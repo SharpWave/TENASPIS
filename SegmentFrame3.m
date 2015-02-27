@@ -1,4 +1,4 @@
-function [frame,cc,thresh,realthresh,smf] = SegmentFrame3(frame,toplot,pthresh)
+function [frame,cc,thresh,realthresh,smf] = SegmentFrame3(frame,toplot,pthresh,mask)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,6 +20,10 @@ if (toplot) figure;subplot(1,x,1);imagesc(frame); title ('raw input');colormap(g
 %frame = edgetaper(frame,psf);
 %frame = deconvlucy(frame,psf,5);
 smf = frame;
+
+if (nargin == 4)
+  frame(find(mask == 0)) = 0;
+end
 
 if (toplot) subplot(1,x,2);imagesc(frame); title ('smoothed input');colormap(gray);end
 
