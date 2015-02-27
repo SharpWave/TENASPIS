@@ -17,8 +17,8 @@ x = 3;
 if (toplot) figure;subplot(1,x,1);imagesc(frame); title ('raw input');colormap(gray);end
 
 %frame = imopen(frame,strel('disk',2));
-frame = edgetaper(frame,psf);
-frame = deconvlucy(frame,psf,5);
+%frame = edgetaper(frame,psf);
+%frame = deconvlucy(frame,psf,5);
 smf = frame;
 
 if (toplot) subplot(1,x,2);imagesc(frame); title ('smoothed input');colormap(gray);end
