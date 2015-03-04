@@ -9,7 +9,8 @@ end
 minpixels = 9;
 numpan = 3;
 threshinc = 0.1;
-neuronthresh = 250;
+neuronthresh = 300;
+minsolid = 0.9;
 
 
 initframe = frame;
@@ -43,15 +44,18 @@ if (length(cc.PixelIdxList) == 0)
     return;
 end
 
+rp = regionprops(cc,'all');
+
 % ok, now sort the cc's by their sizes
 for i = 1:length(cc.PixelIdxList)
-    segsize(i) = length(cc.PixelIdxList{i});
+    segsize(i) = rp(i).Area;
+    segsolid(i) = rp(i).Solidity;
 end
 
 
 
-CCgoodidx = find(segsize <= neuronthresh);
-CCquestionidx = intersect(find(segsize > neuronthresh),find(segsize <= 3000));
+CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
+CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < 3000));
 CCbadidx = find(segsize > 3000);
 
 % the cc's in CCquestionidx might be multiple cells
@@ -86,20 +90,23 @@ for i = CCquestionidx
             % there were blobs, check if any of them are under
             % thresh
             bsize = [];
+            bSolid = [];
             for j = 1:length(bb.PixelIdxList)
                 bsize(j) = rp(j).Area;
+                bSolid(j) = rp(j).Solidity;
             end
             bsize
+            bSolid
             
             %%%TODO also check for ellipsoid border by comparing the size
             % to the size of the border
             
-            newn = find(bsize <= neuronthresh);
+            newn = intersect(find(bsize <= neuronthresh),find(bSolid >= minsolid));
             if (length(newn) > 0)
                 for j = 1:length(newn)
                     % this is a new list
                     currnewList = currnewList + 1;
-                    newlist{currnewList} = bb.PixelIdxList{j};
+                    newlist{currnewList} = bb.PixelIdxList{newn(j)};
                     display('successfully found a new neuron');
                     if (toplot)
                         pause;
@@ -112,7 +119,7 @@ for i = CCquestionidx
                 break;
             else
                 % still over-threshold blobs left
-                oldn = find(bsize > neuronthresh);
+                oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
                 temp = zeros(cc.ImageSize(1),cc.ImageSize(2));
                 for j = 1:length(oldn)
                     temp(bb.PixelIdxList{oldn(j)}) = initframe(bb.PixelIdxList{oldn(j)});
@@ -129,7 +136,20 @@ for i = CCquestionidx
     end
 end
 close all;
+
+numlists = 0;
+for i = 1:length(CCgoodidx)
+    numlists = numlists + 1;
+    newcc.PixelIdxList{numlists} = cc.PixelIdxList{CCgoodidx(i)};
 end
+
+for i = 1:length(newlist)
+    numlists = numlists + 1;
+    newcc.PixelIdxList{numlists} = newlist{i};
+end
+
+newcc.NumObjects = numlists;
+newcc.ImageSize = cc.Ima
 
             
             

@@ -9,16 +9,19 @@ for i = 1:length(NeuronImage)
 end
 
 figure;
+set(gcf,'Position',[611 102 1079 862]);pause(2);
+
 aviobj = VideoWriter(out_avifile);
+aviobj.FrameRate = 40;
 open(aviobj);
 
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 
 for i = 1000:size(FT,2)
-  temp = h5read(infile,'/Object',[1 1 i*4 1],[Xdim Ydim 1 1]);
+  temp = h5read(infile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
  
-  a = find(FT(:,i*4) > 0);
+  a = find(FT(:,i) > 0);
   imagesc(temp);caxis(climits);colormap gray;
   
   for j = 1:length(x)

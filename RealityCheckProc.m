@@ -1,4 +1,4 @@
-function [ output_args ] = RealityCheckProc()
+function [ output_args ] = RealityCheckProc(file)
 % interactive function for visually determining whether FLmovie's IC's are cells or
 % not.  Outputs a .mat file that contains 3 binary vectors for the status
 % of the cell: bingo, sketchy, garbage
@@ -74,7 +74,7 @@ for i = 1:NumICA
             frames = activations(j,1):2:(activations(j,2)+60);
             for k = frames
                 if (k <= size(SP,2))
-                    tempFrame = h5read('D1movie.h5','/Object',[1 1 k 1],[Xdim Ydim 1 1]);
+                    tempFrame = h5read(file,'/Object',[1 1 k 1],[Xdim Ydim 1 1]);
                 end
                 imagesc(tempFrame);set(gca,'YDir','normal');hold on;plot(x{i},y{i},'-r');colormap(gray);title(int2str(j));caxis([-4 4]);max(tempFrame(:));
                 for m = 1:length(laplist{i})

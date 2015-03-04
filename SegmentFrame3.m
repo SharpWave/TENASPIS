@@ -6,7 +6,7 @@ if (nargin < 2)
     toplot = 0;
 end
 
-minpixels = 9;
+minpixels = 80;
 numpan = 3;
 threshinc = 0.1;
 neuronthresh = 300;
@@ -41,32 +41,37 @@ if (toplot)
 end
 
 if (length(cc.PixelIdxList) == 0)
+    frame = zeros(cc.ImageSize(1),cc.ImageSize(2));
     return;
 end
 
+rp = regionprops(cc,'all');
+
 % ok, now sort the cc's by their sizes
 for i = 1:length(cc.PixelIdxList)
-    segsize(i) = length(cc.PixelIdxList{i});
+    segsize(i) = rp(i).Area;
+    segsolid(i) = rp(i).Solidity;
 end
 
 
 
-CCgoodidx = find(segsize <= neuronthresh);
-CCquestionidx = intersect(find(segsize > neuronthresh),find(segsize <= 3000));
+CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
+CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < 3000));
 CCbadidx = find(segsize > 3000);
 
 % the cc's in CCquestionidx might be multiple cells
 if (toplot)
 figure
 end
-
+newlist = [];
+currnewList = 0;
 for i = CCquestionidx
     % we want to try to increase the threshold and do a bwconncomp on only
     % the pixels that were part of this cc
     % if this creates any cc's that are below the neuron size threshold, we eliminate those pixels and continue to raise the threshold
     % repeating this until all pixels have been eliminated or there are no
     % more cc's
-    currnewList = 0;
+    
     temp = zeros(cc.ImageSize(1),cc.ImageSize(2));
     temp(cc.PixelIdxList{i}) = initframe(cc.PixelIdxList{i});
     tempthresh = thresh + threshinc;
@@ -74,7 +79,7 @@ for i = CCquestionidx
     while(keepgoing)
         keepgoing = 0;
         threshframe = temp > tempthresh;
-        threshframe = bwareaopen(threshframe,minpixels*12,4);
+        threshframe = bwareaopen(threshframe,minpixels,4);
         if (toplot)
             subplot(1,2,1);imagesc(threshframe);colormap gray;caxis([0 1]);
             subplot(1,2,2);imagesc(temp);caxis([tempthresh max(temp(:))]);pause;
@@ -92,8 +97,8 @@ for i = CCquestionidx
                 bsize(j) = rp(j).Area;
                 bSolid(j) = rp(j).Solidity;
             end
-            bsize
-            bSolid
+            %bsize
+            %bSolid
             
             %%%TODO also check for ellipsoid border by comparing the size
             % to the size of the border
@@ -103,7 +108,7 @@ for i = CCquestionidx
                 for j = 1:length(newn)
                     % this is a new list
                     currnewList = currnewList + 1;
-                    newlist{currnewList} = bb.PixelIdxList{j};
+                    newlist{currnewList} = bb.PixelIdxList{newn(j)};
                     display('successfully found a new neuron');
                     if (toplot)
                         pause;
@@ -133,6 +138,29 @@ for i = CCquestionidx
     end
 end
 close all;
+
+numlists = 0;
+newcc.PixelIdxList = [];
+for i = 1:length(CCgoodidx)
+    numlists = numlists + 1;
+    newcc.PixelIdxList{numlists} = cc.PixelIdxList{CCgoodidx(i)};
+end
+
+for i = 1:length(newlist)
+    numlists = numlists + 1;
+    newcc.PixelIdxList{numlists} = newlist{i};
+end
+
+newcc.NumObjects = numlists;
+newcc.ImageSize = cc.ImageSize;
+newcc.Connectivity = 4;
+cc = newcc;
+
+frame = zeros(cc.ImageSize(1),cc.ImageSize(2));
+for i = 1:length(cc.PixelIdxList)
+  frame(cc.PixelIdxList{i}) = 1;
+end
+
 end
 
             

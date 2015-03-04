@@ -11,8 +11,8 @@ end
 load InitClu.mat;
   
 NumMerges = 10;
-RadiusMultiplier = [(1:20)/20,1,1,1];
-for i = 1:NumMerges
+RadiusMultiplier = [(1:20)/40];
+for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
 end
 

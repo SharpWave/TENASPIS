@@ -7,13 +7,14 @@ Ydim = info.Dataspace.Size(2);
 
 av = zeros(Xdim,Ydim);
 thresh = 4;
-load mask.mat;
-for i = 1:NumFrames
+a = load('mask.mat');
+mask = a.mask;
+parfor i = 1:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-    [bw,cc{i}] = SegmentFrame3(tempFrame,1,mask,thresh);
+    [bw,cc{i}] = SegmentFrame3(tempFrame,0,mask,thresh);
     if(todebug == 1)
-        subplot(1,4,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,
-        subplot(1,4,2);imagesc(tempFrame);caxis([3 4]);
+        subplot(1,2,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,
+        subplot(1,2,2);imagesc(tempFrame);caxis([3 4]);pause;
         %subplot(1,4,3);imagesc(outframe);caxis([3 4]);
         %subplot(1,4,4);hist((outframe(:)),50);pause;
     end
@@ -27,8 +28,8 @@ figure;imagesc(av);
 
 
 
-save CC.mat cc thresh;
-
+save CC.mat cc av thresh;
+%keyboard;
 
 
             
