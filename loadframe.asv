@@ -1,4 +1,4 @@
-function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum)
+function [frame,] = loadframe(file,framenum)
 
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
