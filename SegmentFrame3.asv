@@ -9,8 +9,7 @@ end
 minpixels = 9;
 numpan = 3;
 threshinc = 0.1;
-neuronthresh = 300;
-minsolid = 0.9;
+neuronthresh = 250;
 
 
 initframe = frame;
@@ -87,18 +86,15 @@ for i = CCquestionidx
             % there were blobs, check if any of them are under
             % thresh
             bsize = [];
-            bSolid = [];
             for j = 1:length(bb.PixelIdxList)
                 bsize(j) = rp(j).Area;
-                bSolid(j) = rp(j).Solidity;
             end
             bsize
-            bSolid
             
             %%%TODO also check for ellipsoid border by comparing the size
             % to the size of the border
             
-            newn = intersect(find(bsize <= neuronthresh),find(bSolid >= minsolid));
+            newn = find(bsize <= neuronthresh);
             if (length(newn) > 0)
                 for j = 1:length(newn)
                     % this is a new list
@@ -116,7 +112,7 @@ for i = CCquestionidx
                 break;
             else
                 % still over-threshold blobs left
-                oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
+                oldn = find(bsize > neuronthresh);
                 temp = zeros(cc.ImageSize(1),cc.ImageSize(2));
                 for j = 1:length(oldn)
                     temp(bb.PixelIdxList{oldn(j)}) = initframe(bb.PixelIdxList{oldn(j)});
