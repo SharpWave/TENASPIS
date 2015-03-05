@@ -15,7 +15,7 @@ for i = 1:smoothfr-1
 end
 
 for i = smoothfr:NumFrames
-  display(['Calculating F traces for movie frame ',int2str(i),' out of ',int2str(NumFrames)]);
+  display(['Smoothing movie frame ',int2str(i),' out of ',int2str(NumFrames)]);
   F{smoothfr} = double(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
   Fout = zeros(size(F{1}));
   for j = 1:smoothfr
