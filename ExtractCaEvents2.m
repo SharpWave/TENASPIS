@@ -1,4 +1,4 @@
-function [] = ExtractCaEvents2(file,todebug)
+function [] = ExtractCaEvents2(file,todebug,thresh)
 
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
@@ -6,7 +6,7 @@ Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
 av = zeros(Xdim,Ydim);
-thresh = 4;
+
 a = load('mask.mat');
 mask = a.mask;
 parfor i = 1:NumFrames

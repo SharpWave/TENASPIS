@@ -7,7 +7,7 @@ NumFrames = info.Dataspace.Size(3);
 XDim = info.Dataspace.Size(1);
 YDim = info.Dataspace.Size(2);
 
-smfun = hann(smoothfr)./sum(hann(smoothfr));
+smfun = hann(20)./sum(hann(20));
 
 h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','double');
 
@@ -21,7 +21,7 @@ for i = smoothfr:NumFrames
   F{smoothfr} = double(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
   Fout = zeros(size(F{1}));
   for j = 1:smoothfr
-    Fout = Fout+F{j}.*smfun(j);
+    Fout = Fout+F{j}.*;
   end
   Fout = Fout./smoothfr;
   h5write(outfile,'/Object',double(Fout),[1 1 i 1],[XDim YDim 1 1]);

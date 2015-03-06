@@ -15,7 +15,7 @@ ChangeMovie('SMovie.h5','D1Movie.h5');
 !del SMovie.h5 
 
 % Step 3: Extract Ca2+ Events
-[cc] = ExtractCaEvents2('D1Movie.h5');return;
+ExtractCaEvents2('D1Movie.h5',0,thresh);return;
 
 % Step 4: Make Segments
 MakeSegments('D1Movie.h5',cc);
