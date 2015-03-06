@@ -9,22 +9,21 @@ YDim = info.Dataspace.Size(2);
 
 smfun = hann(smoothfr)./sum(hann(smoothfr));
 
-h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','double');
+h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','int32');
 
 for i = 1:smoothfr-1
-    F{i} = double(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
-    h5write(outfile,'/Object',double(F{i}),[1 1 i 1],[XDim YDim 1 1]);
+    F{i} = int32(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
+    h5write(outfile,'/Object',int32(F{i}),[1 1 i 1],[XDim YDim 1 1]);
 end
 
 for i = smoothfr:NumFrames
   display(['Smoothing movie frame ',int2str(i),' out of ',int2str(NumFrames)]);
-  F{smoothfr} = double(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
+  F{smoothfr} = int32(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
   Fout = zeros(size(F{1}));
   for j = 1:smoothfr
-    Fout = Fout+F{j}.*smfun(j);
+    Fout = Fout+double(F{j}).*smfun(j);
   end
-  Fout = Fout./smoothfr;
-  h5write(outfile,'/Object',double(Fout),[1 1 i 1],[XDim YDim 1 1]);
+  h5write(outfile,'/Object',int32(Fout),[1 1 i 1],[XDim YDim 1 1]);
 
   for j = 1:smoothfr-1
       F{j} = F{j+1};
