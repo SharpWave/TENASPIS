@@ -8,7 +8,7 @@ end
 
 minpixels = 80;
 numpan = 3;
-threshinc = 0.1;
+threshinc = 10;
 neuronthresh = 300;
 minsolid = 0.9;
 

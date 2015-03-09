@@ -1,4 +1,4 @@
-function [] = ExtractCaEvents2(file,todebug,thresh)
+function [] = ExtractCaEvents2(file,todebug,thresh,mask)
 
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
@@ -7,14 +7,23 @@ Ydim = info.Dataspace.Size(2);
 
 av = zeros(Xdim,Ydim);
 
-a = load('mask.mat');
-mask = a.mask;
-parfor i = 1:NumFrames
+if (nargin < 4)
+    mask = ones(Xdim,Ydim);
+end
+oldmask = mask;
+
+for i = 1:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    if (i <=20)
+        
+        mask = zeros(Xdim,Ydim);
+    else
+        mask = oldmask;
+    end
     [bw,cc{i}] = SegmentFrame3(tempFrame,0,mask,thresh);
     if(todebug == 1)
         subplot(1,2,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,
-        subplot(1,2,2);imagesc(tempFrame);caxis([3 4]);pause;
+        subplot(1,2,2);imagesc(tempFrame);caxis([0 thresh]);pause;
         %subplot(1,4,3);imagesc(outframe);caxis([3 4]);
         %subplot(1,4,4);hist((outframe(:)),50);pause;
     end
