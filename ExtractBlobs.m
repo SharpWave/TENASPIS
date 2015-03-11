@@ -1,4 +1,9 @@
-function [] = ExtractCaEvents2(file,todebug,thresh,mask)
+function [] = ExtractBlobs(file,todebug,thresh,mask)
+% [] = ExtractBlobs(file,todebug,thresh,mask)
+% extract active cell "blobs" from movie in file
+% todebug 0 or 1 depending if you want to go through frame-by-frame
+% thresh is initial threshold (try BlobStats for thresh determination)
+
 
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
@@ -20,7 +25,7 @@ for i = 1:NumFrames
     else
         mask = oldmask;
     end
-    [bw,cc{i}] = SegmentFrame3(tempFrame,0,mask,thresh);
+    [bw,cc{i}] = SegmentFrame(tempFrame,0,mask,thresh);
     if(todebug == 1)
         subplot(1,2,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,
         subplot(1,2,2);imagesc(tempFrame);caxis([0 thresh]);pause;

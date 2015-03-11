@@ -1,4 +1,4 @@
-function [] = ExtractNeurons2015()
+function [] = ExtractNeurons()
 % [] = ExtractNeurons2015()
 % Make sure that ICmovie.h5 (motion corrected and cropped with one round of
 % 2-pixel disc smoothing) and Pos.mat (manually corrected mouse positions)
@@ -15,10 +15,10 @@ ChangeMovie('SMovie.h5','D1Movie.h5');
 !del SMovie.h5 
 
 % Step 3: Extract Ca2+ Events
-ExtractCaEvents2('D1Movie.h5',0,thresh);return;
+ExtractBlobs('D1Movie.h5',0,thresh);return;
 
 % Step 4: Make Segments
-MakeSegments('D1Movie.h5',cc);
+MakeTransients('D1Movie.h5',cc);
 load Segments.mat;
 
 % Step 5: Combine the segments by neuron

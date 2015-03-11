@@ -1,38 +1,36 @@
-function [] = ExtractROI(file)
+function [] = MakeTransients(file,cc )
+% [] = MakeSegments(file,cc )
+%   Detailed explanation goes here
 
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-av = zeros(Xdim,Ydim);
-for i = 1:NumFrames
-    tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-    [bw,cc{i}] = SegmentFrame2(tempFrame,0);
-    av = av+bw;
-    i
-end
-
-% Iterate through the file and identify unambiguous segments that appear on
-% consecutive frames
-
 NumSegments = 0;
 SegChain = [];
-SegList = [];
+SegList = zeros(NumFrames,100);
 
 for i = 2:NumFrames
+    i
     stats = regionprops(cc{i},'all');
     oldstats = regionprops(cc{i-1},'all');
     for j = 1:cc{i}.NumObjects
         % find match
-        [MatchingSeg] = MatchSeg(stats(i),oldstats,SegList(i-1,:));
+        [MatchingSeg] = MatchSeg(stats(j),oldstats,SegList(i-1,:));
         if (MatchingSeg == 0)
             % no match found, make a new segment
             NumSegments = NumSegments+1;
-            SegChain{NumSegments} = [i,j];
+            SegChain{NumSegments} = {[i,j]};
             SegList(i,j) = NumSegments;
         else
             % a match was found, add to segment
-            
-            
-keyboard;
+            SegChain{MatchingSeg} = [SegChain{MatchingSeg},{[i,j]}];
+            SegList(i,j) = MatchingSeg;
+        end
+    end
+end
+
+save Segments.mat NumSegments SegChain SegList cc NumFrames Xdim Ydim
+end
+
