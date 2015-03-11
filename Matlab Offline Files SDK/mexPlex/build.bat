@@ -1,1 +1,0 @@
-mex -v -output mexPlex -outdir .. PlexMethods.cpp
