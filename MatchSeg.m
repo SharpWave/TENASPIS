@@ -1,6 +1,8 @@
-function [MatchingSeg] = MatchSeg(currstat,oldstats,SegList)
-%UNTITLED2 Summary of this function goes here
+function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList)
+% [MatchingSeg] = MatchSeg(currstat,oldstats,SegList)
 %   Detailed explanation goes here
+minidx = 0;
+
 if (length(oldstats) == 0)
     % no segs on the preceding frame
     MatchingSeg = 0;

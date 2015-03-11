@@ -21,6 +21,9 @@ ExtractBlobs('D1Movie.h5',0,thresh);return;
 MakeTransients('D1Movie.h5',cc);
 load Segments.mat;
 
+% Step 4.5: Plot Transient Outlines
+PlotUnclusteredTransients();
+
 % Step 5: Combine the segments by neuron
 ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
 

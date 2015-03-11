@@ -34,25 +34,22 @@ for i = 2:NumFrames
             subplot(1,2,1)
             imagesc(f);colormap gray;caxis([-500 500]);hold on;
             plot(x,y,'-r','LineWidth',3);hold off;
-            title ('blob that we are trying to match (red)');
+            title ('Neuron that we are trying to match (red)');
             
             % plot all of the neurons on the previous frame
             f = loadframe(file,i-1);
             subplot(1,2,2);
             imagesc(f);colormap gray;caxis([-500 500]);hold on;
-            title('previous blobs in green, matched blob in red');
             for k = 1:cc{i-1}.NumObjects
                 temp = zeros(Xdim,Ydim);
                 temp(cc{i-1}.PixelIdxList{k}) = 1;
                 b = bwboundaries(temp);
                 y = b{1}(:,1);
                 x = b{1}(:,2);
-                plot(x,y,'-g');
-            end
-        end
+                
         
         % find match
-        [MatchingSeg,idx] = MatchSeg(stats(j),oldstats,SegList(i-1,:));
+        [MatchingSeg] = MatchSeg(stats(j),oldstats,SegList(i-1,:));
         if (MatchingSeg == 0)
             % no match found, make a new segment
             NumSegments = NumSegments+1;
@@ -62,18 +59,6 @@ for i = 2:NumFrames
             % a match was found, add to segment
             SegChain{MatchingSeg} = [SegChain{MatchingSeg},{[i,j]}];
             SegList(i,j) = MatchingSeg;
-            if (todebug)
-                subplot(1,2,2);
-                hold on;
-                temp = zeros(Xdim,Ydim);
-                temp(cc{i-1}.PixelIdxList{idx}) = 1;
-                b = bwboundaries(temp);
-                y = b{1}(:,1);
-                x = b{1}(:,2);
-                plot(x,y,'-r');
-                hold off;
-            end
-            pause;
         end
     end
 end
