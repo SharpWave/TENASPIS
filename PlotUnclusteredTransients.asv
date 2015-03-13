@@ -12,13 +12,13 @@ for i = 1:NumSegments
         temp = zeros(Xdim,Ydim);
         frame = SegChain{i}{j}(1);
         seg = SegChain{i}{j}(2);
-        temp(cc{frame}.PixelIdxList{seg}) = 1;
+        temp(cc{i}.PixelIdxList{j}) = 1;
         AvgSeg{i} = AvgSeg{i}+temp;
     end
     AvgSeg{i} = AvgSeg{i}./length(SegChain{i});
     AllSeg = AllSeg + AvgSeg{i};
 end
-keyboard;
+
 
 
 

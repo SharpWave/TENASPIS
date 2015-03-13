@@ -1,5 +1,8 @@
 function [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
-%UNTITLED6 Summary of this function goes here
+% [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
+% BIG TODO: fix this fucking function
+
+
 %   Detailed explanation goes here
     seg = zeros(Xdim,Ydim);
     Xcent = 0;

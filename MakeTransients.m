@@ -71,9 +71,9 @@ for i = 2:NumFrames
                 y = b{1}(:,1);
                 x = b{1}(:,2);
                 plot(x,y,'-r');
-                hold off;
+                hold off;pause;
             end
-            pause;
+            
         end
     end
 end

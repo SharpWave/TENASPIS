@@ -57,8 +57,8 @@ end
 
 
 CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
-CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < artifactthresh));
-CCbadidx = find(segsize > artifactthresh);
+CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < 3000));
+CCbadidx = find(segsize > 3000);
 
 % the cc's in CCquestionidx might be multiple cells
 if (toplot)
