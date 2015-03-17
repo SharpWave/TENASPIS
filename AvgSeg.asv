@@ -19,8 +19,8 @@ function [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
     CommonPixels = [];
     
     for i = 1:length(SegChain)
-        FrameNum = SegChain{i}(1);
-        ObjNum = SegChain{i}(2);
+        FrameNum = SegChain{j}(1);
+        ObjNum = SegChain{j}(2);
         frames = [frames,FrameNum];
         ts = regionprops(cc{FrameNum},'all');   
         if (i == 1)
@@ -30,20 +30,31 @@ function [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
         end
     end
     
-    if (length(CommonPixels) > 0)
-        seg = single(zeros(Xdim,Ydim));
-        seg(CommonPixels) = 1;
-
-        b = bwconncomp(seg,4);
-        bstat = regionprops(b,'all');
-
-        Xcent = bstat(1).Centroid(1);
-        Ycent = bstat(1).Centroid(2);
-        MeanArea = bstat(1).Area;
-    else
-       seg = zeros(Xdim,Ydim);
-       Xcent = 0;
-       Ycent = 0;
-       MeanArea = 0;
+    tempFrame = zeros(Xdim,Ydim);
+    tempFrame(CommonPixels) = 1;
+    
+    b = bwconncomp(tempFrame,4);
+    bstat = regionprops(b,'all');
+    
+    
+    for j = 1:length(SegChain)
+        FrameNum = SegChain{j}(1);
+        ObjNum = SegChain{j}(2);
+        frames = [frames,FrameNum];
+        ts = regionprops(cc{FrameNum},'all');
+        
+       
+        tempFrame = zeros(Xdim,Ydim);
+        %keyboard;
+        tempFrame(ts(ObjNum).PixelIdxList) = 1;
+        Xcent = Xcent + ts(ObjNum).Centroid(1);
+        Ycent = Ycent + ts(ObjNum).Centroid(2);
+        MeanArea = MeanArea + ts(ObjNum).Area;
+        seg = seg + tempFrame;
     end
+    Xcent = Xcent / length(SegChain);
+    Ycent = Ycent / length(SegChain);
+    MeanArea = MeanArea / length(SegChain);
+    seg = seg./length(SegChain);
 end
+

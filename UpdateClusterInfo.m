@@ -9,16 +9,17 @@ end
 
 
     
-for i = ClustersToUpdate'
+for i = ClustersToUpdate
+    int2str(i)
     display(['updated cluster # ',int2str(i)]);
-    MeanNeuron{i} = zeros(Xdim,Ydim);
+    MeanNeuron{i} = single(zeros(Xdim,Ydim));
     cluidx = find(c == i);
     areas = [];
     Xs = [];
     Ys = [];
     for j = 1:length(cluidx)
         overlap(i,j) = 0;
-        validpixels = (seg{cluidx(j)} > 0.7);
+        validpixels = (seg{cluidx(j)} == 1);
         MeanNeuron{i} = MeanNeuron{i} + validpixels;
         areas = [areas,sum(validpixels(:))];
         Xs = [Xs,Xcent(cluidx(j))];
