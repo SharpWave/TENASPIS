@@ -37,7 +37,7 @@ figure(1);imagesc(AllSeg);
 % main variables: X and Y centroids
 %c = clusterdata([Xcent',Ycent'],1);
 
-c = 1:NumSegments; % don't use clusterdata due to possibility of overclustering
+c = (1:NumSegments)'; % don't use clusterdata due to possibility of overclustering
 
 [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames);
 

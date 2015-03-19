@@ -9,7 +9,7 @@ end
 
 
     
-for i = ClustersToUpdate
+for i = ClustersToUpdate'
     int2str(i)
     display(['updated cluster # ',int2str(i)]);
     MeanNeuron{i} = single(zeros(Xdim,Ydim));
