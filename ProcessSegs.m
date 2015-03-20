@@ -15,7 +15,7 @@ end
 load InitClu.mat;
   
 NumMerges = 10;
-RadiusMultiplier = [(1:10)/40];
+RadiusMultiplier = [(1:10)/40,(1:10)/30];
 for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
     if (todebug)
@@ -36,7 +36,7 @@ for i = 1:length(RadiusMultiplier)
 end
 figure;plot(NumClu);
 if (todebug)
-    save mc.mat mc;
+    save mc.mat mc -v7.3;
 end
 
 % OK now unpack these things

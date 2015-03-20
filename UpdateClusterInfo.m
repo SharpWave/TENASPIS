@@ -21,23 +21,26 @@ for i = ClustersToUpdate'
     for j = 1:length(cluidx)
         overlap(i,j) = 0;
         validpixels = (seg{cluidx(j)} == 1);
-        MeanNeuron{i} = MeanNeuron{i} + validpixels;
-        areas = [areas,sum(validpixels(:))];
-        Xs = [Xs,Xcent(cluidx(j))];
-        Ys = [Ys,Ycent(cluidx(j))];
+        if (j == 1)
+          MeanNeuron{i} = MeanNeuron{i} + validpixels;
+        else
+          MeanNeuron{i} = MeanNeuron{i} .* validpixels;
+        end
+       
         for k = 1:length(cluidx)
             if (j ~= k)
                 overlap(i,j) = max(overlap(i,j),length(intersect(frames{cluidx(j)},frames{cluidx(k)})) > 0);
             end
         end
     end
-    meanareas(i) = mean(areas);
-    meanX(i) = mean(Xs);
-    meanY(i) = mean(Ys);
+    b = bwconncomp(MeanNeuron{i},4);
+    r = regionprops(b,'all'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
+    
+    meanareas(i) = r.Area;
+    meanX(i) = r.Centroid(1);
+    meanY(i) = r.Centroid(2);
     NumEvents(i) = length(cluidx);
     Invalid(i) = sum(overlap(i,:)) > 0;
-    MeanNeuron{i} = MeanNeuron{i}./length(cluidx);
-    
 end
 
 
