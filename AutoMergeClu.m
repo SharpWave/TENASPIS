@@ -10,6 +10,7 @@ ValidClu = unique(c);
 CluDist = pdist([meanX',meanY'],'euclidean');
 CluDist = squareform(CluDist);
 
+% for each unique cluster index, find sufficiently close clusters and merge
 for i = CluToMerge'
   i
   if(ismember(i,ValidClu) == 0)
@@ -20,8 +21,8 @@ for i = CluToMerge'
   maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier; 
 
   nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
-  spsize = ceil(sqrt(length(nearclust)));
   
+  % merge all clusters in nearclust into i
   for k = 1:length(nearclust)
       cidx = nearclust(k); % cidx is cluster number of close transient
       if (c(cidx) ~= c(i)) 

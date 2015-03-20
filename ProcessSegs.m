@@ -1,4 +1,4 @@
-function [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
+function [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim, todebug)
 % [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
 %   Detailed explanation goes here
 close all;
@@ -6,27 +6,38 @@ close all;
 if (exist('InitClu.mat','file') == 0)
     InitializeClusters(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim);
 end
+
+if (nargin < 8)
+    todebug = 0;
+end
   
 
 load InitClu.mat;
   
 NumMerges = 10;
-RadiusMultiplier = [(1:20)/160];
+RadiusMultiplier = [(1:10)/40];
 for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
+    if (todebug)
+        CluToPlot = unique(c);
+        
+        mc{i} = zeros(Xdim,Ydim);
+        for j = CluToPlot'
+            temp = find(MeanNeuron{j} == 1);
+            
+            temp2 = zeros(Xdim,Ydim);
+            temp2(temp) = 1;
+            mc{i} = mc{i}+temp2;
+        end
+        figure;imagesc(mc{i});title(['radius ',num2str(RadiusMultiplier)]);colorbar
+        
+    end
+    NumClu(i) = length(unique(c));
 end
-
-CluToPlot = unique(c);
-mc = zeros(Xdim,Ydim);
-for i = CluToPlot'
-  temp = find(MeanNeuron{i} > 0.7);
-  
-  temp2 = zeros(Xdim,Ydim);
-  temp2(temp) = 1;
-  mc = mc+temp2;
+figure;plot(NumClu);
+if (todebug)
+    save mc.mat mc;
 end
-
-figure(8);imagesc(mc);
 
 % OK now unpack these things
 
