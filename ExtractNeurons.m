@@ -7,17 +7,18 @@ function [] = ExtractNeurons()
 SR = 20;
 
 tic
-% Step 1: Smooth the movie
+%% Step 1: Smooth the movie
 TempSmoothMovie('smIC.h5','SMovie.h5',20);
 
-% Step 2: Take the first derivative
+%% Step 2: Take the first derivative
 ChangeMovie('SMovie.h5','D1Movie.h5');
 !del SMovie.h5 
 
 % Step 3: Extract Ca2+ Events
 ExtractBlobs('D1Movie.h5',0,thresh);return;
 
-% Step 4: Make Segments
+%% Step 4: Make Segments
+load CC.mat
 MakeTransients('D1Movie.h5',cc);
 load Segments.mat;
 

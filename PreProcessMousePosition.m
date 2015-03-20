@@ -42,7 +42,17 @@ yAVI = Ypix*.6246;
 
 figure(777);plot(Xpix,Ypix);title('pre-corrected data');
 
-implay('Raw.AVI');
+% NRK Edit startpos
+try
+    h1 = implay('Raw.AVI');
+    obj = VideoReader('Raw.AVI');
+catch
+    avi_filepath = ls('*.avi');
+    h1 = implay(avi_filepath);
+    disp(['Using ' avi_filepath ])
+    obj = VideoReader(avi_filepath);
+end
+% NRK edit end
 MouseOnMazeFrame = input('on what frame number does Mr. Mouse arrive on the maze??? --->');
 MoMtime = (MouseOnMazeFrame)*(time(2)-time(1))+time(1)
 
