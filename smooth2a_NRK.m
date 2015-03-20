@@ -1,4 +1,4 @@
-function matrixOut = smooth2a(matrixIn,Nr,Nc)
+function matrixOut = smooth2a_NRK(matrixIn,Nr,Nc)
 % Smooths 2D array data.  Ignores NaN's.
 %
 %function matrixOut = smooth2a(matrixIn,Nr,Nc)
@@ -32,6 +32,12 @@ function matrixOut = smooth2a(matrixIn,Nr,Nc)
 % 	G�teborg University, Sweden
 % 	E-mail: olof.liungman@oce.gu.se
 
+% Magic Number
+% sets the linear taper of the smoother (e.g. 0.75 means that pixels one
+% away from the center are weighted 0.75x, pixels two away are 0.75^2, and
+% so forth
+falloff = 0.5; % Not exactly sure how this is working just yet... 
+
 %
 % Initial error statements and definitions
 %
@@ -50,9 +56,17 @@ if length(N(2)) ~= 1, error('Nc must be a scalar!'), end
 % (2*Nc+1) rectangle centered on element "i".
 %
 [row,col] = size(matrixIn);
-eL = spdiags(ones(row,2*N(1)+1),(-N(1):N(1)),row,row);
-eR = spdiags(ones(col,2*N(2)+1),(-N(2):N(2)),col,col);
+eL = sparse([],[],[],row,row);
+eR = sparse([],[],[],col,col);
 
+% Hack to create tapered smoothing kernel (linear falloff)
+for j = N(1)-1:-1:0
+    eL = falloff*eL + spdiags(ones(row,2*j+1),(-j:j),row,row); 
+end
+
+for j = N(2):-1:0
+    eR = falloff*eR + spdiags(ones(col,2*j+1),(-j:j),col,col);
+end
 %
 % Setting all "NaN" elements of "matrixIn" to zero so that these will not
 % affect the summation.  (If this isn't done, any sum that includes a NaN
@@ -74,6 +88,8 @@ nrmlize(A) = NaN;
 %
 matrixOut = eL*matrixIn*eR;
 matrixOut = matrixOut./nrmlize;
+
+% keyboard
 
 end
 

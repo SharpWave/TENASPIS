@@ -1,4 +1,4 @@
-function [] = CalculatePlacefieldsDecPRoc(RoomStr)
+function [] = CalculatePlacefieldsDecProc(RoomStr)
 % [] = [] = CalculatePlacefieldsDOM(RoomStr)
 % RoomStr, e.g. '201a'
 % CutStart -- if the movie is one of the ones where we went and removed
@@ -214,7 +214,7 @@ end
 
 keyboard;
 
-save PlaceMaps.mat x y t xOut yOut speed minspeed SP PlaceMap AdjMap MovMap OccMap Smoother Smoother2 SMovMap SMovMap2 c IC ICnz; 
+save PlaceMaps.mat x y t xOut yOut speed minspeed SP TMap MovMap OccMap IC ICnz cmperbin ip outmap; 
 return;
 
 
