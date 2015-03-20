@@ -54,39 +54,7 @@ for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
 end
 
-
-save ProcOut.mat ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain NumFrames;
-
-
-
-
-
-
-
+save ProcOut.mat ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain NumFrames -v7.3;
  
 end      
 
-% CluDist = pdist([meanX',meanY'],'euclidean');
-% CluDist = squareform(CluDist);
-% CluToPlot = unique(c);
-% 
-% % ok now the user interactive part
-% for i = CluToPlot'
-%   
-%   
-%   
-%   % find all of the reasonably close clusters
-%   maxdist = sqrt(meanareas(i)/pi);
-% 
-%   nearclust = find(CluDist(i,:) < maxdist*1);
-%   
-%   for j = 1:length(nearclust)
-%     if (ismember(nearclust(j),CluToPlot))  
-%     figure(4);
-%     subplot(1,3,1);imagesc(MeanNeuron{i});title(['Neuron ',int2str(i)]);
-%     subplot(1,3,2);imagesc(MeanNeuron{nearclust(j)});title(['target neuron ',int2str(nearclust(j))]);
-%     subplot(1,3,3);imagesc(MeanNeuron{i}+MeanNeuron{nearclust(j)});
-%     pause;
-%     end
-%   end
-% end
