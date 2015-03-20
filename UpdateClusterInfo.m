@@ -17,6 +17,7 @@ for i = ClustersToUpdate'
     areas = [];
     Xs = [];
     Ys = [];
+    % for each transient in the cluster, accumulate stats
     for j = 1:length(cluidx)
         overlap(i,j) = 0;
         validpixels = (seg{cluidx(j)} == 1);

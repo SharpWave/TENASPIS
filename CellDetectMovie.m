@@ -9,16 +9,16 @@ for i = 1:length(NeuronImage)
 end
 
 figure;
-set(gcf,'Position',[611 102 1079 862]);pause(2);
+set(gcf,'Position',[534 72 1171 921]);
 
 aviobj = VideoWriter(out_avifile);
-aviobj.FrameRate = 4;
+aviobj.FrameRate = 20;
 open(aviobj);
 
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 
-frameskip = 5;
+frameskip = 1;
 
 frames = 1:frameskip:size(FT,2);
 
@@ -37,8 +37,10 @@ for i = frames
       hold on;
       plot(x{a(j)},y{a(j)},'-r','LineWidth',3);
   end
-  F = getframe;
+  F = getframe(gcf);
   writeVideo(aviobj,F);
+  clear F;
+  clf;
 end
 close(gcf);
 close(aviobj);
