@@ -1,5 +1,5 @@
-function [ output_args ] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
-%UNTITLED5 Summary of this function goes here
+function [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
+% [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
 %   Detailed explanation goes here
 close all;
 
@@ -15,8 +15,6 @@ RadiusMultiplier = [(1:20)/160];
 for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
 end
-
-[c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(1,c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
 
 CluToPlot = unique(c);
 mc = zeros(Xdim,Ydim);
@@ -34,9 +32,9 @@ figure(8);imagesc(mc);
 
 CurrClu = 0;
 for i = CluToPlot'
-    if (length(find(MeanNeuron{i} > 0.7)) < 10)
-        continue;
-    end
+%     if (length(find(MeanNeuron{i} > 0.7)) < 10)
+%         continue;
+%     end
     CurrClu = CurrClu + 1;
     clusegs = find(c == i);
     ActiveFrames{CurrClu} = [];
@@ -50,13 +48,16 @@ for i = CluToPlot'
     OrigMean{CurrClu} = MeanNeuron{i};
     caltrain{CurrClu} = zeros(1,NumFrames);
     caltrain{CurrClu}(ActiveFrames{CurrClu}) = 1;
+end
+ 
+for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
 end
 
 
 save ProcOut.mat ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain NumFrames;
 
-keyboard;
+
 
 
 

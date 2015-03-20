@@ -1,13 +1,8 @@
 function [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
-% goes through all of the frames of a particular segment and calculates
+% goes through all of the frames of a particular transient and calculates
 % some basic stats 
 
-% BIG TODO: fix this fucking function
-% right now I calculate the average centroid as the average of the 
-% centroids of all of the frames
-% instead I need to calculate it as the centroid of the region where the 
-% pixels were on 100% of the time
 
 
 %   Detailed explanation goes here
