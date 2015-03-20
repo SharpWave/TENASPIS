@@ -12,13 +12,17 @@ figure;
 set(gcf,'Position',[611 102 1079 862]);pause(2);
 
 aviobj = VideoWriter(out_avifile);
-aviobj.FrameRate = 40;
+aviobj.FrameRate = 4;
 open(aviobj);
 
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 
-for i = 1000:size(FT,2)
+frameskip = 5;
+
+frames = 1:frameskip:size(FT,2);
+
+for i = frames
   temp = h5read(infile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
  
   a = find(FT(:,i) > 0);
@@ -34,7 +38,7 @@ for i = 1000:size(FT,2)
       plot(x{a(j)},y{a(j)},'-r','LineWidth',3);
   end
   F = getframe;
-  writeVideo(aviobj,F)
+  writeVideo(aviobj,F);
 end
 close(gcf);
 close(aviobj);

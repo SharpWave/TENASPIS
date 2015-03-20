@@ -11,7 +11,7 @@ end
 load InitClu.mat;
   
 NumMerges = 10;
-RadiusMultiplier = [(1:20)/40];
+RadiusMultiplier = [(1:20)/160];
 for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
 end
@@ -50,10 +50,11 @@ for i = CluToPlot'
     OrigMean{CurrClu} = MeanNeuron{i};
     caltrain{CurrClu} = zeros(1,NumFrames);
     caltrain{CurrClu}(ActiveFrames{CurrClu}) = 1;
+    FT(i,:) = caltrain{i};
 end
 
 
-save ProcOut.mat ActiveFrames NeuronImage NeuronPixels OrigMean caltrain NumFrames;
+save ProcOut.mat ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain NumFrames;
 
 keyboard;
 
