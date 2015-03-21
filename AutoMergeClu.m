@@ -25,8 +25,34 @@ for i = CluToMerge'
   % merge all clusters in nearclust into i
   for k = 1:length(nearclust)
       cidx = nearclust(k); % cidx is cluster number of close transient
+      targpix = find(MeanNeuron{cidx});
+      currpix = find(MeanNeuron{i});
+      comm = length(intersect(targpix,currpix));
+      targrat = comm/length(targpix),
+      currrat = comm/length(currpix),
+      
+      if ((targrat < 0.7) & (currrat < 0.7))
+          display('SUSPECTED BAD MERGE');
+          figure(901);
+          set(gcf,'Position',[534 72 1171 921]);
+
+          temp = zeros(size(MeanNeuron{i}))-2;
+          temp(currpix) = 1;
+          temp = temp-MeanNeuron{cidx};
+          imagesc(temp);
+          pause;
+          
+      end
+      b = bwconncomp(MeanNeuron{cidx}.*MeanNeuron{i},4);
+      if (b.NumObjects > 1)
+          display('Degenerate Cluster Avoided');
+          continue;
+      end
+      
       if (c(cidx) ~= c(i)) 
         c(find(c == cidx)) = i;
+      else
+        display('DEBUG: this check in AutoMergeClu is necessary');
       end
   end
   ValidClu = unique(c);

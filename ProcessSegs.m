@@ -29,7 +29,7 @@ for i = 1:length(RadiusMultiplier)
             temp2(temp) = 1;
             mc{i} = mc{i}+temp2;
         end
-        figure;imagesc(mc{i});title(['radius ',num2str(RadiusMultiplier)]);colorbar
+        figure;imagesc(mc{i});title(['radius ',num2str(RadiusMultiplier(i))]);colorbar
         
     end
     NumClu(i) = length(unique(c));
