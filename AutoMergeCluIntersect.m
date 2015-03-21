@@ -20,7 +20,7 @@ for i = CluToMerge'
     
     currpix = find(MeanNeuron{i});
     for j = CluToMerge'
-        if (CluDist(i,j) > 50)
+        if (CluDist(i,j) > 10)
             continue;
         end
         if (i == j)
@@ -35,10 +35,20 @@ for i = CluToMerge'
         currrat(i,j) = comm/length(currpix);
         
         if ((targrat(i,j) > thresh) && (currrat(i,j) > thresh))
+%             display('MERGE');
+%             figure(901);
+%             set(gcf,'Position',[534 72 1171 921]);
+%             
+%             temp = zeros(size(MeanNeuron{i}))-2;
+%             temp(currpix) = 1;
+%             temp = temp-MeanNeuron{j};
+%             imagesc(temp);
+%             pause;
             if (targrat(i,j) > 0) display(num2str(targrat(i,j))); end
             if (currrat(i,j) > 0) display(num2str(currrat(i,j)));end
             c(find(c == j)) = i;
             ValidClu = unique(c);
+            length(unique(c))
             display(['merging clu ',num2str(i),' and ',num2str(j)]);
             [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
             CluDist = pdist([meanX',meanY'],'euclidean');

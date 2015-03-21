@@ -15,7 +15,7 @@ ChangeMovie('SMovie.h5','D1Movie.h5');
 !del SMovie.h5 
 
 % Step 3: Extract Ca2+ Events
-ExtractBlobs('D1Movie.h5',0,thresh);return;
+ExtractBlobs('D1Movie.h5',0,thresh);
 
 %% Step 4: Make Segments
 load CC.mat

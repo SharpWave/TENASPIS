@@ -17,7 +17,7 @@ load InitClu.mat;
 NumMerges = 10;
 RadiusMultiplier = [(1:10)/40,(1:10)/30];
 
-OverlapThresh = 0.9:-0.01:0.85
+OverlapThresh = 0.85:-0.01:0.80
 
 for i = 1:length(OverlapThresh)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,OverlapThresh(i));
@@ -35,8 +35,10 @@ for i = 1:length(OverlapThresh)
         figure;imagesc(mc{i});title(['radius ',num2str(RadiusMultiplier(i))]);colorbar
         
     end
+    NumClu(i) = length(unique(c));
 end
 
+keyboard;
 for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
     if (todebug)
@@ -53,7 +55,7 @@ for i = 1:length(RadiusMultiplier)
         figure;imagesc(mc{i+length(OverlapThresh)});title(['radius ',num2str(RadiusMultiplier(i))]);colorbar
         
     end
-    NumClu(i) = length(unique(c));
+    NumClu(i+length(OverlapThresh)) = length(unique(c));
 end
 figure;plot(NumClu);
 if (todebug)
