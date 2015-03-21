@@ -81,7 +81,7 @@ length(time)
 
 while (strcmp(MorePoints,'y'))
   subplot(4,3,1:3);plot(time,Xpix);xlabel('time (sec)');ylabel('x position (cm)');hold on;yl = get(gca,'YLim');line([MoMtime MoMtime], [yl(1) yl(2)],'Color','r');hold off;axis tight;
-  subplot(4,3,4:6);plot(time,Ypix);xlabel('time (sec)');ylabel('y position (cm)');hold on;yl = get(gca,'YLim');line([MoMtime MoMtime], [yl(1) yl(2)],'Color','r');hold off;axis tight;
+  subplot(4,3,4:6);plot(time,Ypix);xlabel('time (sec)');ylabel('y position (cm)');hold on;ylabel('x position (cm)');yl = get(gca,'YLim');line([MoMtime MoMtime], [yl(1) yl(2)],'Color','r');hold off;axis tight;
   MorePoints = input('Is there a flaw that needs to be corrected?  [y/n] -->','s');
 
   
@@ -141,7 +141,7 @@ while (strcmp(MorePoints,'y'))
         
         % plot the existing position marker on top
         hold on;plot(xAVI(sFrame+i*2),yAVI(sFrame+i*2),'ro','MarkerSize',4);
-        display(['Time is ' num2str(time(sFrame+i*2)) ' seconds. Click the mouse''s back']);
+        display('click the mouses back');
         [xm,ym] = ginput(1);
         
         % apply corrected position to current frame
@@ -162,8 +162,6 @@ while (strcmp(MorePoints,'y'))
 
         
     end
-    disp(['You just edited from ' num2str(edit_start_time) ...
-        ' sec to ' num2str(edit_end_time) ' sec.'])
     close(1702);
     % NRK edit
     save Pos_temp.mat Xpix Ypix xAVI yAVI MoMtime MouseOnMazeFrame
