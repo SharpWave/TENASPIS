@@ -16,17 +16,18 @@ for i = CluToMerge'
   if(ismember(i,ValidClu) == 0)
       continue;
   end
-  display(['merging cluster # ',int2str(i)]);
-  
+    
   maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier; 
 
   nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
+  
+  currpix = find(MeanNeuron{i});
   
   % merge all clusters in nearclust into i
   for k = 1:length(nearclust)
       cidx = nearclust(k); % cidx is cluster number of close transient
       targpix = find(MeanNeuron{cidx});
-      currpix = find(MeanNeuron{i});
+      
       comm = length(intersect(targpix,currpix));
       targrat = comm/length(targpix),
       currrat = comm/length(currpix),
@@ -48,12 +49,9 @@ for i = CluToMerge'
           display('Degenerate Cluster Avoided');
           continue;
       end
-      
-      if (c(cidx) ~= c(i)) 
-        c(find(c == cidx)) = i;
-      else
-        display('DEBUG: this check in AutoMergeClu is necessary');
-      end
+            
+      c(find(c == cidx)) = i;
+      display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
   end
   ValidClu = unique(c);
   display([int2str(length(ValidClu)),' clusters']);

@@ -36,9 +36,9 @@ for i = ClustersToUpdate'
     b = bwconncomp(MeanNeuron{i},4);
     r = regionprops(b,'all'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
     
-    meanareas(i) = r.Area;
-    meanX(i) = r.Centroid(1);
-    meanY(i) = r.Centroid(2);
+    meanareas(i) = r(1).Area;
+    meanX(i) = r(1).Centroid(1);
+    meanY(i) = r(1).Centroid(2);
     NumEvents(i) = length(cluidx);
     Invalid(i) = sum(overlap(i,:)) > 0;
 end
