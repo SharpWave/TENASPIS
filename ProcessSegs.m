@@ -15,9 +15,9 @@ end
 load InitClu.mat;
   
 NumMerges = 10;
-RadiusMultiplier = [(1:10)/40,(1:10)/30];
 
-OverlapThresh = 0.85:-0.01:0.80
+
+OverlapThresh = 0.85:-0.01:0.75
 
 for i = 1:length(OverlapThresh)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,OverlapThresh(i));
@@ -38,7 +38,8 @@ for i = 1:length(OverlapThresh)
     NumClu(i) = length(unique(c));
 end
 
-keyboard;
+RadiusMultiplier = 0.1:0.05:0.65
+
 for i = 1:length(RadiusMultiplier)
     [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
     if (todebug)

@@ -17,7 +17,11 @@ for i = CluToMerge'
         continue;
     end
     
-    maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier;
+    tempb = bwconncomp(MeanNeuron{i},4);
+    tempp = regionprops(tempb(1),'all');
+    maxdist = tempp.MinorAxisLength*RadiusMultiplier;
+    
+    %maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier;
     
     nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
     

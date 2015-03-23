@@ -56,9 +56,6 @@ for i = CluToMerge'
         end
     end
 end
-keyboard
-
-
 
 end
 
