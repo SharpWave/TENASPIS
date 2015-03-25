@@ -19,7 +19,7 @@ for i = CluToMerge'
     
     tempb = bwconncomp(MeanNeuron{i},4);
     tempp = regionprops(tempb(1),'all');
-    maxdist = tempp.MinorAxisLength*RadiusMultiplier;
+    maxdist = tempp(1).MinorAxisLength*RadiusMultiplier;
     
     %maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier;
     
@@ -28,6 +28,7 @@ for i = CluToMerge'
     currpix = find(MeanNeuron{i});
     
     % merge all clusters in nearclust into i
+    DidMerge = 0;
     for k = 1:length(nearclust)
         cidx = nearclust(k); % cidx is cluster number of close transient
         targpix = find(MeanNeuron{cidx});
@@ -37,8 +38,9 @@ for i = CluToMerge'
         currrat = comm/length(currpix),
         
         if ((targrat < 0.5) && (currrat < 0.5))
+            display('SUSPECTED BAD MERGE');
             continue;
-            %           display('SUSPECTED BAD MERGE');
+            %           
             %           figure(901);
             %           set(gcf,'Position',[534 72 1171 921]);
             %
@@ -54,13 +56,18 @@ for i = CluToMerge'
             display('Degenerate Cluster Avoided');
             continue;
         end
+        if (b.NumObjects == 0)
+            display('somehow no common pixels in merge'); 
+            continue;
+        end
         
         c(find(c == cidx)) = i;
+        DidMerge = 1;
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
     end
     ValidClu = unique(c);
     display([int2str(length(ValidClu)),' clusters']);
-    if (length(nearclust) > 0)
+    if (DidMerge)
         [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
         CluDist = pdist([meanX',meanY'],'euclidean');
         CluDist = squareform(CluDist);
