@@ -64,6 +64,7 @@ for i = CluToMerge'
         c(find(c == cidx)) = i;
         DidMerge = 1;
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
+        [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
     end
     ValidClu = unique(c);
     display([int2str(length(ValidClu)),' clusters']);
