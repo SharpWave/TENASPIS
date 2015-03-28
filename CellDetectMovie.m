@@ -8,6 +8,8 @@ for i = 1:length(NeuronImage)
     x{i} = temp{1}(:,2);
 end
 
+load CC.mat;
+
 figure;
 set(gcf,'Position',[534 72 1171 921]);
 
@@ -36,6 +38,22 @@ for i = frames
   for j = 1:length(a)
       hold on;
       plot(x{a(j)},y{a(j)},'-r','LineWidth',3);
+  end
+  
+  xg = [];
+  yg = [];
+  
+  for j = 1:length(cc{i}.PixelIdxList)
+      temp = zeros(Xdim,Ydim);
+      temp(cc{i}.PixelIdxList{j}) = 1;
+      b = bwboundaries(temp);
+      yg{j} = b{1}(:,1);
+      xg{j} = b{1}(:,2);
+  end
+  
+  for j = 1:length(xg)
+      hold on;
+      plot(xg{j},yg{j},'-g','LineWidth',1);
   end
   F = getframe(gcf);
   writeVideo(aviobj,F);
