@@ -18,7 +18,7 @@ for i = 1:NumSegments
     AvgSeg = AvgSeg./length(SegChain{i});
     AllSeg = AllSeg + AvgSeg;
 end
-keyboard;
+
 
 
 

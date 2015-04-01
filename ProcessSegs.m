@@ -66,6 +66,7 @@ end
 % OK now unpack these things
 
 CurrClu = 0;
+CluToPlot = unique(c);
 for i = CluToPlot'
 %     if (length(find(MeanNeuron{i} > 0.7)) < 10)
 %         continue;
