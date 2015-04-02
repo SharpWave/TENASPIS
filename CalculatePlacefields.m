@@ -1,4 +1,4 @@
-function [] = CalculatePlacefieldsDec(RoomStr)
+function [] = CalculatePlacefields(RoomStr)
 % [] = [] = CalculatePlacefieldsDOM(RoomStr)
 % RoomStr, e.g. '201a'
 % CutStart -- if the movie is one of the ones where we went and removed
@@ -9,29 +9,10 @@ function [] = CalculatePlacefieldsDec(RoomStr)
 
 close all;
 
-if (nargin < 2)
-    CutStart = 0;
-end
-
-load FinalTraces.mat; % load the saved traces
-yOut = y;
-xOut = x;
-
-
-NumCells = size(FT,1);
-
-% normalize each trace by its max
-for i = 1:NumCells
-   m = max(FT(i,:));
-   if (m > 0)
-       FT(i,:) = FT(i,:)/m;
-   end
-end
+load ProcOut.mat
 
 minspeed = 7;
-
 SR = 20;
-
 Pix2Cm = 0.15;
 cmperbin = .5;
 
@@ -46,6 +27,30 @@ else
     end
 end
 
+ICnz = NeuronPixels;
+IC = NeuronImage;
+t = (1:NumFrames)/20;
+
+Xdim = size(NeuronImage{1},1);
+Ydim = size(NeuronImage{1},2);
+
+NumICA = length(caltrain);
+
+for i = 1:NumICA
+    temp = bwboundaries(NeuronImage{i});
+    y{i} = temp{1}(:,1);
+    x{i} = temp{1}(:,2);
+end
+
+for i = 1:NumICA
+    SP(i,:) = caltrain{i};
+end
+
+yOut = y;
+xOut = x;
+
+NumCells = size(SP,1);
+
 [x,y,start_time,MoMtime] = PreProcessMousePosition('Video.DVT');
 x = x.*Pix2Cm;
 y = y.*Pix2Cm;
@@ -55,10 +60,10 @@ speed = sqrt(dx.^2+dy.^2)*SR;
 
 % align starts of Fluorescence video and Plexon tracking to the arrival of
 % the mouse of the maze
-fTime = (1:size(FT,2))/SR;
+fTime = (1:size(SP,2))/SR;
 fStart = findclosest(MoMtime,fTime);
-FT = FT(:,fStart:end);
-fTime = (1:size(FT,2))/SR;
+SP = SP(:,fStart:end);
+fTime = (1:size(SP,2))/SR;
 
 plexTime = (0:length(x)-1)/SR+start_time;
 pStart = findclosest(MoMtime,plexTime);
@@ -67,13 +72,12 @@ y = y(pStart:end);
 speed = speed(pStart:end);
 plexTime = (1:length(x))/SR;
 
-
-Flength = size(FT,2);
+Flength = size(SP,2);
 
 % if Inscopix or Plexon is longer than the other, chop
 if (length(plexTime) <= Flength)
     % Chop the FL
-    FT  = FT(:,1:length(plexTime));
+    SP  = SP(:,1:length(plexTime));
     Flength = length(plexTime)
 else
     speed = speed(1:Flength);
@@ -87,19 +91,33 @@ end
 
 speed(1:100) = 0; % a hack, but otherwise screwy things happen
 
+%%%%%%%%% adjust by half the movie smoothing window 
+HalfWindow = 10;
+
+% shift position and speed right
+x = [zeros(1,HalfWindow),x(1:end-HalfWindow)];
+y = [zeros(1,HalfWindow),y(1:end-HalfWindow)];
+speed = [zeros(1,HalfWindow),speed(1:end-HalfWindow)];
+
+% chop the first HalfWindow
+x = x(HalfWindow+1:end);
+y = y(HalfWindow+1:end);
+speed = speed(HalfWindow+1:end);
+SP = SP(:,HalfWindow+1:end);
+
 Xdim = size(IC{1},1)
 Ydim = size(IC{1},2)
 
+Flength = length(x);
 
 runepochs = NP_FindSupraThresholdEpochs(speed,minspeed);
 isrunning = speed >= minspeed;
 
 t = (1:length(x))./SR;
 
-
 figure(1);plot(t,speed);axis tight;xlabel('time (sec)');ylabel('speed cm/s');
 
-%spiketrain = dumb_fl2act(FT,0.01,0.5);
+%spiketrain = dumb_fl2act(SP,0.01,0.5);
 
 % Set up binning and smoothers for place field analysis
 
@@ -164,7 +182,7 @@ end
 SpeedMap = SpeedMap./OccMap;
 RunSpeedMap = RunSpeedMap./MovMap;
 
-SP = poopsi(FT,0.01,0.5);
+
 figure;
 allmap = zeros(size(MovMap));
 
@@ -172,19 +190,17 @@ for i = 1:NumCells
   TMap{i} = calcmapdec(SP(i,:),MovMap,Xbin,Ybin,isrunning);
 
   [ip(i),outmap] = IsPlacefield(TMap{i},cmperbin);
-  if(ip(i))
-    allmap = allmap+outmap;
-  end
-  if(ip(i))
-    pval(i) = StrapIt(SP(i,:),MovMap,Xbin,Ybin,cmperbin,runepochs,isrunning,0);
-  end
+  
+  pval(i) = StrapIt2(SP(i,:),MovMap,Xbin,Ybin,cmperbin,runepochs,isrunning,0);
+  
 
   
 end
 
-keyboard;
+%PFreview(SP,TMap,t,x,y,pval,ip,find(pval > 0.95)) this finds all of the
+%decent placefields
 
-save PlaceMaps.mat x y t xOut yOut speed minspeed FT SP PlaceMap AdjMap MovMap OccMap Smoother Smoother2 SMovMap SMovMap2 c IC ICnz; 
+save PlaceMaps.mat x y t xOut yOut speed minspeed SP TMap MovMap OccMap IC ICnz cmperbin ip pval outmap; 
 return;
 
 
