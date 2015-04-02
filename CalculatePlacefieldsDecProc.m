@@ -9,44 +9,10 @@ function [] = CalculatePlacefieldsDecProc(RoomStr)
 
 close all;
 
-if (nargin < 2)
-    CutStart = 0;
-end
-
-%load FinalTraces.mat; % load the saved traces
-
 load ProcOut.mat
 
-ICnz = NeuronPixels;
-IC = NeuronImage;
-t = (1:NumFrames)/20;
-
-Xdim = size(NeuronImage{1},1);
-Ydim = size(NeuronImage{1},2);
-
-NumICA = length(caltrain);
-
-for i = 1:NumICA
-  [ICThresh(i),x{i},y{i}] = NumContourPeaks(IC{i},100);
-end
-
-for i = 1:NumICA
-    SP(i,:) = caltrain{i};
-end
-
-
-yOut = y;
-xOut = x;
-
-
-NumCells = size(SP,1);
-
-
-
 minspeed = 7;
-
 SR = 20;
-
 Pix2Cm = 0.15;
 cmperbin = .5;
 
@@ -60,6 +26,30 @@ else
         display('Room 201a');
     end
 end
+
+ICnz = NeuronPixels;
+IC = NeuronImage;
+t = (1:NumFrames)/20;
+
+Xdim = size(NeuronImage{1},1);
+Ydim = size(NeuronImage{1},2);
+
+NumICA = length(caltrain);
+
+for i = 1:NumICA
+    temp = bwboundaries(NeuronImage{i});
+    y{i} = temp{1}(:,1);
+    x{i} = temp{1}(:,2);
+end
+
+for i = 1:NumICA
+    SP(i,:) = caltrain{i};
+end
+
+yOut = y;
+xOut = x;
+
+NumCells = size(SP,1);
 
 [x,y,start_time,MoMtime] = PreProcessMousePosition('Video.DVT');
 x = x.*Pix2Cm;
@@ -81,7 +71,6 @@ x = x(pStart:end);
 y = y(pStart:end);
 speed = speed(pStart:end);
 plexTime = (1:length(x))/SR;
-
 
 Flength = size(SP,2);
 
@@ -116,19 +105,15 @@ y = y(HalfWindow+1:end);
 speed = speed(HalfWindow+1:end);
 SP = SP(:,HalfWindow+1:end);
 
-
-
 Xdim = size(IC{1},1)
 Ydim = size(IC{1},2)
 
 Flength = length(x);
 
-
 runepochs = NP_FindSupraThresholdEpochs(speed,minspeed);
 isrunning = speed >= minspeed;
 
 t = (1:length(x))./SR;
-
 
 figure(1);plot(t,speed);axis tight;xlabel('time (sec)');ylabel('speed cm/s');
 
@@ -212,9 +197,10 @@ for i = 1:NumCells
   
 end
 
-keyboard;
+%PFreview(SP,TMap,t,x,y,pval,ip,find(pval > 0.95)) this finds all of the
+%decent placefields
 
-save PlaceMaps.mat x y t xOut yOut speed minspeed SP TMap MovMap OccMap IC ICnz cmperbin ip outmap; 
+save PlaceMaps.mat x y t xOut yOut speed minspeed SP TMap MovMap OccMap IC ICnz cmperbin ip pval outmap; 
 return;
 
 
