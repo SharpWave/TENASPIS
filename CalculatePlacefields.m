@@ -1,15 +1,10 @@
 function [] = CalculatePlacefields(RoomStr)
 % [] = [] = CalculatePlacefieldsDOM(RoomStr)
 % RoomStr, e.g. '201a'
-% CutStart -- if the movie is one of the ones where we went and removed
-% the first six frames, set this to 1, otherwise omit it
-% This script takes the outputs saved by ExtractTraces and the Video.DVT
-% Placefields are calculated and tested using an adapted version of the
-% Dombeck et al 
 
 close all;
 
-load ProcOut.mat
+load ProcOut.mat; % ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain NumFrames
 
 minspeed = 7;
 SR = 20;
@@ -27,86 +22,19 @@ else
     end
 end
 
-ICnz = NeuronPixels;
-IC = NeuronImage;
-t = (1:NumFrames)/20;
-
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 
-NumICA = length(caltrain);
+NumNeurons = length(caltrain);
 
-for i = 1:NumICA
+for i = 1:NumNeurons
     temp = bwboundaries(NeuronImage{i});
-    y{i} = temp{1}(:,1);
-    x{i} = temp{1}(:,2);
+    yOutline{i} = temp{1}(:,1);
+    xOutline{i} = temp{1}(:,2);
 end
 
-for i = 1:NumICA
-    SP(i,:) = caltrain{i};
-end
-
-yOut = y;
-xOut = x;
-
-NumCells = size(SP,1);
-
-[x,y,start_time,MoMtime] = PreProcessMousePosition('Video.DVT');
-x = x.*Pix2Cm;
-y = y.*Pix2Cm;
-dx = diff(x);
-dy = diff(y);
-speed = sqrt(dx.^2+dy.^2)*SR;
-
-% align starts of Fluorescence video and Plexon tracking to the arrival of
-% the mouse of the maze
-fTime = (1:size(SP,2))/SR;
-fStart = findclosest(MoMtime,fTime);
-SP = SP(:,fStart:end);
-fTime = (1:size(SP,2))/SR;
-
-plexTime = (0:length(x)-1)/SR+start_time;
-pStart = findclosest(MoMtime,plexTime);
-x = x(pStart:end);
-y = y(pStart:end);
-speed = speed(pStart:end);
-plexTime = (1:length(x))/SR;
-
-Flength = size(SP,2);
-
-% if Inscopix or Plexon is longer than the other, chop
-if (length(plexTime) <= Flength)
-    % Chop the FL
-    SP  = SP(:,1:length(plexTime));
-    Flength = length(plexTime)
-else
-    speed = speed(1:Flength);
-    x = x(1:Flength);
-    y = y(1:Flength);
-end
-
-if (length(speed) < length(x))
-    speed(end+1) = 0;
-end
-
-speed(1:100) = 0; % a hack, but otherwise screwy things happen
-
-%%%%%%%%% adjust by half the movie smoothing window 
-HalfWindow = 10;
-
-% shift position and speed right
-x = [zeros(1,HalfWindow),x(1:end-HalfWindow)];
-y = [zeros(1,HalfWindow),y(1:end-HalfWindow)];
-speed = [zeros(1,HalfWindow),speed(1:end-HalfWindow)];
-
-% chop the first HalfWindow
-x = x(HalfWindow+1:end);
-y = y(HalfWindow+1:end);
-speed = speed(HalfWindow+1:end);
-SP = SP(:,HalfWindow+1:end);
-
-Xdim = size(IC{1},1)
-Ydim = size(IC{1},2)
+Xdim = size(NeuronImage{1},1);
+Ydim = size(NeuronImage{1},2);
 
 Flength = length(x);
 
@@ -116,8 +44,6 @@ isrunning = speed >= minspeed;
 t = (1:length(x))./SR;
 
 figure(1);plot(t,speed);axis tight;xlabel('time (sec)');ylabel('speed cm/s');
-
-%spiketrain = dumb_fl2act(SP,0.01,0.5);
 
 % Set up binning and smoothers for place field analysis
 
@@ -131,7 +57,7 @@ NumYBins = ceil(Yrange/cmperbin);
 Xedges = (0:NumXBins)*cmperbin+min(x);
 Yedges = (0:NumYBins)*cmperbin+min(y);
 
-figure(2);hold on;plot(x,y);
+figure(2);hold on;plot(x,y);title('animal trajectory');
 
 % draw all of the edges
 for i = 1:length(Xedges)
@@ -146,8 +72,10 @@ end
 
 axis tight;
 
-[counts,Xbin] = histc(x,Xedges);
-[counts,Ybin] = histc(y,Yedges);
+% Find out which bin the mouse was in at which timepoint
+
+[~,Xbin] = histc(x,Xedges);
+[~,Ybin] = histc(y,Yedges);
 
 Xbin(find(Xbin == (NumXBins+1))) = NumXBins;
 Ybin(find(Ybin == (NumYBins+1))) = NumYBins;
@@ -156,10 +84,11 @@ Xbin(find(Xbin == 0)) = 1;
 Ybin(find(Ybin == 0)) = 1;
 
 
-MovMap = zeros(NumXBins,NumYBins);
-SpeedMap = zeros(NumXBins,NumYBins);
-RunSpeedMap = zeros(NumXBins,NumYBins);
-OccMap = zeros(NumXBins,NumYBins);
+MovMap = zeros(NumXBins,NumYBins); % # of samples in bin while running
+OccMap = zeros(NumXBins,NumYBins); % total # of samples
+SpeedMap = zeros(NumXBins,NumYBins); % average speed in bin
+RunSpeedMap = zeros(NumXBins,NumYBins); % average speed in bin while running
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Calculate Occupancy maps, both for all times and for times limited to 
@@ -182,25 +111,21 @@ end
 SpeedMap = SpeedMap./OccMap;
 RunSpeedMap = RunSpeedMap./MovMap;
 
-
-figure;
-allmap = zeros(size(MovMap));
-
 for i = 1:NumCells
-  TMap{i} = calcmapdec(SP(i,:),MovMap,Xbin,Ybin,isrunning);
+  TMap{i} = calcmapdec(FT(i,:),MovMap,Xbin,Ybin,isrunning);
 
   [ip(i),outmap] = IsPlacefield(TMap{i},cmperbin);
   
-  pval(i) = StrapIt2(SP(i,:),MovMap,Xbin,Ybin,cmperbin,runepochs,isrunning,0);
+  pval(i) = StrapIt(FT(i,:),MovMap,Xbin,Ybin,cmperbin,runepochs,isrunning,0);
   
 
   
 end
 
-%PFreview(SP,TMap,t,x,y,pval,ip,find(pval > 0.95)) this finds all of the
+%PFreview(FT,TMap,t,x,y,pval,ip,find(pval > 0.95)) this finds all of the
 %decent placefields
 
-save PlaceMaps.mat x y t xOut yOut speed minspeed SP TMap MovMap OccMap IC ICnz cmperbin ip pval outmap; 
+save PlaceMaps.mat x y t xOutline yOutline speed minspeed FT TMap MovMap OccMap NeuronImage NeuronPixels cmperbin ip pval outmap; 
 return;
 
 
