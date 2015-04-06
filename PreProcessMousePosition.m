@@ -199,11 +199,11 @@ end
 frame_rate_emp = round(1/mean(diff(time))); % empirical frame rate (frames/sec)
 
 % Generate times to match brain imaging data timestamps
-fps_test = 20; % frames/sec for dummy timestamps
+fps_brainimage = 20; % frames/sec for brain image timestamps
 
-start_time = min(time);
-max_time = max(time);
-time_interp = start_time:1/fps_test:max_time;
+start_time = ceil(min(time)*fps_brainimage)/fps_brainimage;
+max_time = floor(max(time)*fps_brainimage)/fps_brainimage;
+time_interp = start_time:1/fps_brainimage:max_time;
 
 if (max(time_interp) >= max_time)
     time_interp = time_interp(1:end-1);
