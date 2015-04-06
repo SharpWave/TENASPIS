@@ -121,7 +121,7 @@ end
 %PFreview(FT,TMap,t,x,y,pval,ip,find(pval > 0.95)) this finds all of the
 %decent placefields
 
-save PlaceMaps.mat x y t xOutline yOutline speed minspeed FT TMap RunOccMap OccMap NeuronImage NeuronPixels cmperbin pval; 
+save PlaceMaps.mat x y t xOutline yOutline speed minspeed FT TMap RunOccMap OccMap SpeedMap RunSpeedMap NeuronImage NeuronPixels cmperbin pval Xbin Ybin; 
 return;
 
 
