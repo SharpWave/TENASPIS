@@ -198,23 +198,23 @@ end
 
 frame_rate_emp = round(1/mean(diff(time))); % empirical frame rate (frames/sec)
 
-% Conjure up set of times to test script
-fps_test = 20; % frames/sec for dummy timestamps
+% Generate times to match brain imaging data timestamps
+fps_brainimage = 20; % frames/sec for brain image timestamps
 
-start_time = min(time);
-max_time = max(time);
-time_test = start_time:1/fps_test:max_time;
+start_time = ceil(min(time)*fps_brainimage)/fps_brainimage;
+max_time = floor(max(time)*fps_brainimage)/fps_brainimage;
+time_interp = start_time:1/fps_brainimage:max_time;
 
-if (max(time_test) >= max_time)
-    time_test = time_test(1:end-1);
+if (max(time_interp) >= max_time)
+    time_interp = time_interp(1:end-1);
 end
 
 %% Do Linear Interpolation
 
 % Get appropriate time points to interpolate for each timestamp
 time_index = arrayfun(@(a) [max(find(a >= time)) min(find(a < time))],...
-    time_test,'UniformOutput',0);
-time_test_cell = arrayfun(@(a) a,time_test,'UniformOutput',0);
+    time_interp,'UniformOutput',0);
+time_test_cell = arrayfun(@(a) a,time_interp,'UniformOutput',0);
 
 xpos_interp = cellfun(@(a,b) lin_interp(time(a), Xpix(a),...
     b),time_index,time_test_cell);
@@ -222,7 +222,7 @@ xpos_interp = cellfun(@(a,b) lin_interp(time(a), Xpix(a),...
 ypos_interp = cellfun(@(a,b) lin_interp(time(a), Ypix(a),...
     b),time_index,time_test_cell);
 
-save Pos.mat xpos_interp ypos_interp start_time MoMtime
+save Pos.mat xpos_interp ypos_interp time_interp start_time MoMtime
 
 end
 
