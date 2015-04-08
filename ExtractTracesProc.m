@@ -13,38 +13,22 @@ Ydim = size(NeuronImage{1},2);
 NumNeurons = length(NeuronImage);
 
 for i = 1:NumFrames
-  i
-  tempFrame = h5read(moviefile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-  tempFrame = tempFrame(:);
-  
-  if (nargin >1)
+    i
+    tempFrame = h5read(moviefile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    tempFrame = tempFrame(:);
+    
+    
     tempFrame2 = h5read(FLmovie,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     tempFrame2 = tempFrame2(:);
-  end
     
-  for j = 1:NumNeurons
-      FT(i,j) = sum(tempFrame(NeuronPixels{j}));
-      if (nargin > 1)
-          FT2(i,j) = sum(tempFrame2(NeuronPixels{j}));
-      end
-  end
-
-
-
+    
+    for j = 1:NumNeurons
+        Dtrace(i,j) = sum(tempFrame(NeuronPixels{j}));
+        
+        Rawtrace(i,j) = sum(tempFrame2(NeuronPixels{j}));
+        
+    end
 end
-t = (1:NumFrames)/20;
-keyboard;
-for i = 1:NumNeurons
-  subplot(3,3,1:3);
-  plotyy(t,FT(:,i).*(caltrain{i} > 0)',t,FT2(:,i)-min(FT2(:,i)));axis tight;
-  activations = NP_FindSupraThresholdEpochs(caltrain{i},0.1,1);
-  for j = 1:min(6,size(activations,1))
-      subplot(3,3,j+3);
-      tempFrame = h5read(moviefile,'/Object',[1 1 activations(j,1) 1],[Xdim Ydim 1 1]);
-      imagesc(tempFrame);colormap gray;
-  end
-  pause;
-end
-  
-keyboard;
+
+save DumbTraces.mat Dtrace Rawtrace;
 
