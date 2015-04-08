@@ -22,6 +22,8 @@ for i = 1:NumNeurons
     r{i} = regionprops(b{i},'all');
 end
 
+PFsize = zeros(NumNeurons,1);
+
 for i = 1:NumNeurons
     NumPF(i) = b{i}.NumObjects;
     for j = 1:NumPF(i)
@@ -29,15 +31,14 @@ for i = 1:NumNeurons
         PFsize(i,j) = r{i}(j).Area;
         PFcentroid{i,j} = r{i}(j).Centroid;
     end
-    [~,MaxPF(i)] = 
+    [~,MaxPF(i)] = max(PFsize(i,:));
 end
 
 % for every place field, figure out how many times the mouse passed through
 % it
 
 % convert Xbin and Ybin into a single number denoting where the mouse is
-loc_index = sub2ind(size(TMap{1}),Xbin,Ybin); % Y and X purposely switched.  I 
-
+loc_index = sub2ind(size(TMap{1}),Xbin,Ybin); 
 for i = 1:NumNeurons
     for j = 1:NumPF(i)
         PixelBool = zeros(1,NumFrames);
@@ -45,9 +46,22 @@ for i = 1:NumNeurons
             PixelBool(k) = ismember(loc_index(k),PFpixels{i,j});
         end
         PFepochs{i,j} = NP_FindSupraThresholdEpochs(PixelBool,eps,0);
+        PFnumepochs(i,j) = size(PFepochs{i,j},1);
     end
 end
-keyboard;
+
+for i = 1:NumNeurons
+    for j = 1:NumPF(i)
+        for k = 1:PFnumepochs(i,j)
+            PFactive{i,j}(k) = sum(FT(i,PFepochs{i,j}(k,1):PFepochs{i,j}(k,2))) > 0;
+        end
+        PFnumhits(i,j) = sum(PFactive{i,j});
+        PFpcthits(i,j) = PFnumhits(i,j)/PFnumepochs(i,j);
+    end
+end
+
+save PFstats.mat PFpcthits PFnumhits PFactive PFnumepochs PFepochs MaxPF PFcentroid PFsize PFpixels -v7.3;
+
 
     
     
