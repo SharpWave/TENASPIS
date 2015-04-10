@@ -1,4 +1,4 @@
-function [x,y,speed,FT] = AlignImagingToTracking(Pix2Cm,FT)
+function [x,y,speed,FT,FToffset] = AlignImagingToTracking(Pix2Cm,FT)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 SR = 20;
@@ -56,6 +56,8 @@ x = x(HalfWindow+1:end);
 y = y(HalfWindow+1:end);
 speed = speed(HalfWindow+1:end);
 FT = FT(:,HalfWindow+1:end);
+
+FToffset = fStart + HalfWindow + 1;
 
 end
 

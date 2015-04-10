@@ -1,10 +1,10 @@
-function [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim, todebug)
+function [] = ProcessSegs(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, todebug)
 % [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
 %   Detailed explanation goes here
 close all;
 
 if (exist('InitClu.mat','file') == 0)
-    InitializeClusters(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim);
+    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 end
 
 if (nargin < 8)

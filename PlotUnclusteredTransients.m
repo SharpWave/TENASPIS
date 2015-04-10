@@ -1,4 +1,4 @@
-function [ output_args ] = PlotUnclusteredTransients(file)
+function [ output_args ] = PlotUnclusteredTransients()
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -18,7 +18,7 @@ for i = 1:NumSegments
     AvgSeg = AvgSeg./length(SegChain{i});
     AllSeg = AllSeg + AvgSeg;
 end
-
+figure;imagesc(AllSeg)
 
 
 

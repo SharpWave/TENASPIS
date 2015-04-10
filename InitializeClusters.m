@@ -1,4 +1,4 @@
-function [] = InitializeClusters(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
+function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 
 AllSeg = zeros(Xdim,Ydim);
 
