@@ -9,20 +9,20 @@ CurrChan = 1;
 [ns,s] = plx_adchan_samplecounts(inname);
 NumSamples = s(1);
 fout = fopen([outname,'.dat'],'w');
-ChunkSize = 100000;
+ChunkSize = 5000000;
 NumFullChunks = floor(NumSamples/ChunkSize);
 CurrStart = 1;
-
+ad = zeros(NumChannels,ChunkSize);
 for j = 1:NumFullChunks
     j/NumFullChunks
     for i = 1:NumChannels
         
         % read the wideband signal for channel i
-        [adfreq,n,temp] = plx_ad_span(inname,i-1,CurrStart,CurrStart+ChunkSize-1);
-        ad(i,:) = temp;
+        [adfreq,n,ad(i,:)] = plx_ad_span(inname,i-1,CurrStart,CurrStart+ChunkSize-1);
+        %ad(i,:) = temp;
         
     end
-    
+    CurrStart = CurrStart + ChunkSize;
     fwrite(fout,ad,'int16');
 end
 fclose(fout);
