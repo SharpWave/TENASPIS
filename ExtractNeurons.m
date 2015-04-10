@@ -17,6 +17,8 @@ ChangeMovie('SMovie.h5','D1Movie.h5');
 
 thresh = 4*mean(stdframe);
 
+save Blobthresh.mat thresh;
+
 % Step 3: Extract Ca2+ Events
 ExtractBlobs('D1Movie.h5',0,thresh);
 
