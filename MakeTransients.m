@@ -78,6 +78,6 @@ for i = 2:NumFrames
     end
 end
 
-save Segments.mat NumSegments SegChain SegList cc NumFrames Xdim Ydim
+save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim
 end
 

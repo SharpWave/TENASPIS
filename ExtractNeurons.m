@@ -29,7 +29,7 @@ load Segments.mat;
 PlotUnclusteredTransients();
 
 % Step 5: Combine the segments by neuron
-ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
+ProcessSegs(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 
 TotalTime = toc
 
