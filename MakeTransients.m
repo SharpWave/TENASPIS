@@ -78,6 +78,14 @@ for i = 2:NumFrames
     end
 end
 
+for i = 1:length(SegChain)
+    ns(i) = length(SegChain{i});
+end
+
+goodlen = find(ns >= 3);
+SegChain = SegChain(goodlen);
+NumSegments = length(SegChain);
+
 save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim
 end
 
