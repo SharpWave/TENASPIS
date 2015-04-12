@@ -17,6 +17,9 @@ for i = 2:NumFrames
   F1 = h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]);
   DF = F1-F0;
   F0 = F1;
+  if (i <= 20)
+      DF = zeros(size(DF));
+  end
   h5write(outfile,'/Object',int32(DF),[1 1 i 1],[XDim YDim 1 1]);
 end
 
