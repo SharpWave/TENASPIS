@@ -1,4 +1,4 @@
-function [ output_args ] = PFbrowse(h5file,CellsToBrowse)
+function [AllFields] = PFbrowse(h5file,CellsToBrowse)
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 
