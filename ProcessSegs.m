@@ -18,9 +18,14 @@ NumMerges = 10;
 
 
 OverlapThresh = 0.85:-0.01:0.75
-RadiusMultiplier = 0.1:0.05:0.65
+RadiusMultiplier = 0.1:0.05:0.5
+
+[c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,0.9);
+ [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(0.1,c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
+
 for i = 1:length(OverlapThresh)
-    [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(RadiusMultiplier(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,OverlapThresh(i));
+    [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,OverlapThresh(i));
+    
     if (todebug)
         CluToPlot = unique(c);
         
@@ -57,6 +62,26 @@ for i = 1:length(RadiusMultiplier)
         
     end
     NumClu(i+length(OverlapThresh)) = length(unique(c));
+end
+
+for i = 1:length(OverlapThresh)
+    [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,OverlapThresh(i));
+    
+    if (todebug)
+        CluToPlot = unique(c);
+        
+        mc{i} = zeros(Xdim,Ydim);
+        for j = CluToPlot'
+            temp = find(MeanNeuron{j} == 1);
+            
+            temp2 = zeros(Xdim,Ydim);
+            temp2(temp) = 1;
+            mc{i} = mc{i}+temp2;
+        end
+        figure;imagesc(mc{i});title(['radius ',num2str(RadiusMultiplier(i))]);colorbar
+        
+    end
+    NumClu(i+length(OverlapThresh)+length(RadiusMultiplier)) = length(unique(c));
 end
 figure;plot(NumClu);
 if (todebug)
