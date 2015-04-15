@@ -39,9 +39,9 @@ figure(1);imagesc(AllSeg);
 
 c = (1:NumSegments)'; % don't use clusterdata due to possibility of overclustering
 
-[MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames);
+[MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames);
 
-save InitClu.mat c Xdim Ydim seg Xcent Ycent frames MeanNeuron meanareas meanX meanY NumEvents Invalid overlap -v7.3;
+save InitClu.mat c Xdim Ydim seg Xcent Ycent frames MeanNeuron meanareas meanX meanY NumEvents -v7.3;
 
 
 
