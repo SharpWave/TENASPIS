@@ -12,7 +12,7 @@ end
 for i = ClustersToUpdate'
     int2str(i)
     display(['updated cluster # ',int2str(i)]);
-    MeanNeuron{i} = single(zeros(Xdim,Ydim));
+    MeanNeuron{i} = logical(zeros(Xdim,Ydim));
     cluidx = find(c == i);
     areas = [];
     Xs = [];
