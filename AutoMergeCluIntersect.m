@@ -12,8 +12,7 @@ CluDist = squareform(CluDist);
 
 % for each unique cluster index, find sufficiently close clusters and merge
 for i = CluToMerge'
-    i
-    
+
     if(ismember(i,ValidClu) == 0)
         continue;
     end
