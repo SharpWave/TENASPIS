@@ -3,7 +3,7 @@ function [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
 
-seg = logical(Xdim,Ydim);
+seg = logical(zeros(Xdim,Ydim));
 Xcent = 0;
 Ycent = 0;
 MeanArea = 0;

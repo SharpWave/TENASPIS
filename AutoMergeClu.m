@@ -68,11 +68,12 @@ for i = CluToMerge'
         [MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents);
     end
     ValidClu = unique(c);
-    display([int2str(length(ValidClu)),' clusters']);
+    
     if (DidMerge)
         [MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents);
         CluDist = pdist([meanX',meanY'],'euclidean');
         CluDist = squareform(CluDist);
+        display([int2str(length(ValidClu)),' clusters']);
     end
     
 end
