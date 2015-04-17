@@ -1,4 +1,4 @@
-function [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeCluIntersect(c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap,thresh)
+function [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents] = AutoMergeCluIntersect(c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,thresh)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -12,8 +12,7 @@ CluDist = squareform(CluDist);
 
 % for each unique cluster index, find sufficiently close clusters and merge
 for i = CluToMerge'
-    i
-    
+
     if(ismember(i,ValidClu) == 0)
         continue;
     end
@@ -50,7 +49,7 @@ for i = CluToMerge'
             ValidClu = unique(c);
             length(unique(c))
             display(['merging clu ',num2str(i),' and ',num2str(j)]);
-            [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
+            [MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents);
             CluDist = pdist([meanX',meanY'],'euclidean');
             CluDist = squareform(CluDist);
         end

@@ -1,4 +1,4 @@
-function [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap)
+function [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -12,14 +12,15 @@ CluDist = squareform(CluDist);
 
 % for each unique cluster index, find sufficiently close clusters and merge
 for i = CluToMerge'
-    i
     if(ismember(i,ValidClu) == 0)
         continue;
     end
     
     tempb = bwconncomp(MeanNeuron{i},4);
     tempp = regionprops(tempb(1),'all');
-    maxdist = tempp(1).MinorAxisLength*RadiusMultiplier;
+    maxdist = RadiusMultiplier; % try it straight up
+    
+    %maxdist = tempp(1).MinorAxisLength*RadiusMultiplier;
     
     %maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier;
     
@@ -64,24 +65,16 @@ for i = CluToMerge'
         c(find(c == cidx)) = i;
         DidMerge = 1;
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
-        [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
+        [MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents);
     end
     ValidClu = unique(c);
-    display([int2str(length(ValidClu)),' clusters']);
+    
     if (DidMerge)
-        [MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents,Invalid,overlap);
+        [MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,i,MeanNeuron,meanareas,meanX,meanY,NumEvents);
         CluDist = pdist([meanX',meanY'],'euclidean');
         CluDist = squareform(CluDist);
+        display([int2str(length(ValidClu)),' clusters']);
     end
-    % for each nearclust
-    % look at pixel overlap, in both directions, decide if it's egregious
-    % If one is contained within the other, OK
-    % If neither is contained within the other, want overlap in both
-    % directions over X% (use high X)
-    % If switch is made, call updateClusterInfo with indices of both clusters
-    % changed
-    
-    % 2nd round with user interaction and lower X after this
     
 end
 

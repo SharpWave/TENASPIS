@@ -19,7 +19,7 @@ TMap = TMap./occmap;
 TMap(find(isnan(TMap))) = 0;
 Tsum = sum(TMap(:));
 
-sm = fspecial('disk',5);
+sm = fspecial('disk',3);
 TMap = imfilter(TMap,sm);
 
 TMap = TMap.*Tsum./sum(TMap(:)); % keep sum the same
