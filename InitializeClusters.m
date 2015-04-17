@@ -2,36 +2,34 @@ function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydi
 
 % create segment averages
 parfor i = 1:NumSegments
-    i
-    [seg{i},Xcent(i),Ycent(i),MeanArea(i),frames{i}] = AvgSeg(SegChain{i},cc,Xdim,Ydim);
+    display(['initializing transient # ',int2str(i)]);
+    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim);
     length(SegChain{i})
     
-    GoodSeg(i) = 1;
+    GoodTr(i) = 1;
     
     if (MeanArea(i) < 60)
-        GoodSeg(i) = 0;
+        GoodTr(i) = 0;
     end
     
     if (MeanArea(i) > 160)
-        GoodSeg(i) = 0;
+        GoodTr(i) = 0;
     end
 end
 
 % edit out the faulty segments
-GoodSegs = find(GoodSeg);
-seg = seg(GoodSegs);
-Xcent = Xcent(GoodSegs);
-Ycent = Ycent(GoodSegs);
-MeanArea = MeanArea(GoodSegs);
-frames = frames(GoodSegs);
+GoodTrs = find(GoodTr);
+PixelList = PixelList(GoodTrs);
+Xcent = Xcent(GoodTrs);
+Ycent = Ycent(GoodTrs);
+MeanArea = MeanArea(GoodTrs);
+frames = frames(GoodTrs);
 
-NumSegments = length(GoodSegs);
+c = (1:length(frames))'; 
 
-c = (1:NumSegments)'; 
+[PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-[MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames);
-
-save InitClu.mat c Xdim Ydim seg Xcent Ycent frames MeanNeuron meanareas meanX meanY NumEvents -v7.3;
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents -v7.3;
 
 
 
