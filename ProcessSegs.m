@@ -12,7 +12,7 @@ if (nargin < 8)
 end
 
 
-load InitClu.mat;
+load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
@@ -26,7 +26,7 @@ for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
     while (Cchanged == 1)
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents);
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         PlotNeuronOutlines(PixelList,Xdim,Ydim,unique(c)');
@@ -46,17 +46,11 @@ CurrClu = 0;
 CluToPlot = unique(c);
 for i = CluToPlot'
     CurrClu = CurrClu + 1;
-    clusegs = find(c == i);
-    ActiveFrames{CurrClu} = [];
-    for j = clusegs
-        ActiveFrames{CurrClu} = [ActiveFrames{CurrClu},frames{j}];
-    end
-
     NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim));
     NeuronImage{CurrClu}(PixelList{i}) = 1;
     NeuronPixels{CurrClu} = PixelList{i};
     caltrain{CurrClu} = zeros(1,NumFrames);
-    caltrain{CurrClu}(ActiveFrames{CurrClu}) = 1;
+    caltrain{CurrClu}(frames{CurrClu}) = 1;
 end
 
 for i = 1:length(caltrain)

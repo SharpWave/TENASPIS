@@ -1,4 +1,4 @@
-function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents)
+function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -68,18 +68,25 @@ for i = CluToMerge'
             continue;
         end
         
+        %% check for overlapping frames
+        if(length(intersect(frames{i},frames{cidx}) > 0))
+            display('overlapping frames');
+            keyboard;
+            continue;
+        end
+        
         c(find(c == cidx)) = i;
         DidMerge = 1;
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
         
             
-        [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents);
+        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
         
     end
     ValidClu = unique(c);
     
     if (DidMerge)
-        [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents);
+        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
         CluDist = pdist([meanX',meanY'],'euclidean');
         CluDist = squareform(CluDist);
         display([int2str(length(ValidClu)),' clusters']);

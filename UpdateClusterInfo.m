@@ -1,4 +1,4 @@
-function [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,meanareas,meanX,meanY,NumEvents)
+function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
 
 if nargin <= 6
     ClustersToUpdate = unique(c);
@@ -21,6 +21,9 @@ for i = ClustersToUpdate'
           newpixels = validpixels;
         else
           newpixels = intersect(newpixels,validpixels);
+        end
+        if (cluidx(j) ~= i)
+            frames{i} = [frames{i},frames{cluidx(j)}];
         end
 
     end
