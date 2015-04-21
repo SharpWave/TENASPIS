@@ -9,7 +9,7 @@ load ProcOut.mat; % ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain N
 minspeed = 7;
 SR = 20;
 Pix2Cm = 0.15;
-cmperbin = .5;
+cmperbin = .25;
 
 if (nargin == 0)
     Pix2Cm = 0.15;

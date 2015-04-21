@@ -1,40 +1,41 @@
-function [MeanNeuron,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,seg,Xcent,Ycent,frames,ClustersToUpdate,MeanNeuron,meanareas,meanX,meanY,NumEvents)
+function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
 
-
-NumClusters = length(unique(c));
-
-if nargin <= 7
+if nargin <= 6
     ClustersToUpdate = unique(c);
 end
 
 
     
 for i = ClustersToUpdate'
-    int2str(i)
     display(['updated cluster # ',int2str(i)]);
-    MeanNeuron{i} = logical(zeros(Xdim,Ydim));
     cluidx = find(c == i);
-    areas = [];
-    Xs = [];
-    Ys = [];
+
     % for each transient in the cluster, accumulate stats
     for j = 1:length(cluidx)
-        overlap(i,j) = 0;
-        validpixels = (seg{cluidx(j)} == 1);
+        try
+          validpixels = PixelList{cluidx(j)};
+        catch
+          keyboard;
+        end
         if (j == 1)
-          MeanNeuron{i} = MeanNeuron{i} + validpixels;
+          newpixels = validpixels;
         else
-          MeanNeuron{i} = MeanNeuron{i} .* validpixels;
+          newpixels = intersect(newpixels,validpixels);
+        end
+        if (cluidx(j) ~= i)
+            frames{i} = [frames{i},frames{cluidx(j)}];
         end
 
     end
-    b = bwconncomp(MeanNeuron{i},4);
+    BitMap = logical(zeros(Xdim,Ydim));
+    BitMap(newpixels) = 1;
+    b = bwconncomp(BitMap,4);
     r = regionprops(b,'all'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
     if (length(r) == 0)
         display('foundit');
         keyboard;
     end
-    
+    PixelList{i} = newpixels;
     meanareas(i) = r(1).Area;
     meanX(i) = r(1).Centroid(1);
     meanY(i) = r(1).Centroid(2);

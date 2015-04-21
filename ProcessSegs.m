@@ -12,20 +12,26 @@ if (nargin < 8)
 end
 
 
-load InitClu.mat;
+load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
 
-MinPixelDist = 0.1:0.1:3.5
+MinPixelDist = 0.01:0.25:3.5
+figure;
+set(gcf,'Position',[680          55        1120         923]);
+curr = 1;
 
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
     while (Cchanged == 1)
-        [c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,seg,Xcent,Ycent,frames,MeanNeuron,meanareas,meanX,meanY,NumEvents);
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
+        PlotNeuronOutlines(PixelList,Xdim,Ydim,unique(c)');
+        M(curr) = getframe;
+        curr = curr+1;
         if (NumClu(NumIterations) == oldNumCT)
             break;
         else
@@ -40,25 +46,18 @@ CurrClu = 0;
 CluToPlot = unique(c);
 for i = CluToPlot'
     CurrClu = CurrClu + 1;
-    clusegs = find(c == i);
-    ActiveFrames{CurrClu} = [];
-    for j = clusegs
-        ActiveFrames{CurrClu} = [ActiveFrames{CurrClu},frames{j}];
-    end
-    temp = zeros(Xdim,Ydim);
-    temp(find(MeanNeuron{i} > 0.7)) = 1;
-    NeuronImage{CurrClu} = temp;
-    NeuronPixels{CurrClu} = find(MeanNeuron{i} > 0.7);
-    OrigMean{CurrClu} = MeanNeuron{i};
+    NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim));
+    NeuronImage{CurrClu}(PixelList{i}) = 1;
+    NeuronPixels{CurrClu} = PixelList{i};
     caltrain{CurrClu} = zeros(1,NumFrames);
-    caltrain{CurrClu}(ActiveFrames{CurrClu}) = 1;
+    caltrain{CurrClu}(frames{CurrClu}) = 1;
 end
 
 for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
 end
 
-save ProcOut.mat ActiveFrames NeuronImage NeuronPixels OrigMean FT caltrain NumFrames -v7.3;
+save ProcOut.mat ActiveFrames NeuronImage NeuronPixels meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist -v7.3;
 
 end
 
