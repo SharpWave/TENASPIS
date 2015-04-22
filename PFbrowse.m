@@ -49,7 +49,7 @@ Rawtrace = Rawtrace(:,FToffset-1:end);
 for i = CellsToBrowse
     i
     % Plot # 1 : Movie frames
-    subplot(3,2,1);
+    subplot(4,2,1);
     activeframes = find(FT(i,:) == 1);
     avgframe{i} = zeros(size(NeuronImage{1}));
     for j = activeframes
@@ -62,10 +62,10 @@ for i = CellsToBrowse
         avgframe{i} = avgframe{i} + double(loadframe(h5file,j+FToffset));
     end
     avgframe{i} = avgframe{i}./length(activeframes);
-    imagesc(avgframe{i});hold on;colormap gray;plot(xOutline{i},yOutline{i});title(int2str(length(activeframes)));hold off;
+    imagesc(avgframe{i});hold on;colormap gray;plot(xOutline{i},yOutline{i},'-r');title(int2str(length(activeframes)));hold off;
     
     % Plot #2: cell outlines
-    subplot(3,2,2);
+    subplot(4,2,2);
     imagesc(avgframe{i});hold on;colormap gray;
     for j = 1:NumNeurons
         plot(xOutline{j},yOutline{j},'-b');
@@ -76,12 +76,12 @@ for i = CellsToBrowse
     WhichField = MaxPF(i);
     temp = zeros(size(TMap{1}));
     temp(PFpixels{i,WhichField}) = TMap{i}(PFpixels{i,WhichField});
-    subplot(3,2,3);
+    subplot(4,2,3);
     imagesc(temp);colorbar;hold on;plot(Ybin,Xbin);hold off;
     colormap(gca,c);
     
     % Plot #4 : All placefields
-    subplot(3,2,4);
+    subplot(4,2,4);
     imagesc(AllFields);hold on;%plot(Ybin,Xbin);
     colormap(gca,c);
     BoolField = temp > 0;
@@ -98,10 +98,18 @@ for i = CellsToBrowse
     % Plot #5 : Traces
     
     ae = NP_FindSupraThresholdEpochs(FT(i,:),eps);
-    subplot(3,2,5:6);
-    plot(Dtrace(i,:));hold on;
+    subplot(4,2,5:6);
+    plot((1:NumFrames)/20,Dtrace(i,:));hold on;
     for j = 1:size(ae,1)
-       plot(ae(j,1):ae(j,2),Dtrace(i,ae(j,1):ae(j,2)),'-r','LineWidth',3); 
+       plot((ae(j,1):ae(j,2))/20,Dtrace(i,ae(j,1):ae(j,2)),'-r','LineWidth',3); 
+    end
+    hold off
+    
+    ae = NP_FindSupraThresholdEpochs(FT(i,:),eps);
+    subplot(4,2,7:8);
+    plot((1:NumFrames)/20,Rawtrace(i,:));hold on;
+    for j = 1:size(ae,1)
+       plot((ae(j,1):ae(j,2))/20,Rawtrace(i,ae(j,1):ae(j,2)),'-r','LineWidth',3); 
     end
     hold off
     
