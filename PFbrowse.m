@@ -62,7 +62,10 @@ for i = CellsToBrowse
         avgframe{i} = avgframe{i} + double(loadframe(h5file,j+FToffset));
     end
     avgframe{i} = avgframe{i}./length(activeframes);
-    imagesc(avgframe{i});hold on;colormap gray;plot(xOutline{i},yOutline{i},'-r');title(int2str(length(activeframes)));hold off;
+    imagesc(avgframe{i});hold on;colormap gray;plot(xOutline{i},yOutline{i},'-r');title([int2str(length(activeframes)),' active frames']);hold off;
+    
+    ae = NP_FindSupraThresholdEpochs(FT(i,:),eps);
+    NumTransients = size(ae,1);
     
     % Plot #2: cell outlines
     subplot(4,2,2);
@@ -70,14 +73,14 @@ for i = CellsToBrowse
     for j = 1:NumNeurons
         plot(xOutline{j},yOutline{j},'-b');
     end
-    plot(xOutline{i},yOutline{i},'-r');hold off;
+    plot(xOutline{i},yOutline{i},'-r');hold off;title([int2str(NumTransients),' total calcium transients']); 
     
     % Plot #3: TMap
     WhichField = MaxPF(i);
     temp = zeros(size(TMap{1}));
     temp(PFpixels{i,WhichField}) = TMap{i}(PFpixels{i,WhichField});
     subplot(4,2,3);
-    imagesc(temp);colorbar;hold on;plot(Ybin,Xbin);hold off;
+    imagesc(temp);colorbar;hold on;plot(Ybin,Xbin,'-r');hold off;
     colormap(gca,c);
     
     % Plot #4 : All placefields
@@ -96,6 +99,8 @@ for i = CellsToBrowse
     hold off;
     
     % Plot #5 : Traces
+    Dtrace(i,:) = zscore(Dtrace(i,:));
+    Rawtrace(i,:) = zscore(Rawtrace(i,:));
     
     ae = NP_FindSupraThresholdEpochs(FT(i,:),eps);
     subplot(4,2,5:6);
@@ -103,15 +108,15 @@ for i = CellsToBrowse
     for j = 1:size(ae,1)
        plot((ae(j,1):ae(j,2))/20,Dtrace(i,ae(j,1):ae(j,2)),'-r','LineWidth',3); 
     end
-    hold off
+    hold off;axis tight;
     
-    ae = NP_FindSupraThresholdEpochs(FT(i,:),eps);
+    
     subplot(4,2,7:8);
     plot((1:NumFrames)/20,Rawtrace(i,:));hold on;
     for j = 1:size(ae,1)
        plot((ae(j,1):ae(j,2))/20,Rawtrace(i,ae(j,1):ae(j,2)),'-r','LineWidth',3); 
     end
-    hold off
+    hold off;axis tight;
     
      
     
