@@ -51,7 +51,7 @@ for i = CluToPlot'
     NeuronImage{CurrClu}(PixelList{i}) = 1;
     NeuronPixels{CurrClu} = PixelList{i};
     caltrain{CurrClu} = zeros(1,NumFrames);
-    caltrain{CurrClu}(frames{CurrClu}) = 1;
+    caltrain{CurrClu}(frames{i}) = 1;
 end
 
 for i = 1:length(caltrain)

@@ -1,8 +1,12 @@
-function [] = ExtractNeurons(mask)
+function [] = ExtractNeurons(roomstr,mask)
 % [] = ExtractNeurons2015()
 % Make sure that ICmovie.h5 (motion corrected and cropped with one round of
 % 3-pixel disc smoothing) and Pos.mat (manually corrected mouse positions)
 % are in the directory
+
+if (nargin < 1)
+    roomstr = '201b';
+end
 
 %% Step 1: Smooth the movie
 TempSmoothMovie(infile,'SMovie.h5',20);
@@ -17,7 +21,7 @@ thresh = 4*mean(stdframe);
 save Blobthresh.mat thresh;
 
 %% Step 4 (optional): Create the mask
-if (nargin == 0)
+if (nargin < 2)
     EstimateBlobs('D1Movie.h5',0,thresh);
     beep;
     MakeBlobMask();
@@ -36,8 +40,14 @@ load Segments.mat;
 ProcessSegs(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 
 % Step 8: Calculate Placefields
-CalculatePlacefields();
+CalculatePlacefields(roomstr);
 
 % Step 9: Calculate Placefield stats
+PFstats();
 
+% Step 10: Extract Traces
+ExtractTracesProc('D1Movie.h5','SMovie.h5')
+
+% Step 11: Browse placefields
+PFbrowse('D1Movie.h5');
 

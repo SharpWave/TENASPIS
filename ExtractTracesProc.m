@@ -29,6 +29,8 @@ for i = 1:NumFrames
         
     end
 end
+Dtrace = Dtrace';
+Rawtrace = Rawtrace';
 
 save DumbTraces.mat Dtrace Rawtrace;
 
