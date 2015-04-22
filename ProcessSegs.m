@@ -57,7 +57,7 @@ for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
 end
 
-save ProcOut.mat ActiveFrames NeuronImage NeuronPixels meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist -v7.3;
+save ProcOut.mat NeuronImage NeuronPixels meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist -v7.3;
 
 end
 
