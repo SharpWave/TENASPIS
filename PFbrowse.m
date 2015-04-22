@@ -80,7 +80,7 @@ for i = CellsToBrowse
     temp = zeros(size(TMap{1}));
     temp(PFpixels{i,WhichField}) = TMap{i}(PFpixels{i,WhichField});
     subplot(4,2,3);
-    imagesc(temp);colorbar;hold on;plot(Ybin,Xbin,'-r');hold off;
+    imagesc(temp);colorbar; %hold on;plot(Ybin,Xbin,'-r','Linewidth',0.5);hold off; % TRAJ COVERS UP PF Heatmap
     colormap(gca,c);
     
     % Plot #4 : All placefields
