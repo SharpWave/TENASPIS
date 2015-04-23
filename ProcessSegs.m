@@ -31,7 +31,7 @@ for i = 1:length(MinPixelDist)
         [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
-        DistUsed(i) = MinPixelDist(i);
+        DistUsed(NumIterations) = MinPixelDist(i);
         %PlotNeuronOutlines(PixelList,Xdim,Ydim,unique(c)');
         %M(curr) = getframe;
         curr = curr+1;
@@ -63,7 +63,7 @@ end
 figure;
 PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
-plotyy(1:length(NumClu),NumClu,1:length(NumClu),
+plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
 save ProcOut.mat NeuronImage NeuronPixels c meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist InitPixelList -v7.3;
 
 end
