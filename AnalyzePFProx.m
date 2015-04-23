@@ -39,12 +39,21 @@ for i = 1:length(dN)
 end
 
 figure;
-plot(ldPF,ldN,'*');xlabel('neuron distance (pixels)');ylabel('place field distance');
-figure;
 hist3([ldPF',ldN'],[40 40]);xlabel('placefield distance');ylabel('neuron distance');zlabel('# of neurons');
 set(gcf,'renderer','opengl');
 set(get(gca,'child'),'FaceColor','interp','CDataMode','auto');
 
+figure;hist(ldPF,40);xlabel('PF distance');ylabel('# of neurons');
+figure;hist(ldN,40);xlabel('cell body distance');ylabel('# of neurons');
 
-keyboard;
+[r1,p1] = corr(ldPF',ldN')
+display(['correlation r for cell body distance vs placefield distance is: ',num2str(r1)]);
+
+shortdist = find(ldN < 10); % magic #
+figure;
+hist3([ldPF(shortdist)',ldN(shortdist)'],[10 10]);xlabel('placefield distance');ylabel('neuron distance');zlabel('# of neurons');
+set(gcf,'renderer','opengl');
+set(get(gca,'child'),'FaceColor','interp','CDataMode','auto');
+[r1,p1] = corr(ldPF(shortdist)',ldN(shortdist)');
+display(['correlation r for neurons under 10 pixels vs placefield distance is: ',num2str(r1)]);
 
