@@ -49,9 +49,9 @@ figure;hist(ldN,40);xlabel('cell body distance');ylabel('# of neurons');
 [r1,p1] = corr(ldPF',ldN')
 display(['correlation r for cell body distance vs placefield distance is: ',num2str(r1)]);
 
-shortdist = find(ldN < 10); % magic #
+shortdist = find(ldN < 6); % magic #
 figure;
-hist3([ldPF(shortdist)',ldN(shortdist)'],[10 10]);xlabel('placefield distance');ylabel('neuron distance');zlabel('# of neurons');
+hist3([ldPF(shortdist)',ldN(shortdist)'],[20 20]);xlabel('placefield distance');ylabel('neuron distance');zlabel('# of neurons');
 set(gcf,'renderer','opengl');
 set(get(gca,'child'),'FaceColor','interp','CDataMode','auto');
 [r1,p1] = corr(ldPF(shortdist)',ldN(shortdist)');
