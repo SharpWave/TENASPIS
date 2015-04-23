@@ -45,6 +45,8 @@ set(gcf,'Position',[680 78 1156 900]);
 load DumbTraces.mat;
 Dtrace = Dtrace(:,FToffset-1:end);
 Rawtrace = Rawtrace(:,FToffset-1:end);
+Dtrace = Dtrace(:,1:NumFrames);
+Rawtrace = Rawtrace(:,1:NumFrames);
 
 for i = CellsToBrowse
     i
@@ -104,6 +106,7 @@ for i = CellsToBrowse
     
     ae = NP_FindSupraThresholdEpochs(FT(i,:),eps);
     subplot(4,2,5:6);
+    
     plot((1:NumFrames)/20,Dtrace(i,:));hold on;
     for j = 1:size(ae,1)
        plot((ae(j,1):ae(j,2))/20,Dtrace(i,ae(j,1):ae(j,2)),'-r','LineWidth',3); 

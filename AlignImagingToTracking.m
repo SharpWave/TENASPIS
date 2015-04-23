@@ -1,4 +1,4 @@
-function [x,y,speed,FT,FToffset] = AlignImagingToTracking(Pix2Cm,FT)
+function [x,y,speed,FT,FToffset,FToffsetRear] = AlignImagingToTracking(Pix2Cm,FT)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 SR = 20;
@@ -25,12 +25,15 @@ speed = speed(pStart:end);
 plexTime = (1:length(x))/SR;
 
 Flength = size(FT,2);
+FToffsetRear = 0;
 
 % if Inscopix or Plexon is longer than the other, chop
 if (length(plexTime) <= Flength)
     % Chop the FL
     FT  = FT(:,1:length(plexTime));
-    Flength = length(plexTime)
+    FToffsetRear = length(plexTime) - Flength;
+    Flength = length(plexTime);
+    
 else
     speed = speed(1:Flength);
     x = x(1:Flength);

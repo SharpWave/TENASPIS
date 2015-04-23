@@ -5,7 +5,7 @@ if (nargin < 8)
     toplot = 0;
 end
 
-NumShuffles = 1000;
+NumShuffles = 500;
 
 % count the number of cell activations and their sizes
 
