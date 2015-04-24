@@ -32,12 +32,11 @@ end
 ExtractBlobs('D1Movie.h5',0,thresh,mask);
 
 %% Step 6: String Blobs into calcium transients
-load CC.mat
-MakeTransients('D1Movie.h5',cc);
+MakeTransients('D1Movie.h5');
 
 %% Step 7: Decide which transients (segments) belong to the same neuron
-load Segments.mat;
-ProcessSegs(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
+
+ProcessSegs();
 
 % Step 8: Calculate Placefields
 CalculatePlacefields(roomstr);

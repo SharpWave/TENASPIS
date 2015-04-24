@@ -1,10 +1,12 @@
-function [] = MakeTransients(file,cc,todebug)
+function [] = MakeTransients(file,todebug)
 % [] = MakeTransients(file,cc )
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
 % one, whether there was one on the previous frame that matched it and if
 % so which one, thus deducing calcium transients across frames
 
-if (nargin < 3)
+load CC.mat
+
+if (nargin < 2)
     todebug = 0;
 end
 
