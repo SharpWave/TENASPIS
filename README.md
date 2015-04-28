@@ -1,4 +1,4 @@
-# scopix
+# TENASPIS
 Eichenbaumers working on the Schniterscope project in matlab
 
 The master branch should be considered stable.  New changes should be made on their own branches and then merged into master 
