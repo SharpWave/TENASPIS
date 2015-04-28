@@ -56,15 +56,24 @@ for i = 1:NumNeurons
     end
 end
 
+% keyboard
+
 for i = 1:NumNeurons
     PFactive{i,1} = [];
     PFnumhits(i,1) = 0;
     PFpcthits(i,1) = 0;
     PFactive{i,1} = [];
     for j = 1:NumPF(i)
-        for k = 1:PFnumepochs(i,j)
-            PFactive{i,j}(k) = sum(FT(i,PFepochs{i,j}(k,1):PFepochs{i,j}(k,2))) > 0;
-        end
+        % NK Bug fix suggestion starts here
+            % 11/13 alternation session - PFnumepochs(491,16) = [];
+            if PFnumepochs(i,j) == 0
+                PFactive{i,j} = 0;
+            else
+                for k = 1:PFnumepochs(i,j)
+                    PFactive{i,j}(k) = sum(FT(i,PFepochs{i,j}(k,1):PFepochs{i,j}(k,2))) > 0;
+                end
+            end
+            % NK Bug fix suggestion ends here
         PFnumhits(i,j) = sum(PFactive{i,j});
         PFpcthits(i,j) = PFnumhits(i,j)/PFnumepochs(i,j);
     end
