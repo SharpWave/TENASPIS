@@ -16,7 +16,7 @@ threshfactor = 4; % baseline threshold for detecting cells
 TempSmoothMovie(infile,'SMovie.h5',SmoothWindowWidth);
 
 %% Step 2: Take the first derivative
-ChangeMovie('SMovie.h5','D1Movie.h5');
+DFDT_Movie('SMovie.h5','D1Movie.h5');
 
 !del SMovie.h5 
 
