@@ -15,7 +15,6 @@ function [] = MakeNeurons()
 % Xdim Ydim: pixel dimensions of imaging window
 % NumFrames: number of frames in the entire movie
 % FT: binary neuron activity matrix
-% caltrain: vector of cells containing cell activity vectors (same as FT)
 % VersionString: which release of Tenaspis was used
 
 VersionString = '0.8.0.0-beta';
@@ -74,7 +73,7 @@ figure;
 PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
 plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-save ProcOut.mat NeuronImage NeuronPixels c Xdim Ydim FT caltrain NumFrames MinPixelDist DistUsed InitPixelList VersionString -v7.3;
+save ProcOut.mat NeuronImage NeuronPixels c Xdim Ydim FT NumFrames MinPixelDist DistUsed InitPixelList VersionString -v7.3;
 
 end
 
