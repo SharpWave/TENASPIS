@@ -40,7 +40,7 @@ ExtractBlobs('D1Movie.h5',0,thresh,mask);
 MakeTransients('D1Movie.h5');
 
 %% Step 7: Decide which transients (segments) belong to the same neuron
-ProcessSegs();
+MakeNeurons();
 
 
 

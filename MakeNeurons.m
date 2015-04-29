@@ -1,6 +1,8 @@
-function [] = ProcessSegs(todebug)
-% [] = ProcessSegs(NumSegments, SegChain, SegList, cc, NumFrames, Xdim, Ydim)
-%   Detailed explanation goes here
+function [] = MakeNeurons()
+% [] = MakeNeurons()
+% arranges calcium transients into neurons, based on centroid locations
+% inputs: none
+
 close all;
 
 load Segments.mat;
@@ -8,11 +10,6 @@ load Segments.mat;
 if (exist('InitClu.mat','file') == 0)
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 end
-
-if (nargin < 1)
-    todebug = 0;
-end
-
 
 load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents
 NumIterations = 0;
@@ -24,7 +21,7 @@ MinPixelDist = 0.1:0.25:3.5
 figure;
 set(gcf,'Position',[680          55        1120         923]);
 curr = 1;
-M = [];
+
 
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
@@ -34,8 +31,7 @@ for i = 1:length(MinPixelDist)
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
-        %PlotNeuronOutlines(PixelList,Xdim,Ydim,unique(c)');
-        %M(curr) = getframe;
+
         curr = curr+1;
         if (NumClu(NumIterations) == oldNumCT)
             break;
@@ -66,7 +62,7 @@ figure;
 PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
 plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-save ProcOut.mat NeuronImage NeuronPixels c meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist InitPixelList -v7.3;
+save ProcOut.mat NeuronImage NeuronPixels c meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist DistUsed InitPixelList -v7.3;
 
 end
 
