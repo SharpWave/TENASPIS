@@ -11,14 +11,11 @@ function [] = Tenaspis(infile,mask)
 SmoothWindowWidth = 20; % width of window for temporally smoothing the movie with a gaussian (currently using the acquisition sampling rate)
 threshfactor = 4; % baseline threshold for detecting cells
 
-
 %% Step 1: Smooth the movie
 TempSmoothMovie(infile,'SMovie.h5',SmoothWindowWidth);
 
 %% Step 2: Take the first derivative
 DFDT_Movie('SMovie.h5','D1Movie.h5');
-
-!del SMovie.h5 
 
 %% Step 3: Determine the threshold
 [meanframe,stdframe] = moviestats('D1movie.h5');

@@ -20,11 +20,7 @@ for i = CluToMerge'
     tempb = bwconncomp(BitMap,4);
     tempp = regionprops(tempb(1),'all');
     maxdist = RadiusMultiplier; % try it straight up
-    
-    %maxdist = tempp(1).MinorAxisLength*RadiusMultiplier;
-    
-    %maxdist = sqrt(meanareas(i)/pi)*RadiusMultiplier;
-    
+        
     nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
     
     currpix = PixelList{i};
@@ -42,17 +38,8 @@ for i = CluToMerge'
         if ((targrat < 0.5) && (currrat < 0.5))
             display('LOW MUTUAL OVERLAP, aborting merge');
             continue;
-            %           
-            %           figure(901);
-            %           set(gcf,'Position',[534 72 1171 921]);
-            %
-            %           temp = zeros(size(MeanNeuron{i}))-2;
-            %           temp(currpix) = 1;
-            %           temp = temp-MeanNeuron{cidx};
-            %           imagesc(temp);
-            %           pause;
-            
         end
+        
         BitMap1 = logical(zeros(Xdim,Ydim));
         BitMap2 = logical(zeros(Xdim,Ydim));
         BitMap1(PixelList{cidx}) = 1;
