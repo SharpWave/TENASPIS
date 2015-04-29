@@ -20,7 +20,7 @@ NumCT = length(c);
 oldNumCT = NumCT;
 InitPixelList = PixelList;
 
-MinPixelDist = 0.01:0.25:3.5
+MinPixelDist = 0.1:0.25:3.5
 figure;
 set(gcf,'Position',[680          55        1120         923]);
 curr = 1;

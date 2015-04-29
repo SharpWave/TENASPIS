@@ -25,8 +25,8 @@ for i = ClustersToUpdate'
         if (cluidx(j) ~= i)
             frames{i} = [frames{i},frames{cluidx(j)}];
         end
-
     end
+    
     BitMap = logical(zeros(Xdim,Ydim));
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
