@@ -80,16 +80,19 @@ for i = CluToMerge'
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
         
             
-        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
+        %[PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
+        % TODO: put CluDist code here, BUT ONLY UPDATE THE NEURON I
+        % ACTUALLY leave after the merge
         
     end
     ValidClu = unique(c);
     
     if (DidMerge)
         [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
-        CluDist = pdist([meanX',meanY'],'euclidean');
-        CluDist = squareform(CluDist);
-        display([int2str(length(ValidClu)),' clusters']);
+        [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,i);
+%         CluDist = pdist([meanX',meanY'],'euclidean');
+%         CluDist = squareform(CluDist);
+%         display([int2str(length(ValidClu)),' clusters']);
     end
     
 end
