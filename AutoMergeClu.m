@@ -40,7 +40,7 @@ for i = CluToMerge'
         currrat = comm/length(currpix),
         
         if ((targrat < 0.5) && (currrat < 0.5))
-            display('SUSPECTED BAD MERGE');
+            display('LOW MUTUAL OVERLAP, aborting merge');
             continue;
             %           
             %           figure(901);
@@ -60,7 +60,7 @@ for i = CluToMerge'
         
         b = bwconncomp(BitMap1.*BitMap2,4);
         if (b.NumObjects > 1)
-            display('Degenerate Cluster Avoided');
+            display('Merge would create neuron with discontiguous pixels; merge aborted');
             continue;
         end
         if (b.NumObjects == 0)
@@ -70,7 +70,7 @@ for i = CluToMerge'
         
         %% check for overlapping frames
         if(length(intersect(frames{i},frames{cidx}) > 0))
-            display('overlapping frames');
+            display('overlapping frames, this should never happen');
             keyboard;
             continue;
         end
@@ -79,20 +79,12 @@ for i = CluToMerge'
         DidMerge = 1;
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
         
-            
-        %[PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
-        % TODO: put CluDist code here, BUT ONLY UPDATE THE NEURON I
-        % ACTUALLY leave after the merge
-        
     end
     ValidClu = unique(c);
     
     if (DidMerge)
         [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
         [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,i);
-%         CluDist = pdist([meanX',meanY'],'euclidean');
-%         CluDist = squareform(CluDist);
-%         display([int2str(length(ValidClu)),' clusters']);
     end
     
 end

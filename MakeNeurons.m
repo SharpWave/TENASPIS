@@ -3,9 +3,9 @@ function [] = MakeNeurons()
 % arranges calcium transients into neurons, based on centroid locations
 % inputs: none
 
-close all;
+MinPixelDist = 0.1:0.25:3.5
 
-load Segments.mat;
+close all;
 
 if (exist('InitClu.mat','file') == 0)
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
@@ -17,12 +17,7 @@ NumCT = length(c);
 oldNumCT = NumCT;
 InitPixelList = PixelList;
 
-MinPixelDist = 0.1:0.25:3.5
-figure;
-set(gcf,'Position',[680          55        1120         923]);
-curr = 1;
-
-
+% run AutoMergeClu, each time incrementing the distance threshold
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
@@ -32,7 +27,7 @@ for i = 1:length(MinPixelDist)
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
 
-        curr = curr+1;
+        
         if (NumClu(NumIterations) == oldNumCT)
             break;
         else
