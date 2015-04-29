@@ -2,13 +2,29 @@ function [] = MakeNeurons()
 % [] = MakeNeurons()
 % arranges calcium transients into neurons, based on centroid locations
 % inputs: none
+% outputs: ProcOut.mat
+% --------------------------------------
+% Variables saved: (breaking this requires major version update)
+%
+% NumNeurons: final number of neurons
+% NeuronImage: bitmap of each neuron roi
+% NeuronPixels: list of active pixels for each neuron
+% InitPixelList: list of active pixels for each calcium transient
+% c: list of which cluster each transient belongs to
+% meanX meanY: centroids of neurons
+% Xdim Ydim: pixel dimensions of imaging window
+% NumFrames: number of frames in the entire movie
+% FT: binary neuron activity matrix
+% caltrain: vector of cells containing cell activity vectors (same as FT)
+% VersionString: which release of Tenaspis was used
 
+VersionString = '0.8.0.0-beta';
 MinPixelDist = 0.1:0.25:3.5
 
 close all;
 
 if (exist('InitClu.mat','file') == 0)
-    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
+    InitializeClusters();
 end
 
 load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents
@@ -37,9 +53,10 @@ for i = 1:length(MinPixelDist)
 end
 
 % OK now unpack these things
-
 CurrClu = 0;
 CluToPlot = unique(c);
+NumNeurons = length(CluToPlot);
+
 for i = CluToPlot'
     CurrClu = CurrClu + 1;
     NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim));
@@ -57,7 +74,7 @@ figure;
 PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
 plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-save ProcOut.mat NeuronImage NeuronPixels c meanX meanY Xdim Ydim FT caltrain NumFrames M NumClu MinPixelDist DistUsed InitPixelList -v7.3;
+save ProcOut.mat NeuronImage NeuronPixels c Xdim Ydim FT caltrain NumFrames MinPixelDist DistUsed InitPixelList VersionString -v7.3;
 
 end
 
