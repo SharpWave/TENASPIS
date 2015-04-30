@@ -18,12 +18,13 @@ function [] = MakeNeurons()
 % VersionString: which release of Tenaspis was used
 
 VersionString = '0.8.0.0-beta';
-MinPixelDist = 0.1:0.25:3.5
+MinPixelDist = 0.1:1:5
 
 close all;
 
+load Segments.mat; %NumSegments SegChain cc NumFrames Xdim Ydim
 if (exist('InitClu.mat','file') == 0)
-    InitializeClusters;
+    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 end
 
 load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents

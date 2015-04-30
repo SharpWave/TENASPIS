@@ -18,7 +18,7 @@ if (plotdist)
             dists = [dists,CluDist(ValidClu(j),ValidClu(k))];
         end
     end
-    hist(dists(find(dists < 10)),0:0.25:10);title(num2str(RadiusMultiplier));pause;
+    hist(dists(find(dists < 10)),0:0.5:10);title(num2str(RadiusMultiplier));pause;
 end
 
 % for each unique cluster index, find sufficiently close clusters and merge

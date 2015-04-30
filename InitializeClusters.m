@@ -1,6 +1,6 @@
-function [] = InitializeClusters()
+function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 
-load Segments.mat; %NumSegments SegChain cc NumFrames Xdim Ydim
+
 
 % create segment averages
 parfor i = 1:NumSegments
@@ -31,7 +31,7 @@ c = (1:length(frames))';
 
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents -v7.3;
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents -v7.3;
 
 end
 
