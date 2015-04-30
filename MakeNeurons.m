@@ -22,7 +22,7 @@ MinPixelDist = 0.1:1:5
 
 close all;
 
-load Segments.mat; %NumSegments SegChain cc NumFrames Xdim Ydim
+load Segments.mat; %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 if (exist('InitClu.mat','file') == 0)
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 end
@@ -40,7 +40,7 @@ for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
     while (Cchanged == 1)
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,1);
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);

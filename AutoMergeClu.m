@@ -1,7 +1,7 @@
 function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,plotdist)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-
+plotdist = 0;
 NumClusters = length(unique(c));
 CluToMerge = unique(c);
 ValidClu = unique(c);
