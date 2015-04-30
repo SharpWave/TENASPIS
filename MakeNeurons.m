@@ -23,7 +23,7 @@ MinPixelDist = 0.1:0.25:3.5
 close all;
 
 if (exist('InitClu.mat','file') == 0)
-    InitializeClusters();
+    InitializeClusters;
 end
 
 load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents
@@ -32,17 +32,18 @@ NumCT = length(c);
 oldNumCT = NumCT;
 InitPixelList = PixelList;
 
+
+
 % run AutoMergeClu, each time incrementing the distance threshold
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
     while (Cchanged == 1)
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,1);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
 
-        
         if (NumClu(NumIterations) == oldNumCT)
             break;
         else

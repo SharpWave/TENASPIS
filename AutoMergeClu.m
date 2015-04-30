@@ -1,4 +1,4 @@
-function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames)
+function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,plotdist)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -9,6 +9,17 @@ ValidClu = unique(c);
 
 CluDist = pdist([meanX',meanY'],'euclidean');
 CluDist = squareform(CluDist);
+if (plotdist)
+    figure;
+    dists = [];
+    
+    for j = 1:length(ValidClu)
+        for k = 1:j-1
+            dists = [dists,CluDist(ValidClu(j),ValidClu(k))];
+        end
+    end
+    hist(dists(find(dists < 10)),0:0.25:10);title(num2str(RadiusMultiplier));pause;
+end
 
 % for each unique cluster index, find sufficiently close clusters and merge
 for i = CluToMerge'
@@ -20,7 +31,7 @@ for i = CluToMerge'
     tempb = bwconncomp(BitMap,4);
     tempp = regionprops(tempb(1),'all');
     maxdist = RadiusMultiplier; % try it straight up
-        
+    
     nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
     
     currpix = PixelList{i};
@@ -51,7 +62,7 @@ for i = CluToMerge'
             continue;
         end
         if (b.NumObjects == 0)
-            display('somehow no common pixels in merge'); 
+            display('somehow no common pixels in merge');
             continue;
         end
         
