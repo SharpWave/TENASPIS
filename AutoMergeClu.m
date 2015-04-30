@@ -1,7 +1,11 @@
 function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,plotdist)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-plotdist = 0;
+
+if (~exist('plotdist'))
+    plotdist = 0;
+end
+
 NumClusters = length(unique(c));
 CluToMerge = unique(c);
 ValidClu = unique(c);
@@ -12,13 +16,20 @@ CluDist = squareform(CluDist);
 if (plotdist)
     figure;
     dists = [];
-    
+    maxovers = [];
     for j = 1:length(ValidClu)
+        j
         for k = 1:j-1
+            if (CluDist(ValidClu(j),ValidClu(k)) < 10)
             dists = [dists,CluDist(ValidClu(j),ValidClu(k))];
+            dn = min([length(PixelList{ValidClu(j)}),length(PixelList{ValidClu(k)})]);
+            maxovers = [maxovers,length(intersect(PixelList{ValidClu(j)},PixelList{ValidClu(k)}))/dn];
+            end
         end
     end
-    hist(dists(find(dists < 10)),0:0.5:10);title(num2str(RadiusMultiplier));pause;
+    hist3([maxovers',dists'],[40 40]);
+    set(get(gca,'child'),'FaceColor','interp','CDataMode','auto');
+    keyboard;
 end
 
 % for each unique cluster index, find sufficiently close clusters and merge
