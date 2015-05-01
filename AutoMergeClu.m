@@ -17,19 +17,22 @@ if (plotdist)
     figure;
     dists = [];
     maxovers = [];
+    minovers = [];
     for j = 1:length(ValidClu)
-        j
+        
         for k = 1:j-1
             if (CluDist(ValidClu(j),ValidClu(k)) < 10)
             dists = [dists,CluDist(ValidClu(j),ValidClu(k))];
-            dn = min([length(PixelList{ValidClu(j)}),length(PixelList{ValidClu(k)})]);
-            maxovers = [maxovers,length(intersect(PixelList{ValidClu(j)},PixelList{ValidClu(k)}))/dn];
+            dmin = min([length(PixelList{ValidClu(j)}),length(PixelList{ValidClu(k)})]);
+            dmax = max([length(PixelList{ValidClu(j)}),length(PixelList{ValidClu(k)})]);
+            maxovers = [maxovers,length(intersect(PixelList{ValidClu(j)},PixelList{ValidClu(k)}))/dmax];
+            minovers = [minovers,length(intersect(PixelList{ValidClu(j)},PixelList{ValidClu(k)}))/dmin];
             end
         end
     end
     hist3([maxovers',dists'],[40 40]);
     set(get(gca,'child'),'FaceColor','interp','CDataMode','auto');
-    keyboard;
+   
 end
 
 % for each unique cluster index, find sufficiently close clusters and merge
@@ -57,7 +60,14 @@ for i = CluToMerge'
         targrat = comm/length(targpix),
         currrat = comm/length(currpix),
         
-        if ((targrat < 0.5) && (currrat < 0.5))
+        lowrat = min([targrat,currrat]);
+        highrat = max([targrat,currrat]);
+        if (highrat < 0.33333)
+             display('low OVERLAP, aborting merge');
+             continue;  
+        end
+        
+        if ((targrat < 0.6) && (currrat < 0.6))
             display('LOW MUTUAL OVERLAP, aborting merge');
             continue;
         end
