@@ -75,7 +75,7 @@ figure;
 PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
 plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-save ProcOut.mat NeuronImage NeuronPixels c Xdim Ydim FT NumFrames MinPixelDist DistUsed InitPixelList VersionString -v7.3;
+save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames MinPixelDist DistUsed InitPixelList VersionString -v7.3;
 
 end
 
