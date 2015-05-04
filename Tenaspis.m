@@ -23,7 +23,7 @@ thresh = threshfactor*mean(stdframe);
 save Blobthresh.mat thresh;
 
 %% Step 4 (optional): Create the mask
-if (nargin < 2)
+if (~exist('mask'))
     EstimateBlobs('D1Movie.h5',0,thresh);
     beep;
     MakeBlobMask();

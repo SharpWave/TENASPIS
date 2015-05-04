@@ -1,9 +1,8 @@
-function [ output_args ] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
-%figure;
+function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
+%PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
+figure;
 
-if (nargin < 4)
+if (~exist('clusterlist'))
     clusterlist = 1:length(PixelList)
 end
 
@@ -14,7 +13,7 @@ end
 colors = rand(length(clusterlist),3);
 
 for i = 1:length(clusterlist)
-    i/length(clusterlist)
+    
     temp = zeros(Xdim,Ydim);
     temp(PixelList{i}) = 1;
     b = bwboundaries(temp);
