@@ -3,8 +3,6 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 if nargin <= 6
     ClustersToUpdate = unique(c);
 end
-
-
     
 for i = ClustersToUpdate'
     display(['updated cluster # ',int2str(i)]);
