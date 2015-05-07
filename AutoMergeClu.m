@@ -97,6 +97,7 @@ for i = CluToMerge'
         c(find(c == cidx)) = i;
         DidMerge = 1;
         display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
+        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
         
     end
     ValidClu = unique(c);
