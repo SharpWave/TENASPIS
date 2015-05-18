@@ -23,9 +23,9 @@ thresh = threshfactor*mean(stdframe);
 save Blobthresh.mat thresh;
 
 %% Step 4 (optional): Create the mask
-try
+if (exist('mask.mat','file') > 0)
     load mask.mat;
-catch
+else
     EstimateBlobs('D1Movie.h5',0,thresh);
     MakeBlobMask();
     load mask.mat;
