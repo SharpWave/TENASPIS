@@ -20,7 +20,7 @@ parfor i = 1:NumSegments
 end
 
 % edit out the faulty segments
-GoodTrs = find(GoodTr);
+[GoodTrs,cToSeg] = find(GoodTr);
 PixelList = PixelList(GoodTrs);
 Xcent = Xcent(GoodTrs);
 Ycent = Ycent(GoodTrs);
@@ -31,7 +31,7 @@ c = (1:length(frames))';
 
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents -v7.3;
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents cToSeg -v7.3;
 
 end
 
