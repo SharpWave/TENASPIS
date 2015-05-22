@@ -55,7 +55,7 @@ end
 
 % OK now unpack these things
 CurrClu = 0;
-[CluToPlot,nToc] = unique(c);
+[CluToPlot,nToc,cTon] = unique(c);
 NumNeurons = length(CluToPlot);
 
 for i = CluToPlot'
@@ -79,9 +79,9 @@ PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
 plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
 
-[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
+%[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
-save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList MeanBlobs AllBlob VersionString cToSeg nToc -v7.3;
+save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon -v7.3;
 
 end
 
