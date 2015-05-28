@@ -1,38 +1,47 @@
-function [] = Tenaspis(infile)
+function [] = Tenaspis(infile,animal_id,sess_date,sess_num)
 % [] = Tenaspis(infile,mask)
 % Technique for Extracting Neuronal Activity from Single Photon Image
 % Sequences, by David Sullivan
 %
 % inputs:
 % infile: name of the movie, e.g., 'mouse1.h5'
-% mask (optional): binary matrix specifying pixels that are included/excluded from neuron detection
+% animal_id: the animal, e.g., 'GCaMP6f_05'
+% sess_date: the date the session took place, e.g., '09_29_2014'
+% sess_num: which session for a given date to analyze
 
 % static parameters:
 SmoothWindowWidth = 20; % width of window for temporally smoothing the movie with a gaussian (currently using the acquisition sampling rate)
 threshfactor = 4; % baseline threshold for detecting cells
+MasterDirectory = 'C:\MasterData';
 
-%% Step 1: Smooth the movie
-TempSmoothMovie(infile,'SMovie.h5',SmoothWindowWidth);
+%% Step 0: Register the mask
 
-%% Step 2: Take the first derivative
-DFDT_Movie('SMovie.h5','D1Movie.h5');
+load([MasterDirectory,'\',animal_id,'_initialmask.mat']); % gets mask
+init_tif = [MasterDirectory,'\',animal_id,'_init_min_proj.tif'];
+t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
+target_tif = [t_dir,'\ICmovie_min_proj.tif'];
+
+mask_multi_image_reg(init_tif,1,mask,'reg_files',{target_tif});
+
+
+if(~exist([t_dir,'\D1Movie.h5'],'file')) % don't run these if already run
+    %% Step 1: Smooth the movie
+    TempSmoothMovie(infile,'SMovie.h5',SmoothWindowWidth);
+    
+    %% Step 2: Take the first derivative
+    DFDT_Movie('SMovie.h5','D1Movie.h5');
+end
 
 %% Step 3: Determine the threshold
-[meanframe,stdframe] = moviestats('D1movie.h5');
+[meanframe,stdframe] = moviestats('D1Movie.h5');
 thresh = threshfactor*mean(stdframe);
 save Blobthresh.mat thresh;
 
-%% Step 4 (optional): Create the mask
-if (exist(fullfile(cd,'mask.mat'),'file') > 0)
-    load mask.mat;
-else
-    EstimateBlobs('D1Movie.h5',0,thresh);
-    MakeBlobMask();
-    load mask.mat;
-end
+%% Step 4: load the mask
+load ('mask_reg.mat');
 
 % Step 5: Extract Blobs
-ExtractBlobs('D1Movie.h5',0,thresh,mask);
+ExtractBlobs('D1Movie.h5',0,thresh,mask_reg);
 
 %% Step 6: String Blobs into calcium transients
 MakeTransients('D1Movie.h5');
