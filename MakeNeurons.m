@@ -27,7 +27,7 @@ if (exist('InitClu.mat','file') == 0)
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 end
 
-load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents
+load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents cToSeg
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
@@ -55,7 +55,7 @@ end
 
 % OK now unpack these things
 CurrClu = 0;
-CluToPlot = unique(c);
+[CluToPlot,nToc,cTon] = unique(c);
 NumNeurons = length(CluToPlot);
 
 for i = CluToPlot'
@@ -69,13 +69,19 @@ end
 
 for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
+    tempepochs = NP_FindSupraThresholdEpochs(FT(i,:),eps);
+    NumTransients(i) = size(tempepochs,1);
+    ActiveFrames{i} = find(FT(i,:) > eps);
 end
 
 figure;
 PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
 figure;
 plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames MinPixelDist DistUsed InitPixelList VersionString -v7.3;
+
+%[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
+
+save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon -v7.3;
 
 end
 

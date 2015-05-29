@@ -1,4 +1,4 @@
-function [] = Tenaspis(infile,mask)
+function [] = Tenaspis(infile)
 % [] = Tenaspis(infile,mask)
 % Technique for Extracting Neuronal Activity from Single Photon Image
 % Sequences, by David Sullivan
@@ -23,9 +23,10 @@ thresh = threshfactor*mean(stdframe);
 save Blobthresh.mat thresh;
 
 %% Step 4 (optional): Create the mask
-if (~exist('mask'))
+if (exist(fullfile(cd,'mask.mat'),'file') > 0)
+    load mask.mat;
+else
     EstimateBlobs('D1Movie.h5',0,thresh);
-    beep;
     MakeBlobMask();
     load mask.mat;
 end
