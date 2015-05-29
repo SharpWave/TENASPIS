@@ -46,6 +46,9 @@ ExtractBlobs('D1Movie.h5',0,thresh,mask_reg);
 %% Step 6: String Blobs into calcium transients
 MakeTransients('D1Movie.h5');
 
+%temporary: needed because of previous changes:
+!del InitClu.mat 
+
 %% Step 7: Decide which transients (segments) belong to the same neuron
 MakeNeurons();
 
