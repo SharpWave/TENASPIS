@@ -21,9 +21,12 @@ if (toplot)
     subplot(1,numpan,1);imagesc(frame); title ('raw input');colormap(gray);
 end
 
-frame(find(mask == 0)) = 0;
+badpix = find(mask == 0);
+
 
 threshframe = frame > thresh;
+
+
 
 threshframe = bwareaopen(threshframe,minpixels,4); % remove smaller than minpixels
 
@@ -142,14 +145,20 @@ close all;
 
 numlists = 0;
 newcc.PixelIdxList = [];
+
+
 for i = 1:length(CCgoodidx)
-    numlists = numlists + 1;
-    newcc.PixelIdxList{numlists} = cc.PixelIdxList{CCgoodidx(i)};
+    if (length(intersect(cc.PixelIdxList{CCgoodidx(i)},badpix)) == 0)
+      numlists = numlists + 1;
+      newcc.PixelIdxList{numlists} = cc.PixelIdxList{CCgoodidx(i)};
+    end
 end
 
 for i = 1:length(newlist)
-    numlists = numlists + 1;
-    newcc.PixelIdxList{numlists} = newlist{i};
+    if (length(intersect(newlist{i},badpix)) == 0)
+      numlists = numlists + 1;
+      newcc.PixelIdxList{numlists} = newlist{i};
+    end
 end
 
 newcc.NumObjects = numlists;
