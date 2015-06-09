@@ -46,7 +46,9 @@ for i = CluToMerge'
     tempp = regionprops(tempb(1),'all');
     maxdist = RadiusMultiplier; % try it straight up
     
-    nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
+    [sortdist,sortidx] = sort(CluDist(i,:));
+    
+    nearclust = setdiff(intersect(ValidClu,sortidx(find(sortdist < maxdist))),i);
     
     currpix = PixelList{i};
     

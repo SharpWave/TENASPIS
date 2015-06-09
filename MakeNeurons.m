@@ -17,7 +17,7 @@ function [] = MakeNeurons()
 % FT: binary neuron activity matrix
 % VersionString: which release of Tenaspis was used
 
-VersionString = '0.8.0.0-beta';
+VersionString = '0.9.0.0-beta';
 MinPixelDist = 0.1:1:5
 
 close all;
