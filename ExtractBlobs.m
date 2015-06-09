@@ -11,14 +11,15 @@ NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-av = zeros(Xdim,Ydim);
+
 
 if (nargin < 4)
     mask = ones(Xdim,Ydim);
 end
 oldmask = mask;
 
-for i = 1:NumFrames
+parfor i = 1:NumFrames
+    
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     if (i <= 20)
@@ -28,19 +29,16 @@ for i = 1:NumFrames
         mask = oldmask;
     end
     
-    [bw,cc{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    [~,cc{i}] = SegmentFrame(tempFrame,0,mask,thresh);
     
-    if (todebug == 1)
-        subplot(1,2,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,
-        subplot(1,2,2);imagesc(tempFrame);caxis([0 thresh]);pause;
-    end
-    
-    av = av+bw;
-    i
-end
-figure;imagesc(av);
 
-save CC.mat cc av thresh;
+    display(['Detecting Blobs for frame ',int2str(i)]);
+
+end
+
+
+
+save CC.mat cc thresh mask;
 
 
 
