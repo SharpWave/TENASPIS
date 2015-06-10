@@ -1,21 +1,34 @@
 function [] = Tenaspis(infile,varargin)
-% [] = Tenaspis(infile,mask)
+% [] = Tenaspis(infile,varargin)
 % Technique for Extracting Neuronal Activity from Single Photon Image
 % Sequences, by David Sullivan
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% inputs (required)
 %
-% inputs:
 % infile: name of the movie, e.g., 'mouse1.h5'
-% animal_id: the animal, e.g., 'GCaMP6f_05'
-% sess_date: the date the session took place, e.g., '09_29_2014'
-% sess_num: which session for a given date to analyze
+%
+% 
+% inputs (optional):
+% 
+% 'no_movie_process': skips the movie smoothing and first derivative steps
+% - good for re-running this with a new version. defaults to 0
+%
+% 'manual_mask': has the user draw a mask rather than deriving it from the InitRegMask.  Defaults to 0.
+%
+% semi-optional inputs: if manual_mask is 0 (default), you must include
+% 'animal_id': the animal, e.g., 'GCaMP6f_05'
+% 'sess_date': the date the session took place, e.g., '09_29_2014'
+% 'sess_num': which session for a given date to analyze
+%
+% ----------------
+%
+% EXAMPLE: Tenaspis('Obj1 - ICsm.h5','animal_id','GCaMP6f_31','sess_date','10_17_2014','sess_num',1,'no_movie_process',1)
 
-keyboard;
+ManMask = 0;
 
 if (~isempty(varargin))
-    [animal_id,sess_date,sess_num,no_movie_process] = ParseTenaspisInput(varargin);
-    ManMask = 0;
-else
-    ManMask = 1;
+    [animal_id,sess_date,sess_num,no_movie_process,ManMask] = ParseTenaspisInput(varargin);
 end
 
 % animal_id,sess_date,sess_num
@@ -65,7 +78,7 @@ else
 end
 
 % Step 5: Extract Blobs
-ExtractBlobs('D1Movie.h5',0,thresh,mask_reg);
+ExtractBlobs('D1Movie.h5',0,thresh,neuronmask);
 
 %% Step 6: String Blobs into calcium transients
 MakeTransients('D1Movie.h5');
