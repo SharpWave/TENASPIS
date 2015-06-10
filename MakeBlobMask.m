@@ -6,11 +6,11 @@ function [] = MakeBlobMask()
 ToContinue = 'n';
 display('draw a circle around the area with good cells');
 while(strcmp(ToContinue,'y') ~= 1)
-    mask = roipoly;
-    figure;imagesc(mask);
+    neuronmask = roipoly;
+    figure;imagesc(neuronmask);
     ToContinue = input('OK with the mask you just drew? [y/n] --->','s');
 end
-save mask.mat mask
+save manualmask.mat neuronmask
 close all;
 
 end
