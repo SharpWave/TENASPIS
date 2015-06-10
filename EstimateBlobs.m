@@ -1,4 +1,4 @@
-function [] = EstimateBlobs(file,todebug,thresh,mask)
+function [] = EstimateBlobs(file,todebug,thresh,neuronmask)
 % [] = ExtractBlobs(file,todebug,thresh,mask)
 % extract active cell "blobs" from movie in file
 % todebug 0 or 1 depending if you want to go through frame-by-frame
@@ -14,21 +14,21 @@ Ydim = info.Dataspace.Size(2);
 av = zeros(Xdim,Ydim);
 
 if (nargin < 4)
-    mask = ones(Xdim,Ydim);
+    neuronmask = ones(Xdim,Ydim);
 end
-oldmask = mask;
+oldmask = neuronmask;
 
 for i = 1:20:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     if (i <= 20)
         % Don't detect neurons on first 20 frames
-        mask = zeros(Xdim,Ydim);
+        neuronmask = zeros(Xdim,Ydim);
     else
-        mask = oldmask;
+        neuronmask = oldmask;
     end
     
-    [bw,cc{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    [bw,cc{i}] = SegmentFrame(tempFrame,0,neuronmask,thresh);
     
     if (todebug == 1)
         subplot(1,2,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,
