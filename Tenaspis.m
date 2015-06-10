@@ -15,9 +15,11 @@ threshfactor = 4; % baseline threshold for detecting cells
 MasterDirectory = 'C:\MasterData';
 
 %% Step 0: Register the mask
+[init_date,init_sess] = GetInitRegMaskInfo(animal_id);
+init_dir = ChangeDirectory(animal_id,init_date,init_sess);
+init_tif = [init_dir,'\ICmovie_min_proj.tif'];
 
 load([MasterDirectory,'\',animal_id,'_initialmask.mat']); % gets mask
-init_tif = [MasterDirectory,'\',animal_id,'_init_min_proj.tif'];
 t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
 target_tif = [t_dir,'\ICmovie_min_proj.tif'];
 
