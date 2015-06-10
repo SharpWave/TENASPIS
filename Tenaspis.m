@@ -33,6 +33,7 @@ function [] = Tenaspis(infile,varargin)
 % this runs Tenaspis the 'old' way with a manually drawn mask
 
 ManMask = 0;
+no_movie_process = 0;
 
 if (~isempty(varargin))
     [animal_id,sess_date,sess_num,no_movie_process,ManMask] = ParseTenaspisInput(varargin);
