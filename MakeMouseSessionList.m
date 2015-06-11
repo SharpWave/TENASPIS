@@ -167,18 +167,7 @@ MD(i).Session = 1;
 MD(i).Env = 'Triangle Open Field';
 MD(i).Room = '201b';
 if (strcmp(userstr,'Dave'))
-    MD(i).Location = 'Not Present';
-end
-MD(i).Notes = [];
-
-i = i+1;
-MD(i).Animal = 'GCamp6f_31';
-MD(i).Date = '10_20_2014';
-MD(i).Session = 2;
-MD(i).Env = 'Triangle Track';
-MD(i).Room = '201b';
-if (strcmp(userstr,'Dave'))
-    MD(i).Location = 'Not Present';
+    MD(i).Location = 'E:\GCaMP6f_31\10_20_2014\working';
 end
 MD(i).Notes = [];
 
