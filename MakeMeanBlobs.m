@@ -56,11 +56,11 @@ for i = 1:length(MeanBlobs)
     y{i} = b{1}(:,2);
     %y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
     plot(y{i},x{i},'Color','k','LineWidth',bidx(plotorder(i))+1);hold on;
-    plot(y{i},x{i},'Color',cm(cidx(plotorder(i)),:),'LineWidth',bidx(plotorder(i)));hold on;
+    plot(y{i},x{i},'Color',cm(cidx(plotorder(i))-1,:),'LineWidth',bidx(plotorder(i)));hold on;
     
     catch
         continue;
     end
 end
 hold off;
-keyboard;
+save MeanBlobs.mat MeanBlobs;
