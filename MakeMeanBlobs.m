@@ -32,23 +32,35 @@ for i = 1:length(c)
     
 end
 
+load ProcOut.mat;
+TrPerMin = NumTransients./NumFrames*20*60;
+[~,bidx] = histc(TrPerMin,[0:max(TrPerMin)/9:max(TrPerMin)]);
+[~,cidx] = histc(TrPerMin,[0:max(TrPerMin)/length(colormap):max(TrPerMin)]);
+colormap('jet');
+cm = colormap;
 colors = rand(length(MeanBlobs),3);
+[~,plotorder] = sort(TrPerMin);
 
 for i = 1:length(MeanBlobs)
     
     temp = zeros(Xdim,Ydim);
     try
-        temp(find(MeanBlobs{i} > 0.9)) = 1;
+        temp(find(MeanBlobs{plotorder(i)} > 0.9)) = 1;
+    
+    if (NumTransients(plotorder(i)) <= 1)
+        continue;
+    end
+    b = bwboundaries(temp);
+    x{i} = b{1}(:,1);
+    %x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
+    y{i} = b{1}(:,2);
+    %y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
+    plot(y{i},x{i},'Color','k','LineWidth',bidx(plotorder(i))+1);hold on;
+    plot(y{i},x{i},'Color',cm(cidx(plotorder(i)),:),'LineWidth',bidx(plotorder(i)));hold on;
+    
     catch
         continue;
     end
-    
-    b = bwboundaries(temp);
-    x{i} = b{1}(:,1);
-    x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
-    y{i} = b{1}(:,2);
-    y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
-    plot(y{i},x{i},'Color',colors(i,:));hold on;
 end
 hold off;
 keyboard;
