@@ -32,6 +32,12 @@ for i = 1:length(c)
     
 end
 
+for i = 1:max(cTon)
+    MeanBlobs{i} = MeanBlobs{i}./NumFrames(i);
+    BinBlobs{i} = MeanBlobs{i} >= 0.9;
+end
+    
+
 load ProcOut.mat;
 TrPerMin = NumTransients./NumFrames*20*60;
 [~,bidx] = histc(TrPerMin,[0:max(TrPerMin)/9:max(TrPerMin)]);
@@ -47,9 +53,9 @@ for i = 1:length(MeanBlobs)
     try
         temp(find(MeanBlobs{plotorder(i)} > 0.9)) = 1;
     
-    if (NumTransients(plotorder(i)) <= 1)
-        continue;
-    end
+%     if (NumTransients(plotorder(i)) <= 1)
+%         continue;
+%     end
     b = bwboundaries(temp);
     x{i} = b{1}(:,1);
     %x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
@@ -66,4 +72,5 @@ hold off;
 
 MeanBlobs = MeanBlobs(1:max(cTon));
 
-save MeanBlobs.mat MeanBlobs;
+
+save MeanBlobs.mat MeanBlobs BinBlobs;
