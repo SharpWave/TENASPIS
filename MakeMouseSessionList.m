@@ -75,17 +75,6 @@ MD(i).Notes = [];
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '10_08_2014';
-MD(i).Session = 1;
-MD(i).Env = 'Triangle Track';
-MD(i).Room = '201b';
-if (strcmp(userstr,'Dave'))
-    MD(i).Location = 'E:\GCaMP6f_31\10_08_2014\1 - triangle track 201B\working';
-end
-MD(i).Notes = [];
-
-i = i+1;
-MD(i).Animal = 'GCamp6f_31';
-MD(i).Date = '10_08_2014';
 MD(i).Session = 2;
 MD(i).Env = 'Home Cage';
 MD(i).Room = '201b';
