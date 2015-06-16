@@ -1,5 +1,15 @@
-function [MeanBlobs] = MakeMeanBlobs(c,cTon,GoodTrs)
-% Computes the mean value of all pixels in a neuron's "Blob"
+function [MeanBlobs] = MakeMeanBlobs(c,cTon,GoodTrs, varargin)
+% Computes the mean value of all pixels in a neuron's "Blob". Set varargin
+% 'suppress_output' to 0 if you wish to see progress displayed on your
+% screen (default = 0).
+
+suppress_output = 1;
+
+for j = 1:length(varargin)
+    if strcmpi(varargin{j},'suppress_output')
+        suppress_output = varargin{j+1};
+    end
+end
 
 load Segments.mat;
 load CC.mat;
@@ -28,7 +38,9 @@ for i = 1:length(c)
         NumFrames(CurrNeuron) = NumFrames(CurrNeuron) + 1;
     end
     
-    
+    if suppress_output == 0
+        disp(['Part 1: ' num2str(i) ' of ' num2str(length(c)) '.'])
+    end
     
 end
 
@@ -60,6 +72,10 @@ for i = 1:length(MeanBlobs)
     
     catch
         continue;
+    end
+    
+    if suppress_output == 0
+        disp(['Part 2: ' num2str(i) ' of ' num2str(length(MeanBlobs)) '.'])
     end
 end
 hold off;
