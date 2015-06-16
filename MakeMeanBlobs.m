@@ -79,4 +79,7 @@ for i = 1:length(MeanBlobs)
     end
 end
 hold off;
+
+MeanBlobs = MeanBlobs(1:max(cTon));
+
 save MeanBlobs.mat MeanBlobs;
