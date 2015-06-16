@@ -24,8 +24,16 @@ function [] = Tenaspis(infile,varargin)
 % ----------------
 %
 % EXAMPLE: Tenaspis('Obj1 - ICsm.h5','animal_id','GCaMP6f_31','sess_date','10_17_2014','sess_num',1,'no_movie_process',1)
+% this will use a registered mask but skip the movie processing
+%
+% EXAMPLE: Tenaspis('Obj1 - ICsm.h5')
+% this hits an error
+%
+% EXAMPLE: Tenaspis('Obj1 - ICsm.h5','manual_mask',1)
+% this runs Tenaspis the 'old' way with a manually drawn mask
 
 ManMask = 0;
+no_movie_process = 0;
 
 if (~isempty(varargin))
     [animal_id,sess_date,sess_num,no_movie_process,ManMask] = ParseTenaspisInput(varargin);

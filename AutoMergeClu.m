@@ -44,9 +44,11 @@ for i = CluToMerge'
     BitMap(PixelList{i}) = 1;
     tempb = bwconncomp(BitMap,4);
     tempp = regionprops(tempb(1),'all');
-    maxdist = RadiusMultiplier; % try it straight up
+    maxdist = RadiusMultiplier; 
     
-    nearclust = setdiff(intersect(ValidClu,find(CluDist(i,:) < maxdist)),i);
+    [sortdist,sortidx] = sort(CluDist(i,:));
+    
+    nearclust = setdiff(intersect(ValidClu,sortidx(find(sortdist < maxdist))),i);
     
     currpix = PixelList{i};
     
@@ -56,19 +58,36 @@ for i = CluToMerge'
         cidx = nearclust(k); % cidx is cluster number of close transient
         targpix = PixelList{cidx};
         
+        NumCurrClust = length(find(c == i))
+        NumTargClust = length(find(c == cidx))
+        
         comm = length(intersect(targpix,currpix));
         targrat = comm/length(targpix),
         currrat = comm/length(currpix),
         
-        lowrat = min([targrat,currrat]);
-        highrat = max([targrat,currrat]);
-        if (highrat < 0.33333)
-             display('low OVERLAP, aborting merge');
-             continue;  
+        if (NumCurrClust > NumTargClust)
+            denom = length(currpix);
+        else
+            denom = length(targpix);
         end
         
-        if ((targrat < 0.6) && (currrat < 0.6))
-            display('LOW MUTUAL OVERLAP, aborting merge');
+        lowrat = min([targrat,currrat]);
+        highrat = max([targrat,currrat]);
+        
+        commremains = comm/denom
+        
+%         if (highrat < 0.33333)
+%              display('low OVERLAP, aborting merge');
+%              continue;  
+%         end
+%         
+%         if ((targrat < 0.6) && (currrat < 0.6))
+%             display('LOW MUTUAL OVERLAP, aborting merge');
+%             continue;
+%         end
+
+        if (commremains < 0.1)
+            display('too much reduction in mutual area, aborting merge');
             continue;
         end
         
