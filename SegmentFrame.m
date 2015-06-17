@@ -113,7 +113,7 @@ for i = CCquestionidx
                     % this is a new list
                     currnewList = currnewList + 1;
                     newlist{currnewList} = bb.PixelIdxList{newn(j)};
-                    display('successfully found a new neuron');
+                    %display('successfully found a new neuron');
                     if (toplot)
                         pause;
                     end
