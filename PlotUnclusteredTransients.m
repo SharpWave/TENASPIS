@@ -1,4 +1,4 @@
-function [ output_args ] = PlotUnclusteredTransients()
+function [ AllSeg ] = PlotUnclusteredTransients()
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
