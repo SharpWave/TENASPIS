@@ -12,7 +12,7 @@ threshinc = 10;
 neuronthresh = 300;
 artifactthresh = 3000;
 minsolid = 0.9;
-
+ccprops = [];
 
 initframe = frame;
 
