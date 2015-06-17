@@ -1,4 +1,4 @@
-function [frame,cc] = SegmentFrame(frame,toplot,mask,thresh)
+function [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -165,6 +165,9 @@ newcc.NumObjects = numlists;
 newcc.ImageSize = cc.ImageSize;
 newcc.Connectivity = 4;
 cc = newcc;
+ccprops = regionprops(cc);
+
+% add in centroids
 
 frame = zeros(cc.ImageSize(1),cc.ImageSize(2));
 for i = 1:length(cc.PixelIdxList)

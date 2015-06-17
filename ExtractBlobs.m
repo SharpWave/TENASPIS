@@ -29,7 +29,7 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
     
-    [~,cc{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    [~,cc{i},ccprops{i}] = SegmentFrame(tempFrame,0,mask,thresh);
     
 
     display(['Detecting Blobs for frame ',int2str(i)]);
@@ -38,7 +38,7 @@ end
 
 
 
-save CC.mat cc thresh mask;
+save CC.mat cc ccprops thresh mask;
 
 
 
