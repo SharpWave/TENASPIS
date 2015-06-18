@@ -12,7 +12,7 @@ AI(2).init_sess = 1;
 
 
 for i = 1:length(AI)
-    if (strcmp(AI(i).animal,animal_id))
+    if (strcmpi(AI(i).animal,animal_id))
         init_date = AI(i).init_date;
         init_sess = AI(i).init_sess;
         return;
