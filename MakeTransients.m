@@ -84,10 +84,20 @@ for i = 1:length(SegChain)
     ns(i) = length(SegChain{i});
 end
 
-goodlen = find(ns >= 3);
+DistTrav = TransientStats(SegChain);
+
+goodlen = find(ns >= 5);
+gooddist = find(DistTrav < 5);
+
+goodseg = intersect(goodlen,gooddist);
+
 SegChain = SegChain(goodlen);
 NumSegments = length(SegChain);
 
+
+
 save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim
+
+
 end
 
