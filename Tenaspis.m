@@ -56,6 +56,9 @@ if (~ManMask)
     load([MasterDirectory,'\',animal_id,'_initialmask.mat']); % gets mask
     t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
     target_tif = [t_dir,'\ICmovie_min_proj.tif'];
+    reg_struct.Animal = animal_id;
+    reg_struct.Date = sess_date;
+    reg_struct.Session = sess_num;
     
     mask_multi_image_reg(init_tif,1,mask,'reg_files',{target_tif});
 else
