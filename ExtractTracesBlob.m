@@ -5,6 +5,7 @@ function [] = ExtractTracesBlob(moviefile,FLmovie)
 close all;
 
 % Step 1: load up the ROIs
+load ProcOut.mat;
 load MeanBlobs.mat;
 
 Xdim = size(BinBlobs{1},1);
@@ -13,7 +14,10 @@ Ydim = size(BinBlobs{1},2);
 NumNeurons = length(BinBlobs);
 
 for i = 1:NumFrames
-    i
+    if(~mod(i,1000))
+        display([num2str(i/NumFrames),' of the way done']);
+    end
+    
     tempFrame = h5read(moviefile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     tempFrame = tempFrame(:);
     
