@@ -14,7 +14,7 @@ function [ output_args ] = PostHocTraceComparison(h5file)
 % threshold, add those, divide by total
 
 % Compare the two average frames
-
+load PlaceMaps.mat; % lazy, for getting the outlines
 load ProcOut.mat;
 load DumbTraces.mat;
 
@@ -46,12 +46,18 @@ for i = 1:NumNeurons
         t_avgframe{i} = t_avgframe{i} + double(loadframe(h5file,j));
     end    
     t_avgframe{i} = t_avgframe{i}./length(threshframes);
+    
     subplot(1,3,1);
-    imagesc(avgframe{i});
-    subplot(1,3,2);title([int2str(length(activeframes)),' base active frames']);
-    imagesc(t_avgframe{i});
-    subplot(1,3,3);title([int2str(length(threshframes)),' expanded active frames']);
-    imagesc(avgframe{i}-t_avgframe{i});colorbar;pause;
+    imagesc(avgframe{i});title([int2str(length(activeframes)),' base active frames, # CT = ',int2str(NumTransients(i))]);
+    hold on;plot(xOutline{i},yOutline{i},'-r');hold off;
+    
+    subplot(1,3,2);
+    imagesc(t_avgframe{i});title([int2str(length(threshframes)),' expanded active frames']);
+    hold on;plot(xOutline{i},yOutline{i},'-r');hold off;
+    
+    subplot(1,3,3);
+    imagesc(avgframe{i}-t_avgframe{i});colorbar;title('base minus expanded');
+    hold on;plot(xOutline{i},yOutline{i},'-r');hold off;pause;
    
 end
 
