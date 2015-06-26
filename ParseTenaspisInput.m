@@ -1,10 +1,11 @@
-function [animal_id,sess_date,sess_num,no_movie_process,ManMask] = ParseTenaspisInput(args);
+function [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(args);
 % [animal_id,sess_date,sess_num,no_movie_process] = ParseTenaspisInput(args);
 animal_id = [];
 sess_date = [];
 sess_num = [];
 no_movie_process = 0;
 ManMask = 0;
+no_blobs = 0;
 
 for i = 1:length(args)
     if (mod(i,2) == 0)
@@ -28,6 +29,10 @@ for i = 1:length(args)
     
     if (strcmp(args{i},'manual_mask'))
         ManMask = args{i+1};
+    end
+    
+    if (strcmp(args{i},'no_blobs'))
+        no_blobs = args{i+1};
     end
     
 end

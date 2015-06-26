@@ -3,14 +3,14 @@ function [] = Tenaspis(infile,varargin)
 % Technique for Extracting Neuronal Activity from Single Photon Image
 % Sequences, by David Sullivan
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+%
 % inputs (required)
 %
 % infile: name of the movie, e.g., 'mouse1.h5'
 %
-% 
+%
 % inputs (optional):
-% 
+%
 % 'no_movie_process': skips the movie smoothing and first derivative steps
 % - good for re-running this with a new version. defaults to 0
 %
@@ -36,7 +36,7 @@ ManMask = 0;
 no_movie_process = 0;
 
 if (~isempty(varargin))
-    [animal_id,sess_date,sess_num,no_movie_process,ManMask] = ParseTenaspisInput(varargin);
+    [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(varargin);
 end
 
 % animal_id,sess_date,sess_num
@@ -73,24 +73,25 @@ if(~no_movie_process) % don't run these if already run
     DFDT_Movie('SMovie.h5','D1Movie.h5');
 end
 
-%% Step 3: Determine the threshold
-[meanframe,stdframe] = moviestats('D1Movie.h5');
-thresh = threshfactor*mean(stdframe);
-save Blobthresh.mat thresh;
-
-%% Step 4: load the mask
-if (~ManMask)
-  load ('mask_reg.mat');
-  neuronmask = mask_reg;
-else
-  EstimateBlobs('D1Movie.h5',0,thresh);
-  MakeBlobMask;
-  load('manualmask.mat');
+if (~no_blobs)
+    %% Step 3: Determine the threshold
+    [meanframe,stdframe] = moviestats('D1Movie.h5');
+    thresh = threshfactor*mean(stdframe);
+    save Blobthresh.mat thresh;
+    
+    %% Step 4: load the mask
+    if (~ManMask)
+        load ('mask_reg.mat');
+        neuronmask = mask_reg;
+    else
+        EstimateBlobs('D1Movie.h5',0,thresh);
+        MakeBlobMask;
+        load('manualmask.mat');
+    end
+    
+    % Step 5: Extract Blobs
+    ExtractBlobs('D1Movie.h5',0,thresh,neuronmask);
 end
-
-% Step 5: Extract Blobs
-ExtractBlobs('D1Movie.h5',0,thresh,neuronmask);
-
 %% Step 6: String Blobs into calcium transients
 MakeTransients('D1Movie.h5');
 
