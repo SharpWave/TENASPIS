@@ -275,7 +275,7 @@ MD(i).Notes = 'Right';
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_15_2014';
-MD(i).Session = 1;
+MD(i).Session = 2;
 MD(i).Env = '2 env square left 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
@@ -295,9 +295,9 @@ end
 MD(i).Notes = 'Left';
 
 i = i+1;
-MD(i).Animal = 'GCa2emp6f_31';
+MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_16_2014';
-MD(i).Session = 1;
+MD(i).Session = 2;
 MD(i).Env = '2 env octagon right 90CCW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
@@ -319,7 +319,7 @@ MD(i).Notes = 'Right';
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_17_2014';
-MD(i).Session = 1;
+MD(i).Session = 2;
 MD(i).Env = '2 env octagon mid 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
@@ -341,7 +341,7 @@ MD(i).Notes = 'Right';
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_18_2014';
-MD(i).Session = 1;
+MD(i).Session = 2;
 MD(i).Env = '2 env square mid 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
@@ -385,7 +385,7 @@ MD(i).Notes = 'Left';
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_21_2014';
-MD(i).Session = 1;
+MD(i).Session = 2;
 MD(i).Env = '2 env - square mid 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
@@ -407,7 +407,7 @@ MD(i).Notes = 'Mid';
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_22_2014';
-MD(i).Session = 1;
+MD(i).Session = 2;
 MD(i).Env = '2 env - octagon left 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
@@ -416,6 +416,50 @@ end
 MD(i).Notes = 'Left, Rotated 90CW';
 
 %% Start of G30
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30';
+MD(i).Date = '10_16_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_16_2014\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30';
+MD(i).Date = '10_17_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_17_2014\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30';
+MD(i).Date = '10_21_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_21_2014\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30';
+MD(i).Date = '10_23_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_23_2014\Working';
+end
+MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_30';
