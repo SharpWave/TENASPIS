@@ -535,6 +535,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\11_11_2014\Working';
+elseif (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G30\alternation\11_11_2014\Working';
 end
 MD(i).Notes = [];
 
@@ -546,6 +548,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\11_12_2014\Working';
+elseif (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G30\alternation\11_12_2014\Working';
 end
 MD(i).Notes = [];
 
@@ -557,6 +561,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\11_13_2014\Working';
+elseif (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G30\alternation\11_13_2014\Working';
 end
 MD(i).Notes = [];
 
