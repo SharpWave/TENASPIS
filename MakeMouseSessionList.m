@@ -723,6 +723,18 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = 'Mid';
 
+%% GCamp6f_44 starts here
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_44';
+MD(i).Date = '07_08_2015';
+MD(i).Session = 1;
+MD(i).Env = 'homecage';
+MD(i).Room = 'surgery';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G44\07_08_2015\Working';
+end
+MD(i).Notes = 'Mid';
 %%
 save MasterDirectory.mat MD;
 
