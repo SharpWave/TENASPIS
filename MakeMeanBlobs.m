@@ -1,9 +1,11 @@
 function [MeanBlobs] = MakeMeanBlobs(c,cTon,GoodTrs, varargin)
 % Computes the mean value of all pixels in a neuron's "Blob". Set varargin
 % 'suppress_output' to 0 if you wish to see progress displayed on your
-% screen (default = 0).
+% screen via a simple progress bar (default = 0). 
+
 
 suppress_output = 1;
+progress_bar = 0;
 
 for j = 1:length(varargin)
     if strcmpi(varargin{j},'suppress_output')
@@ -18,6 +20,7 @@ for i = 1:max(c)
     MeanBlobs{i} = [];
 end
 
+p = ProgressBar(length(c));
 for i = 1:length(c)
     CurrNeuron = cTon(c(i));
     
@@ -39,10 +42,11 @@ for i = 1:length(c)
     end
     
     if suppress_output == 0
-        disp(['Part 1: ' num2str(i) ' of ' num2str(length(c)) '.'])
+        p.progress;
     end
     
 end
+p.stop;
 
 for i = 1:max(cTon)
     MeanBlobs{i} = MeanBlobs{i}./NumFrames(i);
