@@ -735,6 +735,41 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G44\07_08_2015\Working';
 end
 MD(i).Notes = 'Mid';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_44';
+MD(i).Date = '07_09_2015';
+MD(i).Session = 1;
+MD(i).Env = 'homecage';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G44\07_09_2015\Session 1';
+end
+MD(i).Notes = 'Mid';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_44';
+MD(i).Date = '07_10_2015';
+MD(i).Session = 1;
+MD(i).Env = 'homecage';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G44\07_10_2015\Session 1';
+end
+MD(i).Notes = 'Mid';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_44';
+MD(i).Date = '07_10_2015';
+MD(i).Session = 2;
+MD(i).Env = 'homecage';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G44\07_10_2015\Session 2';
+end
+MD(i).Notes = 'Mid';
+
+
 %%
 save MasterDirectory.mat MD;
 

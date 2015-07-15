@@ -3,14 +3,14 @@ function [] = Tenaspis(infile,varargin)
 % Technique for Extracting Neuronal Activity from Single Photon Image
 % Sequences, by David Sullivan
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
+% 
 % inputs (required)
 %
 % infile: name of the movie, e.g., 'mouse1.h5'
 %
-%
+% 
 % inputs (optional):
-%
+% 
 % 'no_movie_process': skips the movie smoothing and first derivative steps
 % - good for re-running this with a new version. defaults to 0
 %
@@ -60,7 +60,7 @@ if (~ManMask)
     reg_struct.Date = sess_date;
     reg_struct.Session = sess_num;
     
-    mask_multi_image_reg(init_tif,1,mask,'reg_files',{target_tif});
+    mask_multi_image_reg(init_tif,init_date,init_sess,reg_struct);
 else
     t_dir = pwd;
 end
