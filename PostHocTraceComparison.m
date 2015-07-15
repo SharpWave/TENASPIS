@@ -14,9 +14,12 @@ function [ output_args ] = PostHocTraceComparison(h5file)
 % threshold, add those, divide by total
 
 % Compare the two average frames
-
+load PlaceMaps.mat; % lazy, for getting the outlines
 load ProcOut.mat;
 load DumbTraces.mat;
+
+test_radius = 7;
+close all;
 
 for i = 1:NumNeurons
     activeframes = find(FT(i,:) == 1);
@@ -46,12 +49,32 @@ for i = 1:NumNeurons
         t_avgframe{i} = t_avgframe{i} + double(loadframe(h5file,j));
     end    
     t_avgframe{i} = t_avgframe{i}./length(threshframes);
+    
+    InROIvals = avgframe{i}(NeuronPixels{i});
+    roiCom = centerOfMass(double(NeuronImage{i}));
+    [radpix,radimg] = GetPixelsInRadius(Xdim,Ydim,roiCom(2),roiCom(1),test_radius);
+    outpix = setdiff(radpix,NeuronPixels{i});
+    outvals = avgframe{i}(outpix);
+    [~,NeuronSig{i}] = ttest2(InROIvals,outvals);
+    
+    t_InROIvals = t_avgframe{i}(NeuronPixels{i});
+    t_outvals = t_avgframe{i}(outpix);
+    [~,TestSig{i}] = ttest2(t_InROIvals,t_outvals);
+    
+   
+    
+    
     subplot(1,3,1);
-    imagesc(avgframe{i});
-    subplot(1,3,2);title([int2str(length(activeframes)),' base active frames']);
-    imagesc(t_avgframe{i});
-    subplot(1,3,3);title([int2str(length(threshframes)),' expanded active frames']);
-    imagesc(avgframe{i}-t_avgframe{i});colorbar;pause;
+    imagesc(avgframe{i});title([int2str(length(activeframes)),' base active frames, # CT = ',int2str(NumTransients(i))]);xlabel(['separation pval = ',num2str(NeuronSig{i})]);
+    hold on;plot(xOutline{i},yOutline{i},'-r');hold off;ylabel(['In/Out ratio = ',num2str(mean(InROIvals)/mean(outvals))]);
+    
+    subplot(1,3,2);
+    imagesc(t_avgframe{i});title([int2str(length(threshframes)),' expanded active frames']);xlabel(['separation pval = ',num2str(TestSig{i})]);
+    hold on;plot(xOutline{i},yOutline{i},'-r');hold off;ylabel(['In/Out ratio = ',num2str(mean(t_InROIvals)/mean(t_outvals))]);
+    
+    subplot(1,3,3);
+    imagesc(avgframe{i}-t_avgframe{i});colorbar;title('base minus expanded');
+    hold on;plot(xOutline{i},yOutline{i},'-r');hold off;pause;
    
 end
 
