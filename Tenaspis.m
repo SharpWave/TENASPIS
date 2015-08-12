@@ -11,8 +11,9 @@ function [] = Tenaspis(infile,varargin)
 % 
 % inputs (optional):
 % 
-% 'no_movie_process': skips the movie smoothing and first derivative steps
-% - good for re-running this with a new version. defaults to 0
+% 'no_movie_process': 1 skips the movie smoothing and first derivative steps
+% - good for re-running this with a new version. 0 = apply smoothing and 
+% first derivative steps.  defaults to 0
 %
 % 'manual_mask': has the user draw a mask rather than deriving it from the InitRegMask.  Defaults to 0.
 %
@@ -51,11 +52,11 @@ if (~ManMask)
     %% Step 0: Register the mask
     [init_date,init_sess] = GetInitRegMaskInfo(animal_id);
     init_dir = ChangeDirectory(animal_id,init_date,init_sess);
-    init_tif = [init_dir,'\ICmovie_min_proj.tif'];
+    init_tif = fullfile(init_dir,'\ICmovie_min_proj.tif');
     
     load([MasterDirectory,'\',animal_id,'_initialmask.mat']); % gets mask
-    t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
-    target_tif = [t_dir,'\ICmovie_min_proj.tif'];
+%     t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
+%     target_tif = fullfile(t_dir,'\ICmovie_min_proj.tif');
     reg_struct.Animal = animal_id;
     reg_struct.Date = sess_date;
     reg_struct.Session = sess_num;

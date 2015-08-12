@@ -794,7 +794,7 @@ G30_2env(2) = i;
 
 %% GCamp6f_44 starts here
 
-G44_homecage(1) = (i+1);
+G44(1) = (i+1);
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_44';
@@ -1007,6 +1007,56 @@ MD(i).Env = 'square open field';
 MD(i).Room = '201a';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G44\07_22_2015\Session 2 - square\Working';
+end
+MD(i).Notes = '';
+
+G44(2) = i;
+
+%% Start G45
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 1;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\1 - triangle\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 2;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\2 - triangle\Working';
+end
+MD(i).Notes = '';
+
+%% Start G41
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_41';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 1;
+MD(i).Env = 'square open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G41\08_05_2015\1 - square\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_41';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 2;
+MD(i).Env = 'square open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G41\08_05_2015\2 - square\Working';
 end
 MD(i).Notes = '';
 
