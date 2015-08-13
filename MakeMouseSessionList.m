@@ -8,6 +8,8 @@ CurrDir = pwd;
 MasterDirectory = 'C:\MasterData';
 cd(MasterDirectory);
 
+G31.all(1) = 1;
+
 i = 1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '09_29_2014';
@@ -296,7 +298,7 @@ end
 MD(i).Notes = [];
 
 %% G31 2 env sessions
-G31_2env(1) = i+1;
+G31.two_env(1) = i+1;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
@@ -408,6 +410,7 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = 'Mid, Standard';
 
+
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_20_2014';
@@ -418,6 +421,7 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_20_2014_nb\2 env 180\Working\octagon';
 end
 MD(i).Notes = 'Rotated 180';
+MD(i).exclude_frames = 13134:18969;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
@@ -429,6 +433,7 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_20_2014_nb\2 env 180\Working\square';
 end
 MD(i).Notes = 'Rotated 180';
+MD(i).exclude_frames = 13134:18969;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
@@ -474,11 +479,13 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = 'Left, Rotated 90CW';
 
-G31_2env(2) = i;
+G31.two_env(2) = i;
+G31.all(2) = i;
 
 %% Start of G30
 
-G30_alternation(1) = i+1;
+G30.all(1) = i+1;
+G30.alternation(1) = i+1;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_30';
@@ -629,11 +636,11 @@ elseif (strcmp(userstr,'Nat_laptop'))
 end
 MD(i).Notes = [];
 
-G30_alternation(2) = i;
+G30.alternation(2) = i;
 
 %% G30 2env experiment
 
-G30_2env(1) = (i+1);
+G30.two_env(1) = (i+1);
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_30';
@@ -790,11 +797,12 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = 'Mid';
 
-G30_2env(2) = i;
+G30.two_env(2) = i;
+G30.all(2) = i;
 
 %% GCamp6f_44 starts here
 
-G44(1) = (i+1);
+G44.all(1) = (i+1);
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_44';
@@ -1010,9 +1018,11 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = '';
 
-G44(2) = i;
+G44.all(2) = i;
 
 %% Start G45
+
+G45.all(1) = i+1;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45';
@@ -1036,7 +1046,11 @@ if (strcmp(userstr,'Nat_laptop'))
 end
 MD(i).Notes = '';
 
+G45.all(2) = i;
+
 %% Start G41
+
+G41.all(1) = i+1;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_41';
@@ -1060,12 +1074,15 @@ if (strcmp(userstr,'Nat_laptop'))
 end
 MD(i).Notes = '';
 
+G41.all(2) = i;
+
 %% Compile session_ref
 
-session_ref.G31_2env = G31_2env;
-session_ref.G30_alternation = G30_alternation; 
-
-session_ref.G44_homecage = G44_homecage;
+session_ref.G30 = G30;
+session_ref.G31 = G31;
+session_ref.G41 = G41;
+session_ref.G44 = G44;
+session_ref.G45 = G45;
 
 %%
 save MasterDirectory.mat MD;
