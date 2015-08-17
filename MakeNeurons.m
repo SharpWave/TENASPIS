@@ -33,8 +33,6 @@ NumCT = length(c);
 oldNumCT = NumCT;
 InitPixelList = PixelList;
 
-
-
 % run AutoMergeClu, each time incrementing the distance threshold
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
@@ -74,10 +72,14 @@ for i = 1:length(caltrain)
     ActiveFrames{i} = find(FT(i,:) > eps);
 end
 
-figure;
-PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
-figure;
-plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
+try % Error catching clause: larger files are failing here for some reason
+    figure;
+    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
+    figure;
+    plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
+catch
+    disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
+end
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
