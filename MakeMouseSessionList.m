@@ -735,10 +735,21 @@ i = i+1;
 MD(i).Animal = 'GCamp6f_30';
 MD(i).Date = '11_23_2014';
 MD(i).Session = 1;
-MD(i).Env = '2env - combined';
+MD(i).Env = '2env - combined square';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'J:\GCamp Mice\Working\G30\2env\11_23_2014\Working';
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\2env\11_23_2014\Working\square';
+end
+MD(i).Notes = 'Mid - Standard';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30';
+MD(i).Date = '11_23_2014';
+MD(i).Session = 2;
+MD(i).Env = '2env - combined octagon';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\2env\11_23_2014\Working\octagon';
 end
 MD(i).Notes = 'Mid - Standard';
 
@@ -746,10 +757,21 @@ i = i+1;
 MD(i).Animal = 'GCamp6f_30';
 MD(i).Date = '11_24_2014';
 MD(i).Session = 1;
-MD(i).Env = '2env - combined';
+MD(i).Env = '2env - combined octagon';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'J:\GCamp Mice\Working\G30\2env\11_24_2014\Working\rotate 180';
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\2env\11_24_2014\Working\rotate 180\octagon';
+end
+MD(i).Notes = 'Mid, Rotated 180';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30';
+MD(i).Date = '11_24_2014';
+MD(i).Session = 2;
+MD(i).Env = '2env - combined square';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\2env\11_24_2014\Working\rotate 180\square';
 end
 MD(i).Notes = 'Mid, Rotated 180';
 
@@ -1076,6 +1098,35 @@ MD(i).Notes = '';
 
 G41.all(2) = i;
 
+%% Start G46
+
+G46.all(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_46';
+MD(i).Date = '08_14_2015';
+MD(i).Session = 1;
+MD(i).Env = 'homecage';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G46\08_14_2015\1 - homecage plus 1_25\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_46';
+MD(i).Date = '08_14_2015';
+MD(i).Session = 2;
+MD(i).Env = 'homecage';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G46\08_14_2015\2 - homecage plus 2_25\Working';
+end
+MD(i).Notes = '';
+
+G46.all(2) = i;
+
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
@@ -1083,6 +1134,7 @@ session_ref.G31 = G31;
 session_ref.G41 = G41;
 session_ref.G44 = G44;
 session_ref.G45 = G45;
+session_ref.G46 = G46;
 
 %%
 save MasterDirectory.mat MD;

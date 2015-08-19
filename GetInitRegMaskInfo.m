@@ -22,6 +22,10 @@ AI(5).animal = 'GCamp6f_41';
 AI(5).init_date = '08_05_2015';
 AI(5).init_sess = 1;
 
+AI(6).animal = 'GCamp6f_46';
+AI(6).init_date = '08_14_2015';
+AI(6).init_sess = 1;
+
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))
         init_date = AI(i).init_date;
