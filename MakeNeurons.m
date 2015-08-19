@@ -1,7 +1,8 @@
-function [] = MakeNeurons()
-% [] = MakeNeurons()
+function [] = MakeNeurons(varargin)
+% [] = MakeNeurons(varargin)
 % arranges calcium transients into neurons, based on centroid locations
-% inputs: none
+% inputs: varargin - see MakeTransients for 'min_trans_length' variable
+% (optional)
 % outputs: ProcOut.mat
 % --------------------------------------
 % Variables saved: (breaking this requires major version update)
@@ -17,17 +18,35 @@ function [] = MakeNeurons()
 % FT: binary neuron activity matrix
 % VersionString: which release of Tenaspis was used
 
+%% Process varargins
+min_trans_length = 5; % default: minimum number of frames a transient must last in order to be included
+
+for j = 1:length(varargin)
+   if strcmpi(varargin{j},'min_trans_length')
+       min_trans_length = varargin{j+1};
+   end
+end
+
+%%
+
 VersionString = '0.9.0.0-beta';
 MinPixelDist = 0.1:1:5
 
 close all;
+if min_trans_length == 5
+    load_name = 'Segments.mat';
+    initclu_name = 'InitClu.mat';
+else
+    load_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
+    initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
+end
+load(load_name) %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
-load Segments.mat; %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
-if (exist('InitClu.mat','file') == 0)
-    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
+if (exist(initclu_name,'file') == 0)
+    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, min_trans_length);
 end
 
-load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents cToSeg
+load(initclu_name); %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents cToSeg
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
@@ -83,7 +102,13 @@ end
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
-save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon -v7.3;
+if min_trans_length == 5
+    save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon min_trans_length -v7.3;
+else
+    save_name = ['Procout_minlength_' num2str(min_trans_length) '.mat'];
+    save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
+        'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'GoodTrs', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+end
 
 end
 
