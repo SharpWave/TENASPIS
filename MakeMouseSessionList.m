@@ -1012,6 +1012,9 @@ MD(i).Room = '201a';
 if (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\1 - triangle\Working';
 end
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_05_2015\1 - triangle';
+end
 MD(i).Notes = '';
 
 i = i+1;
@@ -1022,6 +1025,23 @@ MD(i).Env = 'triangle open field';
 MD(i).Room = '201a';
 if (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\2 - triangle\Working';
+end
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_05_2015\2 - triangle';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 2;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\2 - triangle\Working';
+end
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_05_2015\2 - triangle';
 end
 MD(i).Notes = '';
 
