@@ -1045,6 +1045,118 @@ if (strcmp(userstr,'Dave'))
 end
 MD(i).Notes = '';
 
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_06_2015';
+MD(i).Session = 1;
+MD(i).Env = 'square track';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_06_2015\1 - square track';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_06_2015';
+MD(i).Session = 2;
+MD(i).Env = 'square track';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_06_2015\2 - square track';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_10_2015';
+MD(i).Session = 1;
+MD(i).Env = 'square open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_10_2015\1 - square open field';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_11_2015';
+MD(i).Session = 1;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_11_2015\1 - triangle open field';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_12_2015';
+MD(i).Session = 1;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_12_2015\1 - triangle open field';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_12_2015';
+MD(i).Session = 2;
+MD(i).Env = 'triangle track';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_12_2015\2 - triangle track';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_13_2015';
+MD(i).Session = 1;
+MD(i).Env = 'triangle track';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_13_2015\1 - triangle track';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_13_2015';
+MD(i).Session = 2;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_13_2015\2 - triangle open field';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_14_2015';
+MD(i).Session = 1;
+MD(i).Env = 'triangle track';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_14_2015\1 - triangle track';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_18_2015';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_45\8_18_2015\1 - alternation';
+end
+MD(i).Notes = '';
+
+
+
 %% Start G41
 
 i = i+1;
