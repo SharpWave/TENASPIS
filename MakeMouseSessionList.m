@@ -231,6 +231,17 @@ MD(i).Notes = 'Rotated 90 deg CCW';
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '10_31_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Square Open Field';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Dave'))
+    MD(i).Location = 'E:\GCaMP6f_31\10_31_2014\1 - square 201B';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '11_03_2014';
 MD(i).Session = 1;
 MD(i).Env = 'Square Track';
