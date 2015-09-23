@@ -9,8 +9,8 @@ function [] = MakeTransients(file,todebug,varargin)
 %   order to be included, enter as MakeTransients(...,'min_trans_length,3)
 
 %% Calcium transient inclusion criteria
-min_trans_length = 5; % minimum number of frames a transient must last in order to be included
-max_trans_dist = 5; % maximum number of pixels a transient can travel without being discarded
+min_trans_length = 5; % (default) minimum number of frames a transient must last in order to be included
+max_trans_dist = 5; % (default) maximum number of pixels a transient can travel without being discarded
 
 %% Get vargins
 for j = 1:length(varargin)

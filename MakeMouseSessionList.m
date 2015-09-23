@@ -420,7 +420,7 @@ MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_20_2014_nb\2 env 180\Working\octagon';
 end
-MD(i).Notes = 'Rotated 180';
+MD(i).Notes = 'Rotated 180 - Note that we lose basically half our data here because of the dropped frames, resulting in lower info scores, pvalues, etc.';
 MD(i).exclude_frames = 13134:18969;
 
 i = i+1;
@@ -480,7 +480,158 @@ end
 MD(i).Notes = 'Left, Rotated 90CW';
 
 G31.two_env(2) = i;
+
+%%
+
+G31.two_env_debug(1) = i + 1;
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_20_2014';
+MD(i).Session = 3;
+MD(i).Env = '2 env - 180 square';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_20_2014_nb\2 env 180\Working\debug square';
+end
+MD(i).Notes = 'Rotated 180 - trying to look at only first time in the square';
+MD(i).exclude_frames = 24000:31614;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_20_2014';
+MD(i).Session = 4;
+MD(i).Env = '2 env - 180 square';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_20_2014_nb\2 env 180\Working\debug octagon';
+end
+MD(i).Notes = 'Rotated 180 - trying to look at only first time in the octagon';
+MD(i).exclude_frames = 6500:31614;
+
+
+
+G31.two_env_debug(2) = i;
+
+%% G31 Alternation Sessions
+
+G31.alternation(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '11_24_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\11_24_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '11_25_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\11_25_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '11_26_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\11_26_2014\Working';
+end
+MD(i).Notes = '';
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_02_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\12_02_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_03_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\12_03_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_04_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\12_04_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_05_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\12_05_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_09_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\12_09_2014\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_11_2014';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\alternation\12_11_2014\Working';
+end
+MD(i).Notes = '';
+
+G31.alternation(2) = i;
 G31.all(2) = i;
+
+%% Transient Tweaking
+G31.transient_tweak(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = 'G31_trans_tweak';
+MD(i).Session = 1;
+MD(i).Env = '2 env square right';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_15_2014\1 - 2env square right\Working';
+end
+MD(i).Notes = 'Use this folder for QCing transient length limit tweaking';
+
+G31.transient_tweak(2) = i;
 
 %% Start of G30
 
