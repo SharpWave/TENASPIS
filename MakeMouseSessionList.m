@@ -500,7 +500,7 @@ i = i+1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_20_2014';
 MD(i).Session = 4;
-MD(i).Env = '2 env - 180 square';
+MD(i).Env = '2 env - 180 octagon';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_20_2014_nb\2 env 180\Working\debug octagon';
