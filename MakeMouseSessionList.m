@@ -973,6 +973,67 @@ MD(i).Notes = 'Mid';
 G30.two_env(2) = i;
 G30.all(2) = i;
 
+%% G30 FC Pilot - note listed ast 30_2 because imaging looks very different than original G30 recordings...
+
+G30.FC_pilot(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30_2';
+MD(i).Date = '06_10_2015';
+MD(i).Session = 1;
+MD(i).Env = 'FC';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\FC Pilot\06_10_2015\1 - shock baseline\Working';
+end
+MD(i).Notes = 'Day 1 - FC environment baseline';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30_2';
+MD(i).Date = '06_10_2015';
+MD(i).Session = 2;
+MD(i).Env = 'neutral';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\FC Pilot\06_10_2015\2 - neutral baseline\Working';
+end
+MD(i).Notes = 'Day 1 - neutral environment baseline';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30_2';
+MD(i).Date = '06_10_2015';
+MD(i).Session = 3;
+MD(i).Env = 'shock';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\FC Pilot\06_10_2015\3 - shock shock\Working';
+end
+MD(i).Notes = 'Day 1 - FC environment shock session';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30_2';
+MD(i).Date = '06_10_2015';
+MD(i).Session = 4;
+MD(i).Env = 'neutral';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\FC Pilot\06_10_2015\4 - neutral 3 hr\Working';
+end
+MD(i).Notes = 'Day 1 - neutral environment 3hr session';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_30_2';
+MD(i).Date = '06_10_2015';
+MD(i).Session = 5;
+MD(i).Env = 'shock';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G30\FC Pilot\06_10_2015\5 - shock 3 hr\Working';
+end
+MD(i).Notes = 'Day 1 - FC environment 3hr session';
+
+G30.FC_pilot(2) = i;
+
 %% GCamp6f_44 starts here
 
 G44.all(1) = (i+1);
@@ -1205,6 +1266,8 @@ MD(i).Env = 'triangle open field';
 MD(i).Room = '201a';
 if (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\1 - triangle\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\08_05_2015\1 - triangle\Working';
 end
 MD(i).Notes = '';
 
@@ -1216,9 +1279,26 @@ MD(i).Env = 'triangle open field';
 MD(i).Room = '201a';
 if (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\2 - triangle\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\08_05_2015\2 - triangle\Working';
 end
 MD(i).Notes = '';
 
+%% G45 2env
+G45.twoenv(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '09_01_2015';
+MD(i).Session = 1;
+MD(i).Env = '2env - connected';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\09_01_2015\Working';
+end
+MD(i).Notes = '2env connected';
+
+G45.twoenv(2) = i;
 G45.all(2) = i;
 
 %% Start G41
