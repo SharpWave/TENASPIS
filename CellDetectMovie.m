@@ -10,10 +10,10 @@ end
 
 load CC.mat;
 
-figure;
-set(gcf,'Position',[534 72 1171 921]);
+figure1 = figure;
+set(gcf,'Position',[1          41        1920         964]);
 
-aviobj = VideoWriter(out_avifile);
+aviobj = VideoWriter(out_avifile,'MPEG-4');
 aviobj.FrameRate = 20;
 open(aviobj);
 
@@ -30,10 +30,10 @@ for i = frames
   a = find(FT(:,i) > 0);
   imagesc(temp);caxis(climits);colormap gray;
   
-  for j = 1:length(x)
-      hold on;
-      plot(x{j},y{j},'-b','LineWidth',0.5);
-  end
+%   for j = 1:length(x)
+%       hold on;
+%       plot(x{j},y{j},'-b','LineWidth',0.5);
+%   end
   
   for j = 1:length(a)
       hold on;
@@ -55,9 +55,27 @@ for i = frames
       hold on;
       plot(xg{j},yg{j},'-g','LineWidth',1);
   end
+  axis equal;
+  axis off;
+  
+  line([140 210.5],[400 400],'LineWidth',5,'Color','k')
+% Create textbox
+tempobj = annotation(figure1,'textbox',...
+    [0.6994375 0.171161826251701 0.0515624986185382 0.0280082982296271],...
+    'String',{['t = ',num2str(round(i/20)),' seconds']},...
+    'LineStyle','none');
+
+% Create textbox
+annotation(figure1,'textbox',...
+    [0.397875 0.283929193608964 0.0323333333333334 0.0287368154318838],...
+    'String',{'100 µm'},...
+    'LineStyle','none',...
+    'FitBoxToText','off');
+
   F = getframe(gcf);
   writeVideo(aviobj,F);
   clear F;
+  
   clf;
 end
 close(gcf);
