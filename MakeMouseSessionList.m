@@ -286,6 +286,94 @@ MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '11_24_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\11_24_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '11_25_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\11_25_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '11_26_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\11_26_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_02_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\12_02_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_03_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\12_03_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_04_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\12_04_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_05_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\12_05_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
+MD(i).Date = '12_09_2014';
+MD(i).Session = 1;
+MD(i).Env = 'Alternation';
+MD(i).Room = '2 Cu 201B';
+if (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_31\Alternation\12_09_2014';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '12_11_2014';
 MD(i).Session = 1;
 MD(i).Env = 'Alternation';
@@ -488,6 +576,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_16_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\10_16_2014';
 end
 MD(i).Notes = [];
 
@@ -499,6 +589,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_17_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\10_17_2014';
 end
 MD(i).Notes = [];
 
@@ -510,6 +602,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_21_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\10_21_2014';
 end
 MD(i).Notes = [];
 
@@ -521,6 +615,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_23_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\10_23_2014';
 end
 MD(i).Notes = [];
 
@@ -532,6 +628,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_28_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\10_28_2014';
 end
 MD(i).Notes = [];
 
@@ -543,6 +641,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\10_31_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\10_31_2014';
 end
 MD(i).Notes = [];
 
@@ -554,6 +654,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'j:\GCamp Mice\Working\G30\alternation\11_04_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_04_2014';
 end
 MD(i).Notes = [];
 
@@ -565,6 +667,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'j:\GCamp Mice\Working\G30\alternation\11_06_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_06_2014';
 end
 MD(i).Notes = [];
 
@@ -576,6 +680,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'j:\GCamp Mice\Working\G30\alternation\11_07_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_07_2014';
 end
 MD(i).Notes = [];
 
@@ -587,6 +693,8 @@ MD(i).Env = 'Alternation';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'j:\GCamp Mice\Working\G30\alternation\11_10_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_10_2014';
 end
 MD(i).Notes = [];
 
@@ -600,6 +708,8 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\11_11_2014\Working';
 elseif (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G30\alternation\11_11_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_11_2014';
 end
 MD(i).Notes = [];
 
@@ -613,6 +723,8 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\11_12_2014\Working';
 elseif (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G30\alternation\11_12_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_12_2014';
 end
 MD(i).Notes = [];
 
@@ -626,6 +738,8 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G30\alternation\11_13_2014\Working';
 elseif (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G30\alternation\11_13_2014\Working';
+elseif (strcmp(userstr,'Will'))
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_30\Alternation\11_13_2014';
 end
 MD(i).Notes = [];
 
