@@ -10,10 +10,10 @@ end
 
 load CC.mat;
 
-figure;
-set(gcf,'Position',[534 72 1171 921]);
+figure1 = figure;
+set(gcf,'Position',[1          41        1920         964]);
 
-aviobj = VideoWriter(out_avifile);
+aviobj = VideoWriter(out_avifile,'MPEG-4');
 aviobj.FrameRate = 20;
 open(aviobj);
 
@@ -73,7 +73,7 @@ for i = frames
   %temp1 = (temp1-mmf)./msf;
   temp1 = (temp1-mean(down1))./(mean(up1)-mean(down1));
   
-  temp2 = double(h5read(infile2,'/Object',[1 1 i 1],[Xdim Ydim 1 1]));
+  temp2 = double(h5read(infile2,'/Object',[1 1 min(i+10,size(FT,2)) 1],[Xdim Ydim 1 1]));
   %temp2 = (temp2-mmf2)./msf2;
   temp2 = (temp2-mean(down2))./(mean(up2)-mean(down2));
   
@@ -82,7 +82,43 @@ for i = frames
   temp3 = (temp3-mean(down3))./(mean(up3)-mean(down3));
   
   a = find(FT(:,i) > 0);
-  imagesc([temp1,temp2,temp3]);caxis(climits);colormap gray;axis equal;axis off;
+  imagesc([temp1,temp3,temp2]);caxis(climits);colormap gray;axis equal;axis off;
+  
+  % Create textbox
+annotation(figure1,'textbox',...
+    [0.208291666666665 0.654564316805715 0.106249996988724 0.0591286292523764],...
+    'Color',[1 0 0],...
+    'String','Raw Data',...
+    'LineStyle','none','FontSize',28);
+
+% Create textbox
+annotation(figure1,'textbox',...
+    [0.657770833333333 0.650414939212354 0.236979159759358 0.0591286292523764],...
+    'Color',[1 0 0],...
+    'String',{'Temporal First Derivative'},...
+    'LineStyle','none','FontSize',28);
+
+% Create textbox
+annotation(figure1,'textbox',...
+    [0.431208333333332 0.652489628009034 0.187499994567285 0.0591286292523764],...
+    'Color',[1 0 0],...
+    'String',{'Spatially Smoothed'},...
+    'LineStyle','none','FontSize',28);
+
+annotation(figure1,'textbox',...
+    [0.1885 0.398037077426391 0.0323333333333334 0.0287368154318838],...
+    'String',{'100 µm'},...
+    'LineStyle','none','FitBoxToText','off');
+
+line([140 210.5],[400 400],'LineWidth',5,'Color','k')
+
+annotation(figure1,'textbox',...
+    [0.315583333333333 0.320539419087137 0.0557708333333333 0.0197095435684647],...
+    'String',{['t = ',num2str(round(i/20)),' seconds']},...
+    'LineStyle','none',...
+    'FitBoxToText','on');
+
+%keyboard;
   
 %   for j = 1:length(x)
 %       hold on;
