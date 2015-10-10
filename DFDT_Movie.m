@@ -7,10 +7,10 @@ NumFrames = info.Dataspace.Size(3);
 XDim = info.Dataspace.Size(1);
 YDim = info.Dataspace.Size(2);
 
-h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','int32');
+h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','int16');
 
 F0 = h5read(infile,'/Object',[1 1 1 1],[XDim YDim 1 1]);
-h5write(outfile,'/Object',int32(zeros(size(F0))),[1 1 1 1],[XDim YDim 1 1]);
+h5write(outfile,'/Object',int16(zeros(size(F0))),[1 1 1 1],[XDim YDim 1 1]);
 
 for i = 2:NumFrames
   display(['Calculating temporal difference for movie frame ',int2str(i),' out of ',int2str(NumFrames)]);
@@ -20,7 +20,7 @@ for i = 2:NumFrames
   if (i <= 20)
       DF = zeros(size(DF));
   end
-  h5write(outfile,'/Object',int32(DF),[1 1 i 1],[XDim YDim 1 1]);
+  h5write(outfile,'/Object',int16(DF),[1 1 i 1],[XDim YDim 1 1]);
 end
 
   
