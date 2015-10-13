@@ -1,4 +1,4 @@
-function [] = CellDetectMovie(infile,out_avifile,FT,NeuronImage,climits)
+function [] = CellDetectMovie(infile,out_avifile,FT,NeuronImage,climits,delayframes)
 
 close all;
 
@@ -34,12 +34,13 @@ for i = frames
 %       hold on;
 %       plot(x{j},y{j},'-b','LineWidth',0.5);
 %   end
-  
+  hold on;
+  if (i > delayframes)
   for j = 1:length(a)
-      hold on;
-      plot(x{a(j)},y{a(j)},'-r','LineWidth',3);
+      
+      plot(x{a(j)},y{a(j)},'-b','LineWidth',2);
   end
-  
+  end
   xg = [];
   yg = [];
   
@@ -53,7 +54,7 @@ for i = frames
   
   for j = 1:length(xg)
       hold on;
-      plot(xg{j},yg{j},'-g','LineWidth',1);
+      plot(xg{j},yg{j},'-r','LineWidth',3);
   end
   axis equal;
   axis off;
