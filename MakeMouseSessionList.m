@@ -320,7 +320,7 @@ MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G31\2env\12_15_2014\2 - 2env square left 90CW\Working';
 end
-MD(i).Notes = 'Left, Rotated 90CW';
+MD(i).Notes = 'Left, Rotated 90CW - NOTE THIS IS WRONG it is actually 90CCW';
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_31';
