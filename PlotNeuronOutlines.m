@@ -1,6 +1,19 @@
-function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
+function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 %PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
+% varargin: 'plot_max_proj',max_proj_tif_path plots the clusters over the
+% maximum projection
+
+
+if strcmpi(varargin{1},'plot_max_proj')
+    max_proj = imread(varargin{2});
+end
 figure;
+
+% Plot maximum projection if indicated
+if exist('max_proj','var')
+    imagesc_gray(max_proj);
+    hold on
+end
 
 if (~exist('clusterlist'))
     clusterlist = 1:length(PixelList)
