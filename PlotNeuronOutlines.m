@@ -1,6 +1,6 @@
 function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
 %PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
-figure;
+figure1 = figure;
 
 if (~exist('clusterlist'))
     clusterlist = 1:length(PixelList)
@@ -24,5 +24,14 @@ for i = 1:length(clusterlist)
     plot(y{i},x{i},'Color',colors(clusterlist(i),:));hold on;
 end
 hold off;
+axis equal;
+set(gcf,'Position',[1          41        1920         964]);
+annotation(figure1,'textbox',...
+    [0.397875 0.283929193608964 0.0323333333333334 0.0287368154318838],...
+    'String',{'100 µm'},...
+    'LineStyle','none',...
+    'FitBoxToText','off');
+
+line([140 210.5],[400 400],'LineWidth',5,'Color','k')
 end
 
