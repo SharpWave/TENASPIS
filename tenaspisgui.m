@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 26-Oct-2015 14:58:00
+% Last Modified by GUIDE v2.5 27-Oct-2015 16:14:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -98,6 +98,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+
 % --- Executes on selection change in date_box.
 function date_box_Callback(hObject, eventdata, handles)
 % hObject    handle to date_box (see GCBO)
@@ -144,19 +145,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in listbox4.
-function listbox4_Callback(hObject, eventdata, handles)
-% hObject    handle to listbox4 (see GCBO)
+% --- Executes on selection change in queuebox.
+function queuebox_Callback(hObject, eventdata, handles)
+% hObject    handle to queuebox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns listbox4 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from listbox4
+% Hints: contents = cellstr(get(hObject,'String')) returns queuebox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from queuebox
 
 
 % --- Executes during object creation, after setting all properties.
-function listbox4_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to listbox4 (see GCBO)
+function queuebox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to queuebox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -252,6 +253,17 @@ function LOAD_DATABASE_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [FileName,PathName] = uigetfile('*.mat','Select the database');
+
+% load database
+load([PathName,FileName]);
+
+% query for user
+
+% update animal text box
+
+% clear session text box
+
+% clear date text box
 
 % --------------------------------------------------------------------
 function Untitled_5_Callback(hObject, eventdata, handles)
