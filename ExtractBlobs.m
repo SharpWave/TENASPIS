@@ -35,6 +35,8 @@ if (nargin < 4)
 end
 oldmask = mask;
 
+initareas = [];
+
 parfor i = 1:NumFrames
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
@@ -46,13 +48,14 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
     
-    [~,cc{i},ccprops{i}] = SegmentFrame(tempFrame,0,mask,thresh);
-    
+    [~,cc{i},ccprops{i},initareas_tmp] = SegmentFrame(tempFrame,0,mask,thresh);
+    initareas = [initareas,initareas_tmp];
 
     display(['Detecting Blobs for frame ',int2str(i)]);
 
 end
 
+keyboard;
 
 
 save CC.mat cc ccprops thresh mask;

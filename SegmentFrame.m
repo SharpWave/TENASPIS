@@ -1,4 +1,4 @@
-function [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
+function [frame,cc,ccprops,initareas] = SegmentFrame(frame,toplot,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,6 +55,12 @@ end
 cc = bwconncomp(threshframe,4);
 % labeled = labelmatrix(cc);
 % rgb_label = label2rgb(labeled,@spring,'c','shuffle');
+
+initareas = [];
+for i = 1:length(cc.PixelIdxList)
+    initareas = [initareas,length(cc.PixelIdxList{i})];
+end
+
 
 colormap gray;
 if (toplot)
