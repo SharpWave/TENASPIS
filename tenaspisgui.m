@@ -257,9 +257,21 @@ function LOAD_DATABASE_Callback(hObject, eventdata, handles)
 % load database
 load([PathName,FileName]);
 
-% query for user
+% determine which entries are valid
+ValidDBentries = [];
+curr = 1;
+for i = 1:length(MD)
+    if (~isempty(MD(i).Location))
+        ValidDBentries = [ValidDBentries,i];
+        AnimalListTmp{curr} = MD(i).Animal;
+        curr = curr+1;
+    end
+end
 
 % update animal text box
+AllAnimals = unique(AnimalListTmp);
+
+keyboard;
 
 % clear session text box
 
