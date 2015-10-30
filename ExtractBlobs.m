@@ -55,10 +55,7 @@ parfor i = 1:NumFrames
 
 end
 
-keyboard;
-
-
-save CC.mat cc ccprops thresh mask;
+save CC.mat cc ccprops thresh mask initareas;
 
 
 

@@ -24,7 +24,7 @@ if (nargin < 2)
     toplot = 0;
 end
 
-minpixels = 40;
+minpixels = 80;
 numpan = 3;
 threshinc = 10;
 neuronthresh = 300;

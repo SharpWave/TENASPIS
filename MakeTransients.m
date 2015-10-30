@@ -103,8 +103,8 @@ end
 
 DistTrav = TransientStats(SegChain);
 
-goodlen = find(ns >= 5);
-gooddist = find(DistTrav < 5);
+goodlen = find(ns >= 3);
+gooddist = find(DistTrav < 9);
 
 goodseg = intersect(goodlen,gooddist);
 
