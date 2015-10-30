@@ -91,15 +91,18 @@ if ~isfield(handles,'MD')
    image(imread('f46.jpg'));
    axis off;
    %errordlg('YOURE SO STUPID!!!!');
+   return;
 end
 
 MD = handles.MD;
 
-selected_animals = handles.animal_select_box.Value(1);
+selected_animal = handles.animal_select_box.Value(1);
+handles.selected_animal_str = handles.animal_select_box.String{selected_animal};
+
 
 animal_dates = [];
 curr = 1;
-for j = selected_animals
+for j = selected_animal
     for i = 1:length(MD)
         if (strcmp(MD(i).Animal,handles.animal_select_box.String{j}) && ~isempty(MD(i).Location))
             animal_dates{curr} = MD(i).Date;
@@ -109,6 +112,10 @@ for j = selected_animals
 end
 handles.date_select_box.Value = [];
 handles.date_select_box.String = unique(animal_dates);
+
+handles.session_select_box.Value = [];
+handles.session_select_box.String = [];
+guidata(hObject,handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -136,11 +143,28 @@ function date_select_box_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns date_select_box contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from date_select_box
 selected_dates = handles.date_select_box.Value;
-selected_animal = handles.animal_select_box.Value;
+
 
 % find the entries of MD that match the selected animal and dates
 % then display them in the session box
+MD = handles.MD;
+curr = 1;
+sess_box_strings = [];
 
+for i = 1:length(MD)
+    for j = 1:length(selected_dates)
+      if (strcmp(MD(i).Animal,handles.selected_animal_str) && strcmp(MD(i).Date,handles.date_select_box.String{selected_dates(j)}))
+          sess_box_strings{curr} = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+          handles.sess_box_MDidx(curr) = i;
+          curr = curr + 1;
+      end
+    end
+end
+
+handles.session_select_box.Value = 1;
+handles.session_select_box.String = sess_box_strings;
+guidata(hObject,handles);
+          
 
 % --- Executes during object creation, after setting all properties.
 function date_select_box_CreateFcn(hObject, eventdata, handles)
