@@ -82,7 +82,27 @@ function animal_select_box_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns animal_select_box contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from animal_select_box
 
-% In the date box, write in all dates for selected animals 
+% In the date box, write in all dates for selected animals
+if ~exist('handles.MD','var')
+    %return;
+end
+
+MD = handles.MD;
+
+selected_animals = handles.animal_select_box.Value(1);
+
+animal_dates = [];
+curr = 1;
+for j = selected_animals
+    for i = 1:length(MD)
+        if (strcmp(MD(i).Animal,handles.animal_select_box.String{j}) && ~isempty(MD(i).Location))
+            animal_dates{curr} = MD(i).Date;
+            curr = curr+1;
+        end
+    end
+end
+handles.date_select_box.Value = [];
+handles.date_select_box.String = unique(animal_dates);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -97,7 +117,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-AnimalBoxHandle = gco;
+
 
 
 
@@ -109,6 +129,11 @@ function date_select_box_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns date_select_box contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from date_select_box
+selected_dates = handles.date_select_box.Value;
+selected_animal = handles.animal_select_box.Value;
+
+% find the entries of MD that match the selected animal and dates
+% then display them in the session box
 
 
 % --- Executes during object creation, after setting all properties.
@@ -283,6 +308,9 @@ handles.date_select_box.Value = [];
 % clear session text box
 handles.session_select_box.String = [];
 handles.session_select_box.Value = [];
+
+handles.MD = MD;
+guidata(hObject,handles);
 
 
 % --------------------------------------------------------------------
