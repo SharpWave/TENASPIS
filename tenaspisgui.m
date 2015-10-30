@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 27-Oct-2015 16:14:13
+% Last Modified by GUIDE v2.5 30-Oct-2015 12:22:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -97,21 +97,23 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+AnimalBoxHandle = gco;
 
 
-% --- Executes on selection change in date_box.
-function date_box_Callback(hObject, eventdata, handles)
-% hObject    handle to date_box (see GCBO)
+
+% --- Executes on selection change in date_select_box.
+function date_select_box_Callback(hObject, eventdata, handles)
+% hObject    handle to date_select_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns date_box contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from date_box
+% Hints: contents = cellstr(get(hObject,'String')) returns date_select_box contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from date_select_box
 
 
 % --- Executes during object creation, after setting all properties.
-function date_box_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to date_box (see GCBO)
+function date_select_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to date_select_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -122,19 +124,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in sessionbox.
-function sessionbox_Callback(hObject, eventdata, handles)
-% hObject    handle to sessionbox (see GCBO)
+% --- Executes on selection change in session_select_box.
+function session_select_box_Callback(hObject, eventdata, handles)
+% hObject    handle to session_select_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns sessionbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from sessionbox
+% Hints: contents = cellstr(get(hObject,'String')) returns session_select_box contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from session_select_box
 
 
 % --- Executes during object creation, after setting all properties.
-function sessionbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to sessionbox (see GCBO)
+function session_select_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to session_select_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -271,11 +273,17 @@ end
 % update animal text box
 AllAnimals = unique(AnimalListTmp);
 
-keyboard;
-
-% clear session text box
+handles.animal_select_box.String = AllAnimals;
+handles.animal_select_box.Value = [];
 
 % clear date text box
+handles.date_select_box.String = [];
+handles.date_select_box.Value = [];
+
+% clear session text box
+handles.session_select_box.String = [];
+handles.session_select_box.Value = [];
+
 
 % --------------------------------------------------------------------
 function Untitled_5_Callback(hObject, eventdata, handles)
