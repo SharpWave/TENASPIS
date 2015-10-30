@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 30-Oct-2015 12:22:01
+% Last Modified by GUIDE v2.5 30-Oct-2015 15:21:28
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,7 +60,9 @@ guidata(hObject, handles);
 
 % UIWAIT makes tenaspisgui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
+axes(handles.imagedisplaybox);
+image(imread('ff.jpg'));
+axis off;
 
 % --- Outputs from this function are returned to the command line.
 function varargout = tenaspisgui_OutputFcn(hObject, eventdata, handles) 
@@ -83,8 +85,12 @@ function animal_select_box_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from animal_select_box
 
 % In the date box, write in all dates for selected animals
-if ~exist('handles.MD','var')
-    %return;
+if ~isfield(handles,'MD')
+   
+   axes(handles.imagedisplaybox);
+   image(imread('f46.jpg'));
+   axis off;
+   %errordlg('YOURE SO STUPID!!!!');
 end
 
 MD = handles.MD;
@@ -329,6 +335,7 @@ function axes1_CreateFcn(hObject, eventdata, handles)
 % Hint: place code in OpeningFcn to populate axes1
 
 
+
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
@@ -357,3 +364,12 @@ function edit2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes during object creation, after setting all properties.
+function imagedisplaybox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to imagedisplaybox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: place code in OpeningFcn to populate imagedisplaybox
