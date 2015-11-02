@@ -1,13 +1,27 @@
 function [] = Tenaspis(infile,varargin)
 % [] = Tenaspis(infile,varargin)
-% Technique for Extracting Neuronal Activity from Single Photon Image
-% Sequences, by David Sullivan
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences 
+% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This file is part of Tenaspis.
 % 
-% inputs (required)
+%     Tenaspis is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     Tenaspis is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% inputs (required):
 %
 % infile: name of the movie, e.g., 'mouse1.h5'
-%
 % 
 % inputs (optional):
 % 
@@ -51,11 +65,9 @@ if (~isempty(varargin))
     [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(varargin);
 end
 
-% animal_id,sess_date,sess_num
-
 % static parameters:
 SmoothWindowWidth = 20; % width of window for temporally smoothing the movie with a gaussian (currently using the acquisition sampling rate)
-threshfactor = 4; % baseline threshold for detecting cells
+threshfactor = 4; % baseline threshold (pixel std multiplier) for detecting cells
 
 if (~ManMask)
     MasterDirectory = 'C:\MasterData';

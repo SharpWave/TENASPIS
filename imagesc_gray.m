@@ -1,6 +1,4 @@
-function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
-% [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
-%  
+function [] = imagesc_gray(A)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,43 +16,11 @@ function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%imagesc_gray - simple function to run imagesc with colormap(gray) and
+%colorbar enabled
 
-AI(1).animal = 'GCaMP6f_31';
-AI(1).init_date = '09_29_2014';
-AI(1).init_sess = 1;
+imagesc(A); colormap(gca,gray); colorbar
 
-AI(2).animal = 'GCamp6f_30';
-AI(2).init_date = '11_11_2014';
-AI(2).init_sess = 1;
-
-AI(3).animal = 'GCamp6f_44';
-AI(3).init_date = '07_10_2015';
-AI(3).init_sess = 2;
-
-AI(4).animal = 'GCamp6f_45';
-AI(4).init_date = '08_05_2015';
-AI(4).init_sess = 1;
-
-AI(5).animal = 'GCamp6f_41';
-AI(5).init_date = '08_05_2015';
-AI(5).init_sess = 1;
-
-AI(6).animal = 'GCamp6f_46';
-AI(6).init_date = '08_14_2015';
-AI(6).init_sess = 1;
-
-AI(7).animal = 'GCamp6f_30_2';
-AI(7).init_date = '06_10_2015';
-AI(7).init_sess = 1;
-
-for i = 1:length(AI)
-    if (strcmpi(AI(i).animal,animal_id))
-        init_date = AI(i).init_date;
-        init_sess = AI(i).init_sess;
-        return;
-    end
-end
-        
 
 end
 
