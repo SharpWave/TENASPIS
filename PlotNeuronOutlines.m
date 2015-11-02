@@ -3,9 +3,10 @@ function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 % varargin: 'plot_max_proj',max_proj_tif_path plots the clusters over the
 % maximum projection
 
-
-if strcmpi(varargin{1},'plot_max_proj')
-    max_proj = imread(varargin{2});
+for j = 1:length(varargin)
+    if strcmpi(varargin{j},'plot_max_proj')
+        max_proj = imread(varargin{j+1});
+    end
 end
 figure;
 
