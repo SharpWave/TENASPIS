@@ -1373,6 +1373,47 @@ end
 MD(i).Notes = '2env connected';
 
 G45.twoenv(2) = i;
+
+%% G45 Alternation
+
+G45.alternation(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '09_30_2015';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\alternation\09_30_2015\1 - alternation\Working';
+end
+MD(i).Notes = 'Need to exclude timestamps in between two sessions';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '09_30_2015';
+MD(i).Session = 2;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\alternation\09_30_2015\2 - alternation\Working';
+end
+MD(i).Notes = 'Need to exclude timestamps in between two sessions';
+MD(i).exclude_frames = 14976:15233;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '10_02_2015';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\alternation\10_02_2015\1 - alternation\Working';
+end
+MD(i).Notes = 'Need to exclude timestamps in between two sessions';
+MD(i).exclude_frames = 13661:13980;
+
+G45.alternation(2) = i;
 G45.all(2) = i;
 
 %% Start G41
