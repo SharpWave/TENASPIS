@@ -1582,10 +1582,21 @@ G45.twoenv(1) = i+1;
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_28_2015';
+MD(i).Session = 1;
+MD(i).Env = '2env - square right';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_28_2015\1 - square right\Working';
+end
+MD(i).Notes = 'square right';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '09_01_2015';
 MD(i).Session = 1;
 MD(i).Env = '2env - connected';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\09_01_2015\Working';
 end
