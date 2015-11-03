@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 03-Nov-2015 14:37:59
+% Last Modified by GUIDE v2.5 03-Nov-2015 16:27:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -381,13 +381,27 @@ function axes1_CreateFcn(hObject, eventdata, handles)
 
 
 
-% --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+% --- Executes on button press in queue_del_button.
+function queue_del_button_Callback(hObject, eventdata, handles)
+% hObject    handle to queue_del_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% remove selected (Value) entries from queuebox_MDidx
+MD = handles.MD;
+handles.queuebox_MDidx = setdiff(handles.queuebox_MDidx,handles.queuebox_MDidx(handles.queuebox.Value));
 
+% compute new box string based off of new MDidx
+curr = 1;
+queuebox_strings = [];
+for i = handles.queuebox_MDidx
+    queuebox_strings{curr} = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+    curr = curr + 1;
+end
+
+handles.queuebox.Value = 1;
+handles.queuebox.String = queuebox_strings;
+guidata(hObject,handles);
 
 function edit2_Callback(hObject, eventdata, handles)
 % hObject    handle to edit2 (see GCBO)
