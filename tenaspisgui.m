@@ -253,8 +253,18 @@ function queue_add_button_Callback(hObject, eventdata, handles)
 % and then add it to the queuebox
 
 % new queue is the set union of session_select_box and queue_box
+MD = handles.MD;
+handles.queuebox_MDidx = union(handles.sess_box_MDidx(handles.session_select_box.Value),handles.queuebox_MDidx);
 
-% handles.sess_box_MDidx;
+curr = 1;
+for i = handles.queuebox_MDidx
+    queuebox_strings{curr} = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+    curr = curr + 1;
+end
+
+handles.queuebox.Value = 1;
+handles.queuebox.String = queuebox_strings;
+guidata(hObject,handles);
 
 
 % --------------------------------------------------------------------
