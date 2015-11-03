@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 30-Oct-2015 15:21:28
+% Last Modified by GUIDE v2.5 03-Nov-2015 14:37:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -188,6 +188,8 @@ function session_select_box_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns session_select_box contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from session_select_box
 
+% actually this callbox does nothing
+
 
 % --- Executes during object creation, after setting all properties.
 function session_select_box_CreateFcn(hObject, eventdata, handles)
@@ -224,6 +226,8 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+handles.queuebox_MDidx = [];
+guidata(hObject,handles);
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
@@ -239,11 +243,18 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+% --- Executes on button press in queue_add_button.
+function queue_add_button_Callback(hObject, eventdata, handles)
+% hObject    handle to queue_add_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% take everything highlighted in session_select_box and append it to the queue
+% and then add it to the queuebox
+
+% new queue is the set union of session_select_box and queue_box
+
+% handles.sess_box_MDidx;
 
 
 % --------------------------------------------------------------------
