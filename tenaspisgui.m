@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 03-Nov-2015 16:27:31
+% Last Modified by GUIDE v2.5 04-Nov-2015 17:10:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -258,7 +258,7 @@ handles.queuebox_MDidx = union(handles.sess_box_MDidx(handles.session_select_box
 
 curr = 1;
 for i = handles.queuebox_MDidx
-    queuebox_strings{curr} = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+    queuebox_strings{curr} = [int2str(curr),'. ',MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
     curr = curr + 1;
 end
 
@@ -365,10 +365,37 @@ guidata(hObject,handles);
 
 
 % --------------------------------------------------------------------
-function Untitled_5_Callback(hObject, eventdata, handles)
-% hObject    handle to Untitled_5 (see GCBO)
+function add_session_button_Callback(hObject, eventdata, handles)
+% hObject    handle to add_session_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% check if database loaded, if not, give error dialog and return
+if (~isfield(handles,'MD'))
+  errordlg('no database loaded','add session error');
+  return;
+end
+
+keyboard;
+
+% query for date
+datevec = uisetdate2;
+
+% query for file
+[filename, pathname] = uigetfile('*.h5', 'Pick a h5 movie file');
+
+% query for session number
+
+% query for experiment type
+
+% show user the shizz, ask if OK (abort if not)
+
+% add data to MD
+
+% backup old database
+
+% save database
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -395,7 +422,7 @@ handles.queuebox_MDidx = setdiff(handles.queuebox_MDidx,handles.queuebox_MDidx(h
 curr = 1;
 queuebox_strings = [];
 for i = handles.queuebox_MDidx
-    queuebox_strings{curr} = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+    queuebox_strings{curr} = [int2str(curr),'. ',MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
     curr = curr + 1;
 end
 
@@ -432,3 +459,26 @@ function imagedisplaybox_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: place code in OpeningFcn to populate imagedisplaybox
+
+
+% --- Executes on selection change in popupmenu1.
+function popupmenu1_Callback(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+
+
+% --- Executes during object creation, after setting all properties.
+function popupmenu1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to popupmenu1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
