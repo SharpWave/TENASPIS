@@ -22,7 +22,7 @@ function varargout = session_add_dialog(varargin)
 
 % Edit the above text to modify the response to help session_add_dialog
 
-% Last Modified by GUIDE v2.5 06-Nov-2015 13:08:23
+% Last Modified by GUIDE v2.5 06-Nov-2015 14:38:20
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,7 +59,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes session_add_dialog wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.session_adder);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -79,7 +79,8 @@ function movie_select_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [FileName,PathName] = uigetfile('*.h5','Pick an .h5 movie file')
-
+handles.filepath = [PathName,FileName];
+guidata(hObject,handles);
 
 % --- Executes on selection change in popupmenu1.
 function popupmenu1_Callback(hObject, eventdata, handles)
@@ -109,7 +110,9 @@ function date_select_button_Callback(hObject, eventdata, handles)
 % hObject    handle to date_select_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-year_month_day = uisetdate2;
+ymd = uisetdate2;
+handles.date = [int2str(ymd(2)),'/',int2str(ymd(3)),'/',int2str(ymd(1))];
+guidata(hObject,handles);
 
 % --- Executes on selection change in session_number_menu.
 function session_number_menu_Callback(hObject, eventdata, handles)
@@ -185,8 +188,26 @@ function OKbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to OKbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-keyboard;
-% grab data from popup and edit text fields 
+
+% grab data from popup and edit text fields
+newdata.Animal = handles.animal_name_box.String;
+newdata.Date = handles.date;
+newdata.Session = str2num(handles.session_number_menu.String);
+newdata.Env = handles.experiment_type_box.String;
+newdata.Room = handles.room_box.String;
+newdata.Location = handles.filepath;
+newdata.Notes = [];
+
+ht = findobj('Tag','tenaspisgui');
+dt = guidata(ht);
+
+dt.MD(end+1) = newdata;
+guidata(ht,dt);
+
+
+h = findobj('Tag','session_adder');
+close(h);
+
 
 % if data is invalid or fields are left blank, show dialog and return
 
@@ -195,3 +216,49 @@ keyboard;
 %   session adder
 %   if user clicks no, cloes yes/no dialog
 % add the entry to 
+
+
+
+function room_box_Callback(hObject, eventdata, handles)
+% hObject    handle to room_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of room_box as text
+%        str2double(get(hObject,'String')) returns contents of room_box as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function room_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to room_box (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit5_Callback(hObject, eventdata, handles)
+% hObject    handle to edit5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit5 as text
+%        str2double(get(hObject,'String')) returns contents of edit5 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit5_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

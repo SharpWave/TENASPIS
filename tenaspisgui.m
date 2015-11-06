@@ -331,6 +331,7 @@ function LOAD_DATABASE_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [FileName,PathName] = uigetfile('*.mat','Select the database');
+handles.dbfile = [PathName,FileName];
 
 % load database
 load([PathName,FileName]);
@@ -376,7 +377,8 @@ if (~isfield(handles,'MD'))
   return;
 end
 
-session_add_dialog
+session_add_dialog;
+keyboard;
 
 % query for session number
 
