@@ -331,8 +331,8 @@ function LOAD_DATABASE_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [FileName,PathName] = uigetfile('*.mat','Select the database');
-handles.dbfile = [PathName,FileName];
-
+handles.dbfile = FileName;
+handles.dbpath = PathName;
 % load database
 load([PathName,FileName]);
 
@@ -377,20 +377,50 @@ if (~isfield(handles,'MD'))
   return;
 end
 
-session_add_dialog;
-keyboard;
+% add entry to MD
+sad = session_add_dialog;
+uiwait(sad);
 
-% query for session number
+handles = guidata(hObject);
 
-% query for experiment type
+FileName = handles.dbfile;
+PathName = handles.dbpath;
 
-% show user the shizz, ask if OK (abort if not)
+% backup old file
+backupstr = ['! move ',PathName,FileName,' ',PathName,FileName,'.bak'];
+display(backupstr)
+eval(backupstr);
 
-% add data to MD
+% save new MD
+MD = handles.MD;
+save([PathName,FileName],'MD');
 
-% backup old database
+% determine which entries are valid
+ValidDBentries = [];
+curr = 1;
+for i = 1:length(MD)
+    if (~isempty(MD(i).Location))
+        ValidDBentries = [ValidDBentries,i];
+        AnimalListTmp{curr} = MD(i).Animal;
+        curr = curr+1;
+    end
+end
 
-% save database
+% update animal text box
+AllAnimals = unique(AnimalListTmp);
+
+handles.animal_select_box.String = AllAnimals;
+handles.animal_select_box.Value = [];
+
+% clear date text box
+handles.date_select_box.String = [];
+handles.date_select_box.Value = [];
+
+% clear session text box
+handles.session_select_box.String = [];
+handles.session_select_box.Value = [];
+
+
 
 
 

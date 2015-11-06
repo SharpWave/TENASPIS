@@ -192,7 +192,7 @@ function OKbutton_Callback(hObject, eventdata, handles)
 % grab data from popup and edit text fields
 newdata.Animal = handles.animal_name_box.String;
 newdata.Date = handles.date;
-newdata.Session = str2num(handles.session_number_menu.String);
+newdata.Session = str2num(handles.session_number_menu.String(handles.session_number_menu.Value));
 newdata.Env = handles.experiment_type_box.String;
 newdata.Room = handles.room_box.String;
 newdata.Location = handles.filepath;
