@@ -1593,6 +1593,83 @@ MD(i).Notes = 'square right';
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_28_2015';
+MD(i).Session = 2;
+MD(i).Env = '2env - square left 90CCW';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_28_2015\2 - square left 90CCW\Working';
+end
+MD(i).Notes = 'square left 90CCW';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_29_2015';
+MD(i).Session = 1;
+MD(i).Env = '2env - octagon right';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_29_2015\1 - oct right\Working';
+end
+MD(i).Notes = 'octagon right';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_29_2015';
+MD(i).Session = 2;
+MD(i).Env = '2env - octagon mid 90CCW';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_29_2015\2 - oct mid 90CCW\Working';
+end
+MD(i).Notes = 'octagon mid 90CCW';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_30_2015';
+MD(i).Session = 1;
+MD(i).Env = '2env - octagon mid';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_30_2015\1 - oct mid\Working';
+end
+MD(i).Notes = 'octagon mid';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_30_2015';
+MD(i).Session = 2;
+MD(i).Env = '2env - octagon mid';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_30_2015\2 - oct left 90CW\Working';
+end
+MD(i).Notes = 'octagon mid';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_31_2015';
+MD(i).Session = 1;
+MD(i).Env = '2env - square left';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_31_2015\1 - square left\Working';
+end
+MD(i).Notes = 'square left';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_31_2015';
+MD(i).Session = 2;
+MD(i).Env = '2env - square mid';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_31_2015\2 - square mid 90CW\Working';
+end
+MD(i).Notes = 'square mid 90CCW';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '09_01_2015';
 MD(i).Session = 1;
 MD(i).Env = '2env - connected';

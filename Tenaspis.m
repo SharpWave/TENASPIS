@@ -94,7 +94,13 @@ if(~no_movie_process) % don't run these if already run
     TempSmoothMovie(infile,'SMovie.h5',SmoothWindowWidth);
     
     %% Step 2: Take the first derivative
-    DFDT_Movie('SMovie.h5','D1Movie.h5');
+    multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
+    if ~isempty(multiplier_use)
+        delete D1Movie.h5
+        multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5',multiplier_use);
+        save multiplier.mat multiplier_use
+    end
+    delete SMovie.h5
 end
 
 if (~no_blobs)

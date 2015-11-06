@@ -62,12 +62,12 @@ for i = 2:NumFrames
 end
 
 % Calculate new multiplier to use if necessary
-if ~isempty(maxDF) || ~isempty(minDF)
+if ~isempty(bad_frames)
       scale_factor = min([abs(single(intmax('int16'))/maxDF) abs(single(intmin('int16'))/minDF)]);
       multiplier_use = floor(multiplier*scale_factor);
       num_bad_frames = length(bad_frames);
       disp(['Multiplier used results in clipping for ' num2str(num_bad_frames) ' frames. Re-run with multiplier = ' num2str(multiplier_use)])
-  else
+else
       multiplier_use = [];
 end
   
