@@ -22,7 +22,7 @@ function varargout = session_add_dialog(varargin)
 
 % Edit the above text to modify the response to help session_add_dialog
 
-% Last Modified by GUIDE v2.5 05-Nov-2015 14:05:02
+% Last Modified by GUIDE v2.5 06-Nov-2015 13:08:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -109,21 +109,21 @@ function date_select_button_Callback(hObject, eventdata, handles)
 % hObject    handle to date_select_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+year_month_day = uisetdate2;
 
-
-% --- Executes on selection change in popupmenu2.
-function popupmenu2_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+% --- Executes on selection change in session_number_menu.
+function session_number_menu_Callback(hObject, eventdata, handles)
+% hObject    handle to session_number_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu2
+% Hints: contents = cellstr(get(hObject,'String')) returns session_number_menu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from session_number_menu
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu2 (see GCBO)
+function session_number_menu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to session_number_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -158,18 +158,18 @@ end
 
 
 
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function experiment_type_box_Callback(hObject, eventdata, handles)
+% hObject    handle to experiment_type_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+% Hints: get(hObject,'String') returns contents of experiment_type_box as text
+%        str2double(get(hObject,'String')) returns contents of experiment_type_box as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function experiment_type_box_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to experiment_type_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -180,8 +180,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in pushbutton3.
-function pushbutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton3 (see GCBO)
+% --- Executes on button press in OKbutton.
+function OKbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to OKbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+keyboard;
+% grab data from popup and edit text fields 
+
+% if data is invalid or fields are left blank, show dialog and return
+
+% show user the entry in a dialog with yes/no buttons, 
+%   if user clicks yes add entry to database, close yes/no dialog, close
+%   session adder
+%   if user clicks no, cloes yes/no dialog
+% add the entry to 

@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 04-Nov-2015 17:10:44
+% Last Modified by GUIDE v2.5 06-Nov-2015 12:59:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,7 +59,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes tenaspisgui wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.tenaspisgui);
 axes(handles.imagedisplaybox);
 image(imread('ff.jpg'));
 axis off;
@@ -376,13 +376,7 @@ if (~isfield(handles,'MD'))
   return;
 end
 
-keyboard;
-
-% query for date
-datevec = uisetdate2;
-
-% query for file
-[filename, pathname] = uigetfile('*.h5', 'Pick a h5 movie file');
+session_add_dialog
 
 % query for session number
 
