@@ -264,6 +264,11 @@ end
 
 handles.queuebox.Value = 1;
 handles.queuebox.String = queuebox_strings;
+
+% update active session
+handles.active_session_MDidx  =handles.queuebox_MDidx(1); 
+handles.active_session_text.String = [MD(handles.active_session_MDidx).Animal,'_',MD(handles.active_session_MDidx).Date,'_',...
+    int2str(MD(handles.active_session_MDidx).Session),' - ',MD(handles.active_session_MDidx).Env];
 guidata(hObject,handles);
 
 
@@ -454,6 +459,11 @@ end
 
 handles.queuebox.Value = 1;
 handles.queuebox.String = queuebox_strings;
+
+handles.active_session_MDidx  = handles.queuebox_MDidx(1); 
+handles.active_session_text.String = [MD(handles.active_session_MDidx).Animal,'_',MD(handles.active_session_MDidx).Date,'_',...
+    int2str(MD(handles.active_session_MDidx).Session),' - ',MD(handles.active_session_MDidx).Env];
+
 guidata(hObject,handles);
 
 function edit2_Callback(hObject, eventdata, handles)
