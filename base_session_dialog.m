@@ -22,7 +22,7 @@ function varargout = base_session_dialog(varargin)
 
 % Edit the above text to modify the response to help base_session_dialog
 
-% Last Modified by GUIDE v2.5 10-Nov-2015 11:20:17
+% Last Modified by GUIDE v2.5 10-Nov-2015 13:02:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -59,8 +59,23 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes base_session_dialog wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.base_session_select_master);
+% display all sessions for animal for active session
+ht = findobj('Tag','tenaspisgui');
+dt = guidata(ht);
+MD = dt.MD;
+animal = MD(dt.active_session_MDidx).Animal;
 
+curr = 1;
+for i = 1:length(MD)
+    if (strcmp(MD(i).Animal,animal))
+        handles.session_sel_list_box.String{curr} = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+        handles.base_list_MDidxs(curr) = i;
+        curr = curr + 1;
+    end
+end
+
+guidata(hObject,handles);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = base_session_dialog_OutputFcn(hObject, eventdata, handles) 
@@ -96,8 +111,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+
+
+
 % --- Executes on button press in session_sel_box_ok.
 function session_sel_box_ok_Callback(hObject, eventdata, handles)
 % hObject    handle to session_sel_box_ok (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+ht = findobj('Tag','tenaspisgui');
+dt = guidata(ht);
+dt.base_session_MDidx = handles.base_list_MDidxs(handles.session_sel_list_box.Value);
+guidata(ht,dt);
+
+h = findobj('Tag','base_session_select_master');
+close(h);

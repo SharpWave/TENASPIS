@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 10-Nov-2015 10:55:08
+% Last Modified by GUIDE v2.5 10-Nov-2015 12:04:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -540,7 +540,12 @@ function base_session_select_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % spawns window for selecting base session
-
+bsd = base_session_dialog;
+uiwait(bsd);
+handles = guidata(hObject);
+i = handles.base_session_MDidx;
 % fill in base session selection
-
+MD = handles.MD;
+handles.base_session_text.String = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
+guidata(hObject,handles);
 
