@@ -342,7 +342,11 @@ function NEW_DATABASE_Callback(hObject, eventdata, handles)
 % hObject    handle to NEW_DATABASE (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[FileName,PathName] = uiputfile
+[FileName,PathName] = uiputfile('*.mat','save new directory as');
+handles.DBfilename = FileName;
+handles.DBpath = PathName;
+guidata(hObject,handles);
+
 
 % --------------------------------------------------------------------
 function LOAD_DATABASE_Callback(hObject, eventdata, handles)
