@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 06-Nov-2015 12:59:04
+% Last Modified by GUIDE v2.5 10-Nov-2015 10:55:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -229,12 +229,25 @@ end
 handles.queuebox_MDidx = [];
 guidata(hObject,handles);
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+% --- Executes on button press in run_tenaspis_button.
+function run_tenaspis_button_Callback(hObject, eventdata, handles)
+% hObject    handle to run_tenaspis_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% runs the active session: handles.active_session_MDidx
+
+% check whether base session for this animal is specified
+
+% if yes, register this session to base session and register masks
+
+% if no, run tenaspis with manual mask
+
+% assemble tenaspis call
+
+% run tenaspis
+
+% display stats (runtime, rec length, # of neurons
 
 % --- Executes on button press in pushbutton2.
 function pushbutton2_Callback(hObject, eventdata, handles)
@@ -518,3 +531,16 @@ function popupmenu1_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in base_session_select.
+function base_session_select_Callback(hObject, eventdata, handles)
+% hObject    handle to base_session_select (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% spawns window for selecting base session
+
+% fill in base session selection
+
+
