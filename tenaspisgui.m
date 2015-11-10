@@ -22,7 +22,7 @@ function varargout = tenaspisgui(varargin)
 
 % Edit the above text to modify the response to help tenaspisgui
 
-% Last Modified by GUIDE v2.5 10-Nov-2015 12:04:03
+% Last Modified by GUIDE v2.5 10-Nov-2015 13:52:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -242,7 +242,8 @@ function run_tenaspis_button_Callback(hObject, eventdata, handles)
 % if yes, register this session to base session and register masks
 
 % if no, run tenaspis with manual mask
-
+keyboard;
+i = handles.active_session_MDidx;
 % assemble tenaspis call
 
 % run tenaspis
@@ -548,4 +549,3 @@ i = handles.base_session_MDidx;
 MD = handles.MD;
 handles.base_session_text.String = [MD(i).Animal,'_',MD(i).Date,'_',int2str(MD(i).Session),' - ',MD(i).Env];
 guidata(hObject,handles);
-

@@ -79,7 +79,8 @@ function movie_select_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [FileName,PathName] = uigetfile('*.h5','Pick an .h5 movie file')
-handles.filepath = [PathName,FileName];
+handles.filname = FileName;
+handles.pathname = PathName;
 guidata(hObject,handles);
 
 % --- Executes on selection change in popupmenu1.
@@ -195,7 +196,7 @@ newdata.Date = handles.date;
 newdata.Session = str2num(handles.session_number_menu.String(handles.session_number_menu.Value));
 newdata.Env = handles.experiment_type_box.String;
 newdata.Room = handles.room_box.String;
-newdata.Location = handles.filepath;
+newdata.Location = [handles.filepath,handles.filename];
 newdata.Notes = [];
 
 ht = findobj('Tag','tenaspisgui');
