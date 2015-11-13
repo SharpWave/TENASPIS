@@ -1,5 +1,14 @@
-function [] = MakeTransients(file,todebug)
-% [] = MakeTransients(file,todebug)
+function [] = MakeTransients(file,todebug,varargin)
+% [] = MakeTransients(file,todebug,varargin)
+%
+% Take all of those blobs found in ExtractBlobs.m and figure out, for each
+% one, whether there was one on the previous frame that matched it and if
+% so which one, thus deducing calcium transients across frames
+%
+% varargins:
+%   'min_trans_length':minimum number of frames a transient must last in
+%   order to be included, enter as MakeTransients(...,'min_trans_length,3)
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -17,9 +26,22 @@ function [] = MakeTransients(file,todebug)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Take all of those blobs found in ExtractBlobs.m and figure out, for each
-% one, whether there was one on the previous frame that matched it and if
-% so which one, thus deducing calcium transients across frames
+%
+%% Calcium transient inclusion criteria
+min_trans_length = 5; % (default) minimum number of frames a transient must last in order to be included
+max_trans_dist = 5; % (default) maximum number of pixels a transient can travel without being discarded
+
+%% Get vargins
+for j = 1:length(varargin)
+   if strcmpi(varargin{j},'min_trans_length')
+       min_trans_length = varargin{j+1};
+   end
+%    if strcmpi(varargin{j},'max_trans_dist')
+%       max_trans_dist = varargin{j+1};
+%    end
+end
+
+%%
 
 load CC.mat
 
@@ -103,8 +125,8 @@ end
 
 DistTrav = TransientStats(SegChain);
 
-goodlen = find(ns >= 5);
-gooddist = find(DistTrav < 5);
+goodlen = find(ns >= min_trans_length);
+gooddist = find(DistTrav < max_trans_dist);
 
 goodseg = intersect(goodlen,gooddist);
 
@@ -112,8 +134,12 @@ SegChain = SegChain(goodlen);
 NumSegments = length(SegChain);
 
 
-
-save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim
+if min_trans_length == 5
+    save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim min_trans_length max_trans_dist
+else
+    save_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
+    save(save_name, 'NumSegments', 'SegChain', 'cc', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist')
+end
 
 
 end
