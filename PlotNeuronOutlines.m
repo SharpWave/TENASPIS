@@ -1,8 +1,5 @@
-function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
-%PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
-% varargin: 'plot_max_proj',max_proj_tif_path plots the clusters over the
-% maximum projection
-%
+function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
+% PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -21,18 +18,6 @@ function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure1 = figure;
-
-for j = 1:length(varargin)
-    if strcmpi(varargin{j},'plot_max_proj')
-        max_proj = imread(varargin{j+1});
-    end
-end
-
-% Plot maximum projection if indicated
-if exist('max_proj','var')
-    imagesc_gray(max_proj);
-    hold on
-end
 
 if (~exist('clusterlist'))
     clusterlist = 1:length(PixelList)

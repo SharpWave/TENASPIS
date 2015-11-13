@@ -1,24 +1,5 @@
-function [] = MakeNeurons(varargin)
-% [] = MakeNeurons(varargin)
-%
-% Arranges calcium transients into neurons, based on centroid locations
-% inputs: varargin - see MakeTransients for 'min_trans_length' variable
-% (optional)
-% outputs: ProcOut.mat
-% --------------------------------------
-% Variables saved: (breaking this requires major version update)
-%
-% NumNeurons: final number of neurons
-% NeuronImage: bitmap of each neuron roi
-% NeuronPixels: list of active pixels for each neuron
-% InitPixelList: list of active pixels for each calcium transient
-% c: list of which cluster each transient belongs to
-% meanX meanY: centroids of neurons
-% Xdim Ydim: pixel dimensions of imaging window
-% NumFrames: number of frames in the entire movie
-% FT: binary neuron activity matrix
-% VersionString: which release of Tenaspis was used
-%
+function [] = MakeNeurons()
+% [] = MakeNeurons()
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -36,36 +17,34 @@ function [] = MakeNeurons(varargin)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% Process varargins
-min_trans_length = 5; % default: minimum number of frames a transient must last in order to be included
-
-for j = 1:length(varargin)
-   if strcmpi(varargin{j},'min_trans_length')
-       min_trans_length = varargin{j+1};
-   end
-end
-
-%%
+% arranges calcium transients into neurons, based on centroid locations
+% inputs: none
+% outputs: ProcOut.mat
+% --------------------------------------
+% Variables saved: (breaking this requires major version update)
+%
+% NumNeurons: final number of neurons
+% NeuronImage: bitmap of each neuron roi
+% NeuronPixels: list of active pixels for each neuron
+% InitPixelList: list of active pixels for each calcium transient
+% c: list of which cluster each transient belongs to
+% meanX meanY: centroids of neurons
+% Xdim Ydim: pixel dimensions of imaging window
+% NumFrames: number of frames in the entire movie
+% FT: binary neuron activity matrix
+% VersionString: which release of Tenaspis was used
 
 VersionString = '0.9.0.0-beta';
 MinPixelDist = 0.1:1:5
 
 close all;
-if min_trans_length == 5
-    load_name = 'Segments.mat';
-    initclu_name = 'InitClu.mat';
-else
-    load_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
-    initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
-end
-load(load_name) %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
-if (exist(initclu_name,'file') == 0)
-    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, min_trans_length);
+load Segments.mat; %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
+if (exist('InitClu.mat','file') == 0)
+    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim);
 end
 
-load(initclu_name); %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents cToSeg
+load InitClu.mat; %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents cToSeg
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
@@ -121,13 +100,7 @@ end
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
-if min_trans_length == 5
-    save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon min_trans_length -v7.3;
-else
-    save_name = ['Procout_minlength_' num2str(min_trans_length) '.mat'];
-    save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-        'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'GoodTrs', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
-end
+save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon -v7.3;
 
 end
 
