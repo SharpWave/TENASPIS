@@ -5,15 +5,16 @@ function [] = ExtractTracesProc(moviefile,FLmovie)
 close all;
 
 % Step 1: load up the ROIs
-load ProcOut.mat;
+load('ProcOut.mat','NeuronImage','NumFrames','NeuronPixels');
 
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 
 NumNeurons = length(NeuronImage);
 
-for i = 1:NumFrames
-    i
+p=ProgressBar(NumFrames);
+parfor i = 1:NumFrames
+    
     tempFrame = h5read(moviefile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     tempFrame = tempFrame(:);
     
@@ -28,9 +29,13 @@ for i = 1:NumFrames
         Rawtrace(i,j) = sum(tempFrame2(NeuronPixels{j}));
         
     end
+    p.progress;
 end
+p.stop; 
+
 Dtrace = Dtrace';
 Rawtrace = Rawtrace';
 
 save DumbTraces.mat Dtrace Rawtrace;
 
+end
