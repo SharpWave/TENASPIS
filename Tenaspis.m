@@ -29,7 +29,8 @@ function [] = Tenaspis(infile,varargin)
 % - good for re-running this with a new version. 0 = apply smoothing and 
 % first derivative steps.  defaults to 0
 %
-% 'manual_mask': has the user draw a mask rather than deriving it from the InitRegMask.  Defaults to 0.
+% 'manual_mask': 1 has the user draw a mask rather than deriving it from the 
+% InitRegMask.  Defaults to 0 (get mask automatically from InitRegMask).
 %
 % semi-optional inputs: if manual_mask is 0 (default), you must include
 % 'animal_id': the animal, e.g., 'GCaMP6f_05'
