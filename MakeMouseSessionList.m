@@ -2377,6 +2377,30 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_16_2015';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_16_2015\2 - Treadmill shaping';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_16_2015';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_16_2015\2 - Treadmill shaping';
+end
+MD(i).Notes = [];
+
+
+
 %% Start of G48 in Will's Treadmill Experiments
 i = i+1;
 MD(i).Animal = 'GCamp6f_48_treadmill';
