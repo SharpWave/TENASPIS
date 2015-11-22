@@ -112,7 +112,7 @@ end
 
 try % Error catching clause: larger files are failing here for some reason
     figure;
-    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,c)
+    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon)
     figure;
     plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
 catch
