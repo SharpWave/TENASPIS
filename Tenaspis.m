@@ -75,7 +75,7 @@ if (~ManMask)
     %% Step 0: Register the mask
     [init_date,init_sess] = GetInitRegMaskInfo(animal_id);
     init_dir = ChangeDirectory(animal_id,init_date,init_sess);
-    init_tif = fullfile(init_dir,'\ICmovie_min_proj.tif');
+    init_tif = fullfile(init_dir,'ICmovie_min_proj.tif');
     
     load([MasterDirectory,'\',animal_id,'_initialmask.mat']); % gets mask
 %     t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
