@@ -33,8 +33,9 @@ for i = 1:smoothfr-1
     h5write(outfile,'/Object',F{i},[1 1 i 1],[XDim YDim 1 1]);
 end
 
+disp('Smoothing frames...');
+p = ProgressBar(NumFrames);
 for i = smoothfr:NumFrames
-  display(['Smoothing movie frame ',int2str(i),' out of ',int2str(NumFrames)]);
   F{smoothfr} = single(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
   Fout = zeros(size(F{1}));
   for j = 1:smoothfr
@@ -45,6 +46,10 @@ for i = smoothfr:NumFrames
   for j = 1:smoothfr-1
       F{j} = F{j+1};
   end
+  p.progress;
+end
+p.stop;
+
 end
 
   
