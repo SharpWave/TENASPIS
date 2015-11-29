@@ -24,6 +24,7 @@ if nargin < 3
     multiplier = 500; % Default value
 end
 
+save DFDT_multiplier.mat multiplier;
 
 info = h5info(infile,'/Object');
 NumFrames = info.Dataspace.Size(3);
