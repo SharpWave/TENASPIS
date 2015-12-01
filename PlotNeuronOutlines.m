@@ -26,6 +26,17 @@ for j = 1:length(varargin)
     if strcmpi(varargin{j},'plot_max_proj')
         max_proj = imread(varargin{j+1});
     end
+    
+    if strcmpi(varargin{j},'cells_to_plot')
+        CTP = varargin{j+1};
+    end
+end
+
+ToPlotCell = zeros(size(clusterlist));
+if (exist('CTP','var'))
+    ToPlotCell(CTP) = 1;
+else
+   ToPlotCell = ones(size(clusterlist)); 
 end
 
 % Plot maximum projection if indicated
@@ -45,7 +56,9 @@ end
 colors = rand(length(clusterlist),3);
 
 for i = 1:length(clusterlist)
-    
+    if(~ToPlotCell(clusterlist(i)))
+        continue;
+    end
     temp = zeros(Xdim,Ydim);
     temp(PixelList{i}) = 1;
     b = bwboundaries(temp);
