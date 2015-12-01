@@ -47,10 +47,6 @@ AI(7).animal = 'GCamp6f_30_2';
 AI(7).init_date = '06_10_2015';
 AI(7).init_sess = 1;
 
-AI(8).animal = 'GCamp6f_45_treadmill';
-AI(8).init_date = '11_02_2015';
-AI(8).init_sess = 1; 
-
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))
         init_date = AI(i).init_date;
