@@ -6,16 +6,17 @@ function [] = MakeICoutput(NumIC)
 % select Obj_1 directory
 dirname = uigetdir;
 cd(dirname);
-
+display('loading data');
 for i = 1:NumIC
     % get the things
     cd(['Obj_',int2str(i)]);
-    load('Obj_1 - IC unmixing image 1.mat');
+    load(['Obj_1 - IC unmixing image ',int2str(i),'.mat']);
     RawIC{i} = Object.Data;
     maxval(i) = max(RawIC{i}(:));
     BinaryIC{i} = RawIC{i} > maxval(i)/2;
-    load('Obj_2 - IC trace1.mat');
+    load(['Obj_2 - IC trace ',int2str(i),'.mat']);
     RawICtrace{i} = Object.Data;
+    cd ..
 end
 
 % apply inclusion thresholds; see Tonegawa % Schnitzer Sun et al PNAS:
@@ -37,18 +38,22 @@ end
 % (if its length exceeded its width by more than two times) were discarded.
 
 GoodIC = zeros(size(NumIC));
-
+display('eliminating bad ICs');
 for i = 1:NumIC
-    if (%major <= 2*minor) 
+    props{i} = regionprops(BinaryIC{i},'all');
+    if (Props{i}.MajorAxisLength <= Props{i}.MinorAxisLength) 
         GoodIC(i) = 1;
+    else
+        display(['Bad IC #',int2str(i)]);
     end
 end
 
 NumGoodIC = sum(GoodIC);
+GoodICidx = find(GoodIC);
 
 % create ROIS
 for i = 1:NumGoodIC
-    ROI{i} = % centroid pixel +- square radius 1/4 the long axis length
+    ROI{i} = 1;% centroid pixel +- square radius 1/4 the long axis length
 end
 
 % update data structures
