@@ -40,8 +40,12 @@ end
 GoodIC = zeros(size(NumIC));
 display('eliminating bad ICs');
 for i = 1:NumIC
-    props{i} = regionprops(BinaryIC{i},'all');
-    if (Props{i}.MajorAxisLength <= Props{i}.MinorAxisLength) 
+    Props{i} = regionprops(BinaryIC{i},'all');
+    if (length(Props{i}) > 1)
+        display(['Bad IC #',int2str(i)]);
+        continue;
+    end
+    if (Props{i}.MajorAxisLength <= Props{i}.MinorAxisLength*2) 
         GoodIC(i) = 1;
     else
         display(['Bad IC #',int2str(i)]);
@@ -50,7 +54,7 @@ end
 
 NumGoodIC = sum(GoodIC);
 GoodICidx = find(GoodIC);
-
+keyboard;
 % create ROIS
 for i = 1:NumGoodIC
     ROI{i} = 1;% centroid pixel +- square radius 1/4 the long axis length
