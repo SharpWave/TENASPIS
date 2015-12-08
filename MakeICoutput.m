@@ -54,12 +54,22 @@ end
 
 NumGoodIC = sum(GoodIC);
 GoodICidx = find(GoodIC);
-keyboard;
+
 % create ROIS
 for i = 1:NumGoodIC
-    ROI{i} = 1;% centroid pixel +- square radius 1/4 the long axis length
+    cidx = GoodICidx(i);
+    sqRad = round(Props{cidx}.MinorAxisLength/4);
+    ROI{i} = zeros(size(BinaryIC{cidx}));
+    xCent = Props{cidx}.Centroid(1);
+    yCent = Props{cidx}.Centroid(2);
+    xMin = max(xCent-sqRad,1);
+    xMax = min(xCent+sqRad,size(BinaryIC{cidx},1));
+    
+    yMin = max(yCent-sqRad,1);
+    yMax = min(yCent+sqRad,size(BinaryIC{cidx},2));
+    ROI{i}(yMin:yMax,xMin:xMax) = 1;% centroid pixel +- square radius 1/4 the long axis length
 end
-
+keyboard;
 % update data structures
 
 % decide where calcium transients exist; see Tonegawa & Schnitzer
