@@ -57,19 +57,24 @@ GoodICidx = find(GoodIC);
 
 % create ROIS
 for i = 1:NumGoodIC
+    display(int2str(i));
     cidx = GoodICidx(i);
     sqRad = round(Props{cidx}.MinorAxisLength/4);
     ROI{i} = zeros(size(BinaryIC{cidx}));
     xCent = Props{cidx}.Centroid(1);
     yCent = Props{cidx}.Centroid(2);
     xMin = max(xCent-sqRad,1);
-    xMax = min(xCent+sqRad,size(BinaryIC{cidx},1));
+    xMax = min(xCent+sqRad,size(BinaryIC{cidx},2));
     
     yMin = max(yCent-sqRad,1);
-    yMax = min(yCent+sqRad,size(BinaryIC{cidx},2));
+    yMax = min(yCent+sqRad,size(BinaryIC{cidx},1));
     ROI{i}(yMin:yMax,xMin:xMax) = 1;% centroid pixel +- square radius 1/4 the long axis length
+    PixelList{i} = find(ROI{i});
+    if (length(PixelList{i}) == 0)
+        keyboard;
+    end
 end
-keyboard;
+
 % update data structures
 
 % decide where calcium transients exist; see Tonegawa & Schnitzer
@@ -77,11 +82,17 @@ keyboard;
 % Calcium traces were calculated at these ROIs for each processed movie,
 % in ImageJ. Calcium events were detected by thresholding (>3 SDs from the ?F/F signal) 
 % at the local maxima of the ?F/F signal.
-
-for i = 1:NumGoodIC
-    % find transients
+[filename,pathname] = uigetfile('*.h5','pick the DF/F file');
+cd(pathname);
+[~,Xdim,Ydim,NumFrames] = loadframe(filename,1);
+for i = 1:NumFrames
+    i/NumFrames
+    [frame,Xdim,Ydim,NumFrames] = loadframe(filename,i);
+    for j = 1:NumGoodIC
+        ROItrace(j,i) = sum(frame(PixelList{j}));% find transients
+    end
 end
-
+keyboard;
 % make a matrix similar to FT
 
 %%%%%%%%%%%%%%%%%%%%%%
