@@ -24,6 +24,7 @@ if nargin < 3
     multiplier = 500; % Default value
 end
 
+save DFDT_multiplier.mat multiplier;
 
 info = h5info(infile,'/Object');
 NumFrames = info.Dataspace.Size(3);
@@ -37,6 +38,9 @@ F0 = h5read(infile,'/Object',[1 1 1 1],[XDim YDim 1 1]);
 h5write(outfile,'/Object',int16(zeros(size(F0))),[1 1 1 1],[XDim YDim 1 1]);
 
 maxDF = 0; minDF = 0; bad_frames = [];
+
+disp('Calculating temporal first derivative...');
+p = ProgressBar(NumFrames);
 for i = 2:NumFrames
   F1 = h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1])*multiplier;
   DF = F1-F0;
@@ -55,11 +59,12 @@ for i = 2:NumFrames
       maxDF = max([maxDF max(DF(:))]); minDF = min([minDF min(DF(:))]); % Calculate max and mins
       bad_frames = [bad_frames i];
   elseif isempty(bad_frames) % If all is ok, continue writing
-      display(['Calculating temporal difference for movie frame ',int2str(i),' out of ',int2str(NumFrames)]);
+      p.progress;
       h5write(outfile,'/Object',int16(DF),[1 1 i 1],[XDim YDim 1 1]);
   end
   
 end
+p.stop;
 
 % Calculate new multiplier to use if necessary
 if ~isempty(bad_frames)

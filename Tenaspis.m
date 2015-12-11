@@ -78,7 +78,7 @@ if (~ManMask)
     init_dir = ChangeDirectory(animal_id,init_date,init_sess);
     init_tif = fullfile(init_dir,'ICmovie_min_proj.tif');
     
-    load(fullfile(MasterDirectory,animal_id,'_initialmask.mat')); % gets mask
+    load(fullfile(MasterDirectory,[animal_id,'_initialmask.mat'])); % gets mask
 %     t_dir = ChangeDirectory(animal_id,sess_date,sess_num);
 %     target_tif = fullfile(t_dir,'\ICmovie_min_proj.tif');
     reg_struct.Animal = animal_id;
@@ -141,4 +141,3 @@ else
 end
 
 end
-
