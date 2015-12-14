@@ -37,6 +37,14 @@ end
 % to one-half the width of the binarized ICs. ROIs that were too elongated
 % (if its length exceeded its width by more than two times) were discarded.
 
+%Correlation of Instantaneous Cell Calcium Event Rate vs. Animal Speed. The
+%instantaneous rate of calcium event of each individual cell was determined
+%from the number of calcium transients that occurred in the 1-s time window
+%place symmetrically around that time bin (time bins sampled at 20 Hz, as
+%stated before). Linear regression analysis was performed on the
+%instantaneous calcium event rate vs. the animal running speed for each
+%individual cell, to yield the distribution of regression slopes (Fig. 3C).
+
 GoodIC = zeros(size(NumIC));
 display('eliminating bad ICs');
 for i = 1:NumIC
@@ -73,7 +81,28 @@ for i = 1:NumGoodIC
     if (length(PixelList{i}) == 0)
         keyboard;
     end
+    ICtrace(i,:) = RawICtrace{cidx};
+    ICFT(i,:) = RawICtrace{cidx} > 3;
+    
 end
+
+ICimage = BinaryIC(GoodICidx);
+RawICimage = RawIC(GoodICidx);
+ICprops = Props(GoodICidx);
+
+NumFrames = size(ICFT,2);
+% make Ca2+ transients per sec traces for each neuron
+for i = 1:NumGoodIC
+    temp = NP_FindSupraThresholdEpochs(ICFT(i,:),eps,0);
+    CaTrStart = temp(:,1);
+    CaTrBool = zeros(1,NumFrames);
+    CaTrBool(CaTrStart) = 1;
+    CaTrRate(i,:) = convtrim(CaTrBool,ones(1,20));
+end
+
+
+save ICoutput.mat ICtrace ICFT ICimage ICprops CaTrRate
+
 
 % update data structures
 
@@ -82,17 +111,17 @@ end
 % Calcium traces were calculated at these ROIs for each processed movie,
 % in ImageJ. Calcium events were detected by thresholding (>3 SDs from the ?F/F signal) 
 % at the local maxima of the ?F/F signal.
-[filename,pathname] = uigetfile('*.h5','pick the DF/F file');
-cd(pathname);
-[~,Xdim,Ydim,NumFrames] = loadframe(filename,1);
-for i = 1:NumFrames
-    i/NumFrames
-    [frame,Xdim,Ydim,NumFrames] = loadframe(filename,i);
-    for j = 1:NumGoodIC
-        ROItrace(j,i) = sum(frame(PixelList{j}));% find transients
-    end
-end
-keyboard;
+% [filename,pathname] = uigetfile('*.h5','pick the DF/F file');
+% cd(pathname);
+% [~,Xdim,Ydim,NumFrames] = loadframe(filename,1);
+% for i = 1:NumFrames
+%     i/NumFrames
+%     [frame,Xdim,Ydim,NumFrames] = loadframe(filename,i);
+%     for j = 1:NumGoodIC
+%         ROItrace(j,i) = sum(frame(PixelList{j}));% find transients
+%     end
+% end
+% keyboard;
 % make a matrix similar to FT
 
 %%%%%%%%%%%%%%%%%%%%%%
