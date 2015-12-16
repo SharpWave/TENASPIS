@@ -22,23 +22,85 @@ for i = 1:length(NeuronImage)
     end
 end
 
-for i = 1:length(NeuronImage)
-    % average frame
-    display(['Calculating Mean Image for Neuron ',int2str(i)]);
-    ActiveF = find(FT(i,:));
-    MeanT{i} = zeros(size(NeuronImage{1}));
-    for j = 1:length(ActiveF)
-        MeanT{i} = MeanT{i}+single(loadframe(moviefile,ActiveF(j)));
+FrameLoaded = zeros(1,NumFrames);
+
+
+NumTimesLoaded = sum(FT)+sum(ICFT);
+[val,idx] = sort(NumTimesLoaded);
+curr = length(idx);
+
+for i = 1:length(idx)
+    framecache{idx(curr)} = single(loadframe(moviefile,idx(curr)));
+    FrameLoaded(idx(curr)) = 1;
+    curr = curr-1;
+    if (mod(i,1500) == 0)
+    [user] = memory;
+    user.MemAvailableAllArrays
+    if (user.MemAvailableAllArrays < 7000000000)
+        break;
     end
-    nAFT(i) = length(ActiveF);
-    if (nAFT(i) > 0)
-    MeanT{i} = MeanT{i}./nAFT(i);
     end
 end
 
-    
-    
+for i = 1:length(NeuronImage)
+    % average frame
+    display(['Calculating Mean Image for Tenaspis Neuron ',int2str(i)]);
+    ActiveF = find(FT(i,:));
+    MeanT{i} = zeros(size(NeuronImage{1}));
+    for j = 1:length(ActiveF)
+        if (FrameLoaded(ActiveF(j)))
+            frame = framecache{ActiveF(j)};
+            %display('cache hit')
+        else
+            frame = single(loadframe(moviefile,ActiveF(j)));
+        end
+%         size(MeanT{i})
+%         size(frame)
+%         if (length(frame) == 0)
+%             keyboard;
+%         end
+        MeanT{i} = MeanT{i}+frame;
+    end
+    nAFT(i) = length(ActiveF);
+    if (nAFT(i) > 0)
+        MeanT{i} = MeanT{i}./nAFT(i);
+    end
 
+    
+end
+
+for i = 1:length(ICimage)
+    % average frame
+    display(['Calculating Mean Image for IC Neuron ',int2str(i)]);
+    ActiveF = find(ICFT(i,:));
+    MeanI{i} = zeros(size(NeuronImage{1}));
+    for j = 1:length(ActiveF)
+        if (FrameLoaded(ActiveF(j)))
+            frame = framecache{ActiveF(j)};
+        else
+            frame = single(loadframe(moviefile,ActiveF(j)));
+
+        end
+        MeanI{i} = MeanI{i}+frame;
+    end
+    nAFI(i) = length(ActiveF);
+    if (nAFI(i) > 0)
+        MeanI{i} = MeanI{i}./nAFI(i);
+    end
+
+end
+
+for i = 1:length(NeuronImage)
+    [mindist(i),ClosestT(i)] = min(Cdist(i,:));
+    MeanDiff{i} = MeanT{i}-MeanI{ClosestT(i)};
+end
+
+save TvP.mat;
+
+figure;
+for i = 1:length(NeuronImage)
+    outl = bwboundaries
+end
 keyboard;
 % for each Tneuron, determine if it has a match (min distance < x)
 % if match present, compare activity
