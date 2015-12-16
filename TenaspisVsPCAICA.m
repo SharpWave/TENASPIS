@@ -36,7 +36,8 @@ for i = 1:length(idx)
     if (mod(i,1500) == 0)
     [user] = memory;
     user.MemAvailableAllArrays
-    if (user.MemAvailableAllArrays < 7000000000)
+    if (user.MemAvailableAllArrays < 10000000000)
+        display([int2str(i),' out of ',int2str(length(idx)),' frames cached']);
         break;
     end
     end
@@ -94,14 +95,18 @@ for i = 1:length(NeuronImage)
     [mindist(i),ClosestT(i)] = min(Cdist(i,:));
     MeanDiff{i} = MeanT{i}-MeanI{ClosestT(i)};
 end
-
+clear framecache;
 save TvP.mat;
 
 figure;
-for i = 1:length(NeuronImage)
-    outl = bwboundaries
-end
 keyboard;
+for i = 1:length(NeuronImage)
+    outT = bwboundaries(NeuronImage{i});
+    outI = bwboundaries(ICimage{ClosestT(i)});
+    
+    subplot(2,3,1);imagesc(MeanT{i});axis equal;colorbar;
+end
+
 % for each Tneuron, determine if it has a match (min distance < x)
 % if match present, compare activity
 
