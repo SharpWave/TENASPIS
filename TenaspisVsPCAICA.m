@@ -131,8 +131,7 @@ for i = 1:length(NeuronImage)
     plot(outI{i}{1}(:,2),outI{i}{1}(:,1),'-k');
     set(gca,'XLim',[Tcent(i,1)-40 Tcent(i,1)+40]); 
     set(gca,'YLim',[Tcent(i,2)-40 Tcent(i,2)+40]);
-    caxis([-2500 2500]);
-    
+        
     title('Ten. - PCAICA','FontSize',8);
     
     subplot(3,3,4:6);
