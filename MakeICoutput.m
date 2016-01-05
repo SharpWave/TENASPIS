@@ -101,7 +101,7 @@ for i = 1:NumGoodIC
 end
 
 
-save ICoutput.mat ICtrace ICFT ICimage ICprops CaTrRate
+save ICoutput.mat ICtrace ICFT ICimage ICprops CaTrRate RawICimage
 
 
 % update data structures
