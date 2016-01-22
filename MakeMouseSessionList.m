@@ -1875,6 +1875,32 @@ MD(i).Notes = 'Need to exclude timestamps in between two sessions';
 MD(i).exclude_frames = 13661:13980;
 
 G45.alternation(2) = i;
+
+%% Start of G45 Continuous-Delay Alternation Data
+G45.alternation2(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_13_2016';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'K:\GCamp6f_45\01_13_2016\1 - alternation\Processed Data';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_14_2016';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'K:\GCamp6f_45\01_14_2016\1 - alternation\Processed Data';
+end
+MD(i).Notes = '';
+
 G45.all(2) = i;
 
 %% Start G41
