@@ -1900,6 +1900,7 @@ if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'K:\GCamp6f_45\01_14_2016\1 - alternation\Processed Data';
 end
 MD(i).Notes = '';
+MD(i).exclude_frames = [12725:15025, 34405:36185, 49425:52245];
 
 G45.all(2) = i;
 
@@ -1956,7 +1957,6 @@ if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G46\08_14_2015\2 - homecage plus 2_25\Working';
 end
 MD(i).Notes = '';
-MD(i).exclude_frames = [12725:15025, 34405:36185, 49425:52245];
 
 G46.all(2) = i;
 
