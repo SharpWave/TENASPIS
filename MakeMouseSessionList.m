@@ -1060,11 +1060,36 @@ if (strcmp(userstr,'Nat_laptop'))
 end
 MD(i).Notes = '';
 
+
+
+%% Start G45
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 1;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\1 - triangle\Working';
+end
+MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 2;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a';
+if (strcmp(userstr,'Nat_laptop'))
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\2 - triangle\Working';
+end
+MD(i).Notes = '';
+
 %% Compile session_ref
 
 session_ref.G31_2env = G31_2env;
 session_ref.G30_alternation = G30_alternation; 
-
 session_ref.G44_homecage = G44_homecage;
 
 %%
