@@ -1,6 +1,4 @@
-function [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(args);
-% [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(args);
-%
+function [] = imagesc_gray(A)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,42 +16,11 @@ function [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = Pars
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-animal_id = [];
-sess_date = [];
-sess_num = [];
-no_movie_process = 0;
-ManMask = 0;
-no_blobs = 0;
+%imagesc_gray - simple function to run imagesc with colormap(gray) and
+%colorbar enabled
 
-for i = 1:length(args)
-    if (mod(i,2) == 0)
-        continue;
-    end
-    if (strcmp(args{i},'animal_id'))
-        animal_id = args{i+1};
-    end
-    
-    if (strcmp(args{i},'sess_date'))
-        sess_date = args{i+1};
-    end
-    
-    if (strcmp(args{i},'sess_num'))
-        sess_num = args{i+1};
-    end
-    
-    if (strcmp(args{i},'no_movie_process'))
-        no_movie_process = args{i+1};
-    end
-    
-    if (strcmp(args{i},'manual_mask'))
-        ManMask = args{i+1};
-    end
-    
-    if (strcmp(args{i},'no_blobs'))
-        no_blobs = args{i+1};
-    end
-    
-end
+imagesc(A); colormap(gca,gray); colorbar
+
 
 end
 

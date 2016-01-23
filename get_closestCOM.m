@@ -1,6 +1,6 @@
-function [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(args);
-% [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = ParseTenaspisInput(args);
-%
+function [ refpoints ] = get_closestCOM( xyvec,COM )
+% [ refpoints ] = get_closestCOM( xyvec,COM )
+%get_closestCOM Get closest COMs of cells to use
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,41 +18,19 @@ function [animal_id,sess_date,sess_num,no_movie_process,ManMask,no_blobs] = Pars
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-animal_id = [];
-sess_date = [];
-sess_num = [];
-no_movie_process = 0;
-ManMask = 0;
-no_blobs = 0;
+% INPUTS
+% xyvec:    n x 2 vector of points with xvalues in column 1 and y values in column 2
+% COM:      1 x k cell of 1 x 2 vectors , NOTE: [ yCOM xCOM] because MATLAB
+%           is dumb like that
+% OUTPUTS
+% refpoints: centers of mass of selected cells, NOTE: [xCOM yCOM}
 
-for i = 1:length(args)
-    if (mod(i,2) == 0)
-        continue;
-    end
-    if (strcmp(args{i},'animal_id'))
-        animal_id = args{i+1};
-    end
-    
-    if (strcmp(args{i},'sess_date'))
-        sess_date = args{i+1};
-    end
-    
-    if (strcmp(args{i},'sess_num'))
-        sess_num = args{i+1};
-    end
-    
-    if (strcmp(args{i},'no_movie_process'))
-        no_movie_process = args{i+1};
-    end
-    
-    if (strcmp(args{i},'manual_mask'))
-        ManMask = args{i+1};
-    end
-    
-    if (strcmp(args{i},'no_blobs'))
-        no_blobs = args{i+1};
-    end
-    
+xvec_use = [xyvec(:,2) xyvec(:,1)]; % Swap x and y input values to make up for MATLAB bug
+refpoints = zeros(size(xvec_use));
+for j = 1: size(xvec_use,1)
+    temp = cellfun(@(a) sqrt((xvec_use(j,:)-a)*(xvec_use(j,:)-a)'), COM);
+    refpoints(j,1) = COM{find(min(temp) == temp)}(2);
+    refpoints(j,2) = COM{find(min(temp) == temp)}(1);
 end
 
 end
