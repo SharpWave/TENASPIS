@@ -12,7 +12,7 @@ i = 1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '09_29_2014';
 MD(i).Session = 1;
-MD(i).Env = 'Square Track';
+MD(i).Env = 'Square Track';% 
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_31\09_29_2014\working';
