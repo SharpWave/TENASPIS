@@ -14,7 +14,7 @@ i = 1;
 MD(i).Animal = 'GCamp6f_31';
 MD(i).Date = '09_29_2014';
 MD(i).Session = 1;
-MD(i).Env = 'Square Track';
+MD(i).Env = 'Square Track';% 
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_31\09_29_2014\working';
@@ -1900,6 +1900,7 @@ if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\01_14_2016\1 - alternation\Processed Data';
 end
 MD(i).Notes = '';
+MD(i).exclude_frames = [12725:15025, 34405:36185, 49425:52245];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_altpilot';
