@@ -1887,6 +1887,8 @@ MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\01_13_2016\1 - alternation\Processed Data';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_13_2016\Working';
 end
 MD(i).Notes = '';
 
@@ -1898,6 +1900,8 @@ MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\01_14_2016\1 - alternation\Processed Data';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_14_2016\Working';
 end
 MD(i).Notes = '';
 MD(i).exclude_frames = [12725:15025, 34405:36185, 49425:52245];
@@ -1913,8 +1917,7 @@ if (strcmp(userstr,'mouseimage'))
 end
 MD(i).Notes = '';
 
-
-
+G45.alternation2(2) = i;
 G45.all(2) = i;
 
 %% Start G41
