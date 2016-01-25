@@ -1886,7 +1886,7 @@ MD(i).Session = 1;
 MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
-    MD(i).Location = 'K:\GCamp6f_45\01_13_2016\1 - alternation\Processed Data';
+    MD(i).Location = 'M:\GCamp6f_45\01_13_2016\1 - alternation\Processed Data';
 end
 MD(i).Notes = '';
 
@@ -1897,9 +1897,22 @@ MD(i).Session = 1;
 MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
-    MD(i).Location = 'K:\GCamp6f_45\01_14_2016\1 - alternation\Processed Data';
+    MD(i).Location = 'M:\GCamp6f_45\01_14_2016\1 - alternation\Processed Data';
 end
 MD(i).Notes = '';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 1;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\01_18_2016\1 - alternation\Processed DAta';
+end
+MD(i).Notes = '';
+
+
 
 G45.all(2) = i;
 
