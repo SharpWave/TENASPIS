@@ -1939,9 +1939,34 @@ MD(i).Session = 1;
 MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
-    MD(i).Location = 'M:\GCamp6f_45\01_18_2016\1 - alternation\Processed DAta';
+    MD(i).Location = 'M:\GCamp6f_45\01_18_2016\1 - alternation\Processed Data';
 end
 MD(i).Notes = '';
+MD(i).exclude_frames = [10971:11371, 35211:35441, 45871:46175];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 2;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\01_18_2016\2 - continuous only\Processed Data';
+end
+MD(i).Notes = 'Continuous Data Only';
+MD(i).exclude_frames = [10971:35441, 45871:46175];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 3;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\01_18_2016\3 - delay only\Processed Data';
+end
+MD(i).Notes = 'Delay Data Only';
+MD(i).exclude_frames = [1:11371, 35211:46175];
 
 G45.alternation_delay_pilot(2) = i;
 G45.all(2) = i;
