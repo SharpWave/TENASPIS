@@ -1906,6 +1906,8 @@ end
 MD(i).Notes = '';
 MD(i).exclude_frames = [12725:15025, 34405:36185, 49425:52245];
 
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
 MD(i).Date = '01_14_2016';
 MD(i).Session = 2;
 MD(i).Env = 'alternation';
