@@ -1942,6 +1942,8 @@ MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\01_18_2016\1 - alternation\Processed Data';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\1 - alternation combined\Working';
 end
 MD(i).Notes = '';
 MD(i).exclude_frames = [10971:11371, 35211:35441, 45871:46175];
@@ -1954,6 +1956,8 @@ MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\01_18_2016\2 - continuous only\Processed Data';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\2 - continuous only\Working';
 end
 MD(i).Notes = 'Continuous Data Only';
 MD(i).exclude_frames = [10971:35441, 45871:46175];
@@ -1966,9 +1970,23 @@ MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\01_18_2016\3 - delay only\Processed Data';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\3 - delay only\Working';
 end
 MD(i).Notes = 'Delay Data Only';
 MD(i).exclude_frames = [1:11371, 35211:46175];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 4;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\4 - continuous only half\Working';
+end
+MD(i).Notes = 'Continuous Data Only - 1st half of each block only';
+MD(i).exclude_frames = [5500:35441, 40656:46165];
 
 G45.alternation_delay_pilot(2) = i;
 G45.all(2) = i;
