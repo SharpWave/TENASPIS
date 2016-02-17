@@ -5,7 +5,6 @@ function [MeanBlobs] = MakeMeanBlobs(c,cTon,GoodTrs, varargin)
 
 
 suppress_output = 1;
-progress_bar = 0;
 
 for j = 1:length(varargin)
     if strcmpi(varargin{j},'suppress_output')

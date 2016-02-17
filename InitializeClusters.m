@@ -1,4 +1,4 @@
-function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
+function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, min_trans_length)
 % [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,6 +18,10 @@ function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydi
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% If min_trans_length is not specified, set it as default (5).
+if ~exist('min_trans_length','var')
+    min_trans_length = 5;
+end
 
 % create segment averages
 parfor i = 1:NumSegments
@@ -48,7 +52,14 @@ c = (1:length(frames))';
 
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents GoodTrs -v7.3;
+save_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
+if min_trans_length == 5
+    save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents GoodTrs min_trans_length -v7.3;
+elseif min_trans_length ~= 5
+     save(save_name,'c', 'Xdim', 'Ydim', 'PixelList', 'Xcent', 'Ycent', 'frames',...
+         'meanareas', 'meanX', 'meanY', 'NumFrames', 'NumEvents', 'GoodTrs', 'min_trans_length', '-v7.3');
+end
+    
 
 end
 

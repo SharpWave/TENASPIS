@@ -1,5 +1,8 @@
-function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
-% PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
+function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
+%PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
+% varargin: 'plot_max_proj',max_proj_tif_path plots the clusters over the
+% maximum projection
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -19,6 +22,29 @@ function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure1 = figure;
 
+for j = 1:length(varargin)
+    if strcmpi(varargin{j},'plot_max_proj')
+        max_proj = imread(varargin{j+1});
+    end
+    
+    if strcmpi(varargin{j},'cells_to_plot')
+        CTP = varargin{j+1};
+    end
+end
+
+ToPlotCell = zeros(size(clusterlist));
+if (exist('CTP','var'))
+    ToPlotCell(CTP) = 1;
+else
+   ToPlotCell = ones(size(clusterlist)); 
+end
+
+% Plot maximum projection if indicated
+if exist('max_proj','var')
+    imagesc_gray(max_proj);
+    hold on
+end
+
 if (~exist('clusterlist'))
     clusterlist = 1:length(PixelList)
 end
@@ -30,7 +56,9 @@ end
 colors = rand(length(clusterlist),3);
 
 for i = 1:length(clusterlist)
-    
+    if(~ToPlotCell(clusterlist(i)))
+        continue;
+    end
     temp = zeros(Xdim,Ydim);
     temp(PixelList{i}) = 1;
     b = bwboundaries(temp);

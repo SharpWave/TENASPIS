@@ -32,7 +32,7 @@ artifactthresh = 3000;
 minsolid = 0.9;
 ccprops = [];
 
-initframe = frame;
+initframe = double(frame);
 
 if (toplot) 
     figure;
@@ -93,15 +93,15 @@ figure
 end
 newlist = [];
 currnewList = 0;
-for i = CCquestionidx
+for i = 1:length(CCquestionidx)
     % we want to try to increase the threshold and do a bwconncomp on only
     % the pixels that were part of this cc
     % if this creates any cc's that are below the neuron size threshold, we eliminate those pixels and continue to raise the threshold
     % repeating this until all pixels have been eliminated or there are no
     % more cc's
-    
+    qidx = CCquestionidx(i);
     temp = zeros(cc.ImageSize(1),cc.ImageSize(2));
-    temp(cc.PixelIdxList{i}) = initframe(cc.PixelIdxList{i});
+    temp(cc.PixelIdxList{qidx}) = initframe(cc.PixelIdxList{qidx});
     tempthresh = thresh + threshinc;
     keepgoing = 1;
     while(keepgoing)
