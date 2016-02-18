@@ -1,4 +1,4 @@
-function [frame,cc,ccprops,initareas] = SegmentFrame(frame,toplot,mask,thresh)
+function [frame,cc,ccprops,initareas,initsolids] = SegmentFrame(frame,toplot,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +62,8 @@ for i = 1:length(cc.PixelIdxList)
 end
 
 
+
+
 colormap gray;
 if (toplot)
     subplot(1,numpan,3);
@@ -81,6 +83,10 @@ for i = 1:length(cc.PixelIdxList)
     segsolid(i) = rp(i).Solidity;
 end
 
+initsolids = [];
+for i = 1:length(cc.PixelIdxList)
+    initsolids = [initsolids,rp(i).Solidity];
+end
 
 
 CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
@@ -189,7 +195,7 @@ newcc.NumObjects = numlists;
 newcc.ImageSize = cc.ImageSize;
 newcc.Connectivity = 4;
 cc = newcc;
-ccprops = regionprops(cc);
+ccprops = regionprops(cc,'all');
 
 % add in centroids
 
