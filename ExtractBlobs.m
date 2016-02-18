@@ -36,6 +36,7 @@ end
 oldmask = mask;
 
 initareas = [];
+initsolids = [];
 
 parfor i = 1:NumFrames
     
@@ -48,14 +49,14 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
     
-    [~,cc{i},ccprops{i},initareas_tmp] = SegmentFrame(tempFrame,0,mask,thresh);
+    [~,cc{i},ccprops{i},initareas_tmp,initsolids_tmp] = SegmentFrame(tempFrame,0,mask,thresh);
     initareas = [initareas,initareas_tmp];
-
+    initsolids = [initsolids,initsolids_tmp];
     display(['Detecting Blobs for frame ',int2str(i)]);
 
 end
 
-save CC.mat cc ccprops thresh mask initareas;
+save CC.mat cc ccprops thresh mask initareas initsolids;
 
 
 

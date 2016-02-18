@@ -27,7 +27,7 @@ end
 minpixels = 40;
 numpan = 3;
 threshinc = 10;
-neuronthresh = 300;
+neuronthresh = 285;
 artifactthresh = 3000;
 minsolid = 0.9;
 ccprops = [];
@@ -57,6 +57,8 @@ cc = bwconncomp(threshframe,4);
 % rgb_label = label2rgb(labeled,@spring,'c','shuffle');
 
 initareas = [];
+initsolids = [];
+
 for i = 1:length(cc.PixelIdxList)
     initareas = [initareas,length(cc.PixelIdxList{i})];
 end
@@ -83,7 +85,7 @@ for i = 1:length(cc.PixelIdxList)
     segsolid(i) = rp(i).Solidity;
 end
 
-initsolids = [];
+
 for i = 1:length(cc.PixelIdxList)
     initsolids = [initsolids,rp(i).Solidity];
 end
