@@ -3,17 +3,17 @@ function [] = ExtractBlobs(file,todebug,thresh,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
-% 
+%
 %     Tenaspis is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
 %     the Free Software Foundation, either version 3 of the License, or
 %     (at your option) any later version.
-% 
+%
 %     Tenaspis is distributed in the hope that it will be useful,
 %     but WITHOUT ANY WARRANTY; without even the implied warranty of
 %     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %     GNU General Public License for more details.
-% 
+%
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,15 +28,10 @@ NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-
-
 if (nargin < 4)
     mask = ones(Xdim,Ydim);
 end
 oldmask = mask;
-
-initareas = [];
-initsolids = [];
 
 parfor i = 1:NumFrames
     
@@ -49,15 +44,14 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
     
-    [~,cc{i},ccprops{i},initareas_tmp,initsolids_tmp] = SegmentFrame(tempFrame,0,mask,thresh);
-    initareas = [initareas,initareas_tmp];
-    initsolids = [initsolids,initsolids_tmp];
+    [~,cc{i},ccprops{i},origprops{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    
     display(['Detecting Blobs for frame ',int2str(i)]);
-
+    
 end
 
-save CC.mat cc ccprops thresh mask initareas initsolids;
+save CC.mat cc ccprops thresh mask origprops;
 
 
 
-            
+

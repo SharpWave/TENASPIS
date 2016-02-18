@@ -1,4 +1,4 @@
-function [frame,cc,ccprops,initareas,initsolids] = SegmentFrame(frame,toplot,mask,thresh)
+function [frame,cc,ccprops,origprops] = SegmentFrame(frame,toplot,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,43 +53,20 @@ if (toplot)
 end
 
 cc = bwconncomp(threshframe,4);
-% labeled = labelmatrix(cc);
-% rgb_label = label2rgb(labeled,@spring,'c','shuffle');
-
-initareas = [];
-initsolids = [];
-
-for i = 1:length(cc.PixelIdxList)
-    initareas = [initareas,length(cc.PixelIdxList{i})];
-end
-
-
-
-
-colormap gray;
-if (toplot)
-    subplot(1,numpan,3);
-    hist(frame(:),100);title('raw frame histogram');
-end
+rp = regionprops(cc,'all');
+origprops = rp;
 
 if (length(cc.PixelIdxList) == 0)
     frame = zeros(cc.ImageSize(1),cc.ImageSize(2));
     return;
 end
 
-rp = regionprops(cc,'all');
 
 % ok, now sort the cc's by their sizes
 for i = 1:length(cc.PixelIdxList)
     segsize(i) = rp(i).Area;
     segsolid(i) = rp(i).Solidity;
 end
-
-
-for i = 1:length(cc.PixelIdxList)
-    initsolids = [initsolids,rp(i).Solidity];
-end
-
 
 CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
 CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < artifactthresh));
