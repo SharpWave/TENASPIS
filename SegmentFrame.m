@@ -26,9 +26,9 @@ end
 
 minpixels = 40;
 numpan = 3;
-threshinc = 10;
-neuronthresh = 285;
-artifactthresh = 3000;
+threshinc = 0.005;%10
+neuronthresh = 175;%300
+artifactthresh = 30000;
 minsolid = 0.9;
 ccprops = [];
 

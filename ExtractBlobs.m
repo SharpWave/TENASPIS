@@ -1,4 +1,4 @@
-function [] = ExtractBlobs(file,todebug,thresh,mask)
+function [] = ExtractBlobs(file,todebug,thresh,mask,autothresh)
 % [] = ExtractBlobs(file,todebug,thresh,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,6 +23,10 @@ function [] = ExtractBlobs(file,todebug,thresh,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
+if ~exist('autothresh','var')
+    autothresh = 0;
+end
+
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
@@ -36,6 +40,9 @@ oldmask = mask;
 parfor i = 1:NumFrames
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    if (autothresh > 0)
+        thresh = mean(tempFrame(:))+autothresh*std(tempFrame(:));
+    end
     
     if (i <= 20)
         % Don't detect neurons on first 20 frames
