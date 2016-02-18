@@ -1,4 +1,4 @@
-function [meanframe,stdframe] = moviestats(file)
+function [meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
 %[meanframe,stdframe] = moviestats(file)
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
@@ -23,6 +23,12 @@ for i = 1:NumFrames
     frame = double(loadframe(file,i));
     meanframe(i) = mean(frame(:));
     stdframe(i) = std(frame(:));
+    
+    if (nargout > 2)
+        pos = find(frame(:) > 0);
+        meanframepos(i) = mean(frame(pos));
+        stdframepos(i) = std(frame(pos));
+    end
 end
 
 
