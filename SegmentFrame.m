@@ -53,7 +53,7 @@ if (toplot)
 end
 
 cc = bwconncomp(threshframe,4);
-rp = regionprops(cc,'all');
+rp = regionprops(cc,'Area','Centroid','Eccentricity','EquivDiameter','MajorAxisLength','MinorAxisLength','Orientation','PixelIdxList','Solidity');
 origprops = rp;
 
 if (length(cc.PixelIdxList) == 0)
@@ -174,7 +174,7 @@ newcc.NumObjects = numlists;
 newcc.ImageSize = cc.ImageSize;
 newcc.Connectivity = 4;
 cc = newcc;
-ccprops = regionprops(cc,'all');
+ccprops = regionprops(cc,'Area','Centroid','Eccentricity','EquivDiameter','MajorAxisLength','MinorAxisLength','Orientation','PixelIdxList','Solidity');
 
 % add in centroids
 
