@@ -38,7 +38,7 @@ end
 oldmask = mask;
 origprops = [];
 
-parfor i = 1:3000
+parfor i = 1:NumFrames
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     if (autothresh > 0)

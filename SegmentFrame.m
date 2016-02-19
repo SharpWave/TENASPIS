@@ -101,7 +101,7 @@ for i = 1:length(CCquestionidx)
         
         
         bb = bwconncomp(threshframe,4);
-        rp = regionprops(bb,'all');        
+        rp = regionprops(bb,'Area','Solidity');        
         if (length(bb.PixelIdxList) > 0)
             % there were blobs, check if any of them are under
             % thresh
