@@ -24,7 +24,7 @@ if (nargin < 2)
     toplot = 0;
 end
 
-minpixels = 40;
+minpixels = 120;
 numpan = 3;
 threshinc = 0.005;%10
 neuronthresh = 175;%300
@@ -33,6 +33,7 @@ minsolid = 0.9;
 ccprops = [];
 
 initframe = double(frame);
+minval = min(initframe(:));
 
 if (toplot) 
     figure;
@@ -70,7 +71,7 @@ end
 
 CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
 CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < artifactthresh));
-CCbadidx = find(segsize > artifactthresh);
+CCbadidx = find(segsize >= artifactthresh);
 
 % the cc's in CCquestionidx might be multiple cells
 if (toplot)
@@ -85,7 +86,7 @@ for i = 1:length(CCquestionidx)
     % repeating this until all pixels have been eliminated or there are no
     % more cc's
     qidx = CCquestionidx(i);
-    temp = zeros(cc.ImageSize(1),cc.ImageSize(2));
+    temp = zeros(cc.ImageSize(1),cc.ImageSize(2))+minval;
     temp(cc.PixelIdxList{qidx}) = initframe(cc.PixelIdxList{qidx});
     tempthresh = thresh + threshinc;
     keepgoing = 1;
@@ -135,7 +136,7 @@ for i = 1:length(CCquestionidx)
             else
                 % still over-threshold blobs left
                 oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
-                temp = zeros(cc.ImageSize(1),cc.ImageSize(2));
+                temp = zeros(cc.ImageSize(1),cc.ImageSize(2))+ minval;
                 for j = 1:length(oldn)
                     temp(bb.PixelIdxList{oldn(j)}) = initframe(bb.PixelIdxList{oldn(j)});
                 end
