@@ -6,6 +6,7 @@ load('ProcOut.mat','NeuronPixels','NeuronImage','NumNeurons','NumFrames','FT');
 load ExpTransients.mat;
 load NormTraces.mat;
 load pPeak.mat;
+load expPosTr.mat;
 
 
 t = (1:NumFrames)/20;
@@ -25,11 +26,11 @@ end
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
-plot(zscore(trace(NeuronID,:)));hold on;plot(FT(NeuronID,:)*5);axis tight;plot(PoPosTr(NeuronID,:)*5,'-r','LineWidth',3);
+plot(zscore(trace(NeuronID,:)));hold on;plot(FT(NeuronID,:)*5);axis tight;plot(expPosTr(NeuronID,:)*5,'-r','LineWidth',3);
 
 for i = 1:length(buddies)
     a(i+1) = subplot(length(buddies)+1,1,i+1);
-    plot(zscore(trace(buddies(i),:)));hold on;plot(FT(buddies(i),:)*5);title(int2str(buddies(i)));
+    plot(zscore(trace(buddies(i),:)));hold on;plot(expPosTr(buddies(i),:)*5,'-r');title(int2str(buddies(i)));
     axis tight;
 end
  linkaxes(a,'x');
