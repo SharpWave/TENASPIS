@@ -32,9 +32,11 @@ for i = 1:NumNeurons
     trace(i,1:11) = 0;
     trace(i,end-11:end) = 0;
     difftrace(i,2:NumFrames) = diff(trace(i,:));
+    difftrace(i,1:11) = 0;
+    difftrace(i,end-11:end) = 0;
 end
 
 
 save NormTraces.mat trace difftrace;
 
-end
+end 

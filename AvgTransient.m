@@ -40,7 +40,7 @@ end
 AvgN = AvgN./length(SegChain);
 
 if (max(AvgN(:)) == 1)
-    AvgN = AvgN > 0.9;
+    AvgN = AvgN > 0.67;
     PixelList = find(AvgN);
         
     b = bwconncomp(AvgN,4);
