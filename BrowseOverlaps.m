@@ -1,9 +1,12 @@
-function [ output_args ] = BrowseOverlaps(traces,moviefile,NeuronID,cx )
+function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx )
 close all;
 
 % load basic shit
 load('ProcOut.mat','NeuronPixels','NeuronImage','NumNeurons','NumFrames','FT');
 load ExpTransients.mat;
+load NormTraces.mat;
+load pPeak.mat;
+
 
 t = (1:NumFrames)/20;
 
@@ -22,11 +25,11 @@ end
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
-plot(zscore(traces(NeuronID,:)));hold on;plot(FT(NeuronID,:)*5);axis tight;plot(PoPosTr(NeuronID,:)*5,'-r','LineWidth',3);
+plot(zscore(trace(NeuronID,:)));hold on;plot(FT(NeuronID,:)*5);axis tight;plot(PoPosTr(NeuronID,:)*5,'-r','LineWidth',3);
 
 for i = 1:length(buddies)
     a(i+1) = subplot(length(buddies)+1,1,i+1);
-    plot(zscore(traces(buddies(i),:)));hold on;plot(FT(buddies(i),:)*5);title(int2str(buddies(i)));
+    plot(zscore(trace(buddies(i),:)));hold on;plot(FT(buddies(i),:)*5);title(int2str(buddies(i)));
     axis tight;
 end
  linkaxes(a,'x');
@@ -39,7 +42,12 @@ end
  [mx,my] = ginput(1);
  f = loadframe(moviefile,mx);
  figure(2);set(gcf,'Position',[1130         337         773         600]);
- imagesc(f);caxis(cx);
+ 
+ [~,maxidx] = max(f(NeuronPixels{NeuronID}));
+ peakpeak = pPeak{NeuronID}(maxidx);
+ peakrank = mRank{NeuronID}(maxidx);
+ 
+ imagesc(f);caxis(cx);title(['peak=',num2str(peakpeak),' rank=',num2str(peakrank)]);
  hold on
  [b] = bwboundaries(NeuronImage{NeuronID});
  b = b{1};
