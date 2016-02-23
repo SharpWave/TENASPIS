@@ -58,7 +58,7 @@ parfor i = 1:NumFrames
     
 end
 
-save CC.mat cc ccprops thresh mask origprops;
+save Blobs.mat cc ccprops thresh mask origprops;
 
 
 
