@@ -19,7 +19,7 @@ function [DistTrav,Ac,Xc,Yc] = TransientStats(SegChain)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For each detected calcium transient, track evolution of area and centroid
 
-load CC.mat;
+load Blobs.mat;
 
 
 for i = 1:length(SegChain)

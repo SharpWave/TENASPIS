@@ -43,7 +43,7 @@ end
 
 %%
 
-load CC.mat
+load Blobs.mat
 
 if (nargin < 2)
     todebug = 0;
@@ -134,12 +134,14 @@ SegChain = SegChain(goodlen);
 NumSegments = length(SegChain);
 
 
-if min_trans_length == 5
-    save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim min_trans_length max_trans_dist
-else
-    save_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
-    save(save_name, 'NumSegments', 'SegChain', 'cc', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist')
-end
+% if min_trans_length == 5
+%     save Segments.mat NumSegments SegChain cc NumFrames Xdim Ydim min_trans_length max_trans_dist
+% else
+%     save_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
+%     save(save_name, 'NumSegments', 'SegChain', 'cc', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist')
+% end
+save('Transients.mat', 'NumSegments', 'SegChain', 'cc', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist')
+
 
 
 end

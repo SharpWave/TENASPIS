@@ -52,13 +52,14 @@ VersionString = '0.9.0.0-beta';
 MinPixelDist = 0.1:1:5
 
 close all;
-if min_trans_length == 5
-    load_name = 'Segments.mat';
-    initclu_name = 'InitClu.mat';
-else
-    load_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
-    initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
-end
+% if min_trans_length == 5
+%     load_name = 'Segments.mat';
+%     initclu_name = 'InitClu.mat';
+% else
+%     load_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
+%     initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
+% end
+load_name = Transients.mat;
 load(load_name) %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
 if (exist(initclu_name,'file') == 0)
@@ -121,13 +122,10 @@ end
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
-if min_trans_length == 5
-    save ProcOut.mat NeuronImage NeuronPixels NumNeurons c Xdim Ydim FT NumFrames NumTransients MinPixelDist DistUsed InitPixelList VersionString GoodTrs nToc cTon min_trans_length -v7.3;
-else
-    save_name = ['Procout_minlength_' num2str(min_trans_length) '.mat'];
+    save_name = 'ProcOut.mat';
     save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
         'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'GoodTrs', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
-end
+
 
 end
 

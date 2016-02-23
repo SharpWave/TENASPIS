@@ -1,4 +1,4 @@
-function [PixelList,Xcent,Ycent,MeanArea,frames] = AvgTransient(SegChain,cc,Xdim,Ydim)
+function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc,Xdim,Ydim)
 % [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
@@ -40,7 +40,7 @@ end
 AvgN = AvgN./length(SegChain);
 
 if (max(AvgN(:)) == 1)
-    AvgN = AvgN > 0.67;
+    AvgN = AvgN > 0.95;
     PixelList = find(AvgN);
         
     b = bwconncomp(AvgN,4);
