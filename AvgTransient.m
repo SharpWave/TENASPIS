@@ -40,10 +40,11 @@ end
 AvgN = AvgN./length(SegChain);
 
 if (max(AvgN(:)) == 1)
-    AvgN = AvgN > 0.95;
-    PixelList = find(AvgN);
+    BoolN = AvgN > 0.95;
+    
+    PixelList = find(BoolN);
         
-    b = bwconncomp(AvgN,4);
+    b = bwconncomp(BoolN,4);
     bstat = regionprops(b,'all');
     
     Xcent = bstat(1).Centroid(1);

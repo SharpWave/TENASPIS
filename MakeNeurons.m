@@ -59,9 +59,9 @@ close all;
 %     load_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
 %     initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
 % end
-load_name = Transients.mat;
+load_name = 'Transients.mat';
 load(load_name) %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
-
+initclu_name = 'InitClu.mat';
 if (exist(initclu_name,'file') == 0)
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, min_trans_length);
 end
