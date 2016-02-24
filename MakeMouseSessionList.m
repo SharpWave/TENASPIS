@@ -1851,6 +1851,8 @@ end
 MD(i).Notes = 'Delay blocks only';
 MD(i).exclude_frames = [1:15025, 34405:52245];
 
+G45.alternation_delay_pilot_good(1) = i+1;
+
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_altpilot';
 MD(i).Date = '01_18_2016';
@@ -1900,12 +1902,48 @@ MD(i).Session = 4;
 MD(i).Env = 'alternation';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\4 - continuous only half\Working';
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\4 - 1st block continuous vs 1st block delay\Working';
 end
-MD(i).Notes = 'Continuous Data Only - 1st half of each block only';
-MD(i).exclude_frames = [5500:35441, 40656:46165];
+MD(i).Notes = '1st continuous block and 1st delay block only';
+MD(i).exclude_frames = [10971:11371, 35211:46175];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 5;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\5 - 1st continuous block only\Working';
+end
+MD(i).Notes = '1st continuous block only';
+MD(i).exclude_frames = [10971:46175];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 6;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\6 - 2nd block continuous vs 1st block delay\Working';
+end
+MD(i).Notes = '2nd continuous block and 1st delay block only';
+MD(i).exclude_frames = [1:11371, 35211:35441, 45871:46175];
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 6;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\7 - 2nd continuous block only\Working';
+end
+MD(i).Notes = '2nd continuous block only';
+MD(i).exclude_frames = [1:35441, 45871:46175];
 
 G45.alternation_delay_pilot(2) = i;
+G45.alternation_delay_pilot_good(2) = i;
 G45.all(2) = i;
 
 %% Start G41
