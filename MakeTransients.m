@@ -130,7 +130,7 @@ gooddist = find(DistTrav < max_trans_dist);
 
 goodseg = intersect(goodlen,gooddist);
 
-SegChain = SegChain(goodlen);
+SegChain = SegChain(goodseg);
 NumSegments = length(SegChain);
 
 
