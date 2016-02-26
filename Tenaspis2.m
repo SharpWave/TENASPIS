@@ -9,7 +9,7 @@ MakeTransients('DFF.h5',0,'min_trans_length',3);
 !del InitClu.mat
 MakeNeurons();
 % get traces
-NormalTraces('SLPDF.h5')
+NormalTraces('SLPDF.h5');
 ExpandTransients(0);
 Calc_pPeak;
 AddPoTransients;
