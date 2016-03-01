@@ -113,7 +113,25 @@ for i = CluToMerge'
         BitMap1(PixelList{cidx}) = 1;
         BitMap2(PixelList{i}) = 1;
         
+        
+   
         b = bwconncomp(BitMap1.*BitMap2,4);
+        b1 = bwconncomp(BitMap1);
+        b2 = bwconncomp(BitMap2);
+        
+        r1 = regionprops(b1,'MinorAxisLength')
+        r2 = regionprops(b2,'MinorAxisLength')
+        CluDist(i,cidx)
+        if (r1.MinorAxisLength/2 < CluDist(i,cidx))
+            display('Distance too high relative to minor axis length');
+            continue;
+        end
+        
+        if (r2.MinorAxisLength/2 < CluDist(i,cidx))
+            display('Distance too high relative to minor axis length');
+            continue;
+        end
+        
         if (b.NumObjects > 1)
             display('Merge would create neuron with discontiguous pixels; merge aborted');
             continue;
