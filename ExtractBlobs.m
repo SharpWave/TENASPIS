@@ -39,6 +39,7 @@ oldmask = mask;
 origprops = [];
 
 parfor i = 1:NumFrames
+    display(['Detecting Blobs for frame ',int2str(i)]);
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     if (autothresh > 0)
@@ -52,13 +53,13 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [~,cc{i},ccprops{i},~] = SegmentFrame(tempFrame,0,mask,thresh);
+    [~,cc{i},ccprops{i},~,PeakPix{i}] = SegmentFrame(tempFrame,0,mask,thresh);
     
-    display(['Detecting Blobs for frame ',int2str(i)]);
+    
     
 end
 
-save Blobs.mat cc ccprops thresh mask origprops;
+save Blobs.mat cc ccprops thresh mask origprops PeakPix;
 
 
 

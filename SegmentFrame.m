@@ -1,4 +1,4 @@
-function [frame,cc,ccprops,origprops] = SegmentFrame(frame,toplot,mask,thresh)
+function [frame,cc,ccprops,origprops,PeakPix] = SegmentFrame(frame,toplot,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,6 +31,7 @@ neuronthresh = 120;%300
 artifactthresh = 30000;
 minsolid = 0.9;
 ccprops = [];
+PeakPix = [];
 
 initframe = double(frame);
 minval = min(initframe(:));
@@ -59,6 +60,8 @@ origprops = rp;
 
 if (length(cc.PixelIdxList) == 0)
     frame = zeros(cc.ImageSize(1),cc.ImageSize(2));
+    PeakPix = [];
+    display('hit this');
     return;
 end
 
@@ -184,7 +187,14 @@ for i = 1:length(cc.PixelIdxList)
   frame(cc.PixelIdxList{i}) = 1;
 end
 
+% get peak pixel
+for i = 1:length(cc.PixelIdxList)
+    [~,idx] = max(initframe(cc.PixelIdxList{i}));
+    [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
 end
+
+end
+
 
             
             
