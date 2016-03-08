@@ -24,10 +24,10 @@ if (nargin < 2)
     toplot = 0;
 end
 
-minpixels = 120;%80
+minpixels = 80;%80
 numpan = 3;
 threshinc = 0.005;%10
-neuronthresh = 180;%300
+neuronthresh = 120;%300
 artifactthresh = 30000;
 minsolid = 0.9;
 ccprops = [];
