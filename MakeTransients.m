@@ -43,7 +43,7 @@ end
 
 %%
 
-load Blobs.mat
+load ('Blobs.mat','cc');
 
 if (nargin < 2)
     todebug = 0;
@@ -60,8 +60,8 @@ SegList = zeros(NumFrames,100);
 
 for i = 2:NumFrames
     i
-    stats = regionprops(cc{i},'all');
-    oldstats = regionprops(cc{i-1},'all');
+    stats = regionprops(cc{i},'WeightedCentroid');
+    oldstats = regionprops(cc{i-1},'WeightedCentroid');
     for j = 1:cc{i}.NumObjects
         if (todebug)
             % plot frame and neuron outline of neuron in question

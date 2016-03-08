@@ -26,10 +26,10 @@ if (length(oldstats) == 0)
 end
 
 % calculate distance
-p1 = currstat.Centroid;
+p1 = currstat.WeightedCentroid;
 
 for i = 1:length(oldstats)
-    p2 = oldstats(i).Centroid;
+    p2 = oldstats(i).WeightedCentroid;
     d(i) = pdist([p1;p2],'euclidean');
 end
 
