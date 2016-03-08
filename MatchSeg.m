@@ -1,4 +1,4 @@
-function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList)
+function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList,distthresh)
 % [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,16 +26,16 @@ if (length(oldstats) == 0)
 end
 
 % calculate distance
-p1 = currstat.WeightedCentroid;
+p1 = currstat;
 
 for i = 1:length(oldstats)
-    p2 = oldstats(i).WeightedCentroid;
+    p2 = oldstats{i};
     d(i) = pdist([p1;p2],'euclidean');
 end
 
 [mindist,minidx] = min(d);
 
-if (mindist < currstat.MinorAxisLength)
+if (mindist < distthresh)
     % we'll consider this a match
     MatchingSeg = SegList(minidx);
 else

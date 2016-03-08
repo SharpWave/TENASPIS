@@ -43,7 +43,7 @@ end
 
 %%
 
-load ('Blobs.mat','cc');
+load ('Blobs.mat','cc','PeakPix');
 
 if (nargin < 2)
     todebug = 0;
@@ -60,8 +60,11 @@ SegList = zeros(NumFrames,100);
 
 for i = 2:NumFrames
     i
-    stats = regionprops(cc{i},'WeightedCentroid');
-    oldstats = regionprops(cc{i-1},'WeightedCentroid');
+     stats = regionprops(cc{i},'MinorAxisLength');
+     
+%     oldstats = regionprops(cc{i-1},'WeightedCentroid');
+    Peaks = PeakPix{i};
+    OldPeaks = PeakPix{i-1};
     for j = 1:cc{i}.NumObjects
         if (todebug)
             % plot frame and neuron outline of neuron in question
@@ -91,9 +94,9 @@ for i = 2:NumFrames
                 plot(x,y,'-g');
             end
         end
-        
+
         % find match
-        [MatchingSeg,idx] = MatchSeg(stats(j),oldstats,SegList(i-1,:));
+        [MatchingSeg,idx] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),stats(j).MinorAxisLength);
         if (MatchingSeg == 0)
             % no match found, make a new segment
             NumSegments = NumSegments+1;
@@ -132,6 +135,7 @@ goodseg = intersect(goodlen,gooddist);
 
 SegChain = SegChain(goodseg);
 NumSegments = length(SegChain);
+
 
 
 % if min_trans_length == 5

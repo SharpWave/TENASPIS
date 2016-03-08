@@ -1,4 +1,4 @@
-function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, min_trans_length)
+function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length)
 % [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,7 +26,7 @@ end
 % create segment averages
 parfor i = 1:NumSegments
     display(['initializing transient # ',int2str(i)]);
-    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i},AvgN{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim);
+    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i},AvgN{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
     length(SegChain{i})
     
     GoodTr(i) = 1;

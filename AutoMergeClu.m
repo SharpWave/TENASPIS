@@ -122,12 +122,12 @@ for i = CluToMerge'
         r1 = regionprops(b1,'MinorAxisLength')
         r2 = regionprops(b2,'MinorAxisLength')
         CluDist(i,cidx)
-        if (r1.MinorAxisLength/2 < CluDist(i,cidx))
+        if (r1.MinorAxisLength < CluDist(i,cidx))
             display('Distance too high relative to minor axis length');
             continue;
         end
         
-        if (r2.MinorAxisLength/2 < CluDist(i,cidx))
+        if (r2.MinorAxisLength < CluDist(i,cidx))
             display('Distance too high relative to minor axis length');
             continue;
         end

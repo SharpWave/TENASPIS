@@ -1,4 +1,4 @@
-function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc,Xdim,Ydim)
+function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc,Xdim,Ydim,PeakPix)
 % [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
@@ -36,8 +36,13 @@ for i = 1:length(SegChain)
     temp = zeros(Xdim,Ydim);
     temp(ts(ObjNum).PixelIdxList) = 1;
     AvgN = AvgN + temp;
+    Xcent = Xcent+PeakPix{FrameNum}{ObjNum}(1);
+    Ycent = Ycent+PeakPix{FrameNum}{ObjNum}(2);
 end
+
 AvgN = AvgN./length(SegChain);
+Xcent = Xcent/length(SegChain);
+Ycent = Ycent/length(SegChain);
 
 if (max(AvgN(:)) == 1)
     BoolN = AvgN > 0.95;
@@ -45,10 +50,10 @@ if (max(AvgN(:)) == 1)
     PixelList = find(BoolN);
         
     b = bwconncomp(BoolN,4);
-    bstat = regionprops(b,'all');
+    bstat = regionprops(b,'Area');
     
-    Xcent = bstat(1).Centroid(1);
-    Ycent = bstat(1).Centroid(2);
+%     Xcent = bstat(1).Centroid(1);
+%     Ycent = bstat(1).Centroid(2);
     MeanArea = bstat(1).Area;
 else
     PixelList = [];
