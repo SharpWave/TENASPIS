@@ -98,10 +98,10 @@ for i = CluToMerge'
 %              continue;  
 %         end
 %         
-%         if ((targrat < 0.6) && (currrat < 0.6))
-%             display('LOW MUTUAL OVERLAP, aborting merge');
-%             continue;
-%         end
+        if ((targrat < 0.3) && (currrat < 0.3))
+            display('LOW MUTUAL OVERLAP, aborting merge');
+            continue;
+        end
 
         if (commremains < 0.1)
             display('too much reduction in mutual area, aborting merge');
@@ -129,6 +129,16 @@ for i = CluToMerge'
         
         if (r2.MinorAxisLength < CluDist(i,cidx))
             display('Distance too high relative to minor axis length');
+            continue;
+        end
+        
+        if (length(union(currpix,targpix)) > 180)
+            display('merge would create an area too big; merge aborted');
+            continue;
+        end
+        
+        if (length(intersect(currpix,targpix)) < 40)
+            display('merge would create an area too small; merge aborted');
             continue;
         end
         
