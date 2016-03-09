@@ -115,7 +115,7 @@ for i = CluToMerge'
         
         
    
-        b = bwconncomp(BitMap1.*BitMap2,4);
+        b = bwconncomp((BitMap1+BitMap2) > 0,4);
         b1 = bwconncomp(BitMap1);
         b2 = bwconncomp(BitMap2);
         

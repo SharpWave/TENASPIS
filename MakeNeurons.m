@@ -22,17 +22,17 @@ function [] = MakeNeurons(varargin)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
-% 
+%
 %     Tenaspis is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
 %     the Free Software Foundation, either version 3 of the License, or
 %     (at your option) any later version.
-% 
+%
 %     Tenaspis is distributed in the hope that it will be useful,
 %     but WITHOUT ANY WARRANTY; without even the implied warranty of
 %     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %     GNU General Public License for more details.
-% 
+%
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,9 +41,9 @@ function [] = MakeNeurons(varargin)
 min_trans_length = 5; % default: minimum number of frames a transient must last in order to be included
 
 for j = 1:length(varargin)
-   if strcmpi(varargin{j},'min_trans_length')
-       min_trans_length = varargin{j+1};
-   end
+    if strcmpi(varargin{j},'min_trans_length')
+        min_trans_length = varargin{j+1};
+    end
 end
 
 %%
@@ -82,7 +82,7 @@ for i = 1:length(MinPixelDist)
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
-
+        
         if (NumClu(NumIterations) == oldNumCT)
             break;
         else
@@ -117,15 +117,20 @@ try % Error catching clause: larger files are failing here for some reason
     PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon)
     figure;
     plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
+    figure
+    for i = 1:NumNeurons
+        b = bwboundaries(NeuronImage{i});
+        plot(b{1}(:,2),b{1}(:,1));hold on
+    end
 catch
     disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
 end
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
-    save_name = 'ProcOut.mat';
-    save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-        'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'GoodTrs', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+save_name = 'ProcOut.mat';
+save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
+    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'GoodTrs', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
 
 
 end
