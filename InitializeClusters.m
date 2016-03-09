@@ -26,7 +26,7 @@ end
 % create segment averages
 parfor i = 1:NumSegments
     display(['initializing transient # ',int2str(i)]);
-    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i},AvgN{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
+    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
     length(SegChain{i})
     
     GoodTr(i) = 1;
@@ -52,7 +52,7 @@ c = (1:length(frames))';
 
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents GoodTrs min_trans_length AvgN -v7.3;
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents GoodTrs min_trans_length -v7.3;
 
     
 
