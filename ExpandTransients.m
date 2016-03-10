@@ -54,7 +54,7 @@ end
 PrePoPosTr = zeros(NumNeurons,NumFrames);
 for i = 1:NumNeurons
     tr = trace(i,:);
-    PrePoPosTr(i,1:NumFrames) = (tr >= MinPeak(i)*0.8).*(PosTr(i,:) == 0);
+    PrePoPosTr(i,1:NumFrames) = (tr >= MinPeak(i)).*(PosTr(i,:) == 0);
 end
 
 for i = 1:NumNeurons

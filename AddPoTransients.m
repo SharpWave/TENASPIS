@@ -3,9 +3,18 @@ function [ output_args ] = AddPoTransients()
 %   Detailed explanation goes here
 load pPeak.mat;
 load ExpTransients.mat;
-load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels');
+load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage');
 
 expPosTr = PosTr;
+
+for i = 1:length(NeuronImage)
+    b = bwconncomp(NeuronImage{i});
+    r = regionprops(b,'Centroid');
+    Cents(i,1:2) = r.Centroid;
+end
+keyboard;
+temp = pdist(Cents);
+CentDist = squareform(temp);
 
 display('checking buddies');
 for j = 1:NumNeurons
@@ -14,10 +23,10 @@ for j = 1:NumNeurons
         if (i == j)
             continue;
         end
-        
-        if (length(intersect(NeuronPixels{i},NeuronPixels{j})) > 0)
+        if (CentDist(i,j) <= 25)
             buddies{j} = [buddies{j},i];
         end
+
     end
 end
 
@@ -52,6 +61,6 @@ for i = 1:NumNeurons
         
     end
 end
-    
-    save expPosTr.mat expPosTr;
-    
+
+save expPosTr.mat expPosTr;
+

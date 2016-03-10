@@ -117,11 +117,7 @@ try % Error catching clause: larger files are failing here for some reason
     PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon)
     figure;
     plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-    figure
-    for i = 1:NumNeurons
-        b = bwboundaries(NeuronImage{i});
-        plot(b{1}(:,2),b{1}(:,1));hold on
-    end
+
 catch
     disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
 end
