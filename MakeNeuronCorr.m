@@ -1,7 +1,7 @@
 function [ output_args ] = MakeNeuronCorr(trace,frames,PixelList)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-
+close all;
 radius = 50;
 
 [~,Xdim,Ydim,NumFrames] = loadframe('DFF.h5',1);
@@ -23,17 +23,18 @@ for i = 1:length(frames)
     i/length(frames)
     frame = loadframe('SLPDF.h5',frames(i));
     DataMat(:,:,i) = frame(xMin:xMax,yMin:yMax);
-
-
+    
+    
 end
 
 figure;imagesc(sum(DataMat,3));
-for i = 1:101
-for j = 1:101
-rval(i,j) = corr(squeeze(DataMat(i,j,:)),trace(frames)');
-end
+
+for i = 1:size(DataMat,1)
+    for j = 1:size(DataMat,2)
+        rval(i,j) = corr(squeeze(DataMat(i,j,:)),trace(frames)');
+    end
 end
 figure;imagesc(rval);caxis([0 1]);colorbar;
 
-keyboard;
+
 
