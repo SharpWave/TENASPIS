@@ -12,7 +12,7 @@ for i = 1:length(NeuronImage)
     r = regionprops(b,'Centroid');
     Cents(i,1:2) = r.Centroid;
 end
-keyboard;
+
 temp = pdist(Cents);
 CentDist = squareform(temp);
 
@@ -23,7 +23,7 @@ for j = 1:NumNeurons
         if (i == j)
             continue;
         end
-        if (CentDist(i,j) <= 25)
+        if (CentDist(i,j) <= 15)
             buddies{j} = [buddies{j},i];
         end
 
