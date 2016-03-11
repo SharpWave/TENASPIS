@@ -57,10 +57,7 @@ for i = CluToMerge'
     if(ismember(i,ValidClu) == 0)
         continue;
     end
-    BitMap = logical(zeros(Xdim,Ydim));
-    BitMap(PixelList{i}) = 1;
-    tempb = bwconncomp(BitMap,4);
-    tempp = regionprops(tempb(1),'all');
+
     maxdist = RadiusMultiplier; 
     
     [sortdist,sortidx] = sort(CluDist(i,:));
@@ -74,87 +71,10 @@ for i = CluToMerge'
     for k = 1:length(nearclust)
         cidx = nearclust(k); % cidx is cluster number of close transient
         targpix = PixelList{cidx};
-        
-        NumCurrClust = length(find(c == i))
-        NumTargClust = length(find(c == cidx))
-        
-        comm = length(intersect(targpix,currpix));
-        targrat = comm/length(targpix),
-        currrat = comm/length(currpix),
-        
-        if (NumCurrClust > NumTargClust)
-            denom = length(currpix);
-        else
-            denom = length(targpix);
-        end
-        
-        lowrat = min([targrat,currrat]);
-        highrat = max([targrat,currrat]);
-        
-        commremains = comm/denom
-        
-%         if (highrat < 0.33333)
-%              display('low OVERLAP, aborting merge');
-%              continue;  
-%         end
-%         
-        if ((targrat < 0.3) && (currrat < 0.3))
-            display('LOW MUTUAL OVERLAP, aborting merge');
-            continue;
-        end
+        length(currpix),length(targpix),length(union(currpix,targpix)),
 
-        if (commremains < 0.1)
-            display('too much reduction in mutual area, aborting merge');
-            continue;
-        end
-        
-        BitMap1 = logical(zeros(Xdim,Ydim));
-        BitMap2 = logical(zeros(Xdim,Ydim));
-        BitMap1(PixelList{cidx}) = 1;
-        BitMap2(PixelList{i}) = 1;
-        
-        
-   
-        b = bwconncomp((BitMap1+BitMap2) > 0,4);
-        b1 = bwconncomp(BitMap1);
-        b2 = bwconncomp(BitMap2);
-        
-        r1 = regionprops(b1,'MinorAxisLength')
-        r2 = regionprops(b2,'MinorAxisLength')
-        CluDist(i,cidx)
-        if (r1.MinorAxisLength < CluDist(i,cidx))
-            display('Distance too high relative to minor axis length');
-            continue;
-        end
-        
-        if (r2.MinorAxisLength < CluDist(i,cidx))
-            display('Distance too high relative to minor axis length');
-            continue;
-        end
-        
-        if (length(union(currpix,targpix)) > 150)
-            display('merge would create an area too big; merge aborted');
-            continue;
-        end
-        
-        if (length(intersect(currpix,targpix)) < 40)
-            display('merge would create an area too small; merge aborted');
-            continue;
-        end
-        
-        if (b.NumObjects > 1)
-            display('Merge would create neuron with discontiguous pixels; merge aborted');
-            continue;
-        end
-        if (b.NumObjects == 0)
-            display('somehow no common pixels in merge');
-            continue;
-        end
-        
-        %% check for overlapping frames
-        if(length(intersect(frames{i},frames{cidx}) > 0))
-            display('overlapping frames, this should never happen');
-            keyboard;
+        if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
+            display('Merge would inflate cluster too much');
             continue;
         end
         

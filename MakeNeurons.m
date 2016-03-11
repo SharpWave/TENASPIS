@@ -49,7 +49,7 @@ end
 %%
 
 VersionString = '0.9.0.0-beta';
-MinPixelDist = [0.1,0.2,0.5,0.75,1,1.5,2,2.5,3,3.5,4,4.5,5];
+MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4];
 
 close all;
 % if min_trans_length == 5
