@@ -1,4 +1,4 @@
-function [frame,cc,ccprops,origprops,PeakPix] = SegmentFrame(frame,toplot,mask,thresh)
+function [frame,cc,PeakPix] = SegmentFrame(frame,toplot,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,toplot,mask,thresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -43,10 +43,7 @@ end
 
 badpix = find(mask == 0);
 
-
 threshframe = frame > thresh;
-
-
 
 threshframe = bwareaopen(threshframe,minpixels,4); % remove smaller than minpixels
 
@@ -55,8 +52,7 @@ if (toplot)
 end
 
 cc = bwconncomp(threshframe,4);
-rp = regionprops(cc,'Area','Centroid','Eccentricity','EquivDiameter','MajorAxisLength','MinorAxisLength','Orientation','PixelIdxList','Solidity');
-origprops = rp;
+rp = regionprops(cc,'Area','Solidity');
 
 if (length(cc.PixelIdxList) == 0)
     frame = zeros(cc.ImageSize(1),cc.ImageSize(2));
@@ -178,7 +174,6 @@ newcc.NumObjects = numlists;
 newcc.ImageSize = cc.ImageSize;
 newcc.Connectivity = 4;
 cc = newcc;
-ccprops = regionprops(cc,'Area','Centroid','Eccentricity','EquivDiameter','MajorAxisLength','MinorAxisLength','Orientation','PixelIdxList','Solidity');
 
 % add in centroids
 

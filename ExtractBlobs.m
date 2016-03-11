@@ -53,13 +53,13 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [~,cc{i},ccprops{i},~,PeakPix{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    [~,cc{i},PeakPix{i}] = SegmentFrame(tempFrame,0,mask,thresh);
     
     
     
 end
 
-save Blobs.mat cc ccprops thresh mask origprops PeakPix;
+save Blobs.mat cc thresh mask PeakPix;
 
 
 
