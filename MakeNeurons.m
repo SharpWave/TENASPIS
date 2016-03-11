@@ -49,7 +49,7 @@ end
 %%
 
 VersionString = '0.9.0.0-beta';
-MinPixelDist = [0.01,0.05,0.1,0.2,0.5,0.75,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5];
+MinPixelDist = [0.01,0.05,0.1,0.2,0.5,0.75,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7];
 
 close all;
 % if min_trans_length == 5
@@ -60,7 +60,7 @@ close all;
 %     initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
 % end
 load_name = 'Transients.mat';
-load('Blobs.mat','PeakPix');
+load('Blobs.mat','PeakPix','cc');
 load(load_name) %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 initclu_name = 'InitClu.mat';
 if (exist(initclu_name,'file') == 0)

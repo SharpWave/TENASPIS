@@ -49,7 +49,7 @@ for i = ClustersToUpdate'
         tempY = tempY+Ycent(cluidx(j));
     end
     temp = temp./length(cluidx);
-    newpixels = find(temp > 0.5);
+    newpixels = find(temp > ((1/length(cluidx))-eps));
     BitMap = logical(zeros(Xdim,Ydim));
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
