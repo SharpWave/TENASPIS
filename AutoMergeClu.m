@@ -132,7 +132,7 @@ for i = CluToMerge'
             continue;
         end
         
-        if (length(union(currpix,targpix)) > 180)
+        if (length(union(currpix,targpix)) > 150)
             display('merge would create an area too big; merge aborted');
             continue;
         end
