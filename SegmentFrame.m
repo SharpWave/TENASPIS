@@ -28,7 +28,6 @@ minpixels = 80;%80
 numpan = 3;
 threshinc = 0.005;%10
 neuronthresh = 120;%300
-artifactthresh = 30000;
 minsolid = 0.9;
 ccprops = [];
 PeakPix = [];
@@ -69,7 +68,7 @@ for i = 1:length(cc.PixelIdxList)
 end
 
 CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
-CCquestionidx = intersect(union(find(segsize > neuronthresh),find(segsolid < minsolid)),find(segsize < artifactthresh));
+CCquestionidx = union(find(segsize > neuronthresh),find(segsolid < minsolid));
 CCbadidx = find(segsize >= artifactthresh);
 
 % the cc's in CCquestionidx might be multiple cells

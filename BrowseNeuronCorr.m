@@ -26,14 +26,17 @@ for i = 1:NumNeurons
     end
     
 end
+
 buddies
-    [b] = bwboundaries(NeuronImage{NeuronID});
-    nb = b{1};
-    
-    
+[b] = bwboundaries(NeuronImage{NeuronID});
+nb = b{1};
 
 figure(1);
-subplot(2,2,1);imagesc((rval{NeuronID}.^2).*(pval{NeuronID} < 0.05));caxis([0 1]);hold on;
+subplot(2,2,1);
+corrimg = (rval{NeuronID}).*(pval{NeuronID} < 0.05);
+corrimg = corrimg > 0.85;
+
+imagesc(corrimg);caxis([0 1]);hold on;
 plot(nb(:,2)-Cents(NeuronID,1)+51,nb(:,1)-Cents(NeuronID,2)+51,'g');hold off;
 subplot(2,2,2);imagesc(AvgN{NeuronID});hold on;plot(nb(:,2)-Cents(NeuronID,1)+51,nb(:,1)-Cents(NeuronID,2)+51,'g');hold off;
 subplot(2,2,3:4);plot(trace(NeuronID,:));hold on;plot(FT(NeuronID,:));hold off;axis tight;
@@ -47,18 +50,19 @@ while(1)
     
     
     
-    imagesc(f);caxis(cx);
+    %imagesc(f);caxis(cx);
+    contour(f,100);
     hold on
     [b] = bwboundaries(NeuronImage{NeuronID});
     b = b{1};
     plot(b(:,2),b(:,1),'g');
     for j = 1:length(buddies)
-        [b] = bwboundaries(NeuronImage{buddies(j)});colormap gray;
+        [b] = bwboundaries(NeuronImage{buddies(j)});%colormap gray;
         b = b{1};
         plot(b(:,2),b(:,1),'r');
     end
     hold off;
-
+    
 end
 end
 
