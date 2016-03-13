@@ -53,7 +53,7 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [~,cc{i},PeakPix{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,0,mask,thresh);
     
     
     

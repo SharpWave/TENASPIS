@@ -49,25 +49,20 @@ end
 %%
 
 VersionString = '0.9.0.0-beta';
-MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4];
+MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4.5];
 
 close all;
-% if min_trans_length == 5
-%     load_name = 'Segments.mat';
-%     initclu_name = 'InitClu.mat';
-% else
-%     load_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
-%     initclu_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
-% end
-load_name = 'Transients.mat';
-load('Blobs.mat','PeakPix','cc');
-load(load_name) %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
-initclu_name = 'InitClu.mat';
-if (exist(initclu_name,'file') == 0)
-    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
-end
 
-load(initclu_name); %c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumEvents cToSeg
+load('Blobs.mat','PeakPix','cc');
+load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
+
+goodseg = find(TransientLength >= min_trans_length);
+SegChain = SegChain(goodseg);
+NumSegments = length(SegChain);
+
+InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
+
+load InitClu.mat;
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
@@ -126,7 +121,7 @@ end
 
 save_name = 'ProcOut.mat';
 save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'GoodTrs', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
 
 
 end

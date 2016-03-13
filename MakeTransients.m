@@ -123,19 +123,16 @@ for i = 2:NumFrames
 end
 
 for i = 1:length(SegChain)
-    ns(i) = length(SegChain{i});
+    TransientLength(i) = length(SegChain{i});
 end
 
 DistTrav = TransientStats(SegChain);
 
-goodlen = find(ns >= min_trans_length);
 gooddist = find(DistTrav < max_trans_dist);
 
-goodseg = intersect(goodlen,gooddist);
-
-SegChain = SegChain(goodseg);
+SegChain = SegChain(gooddist);
 NumSegments = length(SegChain);
-
+TransientLength = TransientLength(gooddist);
 
 
 % if min_trans_length == 5
@@ -144,7 +141,7 @@ NumSegments = length(SegChain);
 %     save_name = ['Segments_minlength_' num2str(min_trans_length) '.mat'];
 %     save(save_name, 'NumSegments', 'SegChain', 'cc', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist')
 % end
-save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist')
+save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist','TransientLength')
 
 
 

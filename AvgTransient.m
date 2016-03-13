@@ -40,12 +40,12 @@ for i = 1:length(SegChain)
     Ycent = Ycent+PeakPix{FrameNum}{ObjNum}(2);
 end
 
-AvgN = AvgN./length(SegChain);
+AvgN = single(AvgN./length(SegChain));
 Xcent = Xcent/length(SegChain);
 Ycent = Ycent/length(SegChain);
 
 if (max(AvgN(:)) == 1)
-    BoolN = AvgN > 0.95;
+    BoolN = AvgN > 0.5;
     
     PixelList = find(BoolN);
         
