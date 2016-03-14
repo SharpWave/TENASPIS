@@ -73,7 +73,7 @@ for i = CluToMerge'
         targpix = PixelList{cidx};
         length(currpix),length(targpix),length(union(currpix,targpix)),
         
-        if (length(intersect(currpix,targpix)) < (length(union(currpix,targpix))-length(intersect(currpix,targpix))))
+        if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
             display('Merge would inflate cluster too much');
             continue;
         end

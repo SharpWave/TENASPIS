@@ -4,17 +4,18 @@ function [ output_args ] = Tenaspis2()
 
 load manualmask;
 
-ExtractBlobs('DFF.h5',0,0,neuronmask,0.3);
-MakeTransients('DFF.h5',0,'min_trans_length',3);
+ExtractBlobs('DFF.h5',0,0,neuronmask,1);
+MakeTransients('DFF.h5',0);
 !del InitClu.mat
-MakeNeurons();
+MakeNeurons('min_trans_length',12);
 % get traces
 NormalTraces('SLPDF.h5');
 ExpandTransients(0);
 Calc_pPeak;
 AddPoTransients;
 DetectGoodSlopes;
-
+CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename','PlaceMaps.mat','half_window',0,'minspeed',3);
+PFstats;
 
 end
 

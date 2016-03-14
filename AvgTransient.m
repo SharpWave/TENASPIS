@@ -45,7 +45,7 @@ Xcent = Xcent/length(SegChain);
 Ycent = Ycent/length(SegChain);
 
 if (max(AvgN(:)) == 1)
-    BoolN = AvgN > 0.5;
+    BoolN = AvgN > 0.8;
     
     PixelList = find(BoolN);
         
