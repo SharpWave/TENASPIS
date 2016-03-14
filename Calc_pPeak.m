@@ -1,7 +1,10 @@
 function Calc_pPeak()
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
-load('ProcOut.mat','NeuronPixels','NumNeurons','FT','NumFrames');
+load('ProcOut.mat','NeuronPixels','NumNeurons','NumFrames');
+load ExpTransients.mat;
+
+FT = PosTr;
 
 pPeak = cell(1,NumNeurons); 
 mRank = cell(1,NumNeurons);
@@ -15,7 +18,9 @@ p = ProgressBar(NumFrames);
 for i = 1:NumFrames
     %i
     ActiveN = find(FT(:,i));
-    frame = loadframe('DFF.h5',i);
+
+    frame = loadframe('SLPDF.h5',i);
+
     for j = 1:length(ActiveN)
         idx = ActiveN(j);
         [~,maxid] = max(frame(NeuronPixels{idx}));
@@ -41,7 +46,8 @@ disp('Rank scoring...');
 p = ProgressBar(NumFrames); 
 for i = 1:NumFrames
     %display(['rankscoring ',int2str(i)]);
-    frame = loadframe('DFF.h5',i);
+    frame = loadframe('SLPDF.h5',i);
+    
     for j = 1:NumNeurons
       [~,srtidx] = sort(frame(NeuronPixels{j}));
       tempRank = [];

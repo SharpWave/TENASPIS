@@ -8,6 +8,8 @@ load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage');
 expPosTr = PosTr;
 
 Cents = zeros(length(NeuronImage),2); 
+rankthresh = 0.67;
+
 for i = 1:length(NeuronImage)
     b = bwconncomp(NeuronImage{i});
     r = regionprops(b,'Centroid');
@@ -51,15 +53,22 @@ for i = 1:NumNeurons
         end
         
         % no buddy spike, check peak
-        f = loadframe('DFF.h5',PoTrPeakIdx{i}(j));
+        f = loadframe('SLPDF.h5',PoTrPeakIdx{i}(j));
         [~,maxidx] = max(f(NeuronPixels{i}));
         peakpeak = pPeak{i}(maxidx);
         peakrank = mRank{i}(maxidx);
-        if (peakpeak > 0) && (peakrank > 0.7)
-            %display('new transient!');
+
+        if (peakpeak > 0) && (peakrank > rankthresh)
+            display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
         else
-            %display('pixels off kilter');
+            display('pixels off kilter');
+            if (peakpeak == 0)
+                display('this pixel is never the peak');
+            end
+            if (peakrank < rankthresh)
+                display('mean rank of the peak not high enough');
+            end
         end
         
     end

@@ -40,7 +40,9 @@ NumSegments = 0;
 SegChain = [];
 SegList = zeros(NumFrames,100);
 
+
 p = ProgressBar(NumFrames); 
+
 for i = 2:NumFrames
     stats = regionprops(cc{i},'MinorAxisLength');
     Peaks = PeakPix{i};
@@ -59,12 +61,12 @@ for i = 2:NumFrames
             SegList(i,j) = MatchingSeg;
         end
     end
-    
+
     p.progress;
 end
 p.stop;
 
-TransientLength = zeros(1,length(SegChain)); 
+TransientLength = zeros(1,length(SegChain));
 for i = 1:length(SegChain)
     TransientLength(i) = length(SegChain{i});
 end
