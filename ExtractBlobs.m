@@ -1,4 +1,4 @@
-function [] = ExtractBlobs(file,todebug,thresh,mask,autothresh)
+function [] = ExtractBlobs(file,thresh,mask,autothresh)
 % [] = ExtractBlobs(file,todebug,thresh,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,7 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,0,mask,thresh);
+    [~,cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);
     
     
     
