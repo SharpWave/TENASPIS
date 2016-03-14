@@ -1,5 +1,5 @@
 function [] = ExtractBlobs(file,thresh,mask,autothresh)
-% [] = ExtractBlobs(file,todebug,thresh,mask)
+% [] = ExtractBlobs(file,thresh,mask,autothresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -32,16 +32,16 @@ NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-if (nargin < 4)
+if (~exist('mask','var'))
     mask = ones(Xdim,Ydim);
 end
 oldmask = mask;
-origprops = [];
 
 parfor i = 1:NumFrames
     display(['Detecting Blobs for frame ',int2str(i)]);
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    
     if (autothresh > 0)
         thresh = mean(tempFrame(:))+autothresh*std(tempFrame(:));
     end
@@ -53,10 +53,7 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);
-    
-    
-    
+    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);   
 end
 
 save Blobs.mat cc thresh mask PeakPix;
