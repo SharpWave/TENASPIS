@@ -13,6 +13,9 @@ TrPeakIdx = cell(1,NumNeurons);         PoTrPeakIdx = TrPeakIdx;
 MinPeak = zeros(1,NumNeurons);          PoMinPeak = MinPeak; 
 MaxPeak = zeros(1,NumNeurons);          PoMaxPeak = MaxPeak; 
 AvgLength = zeros(1,NumNeurons);        PoAvgLength = AvgLength; 
+
+disp('Expanding transients part 1...'); 
+p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     %i
     tr = trace(i,:);
@@ -54,7 +57,10 @@ for i = 1:NumNeurons
     MinPeak(i) = min(TrPeakVal{i});
     MaxPeak(i) = max(TrPeakVal{i});
     AvgLength(i) = mean(TrLength{i});
+    
+    p.progress;
 end
+p.stop;
 
 
 
@@ -65,6 +71,8 @@ for i = 1:NumNeurons
     PrePoPosTr(i,1:NumFrames) = (tr >= MinPeak(i)*0.25).*(PosTr(i,:) == 0);
 end
 
+disp('Expanding transients part 1...'); 
+p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     %i
     tr = trace(i,:);
@@ -106,10 +114,13 @@ for i = 1:NumNeurons
     PoMinPeak(i) = min(TrPeakVal{i});
     PoMaxPeak(i) = max(TrPeakVal{i});
     PoAvgLength(i) = mean(TrLength{i});
+    
+    p.progress;
 end
+p.stop;
 
  save ExpTransients.mat MaxPeak MinPeak PosTr PoPosTr PrePoPosTr PoTrPeakIdx PoNumTr;   
-if (Todebug)
+if Todebug
     for i = 1:NumNeurons
         plot(FT(i,:)*5);hold on;plot(PosTr(i,:)*5);plot(trace(i,:));plot(zscore(difftrace(i,:)));plot(PoPosTr(i,:),'-r','LineWidth',2);hold off;set(gca,'YLim',[-10 10]);pause;
     end

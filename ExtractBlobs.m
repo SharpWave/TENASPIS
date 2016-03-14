@@ -39,6 +39,7 @@ oldmask = mask;
 
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
+p = ProgressBar(NumFrames); 
 parfor i = 1:NumFrames
     %display(['Detecting Blobs for frame ',int2str(i)]);
     
@@ -56,7 +57,10 @@ parfor i = 1:NumFrames
     end
 
     [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);   
+    
+    p.progress;
 end
+p.stop;
 
 save Blobs.mat cc thresh mask PeakPix;
 

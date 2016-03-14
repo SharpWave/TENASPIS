@@ -1,4 +1,4 @@
-function [ output_args ] = AddPoTransients()
+function AddPoTransients()
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 load pPeak.mat;
@@ -7,6 +7,7 @@ load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage');
 
 expPosTr = PosTr;
 
+Cents = zeros(length(NeuronImage),2); 
 for i = 1:length(NeuronImage)
     b = bwconncomp(NeuronImage{i});
     r = regionprops(b,'Centroid');
@@ -30,20 +31,22 @@ for j = 1:NumNeurons
     end
 end
 
+disp('Adding potential transients...');
+p = ProgressBar(NumNeurons); 
 for i = 1:NumNeurons
-    display(['Neuron ',int2str(i)]);
+    %display(['Neuron ',int2str(i)]);
     PoEpochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps);
     for j = 1:size(PoEpochs,1)
         % check for buddies
         buddyspike = 0;
         for k = 1:length(buddies{i})
-            if (sum(expPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
+            if sum(expPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0
                 buddyspike = 1;
             end
         end
         
-        if (buddyspike)
-            display('buddy spike');
+        if buddyspike
+            %display('buddy spike');
             continue;
         end
         
@@ -52,15 +55,20 @@ for i = 1:NumNeurons
         [~,maxidx] = max(f(NeuronPixels{i}));
         peakpeak = pPeak{i}(maxidx);
         peakrank = mRank{i}(maxidx);
-        if ((peakpeak > 0) & (peakrank > 0.7))
-            display('new transient!');
+        if (peakpeak > 0) && (peakrank > 0.7)
+            %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
         else
-            display('pixels off kilter');
+            %display('pixels off kilter');
         end
         
     end
+    
+    p.progress;
 end
+p.stop; 
 
 save expPosTr.mat expPosTr;
+
+end
 
