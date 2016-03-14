@@ -9,15 +9,15 @@ for i = 1:NumNeurons
 end
 
 for i = 1:NumFrames
-    i
+    %i
     ActiveN = find(FT(:,i));
     [frame] = loadframe('DFF.h5',i);
     for j = 1:length(ActiveN)
         idx = ActiveN(j);
-        [val,maxid] = max(frame(NeuronPixels{idx}));
+        [~,maxid] = max(frame(NeuronPixels{idx}));
         pPeak{idx}(maxid) = pPeak{idx}(maxid) + 1;
         
-        [val,srtidx] = sort(frame(NeuronPixels{idx}));
+        [~,srtidx] = sort(frame(NeuronPixels{idx}));
         for k = 1:length(srtidx)
             mRank{idx}(srtidx(k)) = mRank{idx}(srtidx(k))+k;
         end
@@ -30,10 +30,10 @@ for i = 1:NumNeurons
 end
 
 for i = 1:NumFrames
-    display(['rankscoring ',int2str(i)]);
-    [frame] = loadframe('DFF.h5',i);
+    %display(['rankscoring ',int2str(i)]);
+    frame = loadframe('DFF.h5',i);
     for j = 1:NumNeurons
-      [val,srtidx] = sort(frame(NeuronPixels{j}));
+      [~,srtidx] = sort(frame(NeuronPixels{j}));
       tempRank = [];
        for k = 1:length(srtidx)
             tempRank(srtidx(k)) = k;

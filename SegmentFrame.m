@@ -38,13 +38,15 @@ cc = bwconncomp(threshframe,4);
 rp = regionprops(cc,'Area','Solidity');
 
 % exit if no blobs found
-if (isempty(cc.PixelIdxList))
+if isempty(cc.PixelIdxList)
     PeakPix = [];
-    display('no blobs detected');
+    %display('no blobs detected');
     return;
 end
 
 % get area and solidity info
+segsize = zeros(1,length(cc.PixelIdxList));
+segsolid = zeros(1,length(cc.PixelIdxList)); 
 for i = 1:length(cc.PixelIdxList)
     segsize(i) = rp(i).Area;
     segsolid(i) = rp(i).Solidity;
@@ -85,6 +87,8 @@ for i = 1:length(CCquestionidx)
             bsize = [];
             bSolid = [];
             
+            bsize = zeros(1,length(bb.PixelIdxList)); 
+            bSolid = zeros(1,length(bb.PixelIdxList)); 
             for j = 1:length(bb.PixelIdxList)
                 bsize(j) = rp(j).Area;
                 bSolid(j) = rp(j).Solidity;
@@ -148,17 +152,11 @@ newcc.Connectivity = 4;
 cc = newcc;
 
 % get peak pixel
+PeakPix = cell(length(cc.PixelIdxList),2); 
 for i = 1:length(cc.PixelIdxList)
     [~,idx] = max(initframe(cc.PixelIdxList{i}));
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
 end
 
-display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
+%display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
 end
-
-
-
-
-
-
-

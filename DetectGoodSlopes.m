@@ -5,10 +5,11 @@ load NormTraces.mat;
 load('ProcOut.mat','NeuronPixels','NeuronImage');
 
 NumNeurons = size(expPosTr,1);
-NumFrames = size(expPosTr,2);
+%NumFrames = size(expPosTr,2);
 
 aCaTr = zeros(size(expPosTr));
 
+p = ProgressBar(NumNeurons); 
 for i = 1:NumNeurons
     dfdt = zscore(difftrace(i,:));
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps);
@@ -24,17 +25,20 @@ for i = 1:NumNeurons
             inTr = 1;
         end
         
-        if ((dfdt(curr) > 0) & inTr)
+        if (dfdt(curr) > 0) && inTr
            aCaTr(i,curr) = 1;
         end
         
-        if(inTr & (dfdt(curr) < 0))
+        if inTr && (dfdt(curr) < 0)
             inTr = 0;
         end
         curr = curr + 1;
         end
     end
+
+    p.progress;
 end
+p.stop;
 
 FT = aCaTr;
 

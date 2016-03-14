@@ -2,14 +2,23 @@ function [ output_args ] = Tenaspis2()
 % Quick & dirty Tenaspis2
 % Requires DFF.h5, manualmask.mat, and SLPDF.h5 be present
 
-load manualmask;
+load mask_reg;
 
-ExtractBlobs('DFF.h5',0,0,neuronmask,1);
+disp('Extracting blobs...'); 
+ExtractBlobs('DFF.h5',0,0,mask_reg,1);
+
+disp('Making transients...');
 MakeTransients('DFF.h5',0);
 !del InitClu.mat
+
+disp('Making neurons...'); 
 MakeNeurons('min_trans_length',12);
+
 % get traces
+disp('Normalizing traces...'); 
 NormalTraces('SLPDF.h5');
+
+disp('Expanding transients...'); 
 ExpandTransients(0);
 Calc_pPeak;
 AddPoTransients;

@@ -1,12 +1,20 @@
-function [ output_args ] = ExpandTransients(Todebug)
+function ExpandTransients(Todebug)
 % uses traces and
 load('NormTraces.mat','trace','difftrace');
 load('ProcOut.mat','NumNeurons','NumFrames','FT');
 
 
-
+p = ProgressBar(NumNeurons);
+PosTr = zeros(NumNeurons,NumFrames);    PoPosTr = PosTr; 
+NumTr = zeros(1,NumNeurons);            PoNumTr = NumTr; 
+TrLength = cell(1,NumNeurons);          PoTrLength = TrLength; 
+TrPeakVal = cell(1,NumNeurons);         PoTrPeakVal = TrPeakVal; 
+TrPeakIdx = cell(1,NumNeurons);         PoTrPeakIdx = TrPeakIdx;
+MinPeak = zeros(1,NumNeurons);          PoMinPeak = MinPeak; 
+MaxPeak = zeros(1,NumNeurons);          PoMaxPeak = MaxPeak; 
+AvgLength = zeros(1,NumNeurons);        PoAvgLength = AvgLength; 
 for i = 1:NumNeurons
-    i
+    %i
     tr = trace(i,:);
     PosTr(i,1:NumFrames) = 0;
     activefr = find(FT(i,:));
@@ -21,7 +29,7 @@ for i = 1:NumNeurons
         % find backward extent
         curr = activefr(j);
         
-        while ((tr(curr) > 0) & (curr < NumFrames))
+        while (tr(curr) > 0) && (curr < NumFrames)
             curr = curr + 1;
         end
         
@@ -29,7 +37,7 @@ for i = 1:NumNeurons
         
         curr = activefr(j);
         
-        while ((tr(curr) > 0) & (curr > 1))
+        while (tr(curr) > 0) && (curr > 1)
             curr = curr - 1;
         end
         
@@ -58,7 +66,7 @@ for i = 1:NumNeurons
 end
 
 for i = 1:NumNeurons
-    i
+    %i
     tr = trace(i,:);
     PoPosTr(i,1:NumFrames) = 0;
     activefr = find(PrePoPosTr(i,:));
@@ -73,7 +81,7 @@ for i = 1:NumNeurons
         % find backward extent
         curr = activefr(j);
         
-        while ((tr(curr) > 0) & (curr < NumFrames))
+        while (tr(curr) > 0) && (curr < NumFrames)
             curr = curr + 1;
         end
         
@@ -81,7 +89,7 @@ for i = 1:NumNeurons
         
         curr = activefr(j);
         
-        while ((tr(curr) > 0) & (curr > 1))
+        while (tr(curr) > 0) && (curr > 1)
             curr = curr - 1;
         end
         
@@ -107,4 +115,5 @@ if (Todebug)
     end
 end
 
+end
 
