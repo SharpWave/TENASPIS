@@ -16,7 +16,7 @@ for i = 1:NumNeurons
             continue;
         end
         
-        NumTr(i) = NumTr(i) + 1;
+        
         
         % find backward extent
         curr = activefr(j);
@@ -38,14 +38,25 @@ for i = 1:NumNeurons
         PosTr(i,TrStart:TrEnd) = 1;
         
         % stats
-
-        TrLength{i}(NumTr(i)) = TrEnd-TrStart+1;
-        [TrPeakVal{i}(NumTr(i)),idx] = max(tr(TrStart:TrEnd));
-        TrPeakIdx{i}(NumTr(i)) = idx+TrStart-1;
+        
+        
     end
-    MinPeak(i) = min(TrPeakVal{i});
-    MaxPeak(i) = max(TrPeakVal{i});
-    AvgLength(i) = mean(TrLength{i});
+    Epochs = NP_FindSupraThresholdEpochs(PosTr(i,:),eps);
+    NumTr(i) = size(Epochs,1);
+    for j = 1:NumTr(i)
+        TrLength{i}(j) = Epochs(j,2)-Epochs(j,1)+1;
+        [TrPeakVal{i}(j),idx] = max(tr(Epochs(j,1):Epochs(j,2)));
+        TrPeakIdx{i}(j) = idx+Epochs(j,1)-1;
+    end
+    if (NumTr(i) == 0)
+        MinPeak(i) = -inf;
+        MaxPeak(i) = -inf;
+        AvgLength(i) = 0;
+    else
+        MinPeak(i) = min(TrPeakVal{i});
+        MaxPeak(i) = max(TrPeakVal{i});
+        AvgLength(i) = mean(TrLength{i});
+    end
 end
 
 
@@ -68,7 +79,7 @@ for i = 1:NumNeurons
             continue;
         end
         
-        PoNumTr(i) = PoNumTr(i) + 1;
+        
         
         % find backward extent
         curr = activefr(j);
@@ -89,18 +100,19 @@ for i = 1:NumNeurons
         
         PoPosTr(i,TrStart:TrEnd) = 1;
         
-        % stats
-
-        PoTrLength{i}(PoNumTr(i)) = TrEnd-TrStart+1;
-        [PoTrPeakVal{i}(PoNumTr(i)),idx] = max(tr(TrStart:TrEnd));
-        PoTrPeakIdx{i}(PoNumTr(i)) = idx+TrStart-1;
     end
-    PoMinPeak(i) = min(TrPeakVal{i});
-    PoMaxPeak(i) = max(TrPeakVal{i});
-    PoAvgLength(i) = mean(TrLength{i});
+    
+    Epochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps);
+    PoNumTr(i) = size(Epochs,1);
+    for j = 1:PoNumTr(i)
+        PoTrLength{i}(j) = Epochs(j,2)-Epochs(j,1)+1;
+        [PoTrPeakVal{i}(j),idx] = max(tr(Epochs(j,1):Epochs(j,2)));
+        PoTrPeakIdx{i}(j) = idx+Epochs(j,1)-1;
+    end
+    
 end
 
- save ExpTransients.mat MaxPeak MinPeak PosTr PoPosTr PrePoPosTr PoTrPeakIdx PoNumTr;   
+save ExpTransients.mat MaxPeak MinPeak PosTr PoPosTr PrePoPosTr PoTrPeakIdx PoNumTr;
 if (Todebug)
     for i = 1:NumNeurons
         plot(FT(i,:)*5);hold on;plot(PosTr(i,:)*5);plot(trace(i,:));plot(zscore(difftrace(i,:)));plot(PoPosTr(i,:),'-r','LineWidth',2);hold off;set(gca,'YLim',[-10 10]);pause;

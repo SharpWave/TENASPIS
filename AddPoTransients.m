@@ -3,11 +3,11 @@ function [ output_args ] = AddPoTransients()
 %   Detailed explanation goes here
 load pPeak.mat;
 load ExpTransients.mat;
-load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage');
+load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage','Xdim','Ydim');
 
 expPosTr = PosTr;
 
-rankthresh = 0.67;
+rankthresh = 0.55;
 
 for i = 1:length(NeuronImage)
     b = bwconncomp(NeuronImage{i});
@@ -28,11 +28,14 @@ for j = 1:NumNeurons
         if (CentDist(i,j) <= 15)
             buddies{j} = [buddies{j},i];
         end
-
+        
     end
 end
 
+
+
 for i = 1:NumNeurons
+    
     display(['Neuron ',int2str(i)]);
     PoEpochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps);
     for j = 1:size(PoEpochs,1)
@@ -48,12 +51,20 @@ for i = 1:NumNeurons
             display('buddy spike');
             continue;
         end
-        
+        maxidx = [];
         % no buddy spike, check peak
-        f = loadframe('SLPDF.h5',PoTrPeakIdx{i}(j));
-        [~,maxidx] = max(f(NeuronPixels{i}));
-        peakpeak = pPeak{i}(maxidx);
-        peakrank = mRank{i}(maxidx);
+        ps = PoTrPeakIdx{i}(j)-10;
+        for k = ps:PoTrPeakIdx{i}(j)
+            
+            f = loadframe('SLPDF.h5',k);
+            [~,maxidx(k)] = max(f(NeuronPixels{i}));
+        end
+        
+        [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end));
+        
+        meanmaxidx = sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp)));
+        peakpeak = pPeak{i}(meanmaxidx);
+        peakrank = mRank{i}(meanmaxidx);
         if ((peakpeak > 0) & (peakrank > rankthresh))
             display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
