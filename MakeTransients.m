@@ -1,5 +1,5 @@
-function [] = MakeTransients(file,todebug,varargin)
-% [] = MakeTransients(file,todebug,varargin)
+function [] = MakeTransients(varargin)
+% [] = MakeTransients(varargin)
 %
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
 % one, whether there was one on the previous frame that matched it and if
@@ -31,7 +31,7 @@ max_trans_dist = 2; % (default) maximum number of pixels a transient can travel 
 
 load ('Blobs.mat','cc','PeakPix');
 
-info = h5info(file,'/Object');
+info = h5info('DFF.h5','/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
@@ -72,7 +72,7 @@ SegChain = SegChain(gooddist);
 NumSegments = length(SegChain);
 TransientLength = TransientLength(gooddist);
 
-save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'min_trans_length', 'max_trans_dist','TransientLength')
+save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'max_trans_dist','TransientLength')
 
 
 
