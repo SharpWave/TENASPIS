@@ -152,7 +152,7 @@ newcc.Connectivity = 4;
 cc = newcc;
 
 % get peak pixel
-PeakPix = cell(length(cc.PixelIdxList),2); 
+PeakPix = cell(1,length(cc.PixelIdxList)); 
 for i = 1:length(cc.PixelIdxList)
     [~,idx] = max(initframe(cc.PixelIdxList{i}));
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));

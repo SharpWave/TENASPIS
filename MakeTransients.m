@@ -50,6 +50,7 @@ for i = 2:NumFrames
     for j = 1:cc{i}.NumObjects
         % find match
         [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),stats(j).MinorAxisLength);
+ 
         if (MatchingSeg == 0)
             % no match found, make a new segment
             NumSegments = NumSegments+1;
