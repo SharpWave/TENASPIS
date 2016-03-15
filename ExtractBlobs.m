@@ -35,7 +35,7 @@ Ydim = info.Dataspace.Size(2);
 if (~exist('mask','var'))
     mask = ones(Xdim,Ydim);
 end
-oldmask = mask;
+
 
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
@@ -44,14 +44,7 @@ parfor i = 1:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
    
     if (autothresh > 0)
-        thresh = mean(tempFrame(oldmask))+autothresh*std(tempFrame(oldmask));
-    end
-    
-    if (i <= 20)
-        % Don't detect neurons on first 20 frames
-        mask = zeros(Xdim,Ydim);
-    else
-        mask = oldmask;
+        thresh = mean(tempFrame(mask))+autothresh*std(tempFrame(mask));
     end
 
     [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);

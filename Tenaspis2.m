@@ -5,7 +5,7 @@ function Tenaspis2()
 load mask_reg;
 
 disp('Extracting blobs...'); 
-ExtractBlobs('DFF.h5',0,mask_reg,1);
+ExtractBlobs('DFF.h5',0,neuronmask,0.5);
 
 disp('Making transients...');
 MakeTransients('DFF.h5',0);
