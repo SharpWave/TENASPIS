@@ -67,7 +67,7 @@ for i = 1:length(SegChain)
 end
 
 DistTrav = TransientStats(SegChain);
-
+keyboard;
 gooddist = find(DistTrav < max_trans_dist);
 
 SegChain = SegChain(gooddist);

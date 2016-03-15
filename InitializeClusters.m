@@ -29,24 +29,17 @@ parfor i = 1:NumSegments
     [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
     length(SegChain{i})
     
-%     GoodTr(i) = 1;
-    
-%     if (MeanArea(i) < 60)
-%         GoodTr(i) = 0;
-%     end
-%     
-%     if (MeanArea(i) > 160)
-%         GoodTr(i) = 0;
-%     end
+    GoodTr(i) = ~isempty(PixelList{i});
+
 end
 
-% edit out the faulty segments
-% GoodTrs = find(GoodTr);
-% PixelList = PixelList(GoodTrs);
-% Xcent = Xcent(GoodTrs);
-% Ycent = Ycent(GoodTrs);
-% MeanArea = MeanArea(GoodTrs);
-% frames = frames(GoodTrs);
+edit out the faulty segments
+GoodTrs = find(GoodTr);
+PixelList = PixelList(GoodTrs);
+Xcent = Xcent(GoodTrs);
+Ycent = Ycent(GoodTrs);
+MeanArea = MeanArea(GoodTrs);
+frames = frames(GoodTrs);
 
 c = (1:length(frames))'; 
 
