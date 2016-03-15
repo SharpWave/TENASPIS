@@ -4,7 +4,7 @@ function [ output_args ] = Tenaspis2()
 
 load manualmask;
 
-ExtractBlobs('DFF.h5',0,0,neuronmask,1);
+ExtractBlobs('DFF.h5',0,0,neuronmask,0.5);
 MakeTransients('DFF.h5',0);
 !del InitClu.mat
 MakeNeurons('min_trans_length',12);

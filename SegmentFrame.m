@@ -19,11 +19,11 @@ function [cc,PeakPix] = SegmentFrame(frame,mask,thresh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Parameters
-minpixels = 80; % minimum blob size during initial segmentation
-adjminpixels = 50; % minimum blob size during re-segmentation attempts
-threshinc = 0.02; % how much to increase threshold by on each re-segmentation iteration
+minpixels = 60; % minimum blob size during initial segmentation
+adjminpixels = 40; % minimum blob size during re-segmentation attempts
+threshinc = 0.01; % how much to increase threshold by on each re-segmentation iteration
 neuronthresh = 150; % maximum blob size to be considered a neuron
-minsolid = 0.85; % minimum blob solidity to be considered a neuron
+minsolid = 0.9; % minimum blob solidity to be considered a neuron
 
 
 PeakPix = [];
@@ -31,6 +31,7 @@ badpix = find(mask == 0);
 
 % threshold and segment the frame
 initframe = double(frame);
+blankframe = zeros(size(initframe));
 minval = min(initframe(:));
 threshframe = frame > thresh;
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
@@ -64,7 +65,7 @@ for i = 1:length(CCquestionidx)
     % make a frame containing only the pixels in this blob (all else set to
     % minval)
     qidx = CCquestionidx(i);
-    temp = zeros(cc.ImageSize(1),cc.ImageSize(2))+minval;
+    temp = blankframe+minval;
     temp(cc.PixelIdxList{qidx}) = initframe(cc.PixelIdxList{qidx});
     
     % increase threshold one increment from baseline
@@ -108,7 +109,7 @@ for i = 1:length(CCquestionidx)
                 oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
                 
                 % make a frame containing the remaining blobs
-                temp = zeros(cc.ImageSize(1),cc.ImageSize(2))+ minval;
+                temp = blankframe + minval;
                 for j = 1:length(oldn)
                     temp(bb.PixelIdxList{oldn(j)}) = initframe(bb.PixelIdxList{oldn(j)});
                 end
@@ -153,7 +154,7 @@ for i = 1:length(cc.PixelIdxList)
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
 end
 
-display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
+%display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
 end
 
 

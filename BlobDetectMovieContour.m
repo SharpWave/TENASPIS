@@ -14,7 +14,7 @@ open(aviobj);
 for i = 1:length(cc)
     [frame,Xdim,Ydim,NumFrames] = loadframe(infile,i);
     %imagesc(frame);caxis(climits);colormap gray;
-    contour(frame,50);
+    contour(frame,0:0.0025:0.4);
     x = [];
     y = [];
     
@@ -30,7 +30,7 @@ for i = 1:length(cc)
     if (i >= delayframes)
         for j = 1:length(x)
             hold on;
-            plot(x{j},y{j},'-r','LineWidth',3);
+            plot(x{j},y{j},'-r','LineWidth',2.5);
         end
     end
     
