@@ -37,13 +37,14 @@ if (~exist('mask','var'))
 end
 oldmask = mask;
 
+p = ProgressBar(NumFrames);
+display('Detecting Blobs');
 parfor i = 1:NumFrames
-    display(['Detecting Blobs for frame ',int2str(i)]);
-    
+
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     if (autothresh > 0)
-        thresh = mean(tempFrame(:))+autothresh*std(tempFrame(:));
+        thresh = mean(tempFrame(oldmask))+autothresh*std(tempFrame(oldmask));
     end
     
     if (i <= 20)
@@ -53,8 +54,10 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);   
+    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);
+    p.progress;
 end
+p.stop;
 
 save Blobs.mat cc thresh mask PeakPix;
 

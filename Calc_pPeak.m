@@ -12,7 +12,6 @@ for i = 1:NumNeurons
 end
 
 for i = 1:NumFrames
-    i
     ActiveN = find(FT(:,i));
     [frame] = loadframe('SLPDF.h5',i);
     for j = 1:length(ActiveN)
@@ -33,7 +32,6 @@ for i = 1:NumNeurons
 end
 
 for i = 1:NumFrames
-    display(['rankscoring ',int2str(i)]);
     [frame] = loadframe('SLPDF.h5',i);
     for j = 1:NumNeurons
       [val,srtidx] = sort(frame(NeuronPixels{j}));
