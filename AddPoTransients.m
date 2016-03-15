@@ -41,31 +41,55 @@ for i = 1:NumNeurons
     for j = 1:size(PoEpochs,1)
         % check for buddies
         buddyspike = 0;
+        buddyconfs = [];
+        
         for k = 1:length(buddies{i})
             if (sum(expPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
                 buddyspike = 1;
+                
+                
+            end
+            if (sum(PoPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
+                buddyconfs = [buddyconfs,buddies{i}(k)];
+               
             end
         end
-        
-        if (buddyspike)
+        if(buddyspike)
             display('buddy spike');
             continue;
         end
+        
+        
+
         maxidx = [];
         % no buddy spike, check peak
         ps = PoTrPeakIdx{i}(j)-10;
         for k = ps:PoTrPeakIdx{i}(j)
             
             f = loadframe('SLPDF.h5',k);
-            [~,maxidx(k)] = max(f(NeuronPixels{i}));
+            [maxval(k),maxidx(k)] = max(f(NeuronPixels{i}));
+            
         end
+        
+        meanpix = [];
+        if(~isempty(buddyconfs))
+            display('buddy conflict');
+            for k = 1:length(buddyconfs)
+                meanpix(k) = mean(f(NeuronPixels{buddyconfs(k)}));
+            end
+            if (mean(f(NeuronPixels{i})) < max(meanpix))
+                display('lost conflict');
+                continue;
+            end
+        end
+            
         
         [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end));
         
         meanmaxidx = sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp)));
         peakpeak = pPeak{i}(meanmaxidx);
         peakrank = mRank{i}(meanmaxidx);
-        if ((peakpeak > 0) & (peakrank > rankthresh))
+        if ((peakpeak > 0) && (peakrank > rankthresh))
             display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
         else

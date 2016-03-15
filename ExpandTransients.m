@@ -1,27 +1,25 @@
-function [ output_args ] = ExpandTransients(Todebug)
+function [] = ExpandTransients(Todebug)
 % uses traces and
 load('NormTraces.mat','trace','difftrace');
 load('ProcOut.mat','NumNeurons','NumFrames','FT');
 
 
+PosTr = zeros(NumNeurons,NumFrames);
+NumTr = zeros(1,NumNeurons);
 
 for i = 1:NumNeurons
-    i
     tr = trace(i,:);
-    PosTr(i,1:NumFrames) = 0;
     activefr = find(FT(i,:));
-    NumTr(i) = 0;
+    
     for j = 1:length(activefr)
         if (PosTr(i,activefr(j)))
             continue;
         end
-        
-        
-        
+               
         % find backward extent
         curr = activefr(j);
         
-        while ((tr(curr) > 0) & (curr < NumFrames))
+        while ((tr(curr) > 0) && (curr < NumFrames))
             curr = curr + 1;
         end
         
@@ -29,7 +27,7 @@ for i = 1:NumNeurons
         
         curr = activefr(j);
         
-        while ((tr(curr) > 0) & (curr > 1))
+        while ((tr(curr) > 0) && (curr > 1))
             curr = curr - 1;
         end
         
@@ -69,7 +67,6 @@ for i = 1:NumNeurons
 end
 
 for i = 1:NumNeurons
-    i
     tr = trace(i,:);
     PoPosTr(i,1:NumFrames) = 0;
     activefr = find(PrePoPosTr(i,:));
@@ -78,9 +75,7 @@ for i = 1:NumNeurons
         if (PoPosTr(i,activefr(j)))
             continue;
         end
-        
-        
-        
+               
         % find backward extent
         curr = activefr(j);
         
