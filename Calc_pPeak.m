@@ -16,7 +16,6 @@ end
 disp('Getting frames...'); 
 p = ProgressBar(NumFrames); 
 for i = 1:NumFrames
-    %i
     ActiveN = find(FT(:,i));
 
     frame = loadframe('SLPDF.h5',i);
@@ -45,7 +44,6 @@ RankDiff = zeros(NumNeurons,NumFrames);
 disp('Rank scoring...'); 
 p = ProgressBar(NumFrames); 
 for i = 1:NumFrames
-    %display(['rankscoring ',int2str(i)]);
     frame = loadframe('SLPDF.h5',i);
     
     for j = 1:NumNeurons

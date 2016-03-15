@@ -19,7 +19,7 @@ end
 temp = pdist(Cents);
 CentDist = squareform(temp);
 
-display('checking buddies');
+%display('checking buddies');
 for j = 1:NumNeurons
     buddies{j} = [];
     for i = 1:NumNeurons
@@ -46,13 +46,11 @@ for i = 1:NumNeurons
         
         for k = 1:length(buddies{i})
             if sum(expPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0
-                buddyspike = 1;
-                
-                
+                buddyspike = 1;    
             end
+            
             if (sum(PoPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
-                buddyconfs = [buddyconfs,buddies{i}(k)];
-               
+                buddyconfs = [buddyconfs,buddies{i}(k)];            
             end
         end
         

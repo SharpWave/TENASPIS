@@ -30,7 +30,7 @@ PeakPix = [];
 badpix = find(mask == 0);
 
 % threshold and segment the frame
-initframe = double(frame);
+initframe = single(frame);
 minval = min(initframe(:));
 threshframe = frame > thresh;
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels

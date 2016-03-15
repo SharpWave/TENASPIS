@@ -41,12 +41,10 @@ cc = cell(1,NumFrames);
 PeakPix = cell(1,NumFrames); 
 p = ProgressBar(NumFrames); 
 parfor i = 1:NumFrames
-    %display(['Detecting Blobs for frame ',int2str(i)]);
-    
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-    
-    if autothresh
-        thresh = mean(tempFrame(:))+autothresh*std(tempFrame(:));
+   
+    if (autothresh > 0)
+        thresh = mean(tempFrame(oldmask))+autothresh*std(tempFrame(oldmask));
     end
     
     if (i <= 20)
@@ -56,7 +54,7 @@ parfor i = 1:NumFrames
         mask = oldmask;
     end
 
-    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);   
+    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);
     
     p.progress;
 end
