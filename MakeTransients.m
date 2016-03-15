@@ -33,8 +33,8 @@ load ('Blobs.mat','cc','PeakPix');
 
 info = h5info('DFF.h5','/Object');
 NumFrames = info.Dataspace.Size(3);
-%Xdim = info.Dataspace.Size(1);
-%Ydim = info.Dataspace.Size(2);
+Xdim = info.Dataspace.Size(1);
+Ydim = info.Dataspace.Size(2);
 
 NumSegments = 0;
 SegChain = [];

@@ -48,7 +48,7 @@ end
 
 %%
 
-%VersionString = '0.9.0.0-beta';
+VersionString = '0.9.0.0-beta';
 MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4.5];
 
 close all;
@@ -91,8 +91,8 @@ end
 
 % OK now unpack these things
 CurrClu = 0;
-[CluToPlot,~,cTon] = unique(c);
-%NumNeurons = length(CluToPlot);
+[CluToPlot,nToc,cTon] = unique(c);
+NumNeurons = length(CluToPlot);
 
 nClus = length(CluToPlot); 
 NeuronImage = cell(1,nClus); 
