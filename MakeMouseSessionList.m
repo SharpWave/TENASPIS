@@ -1322,7 +1322,7 @@ MD(i).Notes = '';
 
 %% Will's treadmill experiments
 i = i+1;
-MD(i).Animal = 'GCamp6f_45';
+MD(i).Animal = 'GCamp6f_45_treadmll';
 MD(i).Date = '11_02_2015';
 MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
@@ -1443,7 +1443,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_09_2015';
 MD(i).Session = 1;
 MD(i).Env = 'Homecage';
@@ -1454,15 +1454,15 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_09_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_09_2015\2 - Acclimation';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_09_2015\2 - Treadmill (left)';
 end
-MD(i).Notes = ['Actually treadmill shaping. Directory would not let me change folder name'];
+MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45';
@@ -1542,13 +1542,13 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45';
-MD(i).Date = '11_13_2015';
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '03_09_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_13_2015\2 - Treadmill shaping';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\03_09_2016\1 - Treadmill (right)';
 end
 MD(i).Notes = [];
 

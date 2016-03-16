@@ -1,5 +1,8 @@
 function TS_Lowpass_Divide(infile,LPfile)
 
+infilefolder = fileparts(fileparts(infile)); 
+cd(infilefolder); 
+
 smoothfr = 20;
 
 info = h5info(infile,'/Object');
@@ -7,7 +10,7 @@ NumFrames = info.Dataspace.Size(3);
 XDim = info.Dataspace.Size(1);
 YDim = info.Dataspace.Size(2);
 
-finaloutfile = [infile(1:end-3),'_LowpassDivide.h5'];
+finaloutfile = fullfile(pwd,'SLPDF.h5');
 h5create(finaloutfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','single');
 % run movie smoother, save to temp file
 

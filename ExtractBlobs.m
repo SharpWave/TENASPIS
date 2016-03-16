@@ -32,7 +32,7 @@ NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-if (~exist('mask','var'))
+if ~exist('mask','var')
     mask = ones(Xdim,Ydim);
 end
 
