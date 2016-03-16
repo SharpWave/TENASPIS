@@ -82,7 +82,7 @@ for i = 1:length(CCquestionidx)
         bb = bwconncomp(threshframe,4);
         rp = regionprops(bb,'Area','Solidity');
         
-        if (~isempty(bb.PixelIdxList))
+        if ~isempty(bb.PixelIdxList)
             % there were blobs, check if any of them satisfy size and
             % solidity criteria
             bsize = [];

@@ -43,7 +43,7 @@ p = ProgressBar(NumFrames);
 parfor i = 1:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
    
-    if (autothresh > 0)
+    if autothresh > 0
         thresh = mean(tempFrame(mask))+autothresh*std(tempFrame(mask));
     end
 
