@@ -69,12 +69,12 @@ for i = 1:NumNeurons
             fmean = mean(f(NeuronPixels{i}));
             bmean = [];
             for k = 1:length(Buddyspikes)
-                bmean(k) = mean(f(NeuronPixels{overl{i}(k)}));
+                bmean(k) = mean(f(NeuronPixels{Buddyspikes(k)}));
             end
             if (fmean > max(bmean))
                 display('winner');
                 for k = 1:length(Buddyspikes)
-                    aCaTr(overl{i}(k),CaEpochs(j,1):CaEpochs(j,2)) = 0;
+                    aCaTr(Buddyspikes(k),CaEpochs(j,1):CaEpochs(j,2)) = 0;
                 end
             end
         end
