@@ -33,7 +33,7 @@ parfor i = 1:NumSegments
 
 end
 
-edit out the faulty segments
+%edit out the faulty segments
 GoodTrs = find(GoodTr);
 PixelList = PixelList(GoodTrs);
 Xcent = Xcent(GoodTrs);
