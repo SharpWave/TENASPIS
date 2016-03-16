@@ -1,4 +1,4 @@
-function [] = ExtractBlobs(file,thresh,mask,autothresh)
+function [] = ExtractBlobs(file,mask)
 % [] = ExtractBlobs(file,thresh,mask,autothresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,21 +41,22 @@ maskpix = find(mask(:) == 1);
 
 p = ProgressBar(NumFrames);
 display('Detecting Blobs');
-for i = 1:NumFrames
+parfor i = 1:NumFrames
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
-    if (autothresh > 0)
-        thresh = mean(tempFrame(maskpix))+autothresh*std(tempFrame(maskpix));
-    end
+    
+    thresh = median(tempFrame(maskpix));
+    
 %     keyboard;
 %     thresh = median(tempFrame(maskpix))
-    [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);
+    [cc{i},PeakPix{i},NumItsTaken{i}] = SegmentFrame(tempFrame,mask,thresh);
+    (NumItsTaken{i});
     p.progress;
 end
 p.stop;
 
-save Blobs.mat cc thresh mask PeakPix;
+save Blobs.mat cc mask PeakPix NumItsTaken;
 
 
 
