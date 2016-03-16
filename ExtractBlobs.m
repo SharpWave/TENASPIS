@@ -28,7 +28,7 @@ if ~exist('autothresh','var')
 end
 
 info = h5info(file,'/Object');
-NumFrames = info.Dataspace.Size(3);
+NumFrames = info.Dataspace.Size(3)
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
@@ -36,17 +36,20 @@ if (~exist('mask','var'))
     mask = ones(Xdim,Ydim);
 end
 
+maskpix = find(mask(:) == 1);
+
 
 p = ProgressBar(NumFrames);
 display('Detecting Blobs');
-parfor i = 1:NumFrames
-
+for i = 1:NumFrames
+    
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     if (autothresh > 0)
-        thresh = mean(tempFrame(mask))+autothresh*std(tempFrame(mask));
+        thresh = mean(tempFrame(maskpix))+autothresh*std(tempFrame(maskpix));
     end
-
+%     keyboard;
+%     thresh = median(tempFrame(maskpix))
     [cc{i},PeakPix{i}] = SegmentFrame(tempFrame,mask,thresh);
     p.progress;
 end
