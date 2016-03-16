@@ -11,6 +11,8 @@ for i = 1:NumNeurons
     mRank{i} = zeros(size(NeuronPixels{i}));
 end
 
+p = ProgressBar(NumFrames);
+display('calculating ranks and peaks');
 for i = 1:NumFrames
     ActiveN = find(FT(:,i));
     [frame] = loadframe('SLPDF.h5',i);
@@ -24,28 +26,30 @@ for i = 1:NumFrames
             mRank{idx}(srtidx(k)) = mRank{idx}(srtidx(k))+k;
         end
     end
+    p.progress;
 end
+p.stop;
 
 for i = 1:NumNeurons
     pPeak{i} = pPeak{i}./sum(FT(i,:));
     mRank{i} = mRank{i}./sum(FT(i,:))./length(NeuronPixels{i});
 end
 
-for i = 1:NumFrames
-    [frame] = loadframe('SLPDF.h5',i);
-    for j = 1:NumNeurons
-      [val,srtidx] = sort(frame(NeuronPixels{j}));
-      tempRank = [];
-       for k = 1:length(srtidx)
-            tempRank(srtidx(k)) = k;
-       end
-       tempRank = tempRank./length(NeuronPixels{j});
-       %size(mRank{j}),size(tempRank),
-       RankDiff(j,i) = abs(mean(mRank{j}-tempRank'));
-    end
-end
+% for i = 1:NumFrames
+%     [frame] = loadframe('SLPDF.h5',i);
+%     for j = 1:NumNeurons
+%       [val,srtidx] = sort(frame(NeuronPixels{j}));
+%       tempRank = [];
+%        for k = 1:length(srtidx)
+%             tempRank(srtidx(k)) = k;
+%        end
+%        tempRank = tempRank./length(NeuronPixels{j});
+%        %size(mRank{j}),size(tempRank),
+%        RankDiff(j,i) = abs(mean(mRank{j}-tempRank'));
+%     end
+% end
 
-save pPeak.mat pPeak mRank RankDiff;
+save pPeak.mat pPeak mRank;% RankDiff;
 
 end
 
