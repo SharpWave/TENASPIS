@@ -4,10 +4,10 @@ function [ output_args ] = Tenaspis2()
 
 load manualmask;
 
-ExtractBlobs('DFF.h5',0,0,neuronmask,0.5);
-MakeTransients('DFF.h5',0);
+ExtractBlobs('DFF.h5',0,neuronmask,0.5);
+MakeTransients();
 !del InitClu.mat
-MakeNeurons('min_trans_length',12);
+MakeNeurons('min_trans_length',10);
 % get traces
 NormalTraces('SLPDF.h5');
 ExpandTransients(0);
