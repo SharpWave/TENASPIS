@@ -27,7 +27,7 @@ MakeTransients('DFF.h5',0);
 !del InitClu.mat
 
 disp('Making neurons...'); 
-MakeNeurons('min_trans_length',12);
+MakeNeurons('min_trans_length',10);
 
 % get traces
 disp('Normalizing traces...'); 
