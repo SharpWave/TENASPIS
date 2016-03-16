@@ -1322,7 +1322,7 @@ MD(i).Notes = '';
 
 %% Will's treadmill experiments
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_03_2015';
 MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
@@ -1356,7 +1356,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_12_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1368,7 +1368,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_13_2015';
 MD(i).Session = 1;
 MD(i).Env = 'Homecage';
@@ -1379,7 +1379,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_13_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1391,7 +1391,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_16_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1403,7 +1403,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_18_2015';
 MD(i).Session = 1;
 MD(i).Env = 'Homecage';
@@ -1414,7 +1414,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_18_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1426,7 +1426,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_19_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1438,7 +1438,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_20_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Homecage';
@@ -1449,7 +1449,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_20_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1461,7 +1461,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_23_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1473,7 +1473,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_25_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1485,7 +1485,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_26_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1497,19 +1497,19 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
-MD(i).Date = '11_26_2015';
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_27_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '5:26:22 PM';
+MD(i).RecordStartTime = '2:03:07 PM';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_26_2015\3 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_27_2015\2 - Treadmill (left)';
 end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_30_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1521,7 +1521,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_01_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1533,7 +1533,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_02_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1545,7 +1545,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_03_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1557,7 +1557,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '01_12_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1569,7 +1569,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '01_28_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Figure 8';
@@ -1581,7 +1581,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '02_01_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Figure 8';
@@ -1593,7 +1593,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '02_19_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Figure 8';
@@ -1605,7 +1605,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '02_25_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1617,7 +1617,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '02_26_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
@@ -1629,7 +1629,7 @@ end
 MD(i).Notes = [];
 
 i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmll';
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '03_09_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';

@@ -38,8 +38,6 @@ end
 
 maskpix = find(mask(:) == 1);
 
-
-
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
 p = ProgressBar(NumFrames);
@@ -48,7 +46,7 @@ for i = 1:NumFrames
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
-    if (autothresh > 0)
+    if autothresh > 0
         thresh = mean(tempFrame(maskpix))+autothresh*std(tempFrame(maskpix));
     end
 %     keyboard;
