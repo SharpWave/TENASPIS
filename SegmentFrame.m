@@ -1,4 +1,4 @@
-function [cc,PeakPix] = SegmentFrame(frame,mask,thresh)
+function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -33,122 +33,94 @@ badpix = find(mask == 0);
 initframe = single(frame);
 blankframe = zeros(size(initframe));
 minval = min(initframe(:));
+
 threshframe = frame > thresh;
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
-cc = bwconncomp(threshframe,4);
-rp = regionprops(cc,'Area','Solidity');
-
-% exit if no blobs found
-if isempty(cc.PixelIdxList)
-    PeakPix = [];
-    %display('no blobs detected');
-    return;
-end
-
-% get area and solidity info
-segsize = zeros(1,length(cc.PixelIdxList));
-segsolid = zeros(1,length(cc.PixelIdxList)); 
-for i = 1:length(cc.PixelIdxList)
-    segsize(i) = rp(i).Area;
-    segsolid(i) = rp(i).Solidity;
-end
-
-% the cc's in CCgoodidx satisfy the size and solidity criteria
-CCgoodidx = intersect(find(segsize <= neuronthresh),find(segsolid >= minsolid));
-
-% the cc's in CCquestionidx do not satisfy the criteria (but might if we
-% raise the threshold!)
-CCquestionidx = union(find(segsize > neuronthresh),find(segsolid < minsolid));
 
 newlist = [];
 currnewList = 0;
+BlobsInFrame = 1;
+NumIts = 0;
+tNumItsTaken = [];
 
-for i = 1:length(CCquestionidx)
-    % make a frame containing only the pixels in this blob (all else set to
-    % minval)
-    qidx = CCquestionidx(i);
-    temp = blankframe+minval;
-    temp(cc.PixelIdxList{qidx}) = initframe(cc.PixelIdxList{qidx});
+while BlobsInFrame
+    NumIts = NumIts + 1;
+    BlobsInFrame = 0;
+    % threshold and segment the frame
     
-    % increase threshold one increment from baseline
-    tempthresh = thresh + threshinc;
-    BlobsInFrame = 1;
+    bb = bwconncomp(threshframe,4);
+    rp = regionprops(bb,'Area','Solidity');
     
-    while(BlobsInFrame)
-        BlobsInFrame = 0;
-        % threshold and segment the frame
-        threshframe = temp > tempthresh;
-        threshframe = bwareaopen(threshframe,adjminpixels,4);
-        bb = bwconncomp(threshframe,4);
-        rp = regionprops(bb,'Area','Solidity');
-        
-        if ~isempty(bb.PixelIdxList)
-            % there were blobs, check if any of them satisfy size and
-            % solidity criteria
-            bsize = [];
-            bSolid = [];
-            
-            bsize = zeros(1,length(bb.PixelIdxList)); 
-            bSolid = zeros(1,length(bb.PixelIdxList)); 
-            for j = 1:length(bb.PixelIdxList)
-                bsize(j) = rp(j).Area;
-                bSolid(j) = rp(j).Solidity;
-            end
-            
-            newn = intersect(find(bsize <= neuronthresh),find(bSolid >= minsolid));
-            
-            for j = 1:length(newn)
-                % append new blob pixel lists
-                currnewList = currnewList + 1;
-                newlist{currnewList} = bb.PixelIdxList{newn(j)};
-            end
-            
-            
-            if (length(newn) == length(bb.PixelIdxList))
-                % nothing left to split
-                break;
-            else
-                % still blobs left
-                BlobsInFrame = 1;
-                oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
-                
-                % make a frame containing the remaining blobs
-                temp = blankframe + minval;
-                for j = 1:length(oldn)
-                    temp(bb.PixelIdxList{oldn(j)}) = initframe(bb.PixelIdxList{oldn(j)});
-                end
-                
-                % increase threshold
-                tempthresh = tempthresh + threshinc;
-                continue;
-            end
-        else
-            % raising the threshold caused us to go from valid
-            % over-threshold blobs to nothing
-            continue;
-        end
+    if (isempty(bb.PixelIdxList))
+        break;
     end
+    
+    % there were blobs, check if any of them satisfy size and
+    % solidity criteria
+    bsize = [];
+    bSolid = [];
+    
+    for j = 1:length(bb.PixelIdxList)
+        bsize(j) = rp(j).Area;
+        bSolid(j) = rp(j).Solidity;
+    end
+    
+    newn = intersect(find(bsize <= neuronthresh),find(bSolid >= minsolid));
+    
+    for j = 1:length(newn)
+        % append new blob pixel lists
+        currnewList = currnewList + 1;
+        newlist{currnewList} = bb.PixelIdxList{newn(j)};
+        tNumItsTaken(currnewList) = NumIts;
+    end
+       
+    if (length(newn) == length(bb.PixelIdxList))
+        % nothing left to split
+        break;
+    end
+    
+    % still blobs left
+    BlobsInFrame = 1;
+    oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
+    
+    % make a frame containing the remaining blobs
+    temp = blankframe + minval;
+    for j = 1:length(oldn)
+        temp(bb.PixelIdxList{oldn(j)}) = initframe(bb.PixelIdxList{oldn(j)});
+    end
+    
+    % increase threshold
+    thresh = thresh + threshinc;
+    threshframe = temp > thresh;
+    threshframe = bwareaopen(threshframe,adjminpixels,4);
+    
+    
+end
+
+NumItsTaken = [];
+
+% exit if no blobs found
+if (isempty(newlist))
+    PeakPix = [];
+    cc.NumObjects = 0;
+    cc.PixelIdxList = [];
+    display('no blobs detected');
+    return;
 end
 
 numlists = 0;
 newcc.PixelIdxList = [];
 
-for i = 1:length(CCgoodidx)
-    if (isempty(intersect(cc.PixelIdxList{CCgoodidx(i)},badpix)))
-        numlists = numlists + 1;
-        newcc.PixelIdxList{numlists} = single(cc.PixelIdxList{CCgoodidx(i)});
-    end
-end
-
 for i = 1:length(newlist)
     if (isempty(intersect(newlist{i},badpix)))
         numlists = numlists + 1;
         newcc.PixelIdxList{numlists} = single(newlist{i});
+        NumItsTaken(numlists) = tNumItsTaken(i);
     end
 end
 
 newcc.NumObjects = numlists;
-newcc.ImageSize = cc.ImageSize;
+newcc.ImageSize = size(frame);
 newcc.Connectivity = 4;
 cc = newcc;
 
