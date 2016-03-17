@@ -92,7 +92,7 @@ for i = 1:NumNeurons
             %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
         else
-            display('pixels off kilter');
+            %display('pixels off kilter');
             if peakpeak == 0
                 %display('this pixel is never the peak');
             end
