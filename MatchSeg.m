@@ -19,7 +19,7 @@ function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList,distthresh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 minidx = 0;
 
-if (length(oldstats) == 0)
+if isempty(oldstats)
     % no segs on the preceding frame
     MatchingSeg = 0;
     return;
@@ -30,7 +30,9 @@ p1 = currstat;
 
 for i = 1:length(oldstats)
     p2 = oldstats{i};
+    
     d(i) = pdist([p1;p2],'euclidean');
+  
 end
 
 [mindist,minidx] = min(d);

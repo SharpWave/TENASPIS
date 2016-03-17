@@ -23,24 +23,22 @@ function [] = ExtractBlobs(file,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
-if ~exist('autothresh','var')
-    autothresh = 0;
-end
-
 info = h5info(file,'/Object');
-NumFrames = info.Dataspace.Size(3)
+NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-if (~exist('mask','var'))
+if ~exist('mask','var')
     mask = ones(Xdim,Ydim);
 end
 
-maskpix = find(mask(:) == 1);
+maskpix = find(mask(:) > 0);
 
-
+cc = cell(1,NumFrames); 
+PeakPix = cell(1,NumFrames); 
+NumItsTaken = cell(1,NumFrames);
 p = ProgressBar(NumFrames);
-display('Detecting Blobs');
+
 parfor i = 1:NumFrames
     
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
@@ -52,6 +50,7 @@ parfor i = 1:NumFrames
 %     thresh = median(tempFrame(maskpix))
     [cc{i},PeakPix{i},NumItsTaken{i}] = SegmentFrame(tempFrame,mask,thresh);
     (NumItsTaken{i});
+
     p.progress;
 end
 p.stop;
@@ -59,5 +58,4 @@ p.stop;
 save Blobs.mat cc mask PeakPix NumItsTaken;
 
 
-
-
+end

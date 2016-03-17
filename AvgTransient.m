@@ -23,12 +23,14 @@ function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc
 
 Xcent = 0;
 Ycent = 0;
-MeanArea = 0;
+%MeanArea = 0;
 frames = [];
 
 AvgN = zeros(Xdim,Ydim);
 
-for i = 1:length(SegChain)
+nSegChains = length(SegChain);
+p = ProgressBar(nSegChains);
+for i = 1:nSegChains
     FrameNum = SegChain{i}(1);
     ObjNum = SegChain{i}(2);
     frames = [frames,FrameNum];
@@ -38,7 +40,10 @@ for i = 1:length(SegChain)
     AvgN = AvgN + temp;
     Xcent = Xcent+PeakPix{FrameNum}{ObjNum}(1);
     Ycent = Ycent+PeakPix{FrameNum}{ObjNum}(2);
+    
+    p.progress;
 end
+p.stop;
 
 AvgN = single(AvgN./length(SegChain));
 Xcent = Xcent/length(SegChain);

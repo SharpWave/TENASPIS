@@ -30,10 +30,9 @@ PeakPix = [];
 badpix = find(mask == 0);
 
 % threshold and segment the frame
-initframe = double(frame);
+initframe = single(frame);
 blankframe = zeros(size(initframe));
 minval = min(initframe(:));
-
 
 threshframe = frame > thresh;
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
@@ -44,7 +43,7 @@ BlobsInFrame = 1;
 NumIts = 0;
 tNumItsTaken = [];
 
-while(BlobsInFrame)
+while BlobsInFrame
     NumIts = NumIts + 1;
     BlobsInFrame = 0;
     % threshold and segment the frame
@@ -74,7 +73,7 @@ while(BlobsInFrame)
         newlist{currnewList} = bb.PixelIdxList{newn(j)};
         tNumItsTaken(currnewList) = NumIts;
     end
-        
+       
     if (length(newn) == length(bb.PixelIdxList))
         % nothing left to split
         break;
@@ -105,7 +104,9 @@ if (isempty(newlist))
     PeakPix = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
-    display('no blobs detected');
+    cc.ImageSize = size(frame);
+    cc.Connectivity = 0; 
+    %display('no blobs detected');
     return;
 end
 
@@ -126,6 +127,7 @@ newcc.Connectivity = 4;
 cc = newcc;
 
 % get peak pixel
+PeakPix = cell(1,length(cc.PixelIdxList)); 
 for i = 1:length(cc.PixelIdxList)
     [~,idx] = max(initframe(cc.PixelIdxList{i}));
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
@@ -133,10 +135,3 @@ end
 
 %display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
 end
-
-
-
-
-
-
-
