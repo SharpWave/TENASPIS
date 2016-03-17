@@ -60,7 +60,9 @@ goodseg = find(TransientLength >= min_trans_length);
 SegChain = SegChain(goodseg);
 NumSegments = length(SegChain);
 
-InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
+if ~exist(fullfile(pwd,'InitClu.mat'),'file'); 
+    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
+end
 
 load InitClu.mat;
 NumIterations = 0;
@@ -72,8 +74,9 @@ InitPixelList = PixelList;
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
-    while (Cchanged == 1)
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
+    while Cchanged == 1
+        disp(['Merging neurons, iteration #',num2str(NumIterations+1)]); 
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
@@ -91,6 +94,10 @@ CurrClu = 0;
 [CluToPlot,nToc,cTon] = unique(c);
 NumNeurons = length(CluToPlot);
 
+nClus = length(CluToPlot); 
+NeuronImage = cell(1,nClus); 
+NeuronPixels = cell(1,nClus); 
+caltrain = cell(1,nClus); 
 for i = CluToPlot'
     CurrClu = CurrClu + 1;
     NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim));
@@ -100,6 +107,8 @@ for i = CluToPlot'
     caltrain{CurrClu}(frames{i}) = 1;
 end
 
+NumTransients = zeros(1,length(caltrain)); 
+ActiveFrames = cell(1,length(caltrain)); 
 for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
     tempepochs = NP_FindSupraThresholdEpochs(FT(i,:),eps);

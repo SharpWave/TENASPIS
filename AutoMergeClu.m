@@ -23,14 +23,14 @@ if (~exist('plotdist'))
     plotdist = 0;
 end
 
-NumClusters = length(unique(c));
+%NumClusters = length(unique(c));
 CluToMerge = unique(c);
 ValidClu = unique(c);
 
 
 CluDist = pdist([meanX',meanY'],'euclidean');
 CluDist = squareform(CluDist);
-if (plotdist)
+if plotdist
     figure;
     dists = [];
     maxovers = [];
@@ -53,8 +53,10 @@ if (plotdist)
 end
 
 % for each unique cluster index, find sufficiently close clusters and merge
+nClus = length(CluToMerge); 
+p = ProgressBar(nClus); 
 for i = CluToMerge'
-    if(ismember(i,ValidClu) == 0)
+    if ~ismember(i,ValidClu)
         continue;
     end
 
@@ -62,7 +64,7 @@ for i = CluToMerge'
     
     [sortdist,sortidx] = sort(CluDist(i,:));
     
-    nearclust = setdiff(intersect(ValidClu,sortidx(find(sortdist < maxdist))),i);
+    nearclust = setdiff(intersect(ValidClu,sortidx(sortdist < maxdist)),i);
     
     currpix = PixelList{i};
     
@@ -74,7 +76,7 @@ for i = CluToMerge'
         length(currpix),length(targpix),length(union(currpix,targpix)),
         
         if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
-            display('Merge would inflate cluster too much');
+            %display('Merge would inflate cluster too much');
             continue;
         end
 
@@ -83,9 +85,9 @@ for i = CluToMerge'
 %             continue;
 %         end
         
-        c(find(c == cidx)) = i;
+        c(c == cidx) = i;
         DidMerge = 1;
-        display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
+        %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
         [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
         
     end
@@ -96,7 +98,9 @@ for i = CluToMerge'
         [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,i);
     end
     
+    p.progress;
 end
+p.stop; 
 
 end
 

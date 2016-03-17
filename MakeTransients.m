@@ -40,14 +40,17 @@ NumSegments = 0;
 SegChain = [];
 SegList = zeros(NumFrames,100);
 
-p=ProgressBar(NumFrames);
+
+p = ProgressBar(NumFrames); 
+
 for i = 2:NumFrames
     stats = regionprops(cc{i},'MinorAxisLength');
     Peaks = PeakPix{i};
     OldPeaks = PeakPix{i-1};
     for j = 1:cc{i}.NumObjects
         % find match
-        [MatchingSeg,idx] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),stats(j).MinorAxisLength);
+        [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),stats(j).MinorAxisLength);
+ 
         if (MatchingSeg == 0)
             % no match found, make a new segment
             NumSegments = NumSegments+1;
@@ -59,9 +62,12 @@ for i = 2:NumFrames
             SegList(i,j) = MatchingSeg;
         end
     end
+
     p.progress;
 end
 p.stop;
+
+TransientLength = zeros(1,length(SegChain));
 for i = 1:length(SegChain)
     TransientLength(i) = length(SegChain{i});
 end

@@ -24,21 +24,24 @@ if ~exist('min_trans_length','var')
 end
 
 % create segment averages
+p = ProgressBar(NumSegments); 
 parfor i = 1:NumSegments
-    display(['initializing transient # ',int2str(i)]);
-    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
-    length(SegChain{i})
+    %display(['initializing transient # ',int2str(i)]);
+    [PixelList{i},Xcent(i),Ycent(i),~,frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
+    %length(SegChain{i})
     
     GoodTr(i) = ~isempty(PixelList{i});
-
+   
+    p.progress;
 end
+p.stop;
 
 %edit out the faulty segments
 GoodTrs = find(GoodTr);
 PixelList = PixelList(GoodTrs);
 Xcent = Xcent(GoodTrs);
 Ycent = Ycent(GoodTrs);
-MeanArea = MeanArea(GoodTrs);
+%MeanArea = MeanArea(GoodTrs);
 frames = frames(GoodTrs);
 
 c = (1:length(frames))'; 

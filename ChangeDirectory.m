@@ -18,7 +18,7 @@ function [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if(~exist('sess_num'))
+if ~exist('sess_num')
     sess_num = 1;
 end
 
