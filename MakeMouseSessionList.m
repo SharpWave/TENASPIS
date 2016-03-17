@@ -1526,7 +1526,7 @@ MD(i).Date = '12_01_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '2:22:59:00 PM';
+MD(i).RecordStartTime = '2:22:59.00 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\2 - Treadmill (left)';
 end
