@@ -23,10 +23,6 @@ function [] = ExtractBlobs(file,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
-if ~exist('autothresh','var')
-    autothresh = 0;
-end
-
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
@@ -36,7 +32,7 @@ if ~exist('mask','var')
     mask = ones(Xdim,Ydim);
 end
 
-maskpix = find(mask(:) == 1);
+maskpix = find(mask(:) > 0);
 
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 

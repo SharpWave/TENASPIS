@@ -104,7 +104,9 @@ if (isempty(newlist))
     PeakPix = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
-    display('no blobs detected');
+    cc.ImageSize = size(frame);
+    cc.Connectivity = 0; 
+    %display('no blobs detected');
     return;
 end
 

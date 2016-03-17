@@ -20,7 +20,7 @@ load mask_reg
 mask_reg = logical(mask_reg); 
 
 disp('Extracting blobs...'); 
-ExtractBlobs('DFF.h5',0,mask_reg,0.5);
+ExtractBlobs('DFF.h5',mask_reg);
 
 disp('Making transients...');
 MakeTransients('DFF.h5',0);
@@ -44,7 +44,7 @@ AddPoTransients;
 disp('Finalizing...');
 DetectGoodSlopes;
 
-CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename','PlaceMaps.mat','half_window',0,'minspeed',3);
+CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename','PlaceMapsv2.mat','half_window',0,'minspeed',3);
 PFstats;
 
 end
