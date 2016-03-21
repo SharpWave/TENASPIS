@@ -1502,7 +1502,7 @@ MD(i).Date = '11_27_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '2:03:07 PM';
+MD(i).RecordStartTime = '1:14:29 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_27_2015\2 - Treadmill (left)';
 end
@@ -1523,7 +1523,7 @@ MD(i).Notes = [];
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_01_2015';
-MD(i).Session = 2;
+MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '2:22:59.00 PM';
@@ -1866,6 +1866,19 @@ MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '4:08:54.59 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\02_01_2016\2 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+%% T2 folders
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_01_2015';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '2:22:59.00 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\2 - Treadmill (left) T2';
 end
 MD(i).Notes = [];
 

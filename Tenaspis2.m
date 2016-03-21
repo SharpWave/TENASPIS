@@ -24,7 +24,7 @@ ExtractBlobs('DFF.h5',mask_reg);
 
 disp('Making transients...');
 MakeTransients('DFF.h5',0);
-!del InitClu.mat
+%!del InitClu.mat
 
 disp('Making neurons...'); 
 MakeNeurons('min_trans_length',10);
