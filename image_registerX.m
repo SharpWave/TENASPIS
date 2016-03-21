@@ -1,4 +1,4 @@
-function [RegistrationInfoX] = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
+function [RegistrationInfoX,unique_filename] = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
 % RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

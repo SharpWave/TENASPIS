@@ -4,7 +4,7 @@ function [MeanBlobs] = MakeMeanBlobs(c,cTon,GoodTrs, varargin)
 % screen via a simple progress bar (default = 0). 
 
 
-suppress_output = 1;
+suppress_output = 0;
 
 for j = 1:length(varargin)
     if strcmpi(varargin{j},'suppress_output')
@@ -12,8 +12,13 @@ for j = 1:length(varargin)
     end
 end
 
-load Segments.mat;
-load CC.mat;
+try
+    load Transients.mat; 
+    load Blobs.mat;
+catch
+    load Segments.mat;
+    load CC.mat;
+end
 
 for i = 1:max(c)
     MeanBlobs{i} = [];
@@ -32,7 +37,7 @@ for i = 1:length(c)
     for j = 1:length(SegChain{CurrSeg})
         FrameNum = SegChain{CurrSeg}{j}(1);
         ObjNum = SegChain{CurrSeg}{j}(2);
-        ts = regionprops(cc{FrameNum},'all');
+        ts = regionprops(cc{FrameNum},'PixelIdxList');
         tempFrame = zeros(Xdim,Ydim);
         %keyboard;
         tempFrame(ts(ObjNum).PixelIdxList) = 1;

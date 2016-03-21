@@ -48,7 +48,7 @@ c = (1:length(frames))';
 
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents min_trans_length -v7.3;
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents min_trans_length GoodTrs -v7.3;
 
     
 

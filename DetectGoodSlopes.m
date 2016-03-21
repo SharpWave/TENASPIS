@@ -9,7 +9,6 @@ NumNeurons = size(expPosTr,1);
 
 aCaTr = zeros(size(expPosTr));
 
-p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     dfdt = zscore(difftrace(i,:));
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps);
@@ -33,14 +32,11 @@ for i = 1:NumNeurons
         curr = curr + 1;
         end
     end
-
-    p.progress;
 end
-p.stop;
 
 % Calculate Overlaps
 display('Calculating overlaps...');
-p = ProgressBar(NumNeurons);
+p=ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     overl{i} = [];
     for j = 1:NumNeurons
@@ -52,6 +48,7 @@ for i = 1:NumNeurons
 end
 p.stop;
 
+p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     CaEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
     for j = 1:size(CaEpochs,1)
@@ -70,14 +67,16 @@ for i = 1:NumNeurons
                 bmean(k) = mean(f(NeuronPixels{Buddyspikes(k)}));
             end
             if fmean > max(bmean)
-                display('winner');
+                %display('winner');
                 for k = 1:length(Buddyspikes)
                     aCaTr(Buddyspikes(k),CaEpochs(j,1):CaEpochs(j,2)) = 0;
                 end
             end
         end
     end
+    p.progress;
 end
+p.stop;
                 
 FT = aCaTr;                
                
