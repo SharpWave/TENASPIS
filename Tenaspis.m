@@ -119,8 +119,9 @@ if (~no_blobs)
         MakeBlobMask;
         load('manualmask.mat');
     end
-    
+        
     % Step 5: Extract Blobs
+    display('Extracting Blobs');
     ExtractBlobs('D1Movie.h5',0,thresh,neuronmask);
 end
 %% Step 6: String Blobs into calcium transients

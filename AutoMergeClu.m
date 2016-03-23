@@ -23,14 +23,14 @@ if (~exist('plotdist'))
     plotdist = 0;
 end
 
-NumClusters = length(unique(c));
+%NumClusters = length(unique(c));
 CluToMerge = unique(c);
 ValidClu = unique(c);
 
 
 CluDist = pdist([meanX',meanY'],'euclidean');
 CluDist = squareform(CluDist);
-if (plotdist)
+if plotdist
     figure;
     dists = [];
     maxovers = [];
@@ -53,19 +53,18 @@ if (plotdist)
 end
 
 % for each unique cluster index, find sufficiently close clusters and merge
+nClus = length(CluToMerge); 
+p = ProgressBar(nClus); 
 for i = CluToMerge'
-    if(ismember(i,ValidClu) == 0)
+    if ~ismember(i,ValidClu)
         continue;
     end
-    BitMap = logical(zeros(Xdim,Ydim));
-    BitMap(PixelList{i}) = 1;
-    tempb = bwconncomp(BitMap,4);
-    tempp = regionprops(tempb(1),'all');
+
     maxdist = RadiusMultiplier; 
     
     [sortdist,sortidx] = sort(CluDist(i,:));
     
-    nearclust = setdiff(intersect(ValidClu,sortidx(find(sortdist < maxdist))),i);
+    nearclust = setdiff(intersect(ValidClu,sortidx(sortdist < maxdist)),i);
     
     currpix = PixelList{i};
     
@@ -74,65 +73,21 @@ for i = CluToMerge'
     for k = 1:length(nearclust)
         cidx = nearclust(k); % cidx is cluster number of close transient
         targpix = PixelList{cidx};
+        length(currpix),length(targpix),length(union(currpix,targpix)),
         
-        NumCurrClust = length(find(c == i))
-        NumTargClust = length(find(c == cidx))
-        
-        comm = length(intersect(targpix,currpix));
-        targrat = comm/length(targpix),
-        currrat = comm/length(currpix),
-        
-        if (NumCurrClust > NumTargClust)
-            denom = length(currpix);
-        else
-            denom = length(targpix);
+        if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
+            %display('Merge would inflate cluster too much');
+            continue;
         end
-        
-        lowrat = min([targrat,currrat]);
-        highrat = max([targrat,currrat]);
-        
-        commremains = comm/denom
-        
-%         if (highrat < 0.33333)
-%              display('low OVERLAP, aborting merge');
-%              continue;  
-%         end
-%         
-%         if ((targrat < 0.6) && (currrat < 0.6))
-%             display('LOW MUTUAL OVERLAP, aborting merge');
+
+%         if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
+%             display('Merge would inflate cluster too much');
 %             continue;
 %         end
-
-        if (commremains < 0.1)
-            display('too much reduction in mutual area, aborting merge');
-            continue;
-        end
         
-        BitMap1 = logical(zeros(Xdim,Ydim));
-        BitMap2 = logical(zeros(Xdim,Ydim));
-        BitMap1(PixelList{cidx}) = 1;
-        BitMap2(PixelList{i}) = 1;
-        
-        b = bwconncomp(BitMap1.*BitMap2,4);
-        if (b.NumObjects > 1)
-            display('Merge would create neuron with discontiguous pixels; merge aborted');
-            continue;
-        end
-        if (b.NumObjects == 0)
-            display('somehow no common pixels in merge');
-            continue;
-        end
-        
-        %% check for overlapping frames
-        if(length(intersect(frames{i},frames{cidx}) > 0))
-            display('overlapping frames, this should never happen');
-            keyboard;
-            continue;
-        end
-        
-        c(find(c == cidx)) = i;
+        c(c == cidx) = i;
         DidMerge = 1;
-        display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
+        %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
         [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
         
     end
@@ -143,7 +98,9 @@ for i = CluToMerge'
         [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,i);
     end
     
+    p.progress;
 end
+p.stop; 
 
 end
 

@@ -24,7 +24,9 @@ end
 for i = ClustersToUpdate'
     display(['updated cluster # ',int2str(i)]);
     cluidx = find(c == i);
-
+    tempX = 0;
+    tempY = 0;
+    temp = zeros(Xdim,Ydim);
     % for each transient in the cluster, accumulate stats
     for j = 1:length(cluidx)
         try
@@ -32,16 +34,22 @@ for i = ClustersToUpdate'
         catch
           keyboard;
         end
-        if (j == 1)
-          newpixels = validpixels;
-        else
-          newpixels = intersect(newpixels,validpixels);
-        end
+        
+%         if (j == 1)
+%           newpixels = validpixels;
+%         else
+%           newpixels = union(newpixels,validpixels);
+%         end
+        
+        temp(validpixels) = temp(validpixels)+1;
         if (cluidx(j) ~= i)
             frames{i} = [frames{i},frames{cluidx(j)}];
         end
+        tempX = tempX+Xcent(cluidx(j));
+        tempY = tempY+Ycent(cluidx(j));
     end
-    
+    temp = temp./length(cluidx);
+    newpixels = find(temp > ((1/length(cluidx))-eps));
     BitMap = logical(zeros(Xdim,Ydim));
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
@@ -52,8 +60,8 @@ for i = ClustersToUpdate'
     end
     PixelList{i} = newpixels;
     meanareas(i) = r(1).Area;
-    meanX(i) = r(1).Centroid(1);
-    meanY(i) = r(1).Centroid(2);
+    meanX(i) = tempX/length(cluidx);
+    meanY(i) = tempY/length(cluidx);
     NumEvents(i) = length(cluidx);
 
 end

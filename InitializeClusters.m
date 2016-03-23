@@ -1,4 +1,4 @@
-function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, min_trans_length)
+function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length)
 % [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,41 +24,32 @@ if ~exist('min_trans_length','var')
 end
 
 % create segment averages
+p = ProgressBar(NumSegments); 
 parfor i = 1:NumSegments
-    display(['initializing transient # ',int2str(i)]);
-    [PixelList{i},Xcent(i),Ycent(i),MeanArea(i),frames{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim);
-    length(SegChain{i})
+    %display(['initializing transient # ',int2str(i)]);
+    [PixelList{i},Xcent(i),Ycent(i),~,frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
+    %length(SegChain{i})
     
-    GoodTr(i) = 1;
-    
-    if (MeanArea(i) < 60)
-        GoodTr(i) = 0;
-    end
-    
-    if (MeanArea(i) > 160)
-        GoodTr(i) = 0;
-    end
+    GoodTr(i) = ~isempty(PixelList{i});
+   
+    p.progress;
 end
+p.stop;
 
-% edit out the faulty segments
+%edit out the faulty segments
 GoodTrs = find(GoodTr);
 PixelList = PixelList(GoodTrs);
 Xcent = Xcent(GoodTrs);
 Ycent = Ycent(GoodTrs);
-MeanArea = MeanArea(GoodTrs);
+%MeanArea = MeanArea(GoodTrs);
 frames = frames(GoodTrs);
 
 c = (1:length(frames))'; 
 
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
-save_name = ['InitClu_minlength_' num2str(min_trans_length) '.mat'];
-if min_trans_length == 5
-    save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents GoodTrs min_trans_length -v7.3;
-elseif min_trans_length ~= 5
-     save(save_name,'c', 'Xdim', 'Ydim', 'PixelList', 'Xcent', 'Ycent', 'frames',...
-         'meanareas', 'meanX', 'meanY', 'NumFrames', 'NumEvents', 'GoodTrs', 'min_trans_length', '-v7.3');
-end
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents min_trans_length -v7.3;
+
     
 
 end

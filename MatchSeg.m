@@ -1,4 +1,4 @@
-function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList)
+function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList,distthresh)
 % [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,23 +19,25 @@ function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 minidx = 0;
 
-if (length(oldstats) == 0)
+if isempty(oldstats)
     % no segs on the preceding frame
     MatchingSeg = 0;
     return;
 end
 
 % calculate distance
-p1 = currstat.Centroid;
+p1 = currstat;
 
 for i = 1:length(oldstats)
-    p2 = oldstats(i).Centroid;
+    p2 = oldstats{i};
+    
     d(i) = pdist([p1;p2],'euclidean');
+  
 end
 
 [mindist,minidx] = min(d);
 
-if (mindist < currstat.MinorAxisLength)
+if (mindist < distthresh)
     % we'll consider this a match
     MatchingSeg = SegList(minidx);
 else
