@@ -44,12 +44,12 @@ parfor i = 1:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     
-    thresh = median(tempFrame(maskpix));
+    thresh = nanmedian(tempFrame(maskpix));
     
 %     keyboard;
 %     thresh = median(tempFrame(maskpix))
     [cc{i},PeakPix{i},NumItsTaken{i}] = SegmentFrame(tempFrame,mask,thresh);
-    (NumItsTaken{i});
+    %(NumItsTaken{i});
 
     p.progress;
 end

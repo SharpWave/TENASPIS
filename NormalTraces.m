@@ -12,6 +12,7 @@ Ydim = size(NeuronImage{1},2);
 
 NumNeurons = length(NeuronImage);
 
+trace = zeros(NumNeurons,NumFrames); 
 p=ProgressBar(NumFrames);
 parfor i = 1:NumFrames
     
@@ -26,6 +27,7 @@ parfor i = 1:NumFrames
 end
 p.stop; 
 
+difftrace = zeros(size(trace)); 
 for i = 1:NumNeurons
     trace(i,:) = zscore(trace(i,:));
     trace(i,:) = convtrim(trace(i,:),ones(10,1)/10);
@@ -35,8 +37,7 @@ for i = 1:NumNeurons
     difftrace(i,1:11) = 0;
     difftrace(i,end-11:end) = 0;
 end
-
-
+ 
 save NormTraces.mat trace difftrace;
 
 end 

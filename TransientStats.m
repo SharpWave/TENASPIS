@@ -21,7 +21,9 @@ function [DistTrav] = TransientStats(SegChain)
 
 load Blobs.mat;
 
-
+DistTrav = zeros(1,length(SegChain));
+Xc = cell(1,length(SegChain);
+Yc = cell(1,length(SegChain); 
 for i = 1:length(SegChain)
     % for each transient
     

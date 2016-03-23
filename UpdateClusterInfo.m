@@ -22,7 +22,7 @@ if nargin <= 6
 end
     
 for i = ClustersToUpdate'
-    display(['updated cluster # ',int2str(i)]);
+    %display(['updated cluster # ',int2str(i)]);
     cluidx = find(c == i);
     tempX = 0;
     tempY = 0;
@@ -53,7 +53,7 @@ for i = ClustersToUpdate'
     BitMap = logical(zeros(Xdim,Ydim));
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
-    r = regionprops(b,'all'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
+    r = regionprops(b,'Area'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
     if (length(r) == 0)
         display('foundit');
         keyboard;

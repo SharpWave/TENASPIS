@@ -24,3 +24,5 @@ Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
 frame = h5read(file,'/Object',[1 1 framenum 1],[Xdim Ydim 1 1]);
+
+end

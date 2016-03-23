@@ -56,8 +56,8 @@ close all;
 load('Blobs.mat','PeakPix','cc');
 load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
-goodseg = find(TransientLength >= min_trans_length);
-SegChain = SegChain(goodseg);
+%goodseg = find(TransientLength >= min_trans_length);
+SegChain = SegChain(TransientLength >= min_trans_length);
 NumSegments = length(SegChain);
 
 if ~exist(fullfile(pwd,'InitClu.mat'),'file'); 
@@ -75,7 +75,7 @@ for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
     while Cchanged == 1
-        disp(['Merging neurons, iteration #',num2str(NumIterations+1)]); 
+        %disp(['Merging neurons, iteration #',num2str(NumIterations+1)]); 
         [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
@@ -126,11 +126,11 @@ catch
     disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
 end
 
-%[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
+%MakeMeanBlobs(ActiveFrames,c,GoodTrs);
 
 save_name = 'ProcOut.mat';
 save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length','GoodTrs', '-v7.3');
 
 
 end

@@ -16,15 +16,17 @@ reg_struct.Session = sess_num;
 
 mask_multi_image_reg(init_tif,init_date,init_sess,reg_struct);
 
-load mask_reg
+ChangeDirectory(animal_id,sess_date,sess_num); 
+
+load(fullfile(pwd,'mask_reg.mat'))
 mask_reg = logical(mask_reg); 
 
 disp('Extracting blobs...'); 
-ExtractBlobs('DFF.h5',mask_reg);
+ExtractBlobs(fullfile(pwd,'DFF.h5'),mask_reg);
 
 disp('Making transients...');
-MakeTransients('DFF.h5',0);
-%!del InitClu.mat
+MakeTransients(fullfile(pwd,'DFF.h5'),0);
+!del InitClu.mat
 
 disp('Making neurons...'); 
 MakeNeurons('min_trans_length',10);
@@ -44,8 +46,8 @@ AddPoTransients;
 disp('Finalizing...');
 DetectGoodSlopes;
 
-CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename','PlaceMapsv2.mat','half_window',0,'minspeed',3);
-PFstats;
+%CalculatePlacefields('201b','alt_inputs','T2output.mat','half_window',0,'minspeed',3);
+%PFstats;
 
 end
 

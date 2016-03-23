@@ -88,9 +88,9 @@ for i = 1:length(MeanBlobs)
         continue;
     end
     
-    if suppress_output == 0
-        disp(['Part 2: ' num2str(i) ' of ' num2str(length(MeanBlobs)) '.'])
-    end
+%     if suppress_output == 0
+%         disp(['Part 2: ' num2str(i) ' of ' num2str(length(MeanBlobs)) '.'])
+%     end
 end
 hold off;
 
