@@ -28,7 +28,7 @@ end
 % calculate distance
 p1 = currstat;
 
-d = zeros(1,length(oldstats); 
+d = zeros(1,length(oldstats)); 
 for i = 1:length(oldstats)
     p2 = oldstats{i};
     
