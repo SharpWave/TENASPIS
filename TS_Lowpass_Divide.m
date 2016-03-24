@@ -1,4 +1,9 @@
 function TS_Lowpass_Divide(infile,LPfile)
+% TS_Lowpass_Divide(infile,LPfile)
+%
+% infile is your imaging movie with 3-pixel disc smoothing applied
+%
+% LPfile is the imagine movie with 20-pixel disc smoothing applied
 
 infilefolder = fileparts(fileparts(infile)); 
 cd(infilefolder); 
