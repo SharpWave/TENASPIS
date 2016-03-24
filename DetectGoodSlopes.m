@@ -60,7 +60,7 @@ for i = 1:NumNeurons
         end
         if ~isempty(Buddyspikes)
             %display('conflict');
-            f = loadframe('DFF.h5',CaEpochs(j,2));
+            f = loadframe(fullfile(pwd,'DFF.h5'),CaEpochs(j,2));
             fmean = mean(f(NeuronPixels{i}));
             bmean = zeros(1,length(Buddyspikes));
             for k = 1:length(Buddyspikes)

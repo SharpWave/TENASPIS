@@ -19,7 +19,7 @@ function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,fram
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (~exist('plotdist'))
+if ~exist('plotdist','var')
     plotdist = 0;
 end
 
@@ -73,7 +73,7 @@ for i = CluToMerge'
     for k = 1:length(nearclust)
         cidx = nearclust(k); % cidx is cluster number of close transient
         targpix = PixelList{cidx};
-        length(currpix),length(targpix),length(union(currpix,targpix)),
+        %length(currpix),length(targpix),length(union(currpix,targpix)),
         
         if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
             %display('Merge would inflate cluster too much');

@@ -91,14 +91,14 @@ for i = 1:NumNeurons
         if (peakpeak > 0) && (peakrank > rankthresh)
             %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
-        else
-            %display('pixels off kilter');
-            if peakpeak == 0
-                %display('this pixel is never the peak');
-            end
-            if peakrank < rankthresh
-                %display('mean rank of the peak not high enough');
-            end
+%         else
+%             display('pixels off kilter');
+%             if peakpeak == 0
+%                 display('this pixel is never the peak');
+%             end
+%             if peakrank < rankthresh
+%                 display('mean rank of the peak not high enough');
+%             end
         end
         
     end

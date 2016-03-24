@@ -56,15 +56,15 @@ close all;
 load('Blobs.mat','PeakPix','cc');
 load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
-%goodseg = find(TransientLength >= min_trans_length);
-SegChain = SegChain(TransientLength >= min_trans_length);
+goodseg = find(TransientLength >= min_trans_length);		 
+SegChain = SegChain(goodseg);
 NumSegments = length(SegChain);
 
 if ~exist(fullfile(pwd,'InitClu.mat'),'file'); 
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
 end
 
-load InitClu.mat;
+load(fullfile(pwd,'InitClu.mat'));
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
