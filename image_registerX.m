@@ -1,5 +1,8 @@
-function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
-% RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable)
+function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
+    base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
+% RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, ...
+%   reg_date, reg_session, manual_reg_enable, varargin)
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -17,6 +20,7 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, base
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 % Image Registration Function - THIS FUNCTION ONLY REGISTERS ONE IMAGE TO ANOTHER
 % AND DOES NOT DEAL WITH ANY INDIVIDUAL CELLS.
 % this fuction allows you to register a given
@@ -101,9 +105,10 @@ min_trans_thresh = 5;
 
 use_neuron_masks = 0; % default
 name_append = ''; % default
+mask_reg = 0; % default
 for j = 1:length(varargin)
     if strcmpi('mask_reg',varargin{j})
-        mask_reg_file = varargin{j+1};
+        mask_reg = varargin{j+1};
     end
     if strcmpi('use_neuron_masks',varargin{j})
        use_neuron_masks = varargin{j+1}; 
@@ -127,17 +132,13 @@ if nargin == 0 % Prompt user to manually enter in files to register if no inputs
 else
     % Create strings to point to minimum projection files in each working
     % directory for registration
-    currdir = cd;
-    base_path = ChangeDirectory(mouse_name, base_date, base_session);
+    base_path = ChangeDirectory(mouse_name, base_date, base_session, 0);
     base_file = fullfile(base_path,'ICmovie_min_proj.tif');
-    if ~exist('mask_reg_file','var')
-        reg_path = ChangeDirectory(mouse_name, reg_date, reg_session);
-        register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
-    elseif exist('mask_reg_file','var')
-        register_file = mask_reg_file;
+    reg_path = ChangeDirectory(mouse_name, reg_date, reg_session, 0);
+    register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
+    if  mask_reg == 1 % Insert the phrase "neuron_mask" into the saved filename
         reg_date = 'neuron_mask';
     end
-    cd(currdir)
 end
 
 %% Define unique filename for file you are registering to that you will

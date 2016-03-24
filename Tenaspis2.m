@@ -5,16 +5,16 @@ function Tenaspis2(animal_id,sess_date,sess_num)
 MasterDirectory = 'C:\MasterData';
 
 [init_date,init_sess] = GetInitRegMaskInfo(animal_id);
-init_dir = ChangeDirectory(animal_id,init_date,init_sess);
-init_tif = fullfile(init_dir,'ICmovie_min_proj.tif');
+% init_dir = ChangeDirectory(animal_id,init_date,init_sess);
+% init_tif = fullfile(init_dir,'ICmovie_min_proj.tif');
 
-load(fullfile(MasterDirectory,[animal_id,'_initialmask.mat']));
+init_mask_loc = fullfile(MasterDirectory,[animal_id,'_initialmask.mat']);
 
 reg_struct.Animal = animal_id;
 reg_struct.Date = sess_date;
 reg_struct.Session = sess_num;
 
-mask_multi_image_reg(init_tif,init_date,init_sess,reg_struct);
+mask_multi_image_reg(init_mask_loc,init_date,init_sess,reg_struct);
 
 load mask_reg
 mask_reg = logical(mask_reg); 
