@@ -1931,6 +1931,7 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = '2nd continuous block and 1st delay block only';
 MD(i).exclude_frames = [1:11371, 35211:35441, 45871:46175];
+
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_altpilot';
 MD(i).Date = '01_18_2016';
@@ -1942,6 +1943,18 @@ if (strcmp(userstr,'Nat'))
 end
 MD(i).Notes = '2nd continuous block only';
 MD(i).exclude_frames = [1:35441, 45871:46175];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_altpilot';
+MD(i).Date = '01_18_2016';
+MD(i).Session = 7;
+MD(i).Env = 'alternation';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\delay alternation pilot\01_18_2016\1 - alternation combined\Working T2';
+end
+MD(i).Notes = 'Tenaspis 2';
+MD(i).exclude_frames = [10971:11371, 35211:35441, 45871:46175];
 
 G45.alternation_delay_pilot(2) = i;
 G45.alternation_delay_pilot_good(2) = i;
