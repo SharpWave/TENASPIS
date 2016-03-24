@@ -24,8 +24,8 @@ function [] = mask_multi_image_reg(base_mask_file, init_date, init_sess, reg_str
 %   directory. 
 %
 %   INPUTS:
-%       base_file: Full file path of ICmovie_min_proj.tif to which you want
-%       to register other sessions.
+%       base_file: Full file path to the base session neuron mask you wish
+%       to register to other sessions
 %
 %       init_date, init_sess: date and session number for the base mask
 %       file, should be located in GetInitRegMaskInfo
@@ -103,9 +103,8 @@ for this_session = 1:num_sessions
     %Perform image registration. Note that this is backward from what
     %we usually do, as we are now taking the base file and registering
     %it to all the files in reg_file, not vice versa...
-    reginfo_temp = image_registerX(reg_struct.Animal, reg_struct.Date, ...
-        reg_struct.Session, init_date, init_sess, 0,...
-        'mask_reg', 1);
+    reginfo_temp = image_registerX(reg_struct(this_session).Animal, reg_struct(this_session).Date, ...
+        reg_struct(this_session).Session, init_date, init_sess, 0);
     
     % Create a registered mask from the bask mask
     mask = importdata(base_mask_file);
@@ -113,8 +112,8 @@ for this_session = 1:num_sessions
         reginfo_temp.base_ref,'InterpolationMethod','nearest');
     
     %Save the registered mask in the registered session file
-    curr_dir = cd;
-    save_path = ChangeDirectory(reg_struct.Animal,reg_struct.Date, reg_struct.Session);
+    save_path = ChangeDirectory(reg_struct(this_session).Animal, ...
+        reg_struct(this_session).Date, reg_struct(this_session).Session);
     save (fullfile(save_path,'mask_reg.mat'), 'mask_reg');
 end
     

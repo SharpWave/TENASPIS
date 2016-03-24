@@ -47,8 +47,6 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 %               registration, 1 if you want to allow it (default)
 %
 % varargins
-%   'mask_reg': this optional argument MUST be followed by the pathname to
-%   the mask file for running Tenaspis
 %
 %   'use_neuron_masks' (optional): 1 uses neuron masks to register sessions, not the
 %   minimum projection.  0 = default
@@ -105,11 +103,7 @@ min_trans_thresh = 5;
 
 use_neuron_masks = 0; % default
 name_append = ''; % default
-mask_reg = 0; % default
 for j = 1:length(varargin)
-    if strcmpi('mask_reg',varargin{j})
-        mask_reg = varargin{j+1};
-    end
     if strcmpi('use_neuron_masks',varargin{j})
        use_neuron_masks = varargin{j+1}; 
        if use_neuron_masks == 1
@@ -136,9 +130,7 @@ else
     base_file = fullfile(base_path,'ICmovie_min_proj.tif');
     reg_path = ChangeDirectory(mouse_name, reg_date, reg_session, 0);
     register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
-    if  mask_reg == 1 % Insert the phrase "neuron_mask" into the saved filename
-        reg_date = 'neuron_mask';
-    end
+
 end
 
 %% Define unique filename for file you are registering to that you will
