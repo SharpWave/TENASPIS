@@ -105,10 +105,10 @@ for this_session = 1:num_sessions
     %it to all the files in reg_file, not vice versa...
     reginfo_temp = image_registerX(reg_struct.Animal, reg_struct.Date, ...
         reg_struct.Session, init_date, init_sess, 0,...
-        'mask_reg', base_mask_file);
+        'mask_reg', 1);
     
-    %Build the struct.
-    mask = imread(base_mask_file);
+    % Create a registered mask from the bask mask
+    mask = importdata(base_mask_file);
     mask_reg = imwarp(mask,reginfo_temp.tform,'OutputView',...
         reginfo_temp.base_ref,'InterpolationMethod','nearest');
     

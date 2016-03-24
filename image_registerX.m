@@ -1,5 +1,9 @@
-function [RegistrationInfoX,unique_filename] = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
-% RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, reg_date, reg_session, manual_reg_enable)
+
+function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
+    base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
+% RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, ...
+%   reg_date, reg_session, manual_reg_enable, varargin)
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -17,6 +21,7 @@ function [RegistrationInfoX,unique_filename] = image_registerX(mouse_name, base_
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 % Image Registration Function - THIS FUNCTION ONLY REGISTERS ONE IMAGE TO ANOTHER
 % AND DOES NOT DEAL WITH ANY INDIVIDUAL CELLS.
 % this fuction allows you to register a given
@@ -42,8 +47,12 @@ function [RegistrationInfoX,unique_filename] = image_registerX(mouse_name, base_
 % manual_reg_enable: 0 if you want to disallow manually adjusting the
 %               registration, 1 if you want to allow it (default)
 %
-% 'mask_reg': this optional argument MUST be followed by the pathname to
-% the mask file for running Tenaspis
+% varargins
+%   'mask_reg': this optional argument MUST be followed by the pathname to
+%   the mask file for running Tenaspis
+%
+%   'use_neuron_masks' (optional): 1 uses neuron masks to register sessions, not the
+%   minimum projection.  0 = default
 %
 % OUTPUTS
 % cell_map:     cell array with each row corresponding to a given neuron,
@@ -90,11 +99,23 @@ multi_init_rad = 6.25e-4; % optimizer.InitialRadius = 6.25e-3 default
 
 FigNum = 1; % Start off figures at this number
 
+% Minimum number of transients a neuron must have in order to be included
+% when using neuron masks to do registration
+min_trans_thresh = 5; 
 %% Step 0: Get varargins
 
+use_neuron_masks = 0; % default
+name_append = ''; % default
+mask_reg = 0; % default
 for j = 1:length(varargin)
     if strcmpi('mask_reg',varargin{j})
-        mask_reg_file = varargin{j+1};
+        mask_reg = varargin{j+1};
+    end
+    if strcmpi('use_neuron_masks',varargin{j})
+       use_neuron_masks = varargin{j+1}; 
+       if use_neuron_masks == 1
+           name_append = '_regbyneurons';
+       end
     end
 end
 
@@ -112,23 +133,19 @@ if nargin == 0 % Prompt user to manually enter in files to register if no inputs
 else
     % Create strings to point to minimum projection files in each working
     % directory for registration
-    currdir = cd;
-    base_path = ChangeDirectory(mouse_name, base_date, base_session);
+    base_path = ChangeDirectory(mouse_name, base_date, base_session, 0);
     base_file = fullfile(base_path,'ICmovie_min_proj.tif');
-    if ~exist('mask_reg_file','var')
-        reg_path = ChangeDirectory(mouse_name, reg_date, reg_session);
-        register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
-    elseif exist('mask_reg_file','var')
-        register_file = mask_reg_file;
+    reg_path = ChangeDirectory(mouse_name, reg_date, reg_session, 0);
+    register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
+    if  mask_reg == 1 % Insert the phrase "neuron_mask" into the saved filename
         reg_date = 'neuron_mask';
     end
-    cd(currdir)
 end
 
 %% Define unique filename for file you are registering to that you will
 % eventually save in the base path
 unique_filename = fullfile(base_path,['RegistrationInfo-' mouse_name '-' reg_date '-session' ...
-        num2str(reg_session) '.mat']);
+        num2str(reg_session) name_append '.mat']);
 
 %% Step 1a: Skip out on everything if registration is already done!
 try
@@ -149,21 +166,34 @@ base_image_untouch = base_image_gray;
 reg_image_gray = uint16(imread(register_file));
 reg_image_untouch = reg_image_gray;
 
-bg_base = imopen(base_image_gray,strel('disk',disk_size));
-base_image_gray = base_image_gray - bg_base;
-base_image_gray = imadjust(base_image_gray);
-level = graythresh(base_image_gray);
-base_image_bw = im2bw(base_image_gray,level);
-base_image_bw = bwareaopen(base_image_bw,pixel_thresh,8);
-base_image = double(base_image_bw);
+if use_neuron_masks == 0 % Use minimum projection
+    bg_base = imopen(base_image_gray,strel('disk',disk_size));
+    base_image_gray = base_image_gray - bg_base;
+    base_image_gray = imadjust(base_image_gray);
+    level = graythresh(base_image_gray);
+    base_image_bw = im2bw(base_image_gray,level);
+    base_image_bw = bwareaopen(base_image_bw,pixel_thresh,8);
+    base_image = double(base_image_bw);
+    
+    bg_reg = imopen(reg_image_gray,strel('disk',disk_size));
+    reg_image_gray = reg_image_gray - bg_reg;
+    reg_image_gray = imadjust(reg_image_gray);
+    level = graythresh(reg_image_gray);
+    reg_image_bw = im2bw(reg_image_gray,level);
+    reg_image_bw = bwareaopen(reg_image_bw,pixel_thresh,8);
+    reg_image = double(reg_image_bw);
+elseif use_neuron_masks == 1 % Create binary all neuron masks for registration
+    ChangeDirectory(mouse_name, base_date, base_session);
+    load('MeanBlobs','BinBlobs')
+    load('ProcOut.mat','NumTransients')
+    base_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
+    ChangeDirectory(mouse_name, reg_date, reg_session);
+    load('MeanBlobs','BinBlobs')
+    load('ProcOut.mat','NumTransients')
+    reg_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
+    
+end
 
-bg_reg = imopen(reg_image_gray,strel('disk',disk_size));
-reg_image_gray = reg_image_gray - bg_reg;
-reg_image_gray = imadjust(reg_image_gray);
-level = graythresh(reg_image_gray);
-reg_image_bw = im2bw(reg_image_gray,level);
-reg_image_bw = bwareaopen(reg_image_bw,pixel_thresh,8);
-reg_image = double(reg_image_bw);
 
 
 %% Step 2b: Run Registration Functions, get transform
@@ -186,8 +216,8 @@ end
 
 % Run registration
 disp('Running Registration...');
-tform = imregtform(reg_image, base_image, regtype, optimizer, metric);
-
+tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
+%%
 % Create no registration variable
 tform_noreg = tform;
 tform_noreg.T = eye(3);
@@ -206,6 +236,7 @@ moving_gray_noreg = imwarp(reg_image_gray,tform_noreg,'OutputView',...
     base_ref,'InterpolationMethod','nearest');
 
 % Plot it out for comparison
+figure
 h_base_landmark = subplot(2,2,1);
 imagesc(base_image); colormap(gray); colorbar
 title('Base Image');
@@ -216,7 +247,7 @@ subplot(2,2,3)
 imagesc(moving_reg); colormap(gray); colorbar
 title('Registered Image')
 subplot(2,2,4)
-imagesc(abs(moving_reg - base_image)); colormap(gray); colorbar
+imagesc((moving_reg - base_image)); colormap(gray); colorbar
 title('Registered Image - Base Image')
 
 figure
@@ -227,6 +258,7 @@ subplot(1,2,2)
 imagesc_gray(base_image_gray - moving_reg_gray);
 title('Base Image - Registered Image');
 
+%%
 
 % FigNum = FigNum + 1;
 
@@ -312,6 +344,7 @@ RegistrationInfoX(size_info).tform = tform;
 RegistrationInfoX(size_info).exclude_pixels = exclude_pixels;
 RegistrationInfoX(size_info).regstats = regstats;
 RegistrationInfoX(size_info).base_ref = base_ref;
+RegistrationInfoX(size_info).use_neuron_masks = use_neuron_masks;
 
 if exist('T_manual','var')
     RegistrationInfoX(size_info).tform_manual = tform_manual;

@@ -1,5 +1,12 @@
-function [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num)
-% [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num)
+function [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+% [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+% 
+% Changes to the appropriate working directory for the mouse in question,
+% and/or outputs that directory in dirstr.
+% If change_dir_flag is not specified or is set to 1, this will change to
+% the working directory. If change_dir_flag is set to 0, dirstr will still
+% be output but you will remain in the original directory.
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,28 +25,40 @@ function [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if ~exist('sess_num')
+if ~exist('sess_num','var')
     sess_num = 1;
 end
 
-CurrDir = pwd;
+if ~exist('change_dir_flag','var')
+    change_dir_flag = 1; % default value
+end
+
+% CurrDir = pwd;
 
 MasterDirectory = 'C:\MasterData';
-cd(MasterDirectory);
+% cd(MasterDirectory);
 
-load MasterDirectory.mat;
+load(fullfile(MasterDirectory,'MasterDirectory.mat'));
 
-cd(CurrDir);
+% cd(CurrDir);
 
 NumEntries = length(MD);
 
 for i = 1:NumEntries
 
-    if (strcmp(MD(i).Date,sess_date) & (MD(i).Session == sess_num) & strcmp(MD(i).Animal,animal_id))
-        cd(MD(i).Location);
+    if (strcmp(MD(i).Date,sess_date) && (MD(i).Session == sess_num) && strcmp(MD(i).Animal,animal_id))
+        
+        % Change to the appropriate directory if desired
+        if change_dir_flag == 1
+            cd(MD(i).Location);
+        end
+        
         dirstr = (MD(i).Location);
+        
         return;
     end
 end
 
 display('Directory not found');
+
+end

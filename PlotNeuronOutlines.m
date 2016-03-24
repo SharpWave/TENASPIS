@@ -1,5 +1,5 @@
-function [] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,NeuronImage,varargin)
-%PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
+function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
+% [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 % varargin: 'plot_max_proj',max_proj_tif_path plots the clusters over the
 % maximum projection
 %
@@ -67,6 +67,7 @@ for i = 1:length(clusterlist)
     y{i} = b{1}(:,2);
     y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
     plot(y{i},x{i},'Color',colors(clusterlist(i),:));hold on;
+    color_use(i,:) = colors(clusterlist(i),:);
 end
 hold off;
 axis equal;
