@@ -2842,7 +2842,7 @@ MD(i).Notes = [];
 i = i+1;
 MD(i).Animal = 'GCamp6f_48_treadmill';
 MD(i).Date = '11_27_2015';
-MD(i).Session = 2;
+MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '2:03:07 PM';
@@ -2913,6 +2913,18 @@ end
 MD(i).Notes = [];
 
 %% T2 folders
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_27_2015';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '11:07:40.34 AM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_27_2015\2 - Treadmill (left) T2';
+end
+MD(i).Notes = [];
+
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_30_2015';
