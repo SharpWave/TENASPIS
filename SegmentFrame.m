@@ -31,8 +31,8 @@ badpix = find(mask == 0);
 
 % threshold and segment the frame
 initframe = single(frame);
-blankframe = zeros(size(initframe));
-minval = min(initframe(:));
+blankframe = zeros(size(initframe));        %After first iteration, add minval to this. 
+minval = min(initframe(:));                 %Background. 
 
 threshframe = frame > thresh;
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
@@ -51,19 +51,15 @@ while BlobsInFrame
     bb = bwconncomp(threshframe,4);
     rp = regionprops(bb,'Area','Solidity');
     
+    %No blobs. 
     if (isempty(bb.PixelIdxList))
         break;
     end
     
     % there were blobs, check if any of them satisfy size and
     % solidity criteria
-    bsize = [];
-    bSolid = [];
-    
-    for j = 1:length(bb.PixelIdxList)
-        bsize(j) = rp(j).Area;
-        bSolid(j) = rp(j).Solidity;
-    end
+    bsize = deal([rp.Area]);
+    bSolid = deal([rp.Solidity]);
     
     newn = intersect(find(bsize <= neuronthresh),find(bSolid >= minsolid));
     
@@ -74,14 +70,14 @@ while BlobsInFrame
         tNumItsTaken(currnewList) = NumIts;
     end
        
-    if (length(newn) == length(bb.PixelIdxList))
+    if length(newn) == length(bb.PixelIdxList)
         % nothing left to split
         break;
     end
     
     % still blobs left
     BlobsInFrame = 1;
-    oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
+    oldn = union(find(bsize > neuronthresh), find(bSolid < minsolid));
     
     % make a frame containing the remaining blobs
     temp = blankframe + minval;

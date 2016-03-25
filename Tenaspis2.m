@@ -21,6 +21,7 @@ ChangeDirectory(animal_id,sess_date,sess_num);
 load(fullfile(pwd,'mask_reg.mat'))
 mask_reg = logical(mask_reg); 
 
+%%
 disp('Extracting blobs...'); 
 ExtractBlobs(fullfile(pwd,'DFF.h5'),mask_reg);
 

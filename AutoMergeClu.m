@@ -80,10 +80,10 @@ for i = CluToMerge'
             continue;
         end
 
-%         if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
-%             display('Merge would inflate cluster too much');
-%             continue;
-%         end
+        if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
+            %display('Merge would inflate cluster too much');
+            continue;
+        end
         
         c(c == cidx) = i;
         DidMerge = 1;

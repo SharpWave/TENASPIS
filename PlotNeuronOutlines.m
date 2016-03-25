@@ -46,7 +46,7 @@ if exist('max_proj','var')
 end
 
 if (~exist('clusterlist'))
-    clusterlist = 1:length(PixelList)
+    clusterlist = 1:length(PixelList);
 end
 
 if(~isrow(clusterlist))
@@ -55,6 +55,9 @@ end
 
 colors = rand(length(clusterlist),3);
 
+x = cell(1,length(clusterlist));
+y = cell(1,length(clusterlist));
+color_use = zeros(length(clusterlist),3);
 for i = 1:length(clusterlist)
     if(~ToPlotCell(clusterlist(i)))
         continue;
