@@ -52,5 +52,7 @@ function MakeT2Movies(MotCorrh5)
     disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
     Make_DFF(threePixName,DFFname);
     
-    !del tempName
+    delete(tempname);
+    delete(threePixName);
+    delete(SLPDFname);
 end
