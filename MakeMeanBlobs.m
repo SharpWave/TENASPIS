@@ -98,5 +98,5 @@ MeanBlobs = MeanBlobs(1:max(cTon));
 
 % keyboard
 % save MeanBlobs.mat MeanBlobs BinBlobs;
-save('MeanBlobs.mat','MeanBlobs','BinBlobs','-v7.3')
+save('MeanBlobs.mat','MeanBlobs','BinBlobs','-v7.3');
 end
