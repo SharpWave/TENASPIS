@@ -72,18 +72,18 @@ for i = CluToMerge'
     DidMerge = 0;
     for k = 1:length(nearclust)
         cidx = nearclust(k); % cidx is cluster number of close transient
-        targpix = PixelList{cidx};
+        %targpix = PixelList{cidx};
         %length(currpix),length(targpix),length(union(currpix,targpix)),
         
-        if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
-            %display('Merge would inflate cluster too much');
-            continue;
-        end
+%         if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
+%             %display('Merge would inflate cluster too much');
+%             continue;
+%         end
 
-        if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
-            %display('Merge would inflate cluster too much');
-            continue;
-        end
+%         if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
+%             %display('Merge would inflate cluster too much');
+%             continue;
+%         end
         
         c(c == cidx) = i;
         DidMerge = 1;

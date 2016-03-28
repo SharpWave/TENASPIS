@@ -14,7 +14,6 @@ for i = 1:NumNeurons
 end
 
 p = ProgressBar(NumFrames);
-display('Calculating ranks and peaks...');
 for i = 1:NumFrames
     ActiveN = find(FT(:,i));
 

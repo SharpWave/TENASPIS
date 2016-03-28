@@ -2919,7 +2919,7 @@ MD(i).Date = '11_27_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '11:07:40.34 AM';
+MD(i).RecordStartTime = '1:14:29 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_27_2015\2 - Treadmill (left) T2';
 end
@@ -2946,18 +2946,6 @@ MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '2:22:59.00 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\2 - Treadmill (left) T2';
-end
-MD(i).Notes = [];
-
-i = i+1;
-MD(i).Animal = 'GCamp6f_45_treadmill';
-MD(i).Date = '12_01_2015';
-MD(i).Session = 3;
-MD(i).Env = 'Treadmill Loop';
-MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '2:22:59.00 PM';
-if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\1 - Treadmill (left) T2';
 end
 MD(i).Notes = [];
 
