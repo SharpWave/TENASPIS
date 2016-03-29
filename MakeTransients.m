@@ -29,27 +29,32 @@ function [] = MakeTransients(varargin)
 %% Calcium transient inclusion criteria
 max_trans_dist = 2; % (default) maximum number of pixels a transient can travel without being discarded
 
+% Load pertinent blob variables
 load ('Blobs.mat','cc','PeakPix');
 
+% Get basic movie info
 info = h5info('DFF.h5','/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
+% Initialize variables
 NumSegments = 0;
 SegChain = [];
 SegList = zeros(NumFrames,100);
 
-
+% Initialize progress bar
 p = ProgressBar(NumFrames); 
 
+%% Run through loop to connect blobs between successive frames
 for i = 2:NumFrames
-    stats = regionprops(cc{i},'MinorAxisLength');
-    Peaks = PeakPix{i};
-    OldPeaks = PeakPix{i-1};
+    stats = regionprops(cc{i},'MinorAxisLength'); % Assuming each neuron can be approximated by an ellipse, get the minor axis length
+    Peaks = PeakPix{i}; % Grab peak pixel locations
+    OldPeaks = PeakPix{i-1}; % Grab peak pixel locations from previous frame
     for j = 1:cc{i}.NumObjects
-        % find match
-        [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),stats(j).MinorAxisLength);
+        % find match between blob j and all blobs from the previous frame
+        [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),...
+            stats(j).MinorAxisLength);
  
         if (MatchingSeg == 0)
             % no match found, make a new segment
@@ -66,6 +71,7 @@ for i = 2:NumFrames
     p.progress;
 end
 p.stop;
+%%
 
 TransientLength = zeros(1,length(SegChain));
 for i = 1:length(SegChain)
@@ -81,8 +87,6 @@ NumSegments = length(SegChain);
 TransientLength = TransientLength(gooddist);
 
 save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'max_trans_dist','TransientLength')
-
-
 
 end
 
