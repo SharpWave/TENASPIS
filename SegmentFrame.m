@@ -1,5 +1,30 @@
 function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
+%
+%   Identifies local maxima and separates them out into neuron sized blobs.
+%   Does so in an adaptive manner by iteratively bumping up the threshold
+%   until no new blobs are identified.
+%
+%   INPUTS:
+%
+%       frame: a frame from an braing imaging movie
+%
+%       mask: a logical array the same size as frame indicating which areas
+%       have valid neurons (ones) and which do not (zeros)
+%
+%       thresh: the starting value at which you will threshold the values in
+%       frame to being looking for blobs
+%
+%   OUTPUTS:
+%
+%       cc: structure variable containing all the relevant data/statistics 
+%       about the blobs discovered (e.g. the pixel indices for each blob) 
+%
+%       PeakPix: a cell array with the x/y pixel indices for the location 
+%       of the peak pixel intensity for each blob.
+%
+%       NumItsTaken: number of iterations taken to identify each blob.
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -25,18 +50,19 @@ threshinc = 0.01; % how much to increase threshold by on each re-segmentation it
 neuronthresh = 150; % maximum blob size to be considered a neuron
 minsolid = 0.9; % minimum blob solidity to be considered a neuron
 
-
-PeakPix = [];
-badpix = find(mask == 0);
+% Setup variables for below
+PeakPix = []; % Locations of peak pixels 
+badpix = find(mask == 0); % Locations of pixels that are outside the mask and should be excluded
 
 % threshold and segment the frame
 initframe = single(frame);
-blankframe = zeros(size(initframe));        %After first iteration, add minval to this. 
-minval = min(initframe(:));                 %Background. 
 
-threshframe = frame > thresh;
+blankframe = zeros(size(initframe));
+minval = min(initframe(:));
+threshframe = frame > thresh; % apply threshold, make it into a logical array
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
 
+% Set up variables for while loop below
 newlist = [];
 currnewList = 0;
 BlobsInFrame = 1;
@@ -45,23 +71,24 @@ tNumItsTaken = [];
 
 while BlobsInFrame
     NumIts = NumIts + 1;
-    BlobsInFrame = 0;
+    BlobsInFrame = 0; % reset each loop
     % threshold and segment the frame
     
-    bb = bwconncomp(threshframe,4);
-    rp = regionprops(bb,'Area','Solidity');
+    bb = bwconncomp(threshframe,4); % Look for connected regions/blobs in threshframe
+    rp = regionprops(bb,'Area','Solidity'); % Pull area and solidity properties
     
-    %No blobs. 
+    % Break while loop if no blobs meeting all the criteria are found
     if (isempty(bb.PixelIdxList))
         break;
     end
     
-    % there were blobs, check if any of them satisfy size and
+    % if there were blobs, check if any of them satisfy size and
     % solidity criteria
     bsize = deal([rp.Area]);
     bSolid = deal([rp.Solidity]);
     
-    newn = intersect(find(bsize <= neuronthresh),find(bSolid >= minsolid));
+    % Look for new blobs that meet the maximum size AND minimum solidity criteria
+    newn = intersect(find(bsize <= neuronthresh), find(bSolid >= minsolid));
     
     for j = 1:length(newn)
         % append new blob pixel lists
@@ -70,14 +97,16 @@ while BlobsInFrame
         tNumItsTaken(currnewList) = NumIts;
     end
        
-    if length(newn) == length(bb.PixelIdxList)
-        % nothing left to split
+    % If nothing is left to split, break out of the while loop
+    if (length(newn) == length(bb.PixelIdxList))
         break;
     end
     
-    % still blobs left
+    % If there are still blobs left
     BlobsInFrame = 1;
-    oldn = union(find(bsize > neuronthresh), find(bSolid < minsolid));
+    % Define old blobs as those that do NOT meet either the size OR solidity
+    % criteria.
+    oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
     
     % make a frame containing the remaining blobs
     temp = blankframe + minval;
@@ -90,10 +119,12 @@ while BlobsInFrame
     threshframe = temp > thresh;
     threshframe = bwareaopen(threshframe,adjminpixels,4);
     
+    % Run throuh while loop again to determine if new threshold has
+    % produced any more legitimate blobs.
     
 end
 
-NumItsTaken = [];
+NumItsTaken = []; % Initialize Number of iterations to empty
 
 % exit if no blobs found
 if (isempty(newlist))
@@ -106,17 +137,21 @@ if (isempty(newlist))
     return;
 end
 
+% Initialize variables
 numlists = 0;
 newcc.PixelIdxList = [];
 
+% Step through each new blob in the frame 
 for i = 1:length(newlist)
+    % Check to make sure blobs are within the neuron mask
     if (isempty(intersect(newlist{i},badpix)))
-        numlists = numlists + 1;
-        newcc.PixelIdxList{numlists} = single(newlist{i});
-        NumItsTaken(numlists) = tNumItsTaken(i);
+        numlists = numlists + 1; % Count of number of blobs
+        newcc.PixelIdxList{numlists} = single(newlist{i}); % Pixel indices for blob
+        NumItsTaken(numlists) = tNumItsTaken(i); % Save iterations required to ID each blob
     end
 end
 
+% Dump everything into newcc variable
 newcc.NumObjects = numlists;
 newcc.ImageSize = size(frame);
 newcc.Connectivity = 4;

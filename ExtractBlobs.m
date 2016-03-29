@@ -23,39 +23,49 @@ function [] = ExtractBlobs(file,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
+% Get Basic Movie Information
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
+% Pull neuron mask if specified, otherwise set mask to include the whole
+% image
 if ~exist('mask','var')
     mask = ones(Xdim,Ydim);
 end
+maskpix = find(mask(:) > 0); % Get pixels to use when looking for blobs
 
-maskpix = find(mask(:) > 0);
-
+% Pre-allocate variables
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
 NumItsTaken = cell(1,NumFrames);
-p = ProgressBar(NumFrames);
 
+p = ProgressBar(NumFrames); % Initialize progress bar
+
+% Run through each frame and isolate all blobs
 parfor i = 1:NumFrames
     
+    % Read in each imaging frame
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
-    
-    thresh = nanmedian(tempFrame(maskpix));
+
+    thresh = nanmedian(tempFrame(maskpix)); % Set threshold
     
 %     keyboard;
 %     thresh = median(tempFrame(maskpix))
+
+    % Detect all blobs that are within the mask by adaptively thresholding
+    % each frame
     [cc{i},PeakPix{i},NumItsTaken{i}] = SegmentFrame(tempFrame,mask,thresh);
     %(NumItsTaken{i});
 
-    p.progress;
+    p.progress; % update progress bar
+    
 end
-p.stop;
+
+p.stop; % Shut-down progress bar
 
 save Blobs.mat cc mask PeakPix NumItsTaken;
-
 
 end

@@ -75,8 +75,9 @@ for i = 1:length(MinPixelDist)
     Cchanged = 1;
     oldNumCT = NumCT;
     while Cchanged == 1
-        %disp(['Merging neurons, iteration #',num2str(NumIterations+1)]); 
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
+        disp(['Merging neurons, iteration #',num2str(NumIterations+1)]); 
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = ...
+            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
