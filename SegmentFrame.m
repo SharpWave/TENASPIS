@@ -1,17 +1,29 @@
 function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 %
-%   Adaptively thresholds the input frame to identify local maxima and
-%   separate them out into neuron sized blobs.
+%   Identifies local maxima and separates them out into neuron sized blobs.
+%   Does so in an adaptive manner by iteratively bumping up the threshold
+%   until no new blobs are identified.
 %
 %   INPUTS:
-%   frame: a frame from an braing imaging movie
 %
-%   mask: a logical array the same size as frame indicating which areas
-%   have valid neurons (ones) and which do not (zeros)
+%       frame: a frame from an braing imaging movie
 %
-%   thresh: the starting value at which you will threshold the values in
-%   frame to being looking for blobs
+%       mask: a logical array the same size as frame indicating which areas
+%       have valid neurons (ones) and which do not (zeros)
+%
+%       thresh: the starting value at which you will threshold the values in
+%       frame to being looking for blobs
+%
+%   OUTPUTS:
+%
+%       cc: structure variable containing all the relevant data/statistics 
+%       about the blobs discovered (e.g. the pixel indices for each blob) 
+%
+%       PeakPix: a cell array with the x/y pixel indices for the location 
+%       of the peak pixel intensity for each blob.
+%
+%       NumItsTaken: number of iterations taken to identify each blob.
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
