@@ -12,8 +12,22 @@ function [MatchingSeg,minidx] = MatchSeg(currstat,oldstats,SegList,distthresh)
 %   oldstats: same as currstat but for ALL the blobs from the previous
 %   frame
 %
-%   SegList:
+%   SegList: A row vector containing the matching segment number for all
+%   transients from the previous frame, of the form SegList(cc_object_num)
+%   = Segment_num, where cc_object_num is the object number for that frame
+%   in cc variable from ExtractBlobs, and Segment_num corresponds to
+%   MatchingSeg output from running MatchSeg on previous frame
 %
+%   distthresh: maximum distance the peak pixel intensity location can move
+%   to be considered a valid match.  Suggest using the minor axis length of
+%   the neuron
+%
+% OUTPUTS:
+%
+%   MatchingSeg: the matching segment from the previous frame, identified 
+%   from SegList  
+%
+%   minidx: the pixel index for the matching blob from the previous frame
 %   
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
@@ -56,11 +70,13 @@ for i = 1:length(oldstats)
   
 end
 
-[mindist,minidx] = min(d);
+% Locate the closest blob in oldstats and get the distance from its peak
+% pixel (mindist) as well as the pixel index (minidx)
+[mindist,minidx] = min(d); 
 
 if (mindist < distthresh)
     % we'll consider this a match since it meet the min distance threshold
-    MatchingSeg = SegList(minidx);
+    MatchingSeg = SegList(minidx); % Pull the matching segment from the previous frame
 else
     % no match found
     MatchingSeg = 0;

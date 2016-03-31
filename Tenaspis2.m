@@ -23,7 +23,7 @@ disp('Extracting blobs...');
 ExtractBlobs('DFF.h5',mask_reg);
 
 disp('Making transients...');
-MakeTransients('DFF.h5',0);
+MakeTransients('DFF.h5',0); % Dave - the inputs to this are currently unused
 !del InitClu.mat
 
 disp('Making neurons...'); 

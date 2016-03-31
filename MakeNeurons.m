@@ -4,6 +4,7 @@ function [] = MakeNeurons(varargin)
 % Arranges calcium transients into neurons, based on centroid locations
 % inputs: varargin - see MakeTransients for 'min_trans_length' variable
 % (optional)
+%
 % outputs: ProcOut.mat
 % --------------------------------------
 % Variables saved: (breaking this requires major version update)
@@ -18,6 +19,8 @@ function [] = MakeNeurons(varargin)
 % NumFrames: number of frames in the entire movie
 % FT: binary neuron activity matrix
 % VersionString: which release of Tenaspis was used
+% cTon: mapping of each transient from SegFrame to its correct neuron
+% nToc: mapping of each neuron to its final cluster
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,49 +49,66 @@ for j = 1:length(varargin)
     end
 end
 
-%%
+%% 
 
 VersionString = '0.9.0.0-beta';
 MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4.5];
 
 close all;
 
+% Load relevant variables
+disp('Loading variables for MakeTransients')
 load('Blobs.mat','PeakPix','cc');
 load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
+% Identify good segments that are longer than the minimum transient length
 goodseg = find(TransientLength >= min_trans_length);
 SegChain = SegChain(goodseg);
 NumSegments = length(SegChain);
 
+
+% Intialize "clusters", which are segments that have been pared down a bit
+% to their average size/shape across all their active frames and grouped
+% together.  End result is groups
 if ~exist(fullfile(pwd,'InitClu.mat'),'file'); 
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
 end
 
-load InitClu.mat;
+%%
+load InitClu.mat; % Load initialized cluster data
 NumIterations = 0;
 NumCT = length(c);
 oldNumCT = NumCT;
 InitPixelList = PixelList;
 
 % run AutoMergeClu, each time incrementing the distance threshold
+% Since clusters start out temporally and spatially independent from one
+% another, this loop starts out by merging all the clusters that are very
+% close to one another into the same new cluster, then bumping up the
+% distance threshold incrementally until no new clusters are created or the
+% max distance threshold is reached.
 for i = 1:length(MinPixelDist)
     Cchanged = 1;
-    oldNumCT = NumCT;
+    oldNumCT = NumCT; % Update number
     while Cchanged == 1
-        disp(['Merging neurons, iteration #',num2str(NumIterations+1)]); 
+        disp(['Merging neurons, iteration #',num2str(NumIterations+1)])
         [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = ...
             AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
         NumIterations = NumIterations+1;
         NumClu(NumIterations) = length(unique(c));
         DistUsed(NumIterations) = MinPixelDist(i);
         
-        if (NumClu(NumIterations) == oldNumCT)
+        if (NumClu(NumIterations) == oldNumCT) 
+            % If you end up with the same number of clusters as the previous iteration, exit
             break;
         else
+            % Save number of clusters
             oldNumCT = NumClu(NumIterations);
         end
     end
 end
+
+%%
 
 % OK now unpack these things
 CurrClu = 0;
@@ -117,15 +137,20 @@ for i = 1:length(caltrain)
     ActiveFrames{i} = find(FT(i,:) > eps);
 end
 
+%%
+disp('Plotting neuron outlines')
 try % Error catching clause: larger files are failing here for some reason
     figure;
     PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage)
     figure;
-    plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-
+    [hax, ~, ~] = plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
+    xlabel('Iteration Number')
+    ylabel(hax(1),'Number of Clusters'); ylabel(hax(2),'Distance Threshold Used (pixels)')
 catch
     disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
 end
+
+%%
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 

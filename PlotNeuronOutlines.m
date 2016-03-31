@@ -45,8 +45,8 @@ if exist('max_proj','var')
     hold on
 end
 
-if (~exist('clusterlist'))
-    clusterlist = 1:length(PixelList)
+if (~exist('clusterlist','var'))
+    clusterlist = 1:length(PixelList);
 end
 
 if(~isrow(clusterlist))
@@ -55,13 +55,21 @@ end
 
 colors = rand(length(clusterlist),3);
 
+% Initialize ProgressBar
+resol = 10; % Percent resolution for progress bar
+p = ProgressBar(resol);
+update_inc = round(length(clusterlist)/resol); % Get increments for updating ProgressBar
+
 for i = 1:length(clusterlist)
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Update progress bar at set increment
+    end
     if(~ToPlotCell(clusterlist(i)))
         continue;
     end
     temp = zeros(Xdim,Ydim);
     temp(PixelList{i}) = 1;
-    b = bwboundaries(temp);
+    b = bwboundaries(temp,'noholes');
     x{i} = b{1}(:,1);
     x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
     y{i} = b{1}(:,2);
@@ -69,6 +77,7 @@ for i = 1:length(clusterlist)
     plot(y{i},x{i},'Color',colors(clusterlist(i),:));hold on;
     color_use(i,:) = colors(clusterlist(i),:);
 end
+p.stop;
 hold off;
 axis equal;
 set(gcf,'Position',[1          41        1920         964]);
@@ -80,10 +89,10 @@ annotation(figure1,'textbox',...
 
 line([140 210.5],[400 400],'LineWidth',5,'Color','k')
 
-figure
-for i = 1:length(NeuronImage)
-    b = bwboundaries(NeuronImage{i});
-    plot(b{1}(:,2),b{1}(:,1),'Color',colors(i,:));hold on
-end
+% figure
+% for i = 1:length(NeuronImage)
+%     b = bwboundaries(NeuronImage{i});
+%     plot(b{1}(:,2),b{1}(:,1),'Color',colors(i,:));hold on
+% end
 end
 
