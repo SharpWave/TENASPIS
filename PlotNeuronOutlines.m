@@ -1,7 +1,27 @@
 function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 % [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
-% varargin: 'plot_max_proj',max_proj_tif_path plots the clusters over the
-% maximum projection
+%
+% Plots outlines of each neuron's transients in the same color.
+%
+% INPUTS:
+% 
+%   PixelList:
+%
+%   Xdim, Ydim: dimensions of the imaging movie frames
+%
+%   clusterlist: cTon variable created in MakeNeurons and saved under
+%   ProcOut.mat.
+%
+%   varargins: 
+%       'plot_max_proj',max_proj_tif_path plots the clusters over the
+%       maximum projection. Does not need to be followed by any argument
+%
+%       'cells_to_plot': provides an array of cells to plot.  Default =
+%       plot all.
+%
+%       'plot_handle': If provided and followed by a figure handle to an
+%       existing figure or axes, will plot to that. Note that this disables
+%       the plotting of a scale bar. Default = create new figure. 
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,8 +40,8 @@ function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-figure1 = figure;
 
+new_fig = 1; % default - plots to new figure
 for j = 1:length(varargin)
     if strcmpi(varargin{j},'plot_max_proj')
         max_proj = imread(varargin{j+1});
@@ -30,6 +50,19 @@ for j = 1:length(varargin)
     if strcmpi(varargin{j},'cells_to_plot')
         CTP = varargin{j+1};
     end
+    
+    if strcmpi(varargin{j},'plot_handle')
+        new_fig = 0;
+        h_use = varargin{j+1};
+    end
+end
+
+% Create new figure and get handle if fig_handle is not specified in
+% varargin
+if new_fig == 1
+    figure1 = figure;
+elseif new_fig == 0
+    axes(h_use); % Set axes for plotting
 end
 
 ToPlotCell = zeros(size(clusterlist));
@@ -80,14 +113,19 @@ end
 p.stop;
 hold off;
 axis equal;
-set(gcf,'Position',[1          41        1920         964]);
-annotation(figure1,'textbox',...
-    [0.397875 0.283929193608964 0.0323333333333334 0.0287368154318838],...
-    'String',{'100 µm'},...
-    'LineStyle','none',...
-    'FitBoxToText','off');
 
-line([140 210.5],[400 400],'LineWidth',5,'Color','k')
+% Plot scale bar if a new handle is not specified
+if new_fig == 1
+    set(gcf,'Position',[1          41        1920         964]);
+    annotation(figure1,'textbox',...
+        [0.397875 0.283929193608964 0.0323333333333334 0.0287368154318838],...
+        'String',{'100 µm'},...
+        'LineStyle','none',...
+        'FitBoxToText','off');
+    
+    line([140 210.5],[400 400],'LineWidth',5,'Color','k')
+
+end
 
 % figure
 % for i = 1:length(NeuronImage)
