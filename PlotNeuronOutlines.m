@@ -80,10 +80,10 @@ annotation(figure1,'textbox',...
 
 line([140 210.5],[400 400],'LineWidth',5,'Color','k')
 
-figure
-for i = 1:length(NeuronImage)
-    b = bwboundaries(NeuronImage{i});
-    plot(b{1}(:,2),b{1}(:,1),'Color',colors(i,:));hold on
-end
+% figure
+% for i = 1:length(NeuronImage)
+%     b = bwboundaries(NeuronImage{i});
+%     plot(b{1}(:,2),b{1}(:,1),'Color',colors(i,:));hold on
+% end
 end
 
