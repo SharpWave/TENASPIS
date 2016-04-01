@@ -41,6 +41,7 @@ function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Process varargins
 new_fig = 1; % default - plots to new figure
 for j = 1:length(varargin)
     if strcmpi(varargin{j},'plot_max_proj')
@@ -78,6 +79,7 @@ if exist('max_proj','var')
     hold on
 end
 
+%% Initialize clusters to plot
 if (~exist('clusterlist','var'))
     clusterlist = 1:length(PixelList);
 end
@@ -85,6 +87,8 @@ end
 if(~isrow(clusterlist))
     clusterlist = clusterlist';
 end
+
+%% Start plotting transients by neuron
 
 colors = rand(length(clusterlist),3);
 
@@ -94,27 +98,32 @@ p = ProgressBar(resol);
 update_inc = round(length(clusterlist)/resol); % Get increments for updating ProgressBar
 
 for i = 1:length(clusterlist)
+    
+    % Update progress bar at set increment
     if round(i/update_inc) == (i/update_inc)
-        p.progress; % Update progress bar at set increment
+        p.progress; 
     end
+    % Don't plot cluster if not in clusterlist
     if(~ToPlotCell(clusterlist(i)))
         continue;
     end
+    
+    % Plotting code
     temp = zeros(Xdim,Ydim);
     temp(PixelList{i}) = 1;
-    b = bwboundaries(temp,'noholes');
+    b = bwboundaries(temp,'noholes'); % Get cluster boundary
     x{i} = b{1}(:,1);
     x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
     y{i} = b{1}(:,2);
     y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
     plot(y{i},x{i},'Color',colors(clusterlist(i),:));hold on;
-    color_use(i,:) = colors(clusterlist(i),:);
+    color_use(i,:) = colors(clusterlist(i),:); % Make each neuron's clusters a different color
 end
 p.stop;
 hold off;
 axis equal;
 
-% Plot scale bar if a new handle is not specified
+%% Plot scale bar if a new handle is not specified
 if new_fig == 1
     set(gcf,'Position',[1          41        1920         964]);
     annotation(figure1,'textbox',...
@@ -127,6 +136,7 @@ if new_fig == 1
 
 end
 
+%% Old code 
 % figure
 % for i = 1:length(NeuronImage)
 %     b = bwboundaries(NeuronImage{i});

@@ -92,11 +92,13 @@ for i = 1:length(MinPixelDist)
     oldNumCT = NumCT; % Update number
     while Cchanged == 1
         disp(['Merging neurons, iteration #',num2str(NumIterations+1)])
+        
+        % Iteratively merge spatially distant clusters together
         [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = ...
             AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
-        NumIterations = NumIterations+1;
-        NumClu(NumIterations) = length(unique(c));
-        DistUsed(NumIterations) = MinPixelDist(i);
+        NumIterations = NumIterations+1; % Update number of iterations
+        NumClu(NumIterations) = length(unique(c)); % Update number of clusters
+        DistUsed(NumIterations) = MinPixelDist(i); % Updated distance threshold used
         
         if (NumClu(NumIterations) == oldNumCT) 
             % If you end up with the same number of clusters as the previous iteration, exit
@@ -108,49 +110,60 @@ for i = 1:length(MinPixelDist)
     end
 end
 
-%%
+%% Unpack the variables calculated above
 
-% OK now unpack these things
-CurrClu = 0;
-[CluToPlot,nToc,cTon] = unique(c);
-NumNeurons = length(CluToPlot);
+[CluToPlot,nToc,cTon] = unique(c); % Get unique clusters and mappings between clusters and neurons
+NumNeurons = length(CluToPlot); % Final number of neurons
+nClus = length(CluToPlot); % Final number of clusters
 
-nClus = length(CluToPlot); 
+% Initialize variables
+CurrClu = 0; % Set cluster counter for below
 NeuronImage = cell(1,nClus); 
 NeuronPixels = cell(1,nClus); 
 caltrain = cell(1,nClus); 
+
+% Create neuron mask arrays and calcium transient trans
 for i = CluToPlot'
-    CurrClu = CurrClu + 1;
-    NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim));
+    CurrClu = CurrClu + 1; % Update cluster counter
+    NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim)); % Neuron mask
     NeuronImage{CurrClu}(PixelList{i}) = 1;
-    NeuronPixels{CurrClu} = PixelList{i};
-    caltrain{CurrClu} = zeros(1,NumFrames);
+    NeuronPixels{CurrClu} = PixelList{i}; % Neuron mask pixel indices
+    caltrain{CurrClu} = zeros(1,NumFrames); % Calicum transient train
     caltrain{CurrClu}(frames{i}) = 1;
 end
 
+% Initialize variables
 NumTransients = zeros(1,length(caltrain)); 
 ActiveFrames = cell(1,length(caltrain)); 
+
+% Deal out calcium train into FT, and get number of transients and frames
+% that they are active
 for i = 1:length(caltrain)
     FT(i,:) = caltrain{i};
-    tempepochs = NP_FindSupraThresholdEpochs(FT(i,:),eps);
+    tempepochs = NP_FindSupraThresholdEpochs(FT(i,:),eps); % Find all epochs when neuron is active or not
     NumTransients(i) = size(tempepochs,1);
     ActiveFrames{i} = find(FT(i,:) > eps);
 end
 
-%%
+%% Plot All neurons
 disp('Plotting neuron outlines')
 try % Error catching clause: larger files are failing here for some reason
+    
+    % Plot all neurons and transients
     figure;
     PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage)
+    
+    % Plot iteration, cluster, and distance threshold info
     figure;
     [hax, ~, ~] = plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
     xlabel('Iteration Number')
     ylabel(hax(1),'Number of Clusters'); ylabel(hax(2),'Distance Threshold Used (pixels)')
-catch
+    
+catch % Error catching clause
     disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
 end
 
-%%
+%% Save variables
 
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 

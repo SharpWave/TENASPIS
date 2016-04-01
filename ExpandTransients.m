@@ -76,7 +76,7 @@ for i = 1:NumNeurons
     PrePoPosTr(i,1:NumFrames) = (tr >= MinPeak(i)*0.25).*(PosTr(i,:) == 0);
 end
 
-disp('Expanding transients part 1...'); 
+disp('Expanding transients part 2...'); 
 p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     tr = trace(i,:);
