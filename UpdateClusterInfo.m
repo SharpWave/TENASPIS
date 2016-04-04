@@ -5,8 +5,6 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 %   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
 %   ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
 %
-%    
-%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -27,6 +25,7 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 %
 if nargin <= 6
     ClustersToUpdate = unique(c);
+    disp_to_screen = 1;
 elseif nargin < 13
     disp_to_screen = 1;
 end
