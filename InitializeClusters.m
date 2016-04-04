@@ -28,7 +28,7 @@ if ~exist('min_trans_length','var')
 end
 
 % create segment averages
-p = ProgressBar(NumSegments); 
+p = ProgressBar(NumSegments); % Can maybe optimize here
 parfor i = 1:NumSegments
     %display(['initializing transient # ',int2str(i)]);
     [PixelList{i},Xcent(i),Ycent(i),~,frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
