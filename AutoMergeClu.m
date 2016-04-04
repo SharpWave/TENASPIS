@@ -1,6 +1,10 @@
-function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,plotdist)
-% [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,plotdist)
-%   Detailed explanation goes here
+function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = ...
+    AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,plotdist)
+% [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,CluDist] = ...
+%   AutoMergeClu(RadiusMultiplier,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,...
+%   meanX,meanY,NumEvents,frames,plotdist)
+%   Automatically merges clusters whose centroids are less than RadiusMultiplier
+%   apart from one other
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -19,17 +23,26 @@ function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,fram
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+<<<<<<< HEAD
 if ~exist('plotdist','var')
+=======
+if (~exist('plotdist','var'))
+>>>>>>> refs/heads/pr/4
     plotdist = 0;
 end
 
+% keyboard
 %NumClusters = length(unique(c));
+
+% Identify unique clusters
 CluToMerge = unique(c);
 ValidClu = unique(c);
 
-
+% Get distance from each cluster to all the others
 CluDist = pdist([meanX',meanY'],'euclidean');
 CluDist = squareform(CluDist);
+
+%% Run plotting of distance between neurons if specified
 if plotdist
     figure;
     dists = [];
@@ -52,26 +65,42 @@ if plotdist
    
 end
 
+%% Run actual merging functionality
 % for each unique cluster index, find sufficiently close clusters and merge
-nClus = length(CluToMerge); 
-p = ProgressBar(nClus); 
+nClus = length(CluToMerge);
+maxdist = RadiusMultiplier;
+
+% Initialize ProgressBar
+resol = 10; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(resol);
+update_inc = round(nClus/resol); % Get increments for updating ProgressBar
 for i = CluToMerge'
+    
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Also percent = p.progress;
+    end
+    
+    % If the cluster is no longer valid (i.e it has already been merged
+    % into a previous cluster), skip to next cluster
     if ~ismember(i,ValidClu)
         continue;
     end
-
-    maxdist = RadiusMultiplier; 
     
+    % Sort the Clusters from closest to farthest away from cluster i
     [sortdist,sortidx] = sort(CluDist(i,:));
     
+    % Get nearest valid clusters (those that are valid, closer than the
+    % distance threshold, and are not cluster i itself)
     nearclust = setdiff(intersect(ValidClu,sortidx(sortdist < maxdist)),i);
     
     currpix = PixelList{i};
     
-    % merge all clusters in nearclust into i
+    % Merge all clusters in nearclust into i
     DidMerge = 0;
     for k = 1:length(nearclust)
+        % Grab pixels for the nearest cluster
         cidx = nearclust(k); % cidx is cluster number of close transient
+        
         %targpix = PixelList{cidx};
         %length(currpix),length(targpix),length(union(currpix,targpix)),
         
@@ -85,20 +114,25 @@ for i = CluToMerge'
 %             continue;
 %         end
         
-        c(c == cidx) = i;
-        DidMerge = 1;
+        c(c == cidx) = i; % Update cluster number for merged clusters
+        DidMerge = 1; % Flag that you have merged at least one of these clusters
         %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
-        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
+        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
+            c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames,0);
         
     end
     ValidClu = unique(c);
     
+    % If a merge happened, update all the cluster info for the next
+    % iteration
     if (DidMerge)
-        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames);
-        [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,i);
+        [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
+            c,Xdim,Ydim,PixelList,Xcent,Ycent,i,meanareas,meanX,meanY,NumEvents,frames,0);
+        temp = UpdateCluDistances(meanX,meanY,i); % Update distances for newly merged clusters to all other clusters
+        CluDist(i,:) = temp;
+        CluDist(:,i) = temp;
     end
     
-    p.progress;
 end
 p.stop; 
 

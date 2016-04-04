@@ -1,4 +1,5 @@
-function [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,CluToUpdate)
+function [temp] = UpdateCluDistances(meanX,meanY,CluToUpdate)
+%function [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,CluToUpdate)
 % [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,CluToUpdate)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,8 +20,8 @@ function [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,CluToUpdate
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 temp = sqrt((meanX-meanX(CluToUpdate)).^2+(meanY-meanY(CluToUpdate)).^2);
-CluDist(CluToUpdate,:) = temp;
-CluDist(:,CluToUpdate) = temp;
+% CluDist(CluToUpdate,:) = temp;
+% CluDist(:,CluToUpdate) = temp;
 
 
 end

@@ -1,5 +1,12 @@
-function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
-% [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
+function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
+    c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,...
+    meanareas,meanX,meanY,NumEvents,frames,disp_to_screen)
+% [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
+%   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
+%   ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
+%
+%    
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -17,12 +24,17 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 if nargin <= 6
     ClustersToUpdate = unique(c);
+elseif nargin < 13
+    disp_to_screen = 1;
 end
     
 for i = ClustersToUpdate'
-    %display(['updated cluster # ',int2str(i)]);
+    if disp_to_screen == 1
+        display(['updated cluster # ',int2str(i)]);
+    end
     cluidx = find(c == i);
     tempX = 0;
     tempY = 0;
@@ -50,7 +62,7 @@ for i = ClustersToUpdate'
     end
     temp = temp./length(cluidx);
     newpixels = find(temp > ((1/length(cluidx))-eps));
-    BitMap = logical(zeros(Xdim,Ydim));
+    BitMap = false(Xdim,Ydim);
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
     r = regionprops(b,'Area'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.

@@ -1,5 +1,9 @@
 function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length)
 % [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
+%
+% Initial shot at stringing together transients from all Segments
+% identified in MakeTransients
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -31,7 +35,7 @@ parfor i = 1:NumSegments
     [PixelList{i},Xcent(i),Ycent(i),~,frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
     %length(SegChain{i})
     
-    GoodTr(i) = ~isempty(PixelList{i});
+    GoodTr(i) = ~isempty(PixelList{i}); % If trace has valid active pixels, keep
    
     p.progress;
 end
@@ -47,6 +51,7 @@ frames = frames(GoodTrs);
 
 c = (1:length(frames))'; 
 
+% Updates cluster statistics for newly merged clusters
 [PixelList,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent);
 
 save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents min_trans_length GoodTrs -v7.3;
