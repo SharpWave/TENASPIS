@@ -1,6 +1,8 @@
 function AddPoTransients()
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
+
+disp('Loading relevant variables')
 load pPeak.mat;
 load ExpTransients.mat;
 load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage','Xdim','Ydim');
@@ -19,6 +21,8 @@ end
 temp = pdist(Cents);
 CentDist = squareform(temp);
 
+info = h5info('SLPDF.h5','/Object'); % Get movie info for loadframe below
+
 %display('checking buddies');
 for j = 1:NumNeurons
     buddies{j} = [];
@@ -33,6 +37,9 @@ for j = 1:NumNeurons
     end
 end
 
+keyboard
+
+%%
 disp('Adding potential transients...');
 p = ProgressBar(NumNeurons); 
 for i = 1:NumNeurons
@@ -65,7 +72,7 @@ for i = 1:NumNeurons
         ps = PoTrPeakIdx{i}(j)-10;
         for k = ps:PoTrPeakIdx{i}(j)
             
-            f = loadframe('SLPDF.h5',k);
+            f = loadframe('SLPDF.h5', k, info);
             [~,maxidx(k)] = max(f(NeuronPixels{i}));
             
         end
@@ -107,6 +114,7 @@ for i = 1:NumNeurons
 end
 p.stop; 
 
+%%
 save expPosTr.mat expPosTr;
 
 end
