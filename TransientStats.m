@@ -36,11 +36,17 @@ load('Blobs.mat','cc','PeakPix');
 %% Calculate distance traveled for each transient
 DistTrav = nan(1,length(SegChain));
 
-tic
 disp('Calculating statistics for all transients')
-% p = ProgressBar(length(SegChain));
+resol = 10; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(resol);
+update_inc = round(N/resol); % Get increments for updating ProgressBar
+
 for i = 1:length(SegChain)
-    % for each transient
+    
+    % Update progressbar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Also percent = p.progress;
+    end
     
     if length(SegChain{i}) > 1
         Xc = []; Yc = [];
@@ -68,7 +74,8 @@ for i = 1:length(SegChain)
     end
 
 end
-toc
+
+p.stop;
 
 %% Debugging code
 
