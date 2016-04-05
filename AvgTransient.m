@@ -51,7 +51,6 @@ frames = [];
 AvgN = zeros(Xdim,Ydim);
 
 nSegChains = length(SegChain);
-p = ProgressBar(nSegChains);
 for i = 1:nSegChains
     
     % Pull identifying information about each transient from SegChain
@@ -72,9 +71,7 @@ for i = 1:nSegChains
     Xcent = Xcent+PeakPix{FrameNum}{ObjNum}(1); % Add up all centroid/peak locations from each frame
     Ycent = Ycent+PeakPix{FrameNum}{ObjNum}(2); % Add up all centroid/peak locations from each frame
     
-    p.progress;
 end
-p.stop;
 
 % Take averages of the blobs and centroids
 AvgN = single(AvgN./length(SegChain));

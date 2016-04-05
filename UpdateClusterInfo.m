@@ -27,7 +27,8 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 %
 if nargin <= 6
     ClustersToUpdate = unique(c);
-elseif nargin < 13
+end
+if nargin < 13
     disp_to_screen = 1;
 end
     
