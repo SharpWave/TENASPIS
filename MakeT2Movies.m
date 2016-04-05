@@ -30,9 +30,14 @@ function MakeT2Movies(MotCorrh5)
     threePixfilter = fspecial('disk',3);
 
 %% Writing. 
+
+profile off
+profile on
+    disp('Making Movies')
+    info = h5info(MotCorrh5,'/Object');
     p=ProgressBar(nFrames);
     for i=1:nFrames
-        frame = single(loadframe(MotCorrh5,i));
+        frame = single(loadframe(MotCorrh5,i,info));
         
         LPframe = imfilter(frame,LPfilter,'same','replicate');              %20-pixel filter.
         threePixFrame = imfilter(frame,threePixfilter,'same','replicate');  %3-pixel filter.
@@ -54,5 +59,7 @@ function MakeT2Movies(MotCorrh5)
     
     delete(tempname);
     delete(threePixName);
-    delete(SLPDFname);
+    
+profile viewer
+%     delete(SLPDFname);
 end
