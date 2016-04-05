@@ -17,7 +17,7 @@ function [] = MakeNeurons(varargin)
 % meanX meanY: centroids of neurons
 % Xdim Ydim: pixel dimensions of imaging window
 % NumFrames: number of frames in the entire movie
-% FT: binary neuron activity matrix
+% FT: binary matrix of neuron activity identified by segmentation
 % VersionString: which release of Tenaspis was used
 % cTon: mapping of each transient from SegFrame to its correct neuron
 % nToc: mapping of each neuron to its final cluster
