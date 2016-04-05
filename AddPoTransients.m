@@ -67,10 +67,13 @@ for i = 1:NumFrames
             
     f = loadframe('SLPDF.h5', i, info); % Load frame i
     
-    % Get max pixel index and mean pixel intensity for each neuron
-    for j = 1:NumNeurons
-        [~,maxidx_full(j,i)] = max(f(NeuronPixels{j}));
-        meanpix_full(j,i) = mean(f(NeuronPixels{j}));
+    % Get max pixel index and mean pixel intensity for each neuron that is
+    % active or potentially active
+    active_neurons = find(expPosTr(:,i) | PoPosTr(:,i));
+    for j = 1:length(active_neurons)
+        neuron_id = active_neurons(j);
+        [~,maxidx_full(neuron_id,i)] = max(f(NeuronPixels{neuron_id}));  %#ok<*USENS>
+        meanpix_full(neuron_id,i) = mean(f(NeuronPixels{neuron_id}));
     end
     
     if round(i/update_inc) == (i/update_inc)
