@@ -29,7 +29,7 @@ if nargin <= 6
     ClustersToUpdate = unique(c);
 end
 if nargin < 13
-    disp_to_screen = 1;
+    disp_to_screen = 0;
 end
     
 for i = ClustersToUpdate'

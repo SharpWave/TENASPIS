@@ -23,11 +23,8 @@ function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,fram
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-<<<<<<< HEAD
+
 if ~exist('plotdist','var')
-=======
-if (~exist('plotdist','var'))
->>>>>>> refs/heads/pr/4
     plotdist = 0;
 end
 
