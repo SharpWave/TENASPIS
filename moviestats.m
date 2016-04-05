@@ -18,9 +18,22 @@ function [meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[frame,Xdim,Ydim,NumFrames] = loadframe(file,1);
+
+info = h5info(file,'/Object');
+NumFrames = info.Dataspace.Size(3);
+
+% Initialize Progress Bar
+resol = 1; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+
+% Pre-allocate
+meanframe = zeros(1,NumFrames);
+stdframe = zeros(1,NumFrames);
+
+% Calculate stats
 for i = 1:NumFrames
-    frame = double(loadframe(file,i));
+    frame = double(loadframe(file,i,info));
     meanframe(i) = mean(frame(:));
     stdframe(i) = std(frame(:));
     
@@ -29,9 +42,15 @@ for i = 1:NumFrames
         meanframepos(i) = mean(frame(pos));
         stdframepos(i) = std(frame(pos));
     end
+    
+    % Update progress bar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Also percent = p.progress;
+    end
+    
 end
 
-
+p.stop; % Terminate progress bar
 
 end
 
