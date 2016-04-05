@@ -15,12 +15,12 @@ function MakeT2Movies(MotCorrh5)
     SLPDFname = fullfile(folder,'SLPDF.h5');
     DFFname = fullfile(folder,'DFF.h5'); 
     threePixName = fullfile(folder,'threePixSmooth.h5');
-    tempName = fullfile(folder,'temp.h5');
+    tempfilename = fullfile(folder,'temp.h5');
 
 %% Set up.
     info = h5info(MotCorrh5,'/Object'); 
     [~,Xdim,Ydim,nFrames] = loadframe(MotCorrh5,1);
-    h5create(tempName,'/Object',info.Dataspace.Size,'ChunkSize',...
+    h5create(tempfilename,'/Object',info.Dataspace.Size,'ChunkSize',...
         [Xdim Ydim 1 1],'Datatype','single');
     h5create(threePixName,'/Object',info.Dataspace.Size,'ChunkSize',...
         [Xdim Ydim 1 1],'Datatype','single'); 
@@ -35,7 +35,12 @@ profile off
 profile on
     disp('Making Movies')
     info = h5info(MotCorrh5,'/Object');
-    p=ProgressBar(nFrames);
+    
+    % Initialized ProgressBar
+    resol = 1; % Percent resolution for progress bar
+    p = ProgressBar(resol);
+    update_inc = round(NumFrames/resol); % Get increments for updating ProgressBar
+    
     for i=1:nFrames
         frame = single(loadframe(MotCorrh5,i,info));
         
@@ -44,22 +49,26 @@ profile on
        
         h5write(threePixName,'/Object',threePixFrame,[1 1 i 1],...          %Write 3-pixel smoothed.
             [Xdim Ydim 1 1]); 
-        h5write(tempName,'/Object',threePixFrame./LPframe,[1 1 i 1],...     %Write LP divide.
+        h5write(tempfilename,'/Object',threePixFrame./LPframe,[1 1 i 1],...     %Write LP divide.
             [Xdim Ydim 1 1]); 
         
-        p.progress;
+        if round(i/update_inc) == (i/update_inc) % Update progress bar
+            p.progress;
+        end
+        
     end
     p.stop;
     
     disp('Making SLPDF.h5...');         %DF/F of LP divide. 
-    Make_DFF(tempName,SLPDFname);
+    Make_DFF(tempfilename,SLPDFname);
     
     disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
     Make_DFF(threePixName,DFFname);
     
-    delete(tempname);
+    delete(tempfilename);
     delete(threePixName);
-    
-profile viewer
 %     delete(SLPDFname);
+
+profile viewer
+
 end
