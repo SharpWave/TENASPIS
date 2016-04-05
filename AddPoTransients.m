@@ -9,10 +9,11 @@ rankthresh = 0.55; % DAVE - what is this / how did you come up with this?
 %%
 disp('Loading relevant variables')
 load pPeak.mat;
-load ExpTransients.mat;
+load('ExpTransients.mat','PosTr','PoPosTr','PoTrPeakIdx');
 load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage','Xdim','Ydim');
 
 expPosTr = PosTr; % Expanded positive transients - this gets updated below, while PosTr does not
+clear PosTr % Clear this to save RAM
 
 % Get centroids
 Cents = zeros(length(NeuronImage),2); % Initialize
@@ -21,6 +22,7 @@ for i = 1:length(NeuronImage)
     r = regionprops(b,'Centroid');
     Cents(i,1:2) = r.Centroid;
 end
+clear NeuronImage 
 
 temp = pdist(Cents);
 CentDist = squareform(temp);
@@ -110,7 +112,7 @@ for i = 1:NumNeurons
                 buddyspike = 1; % If so, set binary to 1 to initiate checking below
             end
             
-            % Identify if there was activity in the original transient
+            % Identify if there was potential activity in the original transient
             % variable for buddy neurons (potential buddy conflicts)
             if (sum(PoPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
                 buddyconfs = [buddyconfs,buddies{i}(k)]; % accrue list of buddies with potential spiking activity in original (unexpanded) transients       
