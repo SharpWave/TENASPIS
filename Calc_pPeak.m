@@ -16,10 +16,11 @@ end
 p = ProgressBar(NumFrames);
 display('Calculating ranks and peaks...');
 
+info = h5info('SLPDF.h5','/Object');
 for i = 1:NumFrames
     ActiveN = find(FT(:,i));
 
-    frame = loadframe('SLPDF.h5',i);
+    frame = loadframe('SLPDF.h5',i,info);
 
     for j = 1:length(ActiveN)
         idx = ActiveN(j);
