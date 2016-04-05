@@ -112,9 +112,9 @@ for i = 1:NumNeurons
     Epochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps);
     PoNumTr(i) = size(Epochs,1);
     for j = 1:PoNumTr(i)
-        PoTrLength{i}(j) = Epochs(j,2)-Epochs(j,1)+1;
-        [PoTrPeakVal{i}(j),idx] = max(tr(Epochs(j,1):Epochs(j,2)));
-        PoTrPeakIdx{i}(j) = idx+Epochs(j,1)-1;
+        PoTrLength{i}(j) = Epochs(j,2)-Epochs(j,1)+1; % Save potential transient length for epoch j
+        [PoTrPeakVal{i}(j),idx] = max(tr(Epochs(j,1):Epochs(j,2))); % ID the peak potential transient value and index in epoch j
+        PoTrPeakIdx{i}(j) = idx+Epochs(j,1)-1; % Convert index for peak value from epoch j numbering to frame number
     end
     
     p.progress;
