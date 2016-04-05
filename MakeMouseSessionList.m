@@ -1998,7 +1998,6 @@ end
 MD(i).Notes = 'Tenaspis 2';
 MD(i).exclude_frames = [];
 
-
 G45.DNMP(2) = i;
 G45.all(2) = i;
 
