@@ -69,7 +69,9 @@ for i = 1:NumFrames
     
     % Get max pixel index and mean pixel intensity for each neuron that is
     % active or potentially active
-    active_neurons = find(expPosTr(:,i) | PoPosTr(:,i));
+    active_neurons = find(expPosTr(:,i) | PoPosTr(:,i)); 
+    % NRK - could shift to find(sum(expPosTr(:,i:i+10) | PoPosTr(:,i:i+10),2) > 0) 
+    % to look for potential activity up to 10 frames ahead in accordance with 10 frame limit below
     for j = 1:length(active_neurons)
         neuron_id = active_neurons(j);
         [~,maxidx_full(neuron_id,i)] = max(f(NeuronPixels{neuron_id}));  %#ok<*USENS>
@@ -90,6 +92,7 @@ profile off
 profile on
 
 disp('Adding potential transients...');
+NumNeurons = 10; % For debugging
 p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     %display(['Neuron ',int2str(i)]);
@@ -130,16 +133,16 @@ for i = 1:NumNeurons
         end
         
         %%% If there is not a buddy spike, check the peak %%%
-        maxidx = [];
+        maxidx = []; maxidx_orig = [];
 
         ps = PoTrPeakIdx{i}(j)-10; % Grab the 10 frames active before the time of neuron i's potential spike in epoch j
         
         % Identify the pixel index for the max pixel intensity in neuron i for each of these frames
         for k = ps:PoTrPeakIdx{i}(j)
             
-%             f = loadframe('SLPDF.h5', k, info); NRK commenting to test
-%             out speed increases
-%             [~,maxidx(k)] = max(f(NeuronPixels{i}));
+            % Original code to compare to for debugging
+            f = loadframe('SLPDF.h5', k, info); 
+            [~,maxidx_orig(k)] = max(f(NeuronPixels{i}));
             maxidx(k) = maxidx_full(i,k); 
             
         end
@@ -147,13 +150,15 @@ for i = 1:NumNeurons
         % If there are potential buddy conflicts, get the mean pixel
         % intensity for each buddy neuron during the peak of the potential
         % spike of neuron i in epoch j
-        meanpix = [];
+        meanpix = []; meanpix_orig = [];
         if ~isempty(buddyconfs)
             %display('buddy conflict');
             
             % Accrue list of means
             for k = 1:length(buddyconfs)
-%                 meanpix(k) = mean(f(NeuronPixels{buddyconfs(k)})); % NRK commenting to test out speed increases % DAVE - this is only looking at the frame at the of PoTrPeakIds{i}(j) - is that correct?
+                
+                % Original code to compare to for debugging
+                meanpix_orig(k) = mean(f(NeuronPixels{buddyconfs(k)})); % NRK commenting to test out speed increases 
                 meanpix(k) = meanpix_full(buddyconfs(k),PoTrPeakIdx{i}(j)); % mean of buddy k at time of potential peak transient
             end
             
@@ -172,9 +177,21 @@ for i = 1:NumNeurons
         [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end));
         
         % identify the index corresponding to the average of the above
-        meanmaxidx = sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp)));
+        meanmaxidx = sub2ind([Xdim,Ydim],round(nanmean(xp)),round(nanmean(yp))); % sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp))); DAVE - do you mean to have a median of the mean of yp? 
         peakpeak = pPeak{i}(meanmaxidx); % Get the peak value?
         peakrank = mRank{i}(meanmaxidx); % Get the rank of the peak pixel?
+        
+        if todebug
+            [xp_orig,yp_orig] = ind2sub([Xdim,Ydim],maxidx_orig(end-10:end));
+            meanmaxidx_orig = sub2ind([Xdim,Ydim],round(nanmean(xp_orig)),round(nanmean(yp_orig)));
+            if meanmaxidx_orig ~= meanmaxidx
+                disp('Discrepancy in meanmaxidx - debugging');
+                % Basically this is spitting out different values than the
+                % original method because I only get values for the 10
+                % frames before if they included a potential transient
+                keyboard
+            end
+        end
         
         % NAT - continue here after you figure out what Calc_pPeak does...
         if (peakpeak > 0) && (peakrank > rankthresh)
@@ -191,6 +208,12 @@ for i = 1:NumNeurons
         end
         
     end
+    
+    % Debugging code
+%     if todebug
+%         disp(['Done with neuron ' num2str(1)])
+%         keyboard
+%     end
     
     p.progress;
 end
