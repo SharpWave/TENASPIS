@@ -10,8 +10,8 @@ avgframe = zeros(XDim,YDim); % Initialize variable
 
 % Initialize ProgressBar
 resol = 1; % Percent resolution for progress bar
-p = ProgressBar(resol);
-update_inc = round(NumFrames/resol); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 for i = 1:NumFrames
    [frame,~,~,NumFrames] = loadframe(moviefile,i,info); 
    avgframe = avgframe+single(frame);
