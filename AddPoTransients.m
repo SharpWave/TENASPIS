@@ -38,7 +38,7 @@ for j = 1:NumNeurons
     end
 end
 
-keyboard
+% keyboard
 
 %%
 disp('Adding potential transients...');
