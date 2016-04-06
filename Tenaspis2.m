@@ -42,14 +42,21 @@ disp('Expanding transients...');
 ExpandTransients(0);
 
 %% Calculate peak of all transients
+
 disp('Calculating pPeak...'); 
 Calc_pPeak;
 
+%% 
+
+profile off 
+profile on
 AddPoTransients;
 
-%% Determine rising events/on-times for all transients
+% Determine rising events/on-times for all transients
 disp('Finalizing...');
 DetectGoodSlopes;
+
+profile viewer
 
 %% Calculate place fields and accompanying statistics
 CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename',...
