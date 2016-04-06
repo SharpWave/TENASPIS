@@ -15,12 +15,12 @@ function MakeT2Movies(MotCorrh5)
     SLPDFname = fullfile(folder,'SLPDF.h5');
     DFFname = fullfile(folder,'DFF.h5'); 
     threePixName = fullfile(folder,'threePixSmooth.h5');
-    tempName = fullfile(folder,'temp.h5');
+    tempmoviename = fullfile(folder,'temp.h5');
 
 %% Set up.
     info = h5info(MotCorrh5,'/Object'); 
     [~,Xdim,Ydim,nFrames] = loadframe(MotCorrh5,1);
-    h5create(tempName,'/Object',info.Dataspace.Size,'ChunkSize',...
+    h5create(tempmoviename,'/Object',info.Dataspace.Size,'ChunkSize',...
         [Xdim Ydim 1 1],'Datatype','single');
     h5create(threePixName,'/Object',info.Dataspace.Size,'ChunkSize',...
         [Xdim Ydim 1 1],'Datatype','single'); 
@@ -44,7 +44,7 @@ profile on
        
         h5write(threePixName,'/Object',threePixFrame,[1 1 i 1],...          %Write 3-pixel smoothed.
             [Xdim Ydim 1 1]); 
-        h5write(tempName,'/Object',threePixFrame./LPframe,[1 1 i 1],...     %Write LP divide.
+        h5write(tempmoviename,'/Object',threePixFrame./LPframe,[1 1 i 1],...     %Write LP divide.
             [Xdim Ydim 1 1]); 
         
         p.progress;
@@ -52,12 +52,12 @@ profile on
     p.stop;
     
     disp('Making SLPDF.h5...');         %DF/F of LP divide. 
-    Make_DFF(tempName,SLPDFname);
+    Make_DFF(tempmoviename,SLPDFname);
     
     disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
     Make_DFF(threePixName,DFFname);
     
-    delete(tempname);
+    delete(tempmoviename);
     delete(threePixName);
     
 profile viewer
