@@ -38,8 +38,8 @@ profile on
     
     % Initialized ProgressBar
     resol = 1; % Percent resolution for progress bar
-    p = ProgressBar(resol);
-    update_inc = round(NumFrames/resol); % Get increments for updating ProgressBar
+    p = ProgressBar(100/resol);
+    update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
     
     for i=1:nFrames
         frame = single(loadframe(MotCorrh5,i,info));
