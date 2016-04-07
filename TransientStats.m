@@ -39,7 +39,7 @@ DistTrav = nan(1,length(SegChain));
 disp('Calculating statistics for all transients')
 resol = 10; % Percent resolution for progress bar, in this case 10%
 p = ProgressBar(resol);
-update_inc = round(N/resol); % Get increments for updating ProgressBar
+update_inc = round(length(SegChain)/resol); % Get increments for updating ProgressBar
 
 for i = 1:length(SegChain)
     
