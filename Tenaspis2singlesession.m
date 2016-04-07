@@ -3,8 +3,9 @@ function Tenaspis2singlesession()
 % Requires DFF.h5 and SLPDF.h5 be present
 
 %% Extract Blobs
+load singlesessionmask.mat;
 disp('Extracting blobs...'); 
-ExtractBlobs('DFF.h5',mask_reg);
+ExtractBlobs('DFF.h5',neuronmask);
 
 %% Connect blobs into transients
 disp('Making transients...');
