@@ -27,8 +27,12 @@ if ~exist('min_trans_length','var')
     min_trans_length = 5;
 end
 
-% create segment averages
-p = ProgressBar(NumSegments); % Can maybe optimize here
+%% Create segment averages
+disp('Initializing Clusters')
+% Initialize ProgressBar
+resol = 1; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(100/resol);
+update_inc = round(NumSegments/(100/resol)); % Get increments for updating ProgressBar
 parfor i = 1:NumSegments
     %display(['initializing transient # ',int2str(i)]);
     [PixelList{i},Xcent(i),Ycent(i),~,frames{i},~] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
@@ -36,9 +40,13 @@ parfor i = 1:NumSegments
     
     GoodTr(i) = ~isempty(PixelList{i}); % If trace has valid active pixels, keep
    
-    p.progress;
+    % Update ProgressBar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Also percent = p.progress;
+    end
+    
 end
-p.stop;
+p.stop; % Terminate progress bar
 
 %edit out the faulty segments
 GoodTrs = find(GoodTr);
