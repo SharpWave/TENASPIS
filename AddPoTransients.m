@@ -173,7 +173,9 @@ for i = 1:NumNeurons
         
         % Get the subs for the location of the maximum pixel intensity in
         % neuron i during the ten frames preceding the peak in epoch j
-        [xp,yp] = ind2sub([Xdim,Ydim],NeuronPixels{i}(maxidx(end-10:end)));
+        temp = maxidx(end-10:end); % Grab max peak index from the 10 frames preceding peak in epoch j
+        maxidx_valid = temp(~isnan(temp)); % Pull out only non-NaN indices
+        [xp,yp] = ind2sub([Xdim,Ydim],NeuronPixels{i}(maxidx_valid));
 %         [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end)); % DAVE - I think that this should be NeuronPixels{i}(maxidx(end-10:end)).  maxidx reference NeuronPixels, whose max index is the number of pixels in that neuron.  yp is always = 0 for this code
         
         % identify the index corresponding to the average of the above
