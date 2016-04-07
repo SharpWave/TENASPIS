@@ -1,10 +1,16 @@
-function AddPoTransients()
+function AddPoTransients(todebug)
 %UNTITLED5 Summary of this function goes here
 %   Detailed explanation goes here
 
 %% Parameters
 buddy_dist_thresh = 15; % Any neurons with a centroid less than this many pixels away are considered a buddy
 rankthresh = 0.55; % DAVE - what is this / how did you come up with this?
+
+%% Parse debug variable
+
+if nargin < 1
+    todebug = 0;
+end
 
 %%
 disp('Loading relevant variables')
@@ -49,13 +55,10 @@ for j = 1:NumNeurons
     end
 end
 
-keyboard
+% keyboard
 
 %% Nat attempt to load all information on max pixel index for each neuron
 % ahead of time to speed up below
-
-profile off
-profile on
 
 maxidx_full = nan(NumNeurons,NumFrames);
 meanpix_full = nan(NumNeurons,NumFrames);
@@ -69,6 +72,7 @@ for i = 1:NumFrames
     
     % Get max pixel index and mean pixel intensity for each neuron that is
     % active or potentially active
+    % take2
     active_neurons = find(expPosTr(:,i) | PoPosTr(:,i)); 
     % NRK - could shift to find(sum(expPosTr(:,i:i+10) | PoPosTr(:,i:i+10),2) > 0) 
     % to look for potential activity up to 10 frames ahead in accordance with 10 frame limit below
@@ -85,14 +89,9 @@ for i = 1:NumFrames
 end
 p.stop;
 
-profile viewer
 %%
 
-profile off
-profile on
-
 disp('Adding potential transients...');
-NumNeurons = 10; % For debugging
 p = ProgressBar(NumNeurons);
 for i = 1:NumNeurons
     %display(['Neuron ',int2str(i)]);
@@ -174,10 +173,15 @@ for i = 1:NumNeurons
         
         % Get the subs for the location of the maximum pixel intensity in
         % neuron i during the ten frames preceding the peak in epoch j
-        [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end));
+        [xp,yp] = ind2sub([Xdim,Ydim],NeuronPixels{i}(maxidx(end-10:end)));
+%         [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end)); % DAVE - I think that this should be NeuronPixels{i}(maxidx(end-10:end)).  maxidx reference NeuronPixels, whose max index is the number of pixels in that neuron.  yp is always = 0 for this code
         
         % identify the index corresponding to the average of the above
         meanmaxidx = sub2ind([Xdim,Ydim],round(nanmean(xp)),round(nanmean(yp))); % sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp))); DAVE - do you mean to have a median of the mean of yp? 
+        % DAVE I think this should follow: meanmaxidx = find(NeuronPixels{i} ==
+        % meanmaxidx); % This gets us back to NeuronPixel{i} indices, which
+        % are what pPeak and mRank are based on
+        meanmaxidx = find(NeuronPixels{i} == meanmaxidx);
         peakpeak = pPeak{i}(meanmaxidx); % Get the peak value?
         peakrank = mRank{i}(meanmaxidx); % Get the rank of the peak pixel?
         
@@ -219,7 +223,6 @@ for i = 1:NumNeurons
 end
 p.stop; 
 
-profile viewer
 
 %%
 save expPosTr.mat expPosTr;
