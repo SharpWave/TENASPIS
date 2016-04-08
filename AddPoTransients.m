@@ -10,9 +10,11 @@ function AddPoTransients(todebug)
 % A new transient is added if three conditions are met: 
 % 1) there are no transients in any of the buddy neurons identified on any 
 % of the 10 frames prior to the peak of the potential transient, and 2) the 
-% peak of the transient does not move too much throughout its duration, and
+% peak of the transient does not move too much throughout its duration when
+% compared to previously confirmed transients from MakeNeurons, and
 % 3) the rank of the peak pixel across all transients is greater than the 
-% threshold in the code below.
+% threshold in the code below, calculated using all the previously
+% confirmed transients.
 %
 % INPUTS - all are loaded from workspace variables
 %
@@ -28,6 +30,9 @@ function AddPoTransients(todebug)
 %
 %   expPosTr - expanded positive transients, a NumNeurons x NumFrames
 %   logical array for final calcium transient activity
+%
+%   expPosIdx - indices to the mean-maximum pixel for each added transient
+%   in expPosTr
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,18 +105,13 @@ for j = 1:NumNeurons
     end
 end
 
-% keyboard
-
 %% Nat attempt to load all information on max pixel index for each neuron
 % ahead of time to speed up below
-
-profile off
-profile on
 
 maxidx_full = nan(NumNeurons,NumFrames);
 meanpix_full = nan(NumNeurons,NumFrames);
 % Initialize ProgressBar
-resol = 5; % Percent resolution for progress bar, in this case 10%
+resol = 1; % Percent resolution for progress bar, in this case 10%
 p = ProgressBar(100/resol);
 update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 
@@ -122,7 +122,7 @@ for i = 1:NumFrames
     
     % Get max pixel index and mean pixel intensity for each neuron that is
     % active or potentially active
-%     active_neurons = find(expPosTr(:,i) | PoPosTr(:,i)); % take2 edits
+    active_neurons = find(expPosTr(:,i) | PoPosTr(:,i)); % take2 edits
 
     % take3 edits to look for potential activity up to 10 frames ahead in accordance with 10 frame limit below
     if i+10 <= NumFrames
@@ -130,7 +130,7 @@ for i = 1:NumFrames
     else 
         active_neurons = find(sum(expPosTr(:,i:end) | PoPosTr(:,i:end),2) > 0);
     end
-    
+%     
     for j = 1:length(active_neurons)
         neuron_id = active_neurons(j);
         [~,maxidx_full(neuron_id,i)] = max(f(NeuronPixels{neuron_id}));  %#ok<*USENS>
@@ -144,11 +144,10 @@ for i = 1:NumFrames
 end
 p.stop;
 
-profile viewer
-%%
+%% Add potential transients
 
-profile off
-profile on
+expPosTrIdx = cell(1,NumNeurons); % Initialize variable
+expPosTrsubs = cell(1,NumNeurons); % Initialize variable
 
 disp('Adding potential transients...');
 p = ProgressBar(NumNeurons);
@@ -160,6 +159,7 @@ for i = 1:NumNeurons
     
     % Loop through each epoch and check for buddy spiking - if there is
     % none, add a new transient!
+    n_trans_add = 0; % Number of added transients for neuron i
     for j = 1:size(PoEpochs,1)
         
         % initialize variables
@@ -199,10 +199,10 @@ for i = 1:NumNeurons
         for k = ps:PoTrPeakIdx{i}(j)
             
             % Original code to compare to for debugging
-            f = loadframe('SLPDF.h5', k, info); 
-            [~,maxidx_orig(k)] = max(f(NeuronPixels{i}));
+%             f = loadframe('SLPDF.h5', k, info); 
+%             [~,maxidx_orig(k)] = max(f(NeuronPixels{i}));
             maxidx(k) = maxidx_full(i,k); 
-            
+%             
         end
         
         % If there are potential buddy conflicts, get the mean pixel
@@ -216,7 +216,7 @@ for i = 1:NumNeurons
             for k = 1:length(buddyconfs)
                 
                 % Original code to compare to for debugging
-                meanpix_orig(k) = mean(f(NeuronPixels{buddyconfs(k)})); % NRK commenting to test out speed increases 
+%                 meanpix_orig(k) = mean(f(NeuronPixels{buddyconfs(k)})); % NRK commenting to test out speed increases 
                 
                 meanpix(k) = meanpix_full(buddyconfs(k),PoTrPeakIdx{i}(j)); % mean of buddy k at time of potential peak transient
             end
@@ -236,14 +236,29 @@ for i = 1:NumNeurons
             end
         end
         
+
         % Get the subs for the location of the maximum pixel intensity in
         % neuron i during the ten frames preceding the peak in epoch j
-        [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end));
+        temp = maxidx(end-10:end); % take 2/3
+        maxidx_valid = temp(~isnan(temp)); %take 2/3 Grab only frames where neuron trace is non-NaN (i.e. z-score above zero)
+        [xp,yp] = ind2sub([Xdim,Ydim],NeuronPixels{i}(maxidx_valid)); % take 2/3 convert to global pixel indices
         
         % identify the index corresponding to the average of the above
-        meanmaxidx = sub2ind([Xdim,Ydim],round(nanmean(xp)),round(nanmean(yp))); % sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp))); DAVE - do you mean to have a median of the mean of yp? 
-        peakpeak = pPeak{i}(meanmaxidx); % Get the peak value? % Should this actually calculate the peak pixel location for ALL the 10 previous frames - what if it matches most of those frames but then shifts a bunch at the beginning of the transient and thus is shifted from the peak location?
-        peakrank = mRank{i}(meanmaxidx); % Get the mean rank of the peak pixel across all transients
+        meanmaxidx = sub2ind([Xdim,Ydim],round(nanmean(xp)),round(nanmean(yp))); 
+        meanmaxidx = find(meanmaxidx == NeuronPixels{i}); % take2/3 convert back to NeuronPixel indices
+%         meanmaxidx = mode(maxidx(end-10:end)); % take 4
+        
+%         % Before bugfix
+%         [xp,yp] = ind2sub([Xdim,Ydim],maxidx_valid);
+%         meanmaxidx = sub2ind([Xdim,Ydim],round(mean(xp)),round(mean(yp)));
+%         
+        if isempty(meanmaxidx)
+            peakpeak = -inf;
+            peakrank = 0;
+        else
+            peakpeak = pPeak{i}(meanmaxidx); % Get the peak value for all transients confirmed by image segmentation
+            peakrank = mRank{i}(meanmaxidx); % Get the mean rank of the peak pixel across all transients confirmed by image segmentation
+        end
         
         if todebug
             [xp_orig,yp_orig] = ind2sub([Xdim,Ydim],maxidx_orig(end-10:end));
@@ -262,15 +277,19 @@ for i = 1:NumNeurons
         if (peakpeak > 0) && (peakrank > rankthresh)
             %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1; % Add in new transient
+            n_trans_add = n_trans_add + 1; % Update number of added transients
+            expPosTrIdx{i}(n_trans_add) = meanmaxidx; % Save meanmaxidx
+            expPosTrsubs{i}(n_trans_add,1:2) = [round(mean(xp)),round(mean(yp))];
         else % Put in keyboard statments below if you wish to see why each neuron is getting rejected and uncomment disp functions
             %display('pixels off kilter');
-            if peakpeak == 0 
+            if peakpeak == 0
                 %display('this pixel is never the peak');
             end
             if peakrank < rankthresh
                 %display('mean rank of the peak not high enough');
             end
         end
+        
         
     end
     
@@ -284,9 +303,7 @@ for i = 1:NumNeurons
 end
 p.stop; 
 
-profile viewer
-
 %%
-save expPosTr.mat expPosTr;
+save expPosTr.mat expPosTr expPosIdx;
 
 end
