@@ -199,6 +199,7 @@ for i = 1:NumNeurons
             end
         end
         
+        try
         % NAT - continue here after you figure out what Calc_pPeak does...
         if (peakpeak > 0) && (peakrank > rankthresh)
             %display('new transient!');
@@ -211,6 +212,11 @@ for i = 1:NumNeurons
             if peakrank < rankthresh
                 %display('mean rank of the peak not high enough');
             end
+        end
+        
+        catch
+            disp('Error catching toward end of AddPoTransients')
+            keyboard
         end
         
     end

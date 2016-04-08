@@ -11,12 +11,12 @@ function MakeT2Movies(MotCorrh5)
 %
 
 %% File names.
-    folder = fileparts(fileparts(MotCorrh5));
+    folder = fileparts(fileparts(MotCorrh5)); % Grab folder above the one containing MotCorrh5 movie
     SLPDFname = fullfile(folder,'SLPDF.h5');
     DFFname = fullfile(folder,'DFF.h5'); 
     threePixName = fullfile(folder,'threePixSmooth.h5');
     tempfilename = fullfile(folder,'temp.h5');
-
+    
 %% Set up.
     info = h5info(MotCorrh5,'/Object'); 
     [~,Xdim,Ydim,nFrames] = loadframe(MotCorrh5,1);
@@ -39,7 +39,7 @@ profile on
     % Initialized ProgressBar
     resol = 1; % Percent resolution for progress bar
     p = ProgressBar(100/resol);
-    update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+    update_inc = round(nFrames/(100/resol)); % Get increments for updating ProgressBar
     
     for i=1:nFrames
         frame = single(loadframe(MotCorrh5,i,info));
