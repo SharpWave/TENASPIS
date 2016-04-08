@@ -38,8 +38,6 @@ for j = 1:NumNeurons
     end
 end
 
-keyboard
-
 %%
 disp('Adding potential transients...');
 p = ProgressBar(NumNeurons); 
