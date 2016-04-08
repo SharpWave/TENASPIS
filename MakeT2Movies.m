@@ -3,6 +3,12 @@ function MakeT2Movies(MotCorrh5)
 %
 %   Takes cropped, motion-corrected movie and makes two movies from it. 
 %
+% INPUTS
+%
+%   MotCorrh5: full pathname to motion-corrected, cropped movie
+%
+% OUTPUTS - saved to directory above MotCorr5
+%
 %   SLPDF.h5: Takes a 3-pixel smoothed version of the input movie and
 %   divides it by the 20-pixel smoothed version of the same movie. Then,
 %   take the DF/F of the quotient. 
@@ -30,9 +36,6 @@ function MakeT2Movies(MotCorrh5)
     threePixfilter = fspecial('disk',3);
 
 %% Writing. 
-
-profile off
-profile on
     disp('Making Movies')
     info = h5info(MotCorrh5,'/Object');
     
@@ -69,6 +72,5 @@ profile on
     delete(threePixName);
 %     delete(SLPDFname);
 
-profile viewer
 
 end
