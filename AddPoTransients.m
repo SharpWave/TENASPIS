@@ -200,7 +200,7 @@ for i = 1:NumNeurons
             
             % Original code to compare to for debugging
 %             f = loadframe('SLPDF.h5', k, info); 
-%             [~,maxidx_orig(k)] = max(f(NeuronPixels{i}));
+%             [~,maxidx(k)] = max(f(NeuronPixels{i}));
             maxidx(k) = maxidx_full(i,k); 
 %             
         end
@@ -216,7 +216,7 @@ for i = 1:NumNeurons
             for k = 1:length(buddyconfs)
                 
                 % Original code to compare to for debugging
-%                 meanpix_orig(k) = mean(f(NeuronPixels{buddyconfs(k)})); % NRK commenting to test out speed increases 
+%                 meanpix(k) = mean(f(NeuronPixels{buddyconfs(k)})); % NRK commenting to test out speed increases 
                 
                 meanpix(k) = meanpix_full(buddyconfs(k),PoTrPeakIdx{i}(j)); % mean of buddy k at time of potential peak transient
             end
@@ -226,8 +226,8 @@ for i = 1:NumNeurons
             % epoch j is less than the maximum of the mean of all the
             % buddy neurons, then buddy activity probably caused the
             % potential transient so don't add a new one
-            if meanpix_full(i,PoTrPeakIdx{i}(j)) < max(meanpix) 
-                if todebug && (mean(f(NeuronPixels{i})) >= max(meanpix_orig))
+            if todebug && meanpix_full(i,PoTrPeakIdx{i}(j)) < max(meanpix) 
+                if (mean(f(NeuronPixels{i})) >= max(meanpix_orig))
                     disp('Conflict between original method and new method')
                     keyboard
                 end
@@ -304,6 +304,6 @@ end
 p.stop; 
 
 %%
-save expPosTr.mat expPosTr expPosIdx;
+save expPosTr.mat expPosTr expPosTrIdx;
 
 end
