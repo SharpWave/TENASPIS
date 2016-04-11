@@ -130,7 +130,7 @@ for i = 1:NumFrames
     else 
         active_neurons = find(sum(expPosTr(:,i:end) | PoPosTr(:,i:end),2) > 0);
     end
-%     
+    
     for j = 1:length(active_neurons)
         neuron_id = active_neurons(j);
         [~,maxidx_full(neuron_id,i)] = max(f(NeuronPixels{neuron_id}));  %#ok<*USENS>
@@ -260,20 +260,21 @@ for i = 1:NumNeurons
             peakrank = mRank{i}(meanmaxidx); % Get the mean rank of the peak pixel across all transients confirmed by image segmentation
         end
         
-        if todebug
-            [xp_orig,yp_orig] = ind2sub([Xdim,Ydim],maxidx_orig(end-10:end));
-            meanmaxidx_orig = sub2ind([Xdim,Ydim],round(nanmean(xp_orig)),round(nanmean(yp_orig)));
-            if meanmaxidx_orig ~= meanmaxidx
-                disp('Discrepancy in meanmaxidx - debugging');
-                % Basically this is spitting out different values than the
-                % original method because I only get values for the 10
-                % frames before if they included a potential transient
-                keyboard
-            end
-        end
+%         if todebug
+%             [xp_orig,yp_orig] = ind2sub([Xdim,Ydim],maxidx_orig(end-10:end));
+%             meanmaxidx_orig = sub2ind([Xdim,Ydim],round(nanmean(xp_orig)),round(nanmean(yp_orig)));
+%             if meanmaxidx_orig ~= meanmaxidx
+%                 disp('Discrepancy in meanmaxidx - debugging');
+%                 % Basically this is spitting out different values than the
+%                 % original method because I only get values for the 10
+%                 % frames before if they included a potential transient
+%                 keyboard
+%             end
+%         end
         
         % Check if neurons without a buddy transient meet the peak pixel
         % location criteria and rank criteria
+
         if (peakpeak > 0) && (peakrank > rankthresh)
             %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1; % Add in new transient
@@ -289,7 +290,7 @@ for i = 1:NumNeurons
                 %display('mean rank of the peak not high enough');
             end
         end
-        
+
         
     end
     
