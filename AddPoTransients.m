@@ -108,10 +108,10 @@ for j = 1:NumNeurons
 end
 
 % Calculate number of buddies and approximate time to run function below,
-% if over 90 minutes, then calculate everything ahead
+% if over 60 minutes, then calculate everything ahead
 num_buddies = sum(cellfun(@(a) size(a,2),buddies)); % total number of buddy neurons requiring calculation
 approx_time = 25*(NumFrames/40000)*(num_buddies/8500)^2;
-if approx_time > 90
+if approx_time > 60
     calc_ahead = 1;
 else
     calc_ahead = 0;
@@ -349,6 +349,6 @@ end
 p.stop; 
 
 %%
-save expPosTr.mat expPosTr expPosTrIdx;
+save expPosTr.mat expPosTr expPosTrIdx buddies;
 
 end
