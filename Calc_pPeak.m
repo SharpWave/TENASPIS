@@ -65,7 +65,6 @@ update_inc = round(NumFrames/(100/resol)); % Get increments for updating Progres
 display('Calculating ranks and peaks...');
 for i = 1:NumFrames
     ActiveN = find(FT(:,i)); % Identify active neurons in frame i
-
     frame = loadframe('SLPDF.h5',i,info); % Load the frame
     
     % For each neuron, calculate statistics

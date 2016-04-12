@@ -64,17 +64,17 @@ end
 
 calc_ahead = 0; % Default - do not calculate max pixel location and mean pixel intensity ahead
 
-%%
+%% Load variables and calculate pre-requisite data
 disp('Loading relevant variables')
 load pPeak.mat;
 load('ExpTransients.mat','PosTr','PoPosTr','PoTrPeakIdx');
 load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage','Xdim','Ydim');
 
-expPosTr = PosTr; % Expanded positive transients - this gets updated below, while PosTr does not
-clear PosTr % Clear this to save RAM
+expPosTr = PosTr;
 
-% Get centroids
-Cents = zeros(length(NeuronImage),2); % Initialize
+Cents = zeros(length(NeuronImage),2); 
+rankthresh = 0.55;
+
 for i = 1:length(NeuronImage)
     b = bwconncomp(NeuronImage{i});
     r = regionprops(b,'Centroid');
@@ -88,19 +88,13 @@ CentDist = squareform(temp);
 info = h5info('SLPDF.h5','/Object'); % Get movie info for loadframe below
 
 %display('checking buddies');
-
-% Identify buddy neurons for each neuron
 for j = 1:NumNeurons
     buddies{j} = [];
     for i = 1:NumNeurons
-        
-        % Don't count neuron itself as a buddy
-        if (i == j) 
+        if (i == j)
             continue;
         end
-        
-        % Save buddy if it is less than the buddy distance threshold away
-        if (CentDist(i,j) <= buddy_dist_thresh)
+        if (CentDist(i,j) <= 15)
             buddies{j} = [buddies{j},i];
         end
         
@@ -183,7 +177,7 @@ expPosTrIdx = cell(1,NumNeurons); % Initialize variable
 expPosTrsubs = cell(1,NumNeurons); % Initialize variable
 
 disp('Adding potential transients...');
-p = ProgressBar(NumNeurons);
+p = ProgressBar(NumNeurons); 
 for i = 1:NumNeurons
     %display(['Neuron ',int2str(i)]);
 
@@ -194,36 +188,25 @@ for i = 1:NumNeurons
     % none, add a new transient!
     n_trans_add = 0; % Number of added transients for neuron i
     for j = 1:size(PoEpochs,1)
+        % check for buddies
+        buddyspike = 0;
+        buddyconfs = [];
         
-        % initialize variables
-        buddyspike = 0; % binary for if there is a buddy spike
-        buddyconfs = []; % 
-        
-        % Loop through each buddy neuron and identify if there was a buddy
-        % spike or if there is a potential positive transient
         for k = 1:length(buddies{i})
-            
-            % Identify buddy spikes from expanded positive transients
-            % (confirmed spikes)
             if sum(expPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0
-                buddyspike = 1; % If so, set binary to 1 to initiate checking below
+                buddyspike = 1;    
             end
             
-            % Identify if there was potential activity in the original transient
-            % variable for buddy neurons (potential buddy conflicts)
             if (sum(PoPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
-                buddyconfs = [buddyconfs,buddies{i}(k)]; % accrue list of buddies with potential spiking activity in original (unexpanded) transients       
+                buddyconfs = [buddyconfs,buddies{i}(k)];            
             end
         end
         
-        % Skip to next epoch without adding a transient if there is a buddy
-        % spike
         if buddyspike
             %display('buddy spike');
             continue;
         end
         
-        %%% If there is not a buddy spike, check the peak %%%
         maxidx = [];
         
         % Get the indices to all the frames preceding the peak of the
@@ -243,17 +226,12 @@ for i = 1:NumNeurons
             end
             
             n_potrans = n_potrans + 1;
-%             
+            
         end
         
-        % If there are potential buddy conflicts, get the mean pixel
-        % intensity for each buddy neuron during the peak of the potential
-        % spike of neuron i in epoch j
         meanpix = [];
         if ~isempty(buddyconfs)
             %display('buddy conflict');
-            
-            % Accrue list of means
             for k = 1:length(buddyconfs)
                 if calc_ahead == 0
                     meanpix(k) = mean(f(NeuronPixels{buddyconfs(k)}));
@@ -290,8 +268,7 @@ for i = 1:NumNeurons
         
 
         % Get the subs for the location of the maximum pixel intensity in
-        % neuron i during the ten frames preceding the peak in epoch j
-%         temp = maxidx(end-10:end); % Grab info for 10 previous frames
+        % neuron i during the valid frames preceding the peak in epoch j
         maxidx_valid = maxidx(~isnan(maxidx)); %Grab only frames where neuron trace is non-NaN.
         [xp,yp] = ind2sub([Xdim,Ydim],NeuronPixels{i}(maxidx_valid)); % convert NeuronPixel indices to global pixel indices
         
@@ -352,3 +329,4 @@ p.stop;
 save expPosTr.mat expPosTr expPosTrIdx buddies;
 
 end
+

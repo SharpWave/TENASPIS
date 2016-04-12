@@ -63,6 +63,7 @@ p = ProgressBar(NumNeurons);
 
 % Run through each neuron's transients and identify positive slopes
 for i = 1:NumNeurons
+
     dfdt = zscore(difftrace(i,:)); % normalize difftrace (temporal derivative of trace)
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps); % ID epochs where transients occur
     
