@@ -5,7 +5,7 @@ function Tenaspis2singlesession()
 %% Extract Blobs
 load singlesessionmask.mat;
 disp('Extracting blobs...'); 
-%ExtractBlobs('DFF.h5',neuronmask);
+ExtractBlobs('DFF.h5',neuronmask);
 
 %% Connect blobs into transients
 disp('Making transients...');
