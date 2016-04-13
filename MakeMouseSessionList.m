@@ -1970,6 +1970,8 @@ MD(i).Env = 'DNMP';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\04_01_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_01_2016\Working';
 end
 MD(i).Notes = 'Tenaspis 2';
 MD(i).exclude_frames = [];
@@ -1994,6 +1996,8 @@ MD(i).Env = 'DNMP';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\04_05_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_05_2016\Working';
 end
 MD(i).Notes = 'Tenaspis 2';
 MD(i).exclude_frames = [];

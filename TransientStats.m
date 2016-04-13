@@ -37,7 +37,9 @@ load('Blobs.mat','cc','PeakPix');
 DistTrav = nan(1,length(SegChain));
 
 disp('Calculating statistics for all transients')
-resol = 5; % Percent resolution for progress bar, in this case 10%
+
+% Initialize ProgressBar
+resol = 1; % Percent resolution for progress bar, in this case 10%
 p = ProgressBar(100/resol);
 update_inc = round(length(SegChain)/(100/resol)); % Get increments for updating ProgressBar
 
