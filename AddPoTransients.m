@@ -8,10 +8,10 @@ function AddPoTransients(todebug)
 % threshold noted in the code below.  
 %
 % A new transient is added if three conditions are met: 
-% 1) there are no transients in any of the buddy neurons identified on any 
-% of the 10 frames prior to the peak of the potential transient, and 2) the 
-% peak of the transient does not move too much throughout its duration when
-% compared to previously confirmed transients from MakeNeurons, and
+% 1) there are no transients in any of the buddy neurons identified on the 
+% potentially active frames prior to the peak of the potential transient, 
+% and 2) the peak of the transient is located in a plausible position 
+% (where at least one prior transient peak occurred), and
 % 3) the rank of the peak pixel across all transients is greater than the 
 % threshold in the code below, calculated using all the previously
 % confirmed transients.
@@ -34,6 +34,8 @@ function AddPoTransients(todebug)
 %   expPosIdx - indices to the mean-maximum pixel for each added transient
 %   in expPosTr
 %
+%   buddies - indices to the each neuron's buddies
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -55,14 +57,6 @@ function AddPoTransients(todebug)
 %% Parameters
 buddy_dist_thresh = 15; % Any neurons with a centroid less than this many pixels away are considered a buddy
 rankthresh = 0.55; % DAVE - what is this / how did you come up with this?
-
-%% Parse todebug
-
-if nargin < 1
-    todebug = false;
-end
-
-calc_ahead = 0; % Default - do not calculate max pixel location and mean pixel intensity ahead
 
 %% Load variables and calculate pre-requisite data
 disp('Loading relevant variables')
@@ -103,6 +97,7 @@ end
 
 % Calculate number of buddies and approximate time to run function below,
 % if over 60 minutes, then calculate everything ahead
+calc_ahead = 0; % Default - do not calculate max pixel location and mean pixel intensity ahead
 num_buddies = sum(cellfun(@(a) size(a,2),buddies)); % total number of buddy neurons requiring calculation
 approx_time = 25*(NumFrames/40000)*(num_buddies/8500)^2;
 if approx_time > 60
@@ -134,22 +129,6 @@ for i = 1:NumFrames
     
     % Identify active neurons for frame i
     active_neurons = find(expPosTr(:,i) | PoPosTr(:,i));
-% 
-%     % Look for potential activity up to 10 frames ahead in accordance 
-%     % with 10 frame limit below.  Comment out below to only consider
-%     % activity in neighboring neurons that has been identified as a
-%     % potential transient in the 10 prior frames
-%     if i+10 <= NumFrames
-%         active_neurons = find(sum(expPosTr(:,i:i+10) | PoPosTr(:,i:i+10),2) > 0);
-%     else 
-%         active_neurons = find(sum(expPosTr(:,i:end) | PoPosTr(:,i:end),2) > 0);
-%     end
-%     
-%     for j = 1:length(active_neurons)
-%         neuron_id = active_neurons(j);
-%         [~,maxidx_full(neuron_id,i)] = max(f(NeuronPixels{neuron_id}));  %#ok<*USENS>
-%         meanpix_full(neuron_id,i) = mean(f(NeuronPixels{neuron_id}));
-%     end
     
     % Find all the active buddies and get their activity too
     active_plus_buddy = unique([active_neurons' cat(2,buddies{active_neurons})]);
@@ -240,16 +219,6 @@ for i = 1:NumNeurons
                 end
             end
             
-            % De-bugging code
-            if todebug 
-                origmean_test = mean(f(NeuronPixels{i})) < max(meanpix_orig);
-                newmean_test = meanpix_full(i,PoTrPeakIdx{i}(j)) < max(meanpix);
-                if newmean_test ~= origmean_test
-                    disp('Debugging - mismatch in original and new variables meanpix line 226')
-                    keyboard
-                end
-            end
-            
             % Now, compare.  If the mean of neuron i pixels at its peak in
             % epoch j is less than the maximum of the mean of all the
             % buddy neurons, then buddy activity probably caused the
@@ -275,22 +244,6 @@ for i = 1:NumNeurons
         % identify the index corresponding to the average of the above
         meanmaxidx = sub2ind([Xdim,Ydim],round(nanmean(xp)),round(nanmean(yp))); 
         meanmaxidx = find(meanmaxidx == NeuronPixels{i}); % convert global indices back to NeuronPixel indices
-        
-        % meanmaxidx error-catching
-        if todebug
-            % Calculate meanmaxidx in original manner
-%             temp = maxidx_orig(end-10:end); % Grab info for 10 previous frames
-            maxidx_orig_valid = maxidx_orig(~isnan(maxidx_orig)); %Grab only frames where neuron trace is non-NaN.
-            [xp_orig,yp_orig] = ind2sub([Xdim,Ydim],NeuronPixels{i}(maxidx_orig_valid)); % convert NeuronPixel indices to global pixel indices
-            
-            % identify the index corresponding to the average of the above
-            meanmaxidx_orig = sub2ind([Xdim,Ydim],round(nanmean(xp_orig)),round(nanmean(yp_orig)));
-            meanmaxidx_orig = find(meanmaxidx_orig == NeuronPixels{i}); % convert global indices back to NeuronPixel indices
-            if meanmaxidx_orig ~= meanmaxidx
-                disp('Debugging - mismatch in original and new variables meanmaxpix line 265')
-                keyboard
-            end
-        end
         
         if isempty(meanmaxidx) % Designate values that will not result in an added transient for an empty meanmaxidx
             peakpeak = -inf;
