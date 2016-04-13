@@ -16,6 +16,7 @@ function AddPoTransients(todebug)
 % threshold in the code below, calculated using all the previously
 % confirmed transients.
 %
+%
 % INPUTS - all are loaded from workspace variables
 %
 %   from pPeak.mat (see Calc_pPeak): pPeak and mRank
@@ -305,6 +306,6 @@ end
 p.stop; 
 
 %%
-save expPosTr.mat expPosTr expPosIdx;
+save expPosTr.mat expPosTr expPosTrIdx;
 
 end
