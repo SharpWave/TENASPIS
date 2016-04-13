@@ -1,5 +1,21 @@
 function[Epochs] = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
 % [Epochs] = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
+%
+% Finds epochs where consecutive values of x are above InThresh.
+%
+% INPUTS:
+%   x: one-dimensional array of values you wish to evaluate
+%
+%   InThresh: threhold for x
+%
+%   omitends: if x starts or ends in an epoch, omit these as valid
+%
+%
+% OUTPUTS:
+%
+%   Epochs: a num_epochs x 2 array with the start and end indices for each
+%   epoch.
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
