@@ -10,6 +10,7 @@ NumNeurons = size(expPosTr,1);
 aCaTr = zeros(size(expPosTr));
 
 for i = 1:NumNeurons
+    
     dfdt = zscore(difftrace(i,:));
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps);
     for j = 1:size(epochs,1)

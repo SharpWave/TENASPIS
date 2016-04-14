@@ -1,5 +1,23 @@
-function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum)
-% [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum)
+function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,h5_size_info)
+% [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,...)
+%
+% Loads a frame from an h5 file
+%
+% INPUTS:
+%   file: fullpath to h5 file
+%
+%   framenum: frame number of file to load
+%
+%   h5_size_info (optional): data structure obtained by running info =
+%   h5info(file,'/Object') on the movie beforehand.  Will save lots of time
+%   if you are loading many frames, not necessary for loading small numbers
+%   of frames.
+%
+% OUTPUTS:
+%   frame: an array of the frame you loaded
+%
+%   Xdim, Ydim, NumFrames: movie size info obtained using h5info.
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,7 +36,12 @@ function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum)
-info = h5info(file,'/Object');
+
+if nargin < 3
+    info = h5info(file,'/Object');
+else
+    info = h5_size_info;
+end
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);

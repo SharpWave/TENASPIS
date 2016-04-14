@@ -57,7 +57,7 @@ MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4.5];
 close all;
 
 % Load relevant variables
-disp('Loading variables for MakeTransients')
+disp('Loading relevant variables')
 load('Blobs.mat','PeakPix','cc');
 load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 

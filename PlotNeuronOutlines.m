@@ -5,12 +5,13 @@ function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,
 %
 % INPUTS:
 % 
-%   PixelList:
+%   PixelList: InitPixelList from ProcOut.mat
 %
 %   Xdim, Ydim: dimensions of the imaging movie frames
 %
 %   clusterlist: cTon variable created in MakeNeurons and saved under
-%   ProcOut.mat.
+%   ProcOut.mat.  Size of first dimention must match the length of
+%   PixelList
 %
 %   varargins: 
 %       'plot_max_proj',max_proj_tif_path plots the clusters over the
