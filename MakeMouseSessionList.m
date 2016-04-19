@@ -2006,6 +2006,22 @@ end
 MD(i).Notes = 'Tenaspis 2';
 MD(i).exclude_frames = [];
 
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_DNMP';
+MD(i).Date = '04_05_2016';
+MD(i).Session = 2;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\04_05_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_05_2016\Working after Nat_T2edits';
+end
+MD(i).Notes = 'Tenaspis 2';
+MD(i).exclude_frames = [];
+
+
+
 G45.DNMP(2) = i;
 G45.all(2) = i;
 
