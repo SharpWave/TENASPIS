@@ -1984,9 +1984,13 @@ MD(i).Env = 'DNMP';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\04_04_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_04_2016\Working';
 end
 MD(i).Notes = 'Tenaspis 2';
-MD(i).exclude_frames = [];
+MD(i).exclude_frames = [2679:2975, 4592:4863, 6806:7040, 8295:10420, ...
+    15850:16075, 17113:17318, 17520:18336, 25831:26053, 28009:29419, ...
+    29668:31476, 33282:33661, 36544:36986];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_DNMP';
