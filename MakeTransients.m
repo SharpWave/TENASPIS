@@ -73,7 +73,7 @@ for i = 2:NumFrames
         [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),...
             stats(j).MinorAxisLength);
  
-        if (MatchingSeg == 0)
+        if MatchingSeg == 0
             % no match found, make a new segment
             NumSegments = NumSegments+1;
             SegChain{NumSegments} = {[i,j]};

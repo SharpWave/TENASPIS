@@ -13,11 +13,12 @@ for i = 1:NumNeurons
     mRank{i} = zeros(size(NeuronPixels{i}));
 end
 
+info = h5info(fullfile(pwd,'SLPDF.h5'),'/Object');
 p = ProgressBar(NumFrames);
 for i = 1:NumFrames
     ActiveN = find(FT(:,i));
 
-    frame = loadframe(fullfile(pwd,'SLPDF.h5'),i);
+    frame = loadframe(fullfile(pwd,'SLPDF.h5'),i,info);
 
     for j = 1:length(ActiveN)
         idx = ActiveN(j);
