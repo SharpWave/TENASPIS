@@ -1,22 +1,5 @@
-function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,h5_size_info)
-% [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,...)
-%
-% Loads a frame from an h5 file
-%
-% INPUTS:
-%   file: fullpath to h5 file
-%
-%   framenum: frame number of file to load
-%
-%   h5_size_info (optional): data structure obtained by running info =
-%   h5info(file,'/Object') on the movie beforehand.  Will save lots of time
-%   if you are loading many frames, not necessary for loading small numbers
-%   of frames.
-%
-% OUTPUTS:
-%   frame: an array of the frame you loaded
-%
-%   Xdim, Ydim, NumFrames: movie size info obtained using h5info.
+function [meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
+%[meanframe,stdframe] = moviestats(file)
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,16 +19,38 @@ function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,h5_size_info)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Pull info about video file
-if nargin < 3
-    info = h5info(file,'/Object');
-else
-    info = h5_size_info;
-end
+info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
-Xdim = info.Dataspace.Size(1);
-Ydim = info.Dataspace.Size(2);
 
-frame = h5read(file,'/Object',[1 1 framenum 1],[Xdim Ydim 1 1]);
+% Initialize Progress Bar
+resol = 1; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+
+% Pre-allocate
+meanframe = zeros(1,NumFrames);
+stdframe = zeros(1,NumFrames);
+
+% Calculate stats
+for i = 1:NumFrames
+    frame = double(loadframe(file,i,info));
+    meanframe(i) = mean(frame(:));
+    stdframe(i) = std(frame(:));
+    
+    if (nargout > 2)
+        pos = find(frame(:) > 0);
+        meanframepos(i) = mean(frame(pos));
+        stdframepos(i) = std(frame(pos));
+    end
+    
+    % Update progress bar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Also percent = p.progress;
+    end
+    
+end
+
+p.stop; % Terminate progress bar
 
 end
+

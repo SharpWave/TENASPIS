@@ -42,10 +42,11 @@ NumItsTaken = cell(1,NumFrames);
 p = ProgressBar(NumFrames); % Initialize progress bar
 
 % Run through each frame and isolate all blobs
-parfor i = 1:NumFrames
+parfor i = 1:NumFrames 
     
     % Read in each imaging frame
-    tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    tempFrame = loadframe(file,i,info);
+%     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     thresh = median(tempFrame(maskpix)); % Set threshold
 

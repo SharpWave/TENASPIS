@@ -46,7 +46,7 @@ for i = 1:20:NumFrames
         neuronmask = oldmask;
     end
     
-    [bw,cc{i}] = SegmentFrame(tempFrame,0,neuronmask,thresh);
+    [bw,cc{i}] = SegmentFrame(tempFrame,neuronmask,thresh);
     
     if (todebug == 1)
         subplot(1,2,1);imagesc(bw);colormap gray;cc{i}.PixelIdxList,

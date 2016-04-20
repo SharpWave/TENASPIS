@@ -68,8 +68,8 @@ maxdist = RadiusMultiplier;
 
 % Initialize ProgressBar
 resol = 10; % Percent resolution for progress bar, in this case 10%
-p = ProgressBar(resol);
-update_inc = round(nClus/resol); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
+update_inc = round(nClus/(100/resol)); % Get increments for updating ProgressBar
 for i = CluToMerge'
     
     if round(i/update_inc) == (i/update_inc)
