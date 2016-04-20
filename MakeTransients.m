@@ -1,4 +1,4 @@
-function [] = MakeTransients(varargin)
+function [] = MakeTransients()
 % [] = MakeTransients()
 %
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
@@ -61,7 +61,9 @@ SegChain = [];
 SegList = zeros(NumFrames,100); 
 
 % Initialize progress bar
-p = ProgressBar(NumFrames); 
+resol = 1; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 
 %% Run through loop to connect blobs between successive frames
 for i = 2:NumFrames
@@ -84,8 +86,11 @@ for i = 2:NumFrames
             SegList(i,j) = MatchingSeg;
         end
     end
-
-    p.progress;
+    
+    % Update progress bar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop;
 %% Parse Segment data into transients by making sure each segment does not 

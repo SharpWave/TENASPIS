@@ -1,10 +1,41 @@
 function [] = NormalTraces(moviefile)
-% This function takes the ROI output of ExtractNeurons2015 and extracts
-% traces in the straightfoward-most way.  Mostly for validation of the new
-% tech
+% This function takes the ROI output of MakeNeurons and extracts
+% traces in the straightfoward-most way (by summing up all the pixels in a
+% given neuron's ROI. Also normalizes traces at the end and get their
+% temporal derivative
+%
+% INPUTS - all loaded from workspace variables
+%
+%   from ProcOut.mat (see MakeNeurons): NeuronImage, NumFrames,
+%   NeuronPixels
+%
+% OUTPUTS - saved in NormTraces.mat
+%
+%   trace: a smoothed, normalized (z-scored) trace for each neuron
+%
+%   difftrace: temporal derivative of trace
+%
+% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This file is part of Tenaspis.
+% 
+%     Tenaspis is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     Tenaspis is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 close all;
 
-% Step 1: load up the ROIs
+%% Step 1: load up the ROIs
 disp('Loading relevant variables from ProcOut')
 load('ProcOut.mat','NeuronImage','NumFrames','NeuronPixels');
 
@@ -31,10 +62,11 @@ parfor i = 1:NumFrames
 end
 p.stop; % Terminate progress bar
 
+%% Smooth and normalize traces
 difftrace = zeros(size(trace)); 
 disp('Smoothing traces and normalizing')
 for i = 1:NumNeurons
-    trace(i,:) = zscore(trace(i,:)); % Z-score the trace - effectively thresholds trace later in ExpandTransients
+    trace(i,:) = zscore(trace(i,:)); % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
     trace(i,:) = convtrim(trace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
     trace(i,1:11) = 0; % Set 10 first frames to 0
     trace(i,end-11:end) = 0; % Set 10 last frames to 0

@@ -1,28 +1,45 @@
-function [ output_args ] = Make_DFF(moviefile,outfile)
+function Make_DFF(moviefile,outfile)
 
 info = h5info(moviefile,'/Object');
 [~,XDim,YDim,NumFrames] = loadframe(moviefile,1,info);
 h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','single');
 
+%% Get averages.
 display('determining averages');
+avgframe = zeros(XDim,YDim); % Initialize variable
 
-% get averages.
-avgframe = zeros(XDim,YDim);
-p = ProgressBar(NumFrames*2);
+% Initialize ProgressBar
+resol = 1; % Percent resolution for progress bar
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 for i = 1:NumFrames
-   [frame,Xdim,Ydim,NumFrames] = loadframe(moviefile,i,info); 
+   [frame,~,~,NumFrames] = loadframe(moviefile,i,info); 
    avgframe = avgframe+single(frame);
-   p.progress;
+   
+   if round(i/update_inc) == (i/update_inc) % Update progress bar
+       p.progress;
+   end
+   
 end
 avgframe = avgframe./NumFrames;
+p.stop;
 
-% make DFF
+%% Make DFF
 display('calculating and saving DFF');
+
+% Initialize ProgressBar
+resol = 1; % Percent resolution for progress bar
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 for i = 1:NumFrames
-    [frame,Xdim,Ydim,NumFrames] = loadframe(moviefile,i,info); 
+    [frame,~,~,~] = loadframe(moviefile,i,info); 
     newframe = (single(frame)-avgframe)./avgframe;
     h5write(outfile,'/Object',newframe,[1 1 i 1],[XDim YDim 1 1]);
-    p.progress;
+    
+    if round(i/update_inc) == (i/update_inc) % Update progress bar
+       p.progress;
+    end
+   
 end
 p.stop;
 
