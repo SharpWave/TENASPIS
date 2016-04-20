@@ -51,13 +51,9 @@ AI(8).animal = 'GCamp6f_45_treadmill';
 AI(8).init_date = '11_09_2015';
 AI(8).init_sess = 2;
 
-AI(9).animal = 'GCamp6f_45_treadmill';
-AI(9).init_date = '11_09_2015';
-AI(9).init_sess = 1; 
-
 AI(10).animal = 'GCamp6f_48_treadmill';
-AI(10).init_date = '11_09_2015';
-AI(10).init_sess = 1; 
+AI(10).init_date = '11_30_2015';
+AI(10).init_sess = 2; 
 
 AI(11).animal = 'GCamp6f_45_altpilot';
 AI(11).init_date = '01_13_2016';
