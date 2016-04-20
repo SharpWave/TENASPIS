@@ -64,13 +64,12 @@ function MakeT2Movies(MotCorrh5)
     
     disp('Making SLPDF.h5...');         %DF/F of LP divide. 
     Make_DFF(tempfilename,SLPDFname);
-    
+
     disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
     Make_DFF(threePixName,DFFname);
     
+%% Delete old files
     delete(tempfilename);
     delete(threePixName);
-%     delete(SLPDFname);
-
 
 end
