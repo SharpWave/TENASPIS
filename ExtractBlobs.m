@@ -1,5 +1,5 @@
 function [] = ExtractBlobs(file,mask)
-% [] = ExtractBlobs(file,thresh,mask,autothresh)
+% [] = ExtractBlobs(file,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,8 +18,6 @@ function [] = ExtractBlobs(file,mask)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % extract active cell "blobs" from movie in file
-% todebug 0 or 1 depending if you want to go through frame-by-frame
-% thresh is initial threshold (try BlobStats for thresh determination)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
@@ -50,17 +48,12 @@ parfor i = 1:NumFrames
     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     thresh = median(tempFrame(maskpix)); % Set threshold
-    
-%     keyboard;
-%     thresh = median(tempFrame(maskpix))
 
     % Detect all blobs that are within the mask by adaptively thresholding
     % each frame
     [cc{i},PeakPix{i},NumItsTaken{i}] = SegmentFrame(tempFrame,mask,thresh);
-    (NumItsTaken{i});
-
-    p.progress; % update progress bar
     
+    p.progress; % update progress bar    
 end
 
 p.stop; % Shut-down progress bar
