@@ -1,5 +1,5 @@
-function MakeT2Movies(MotCorrh5)
-% MakeT2Movies(MotCorrh5)
+function MakeT2Movies
+% MakeT2Movies
 %
 %   Takes cropped, motion-corrected movie and makes two movies from it. 
 %
@@ -11,7 +11,8 @@ function MakeT2Movies(MotCorrh5)
 %
 
 %% File names.
-    folder = fileparts(fileparts(MotCorrh5));
+    MotCorrh5 = uigetfile('*.h5');
+    folder = fileparts(MotCorrh5);
     SLPDFname = fullfile(folder,'SLPDF.h5');
     DFFname = fullfile(folder,'DFF.h5'); 
     threePixName = fullfile(folder,'threePixSmooth.h5');

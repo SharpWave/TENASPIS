@@ -8,10 +8,11 @@ display('determining averages');
 
 % get averages.
 avgframe = zeros(XDim,YDim);
-
+p = ProgressBar(NumFrames*2);
 for i = 1:NumFrames
    [frame,Xdim,Ydim,NumFrames] = loadframe(moviefile,i,info); 
    avgframe = avgframe+single(frame);
+   p.progress;
 end
 avgframe = avgframe./NumFrames;
 
@@ -21,6 +22,8 @@ for i = 1:NumFrames
     [frame,Xdim,Ydim,NumFrames] = loadframe(moviefile,i,info); 
     newframe = (single(frame)-avgframe)./avgframe;
     h5write(outfile,'/Object',newframe,[1 1 i 1],[XDim YDim 1 1]);
+    p.progress;
 end
+p.stop;
 
 end
