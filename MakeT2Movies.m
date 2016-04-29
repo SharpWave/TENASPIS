@@ -52,7 +52,7 @@ function MakeT2Movies(MotCorrh5)
        
         h5write(threePixName,'/Object',threePixFrame,[1 1 i 1],...          %Write 3-pixel smoothed.
             [Xdim Ydim 1 1]); 
-        h5write(tempfilename,'/Object',threePixFrame./LPframe,[1 1 i 1],...     %Write LP divide.
+        h5write(tempfilename,'/Object',threePixFrame./LPframe,[1 1 i 1],... %Write LP divide.
             [Xdim Ydim 1 1]); 
         
         if round(i/update_inc) == (i/update_inc) % Update progress bar

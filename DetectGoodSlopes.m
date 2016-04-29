@@ -62,7 +62,6 @@ aCaTr = zeros(size(expPosTr));
 p = ProgressBar(NumNeurons);
 
 % Run through each neuron's transients and identify positive slopes
->>>>>>> refs/heads/pr/7
 for i = 1:NumNeurons
 
     dfdt = zscore(difftrace(i,:)); % normalize difftrace (temporal derivative of trace)
@@ -116,6 +115,7 @@ end
 p.stop; % terminate progress bar
 
 % Do one last comparison for buddy spikes to make sure none slipped through
+info = h5info('DFF.h5','/Object');
 for i = 1:NumNeurons
     % Grab epochs of good slope for neuron i
     CaEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps); 
@@ -136,7 +136,7 @@ for i = 1:NumNeurons
             %display('conflict');
             
             % Load frame from DFF movie
-            f = loadframe('DFF.h5',CaEpochs(j,2));
+            f = loadframe('DFF.h5',CaEpochs(j,2),info);
             fmean = mean(f(NeuronPixels{i})); % Get mean of pixels for neuron i
             bmean = zeros(1,length(Buddyspikes)); % Initialize buddy mean
 
@@ -155,7 +155,6 @@ for i = 1:NumNeurons
             end
         end
     end
-    p.progress;
 end
 
 % Rename aCaTr
