@@ -122,7 +122,9 @@ while BlobsInFrame
     % increase threshold
     thresh = thresh + threshinc;
     threshframe = temp > thresh;
-    threshframe = bwareaopen(threshframe,adjminpixels,4);
+    
+    % remove areas with less than adjminpixels
+    threshframe = bwareaopen(threshframe,adjminpixels,4); 
     
     % Run throuh while loop again to determine if new threshold has
     % produced any more legitimate blobs.
