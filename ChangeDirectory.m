@@ -1,8 +1,9 @@
-function [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
-% [dirstr] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+function [dirstr, session_struct] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+% [dirstr, session_struct] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
 % 
 % Changes to the appropriate working directory for the mouse in question,
-% and/or outputs that directory in dirstr.
+% and/or outputs that directory in dirstr. Second output is the data
+% structure from MakeMouseSessionList for the input session.
 % If change_dir_flag is not specified or is set to 1, this will change to
 % the working directory. If change_dir_flag is set to 0, dirstr will still
 % be output but you will remain in the original directory.
@@ -54,6 +55,7 @@ for i = 1:NumEntries
         end
         
         dirstr = (MD(i).Location);
+        session_struct = MD(i);
         
         return;
     end
