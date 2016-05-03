@@ -1368,7 +1368,7 @@ MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_05_2015';
 MD(i).Session = 1;
 MD(i).Env = 'triangle open field';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\1 - triangle\Working';
 elseif (strcmp(userstr,'Nat'))
@@ -1384,7 +1384,7 @@ MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_05_2015';
 MD(i).Session = 2;
 MD(i).Env = 'triangle open field';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat_laptop'))
     MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\G45\2 - triangle\Working';
 elseif (strcmp(userstr,'Nat'))
@@ -1397,10 +1397,32 @@ MD(i).Notes = '';
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 3;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\open field\08_05_2015\1 - triangle\Working';
+end
+MD(i).Notes = 'Session 1 - Tenaspis2';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
+MD(i).Date = '08_05_2015';
+MD(i).Session = 4;
+MD(i).Env = 'triangle open field';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\open field\08_05_2015\2 - triangle\Working';
+end
+MD(i).Notes = 'Session 2 - Tenaspis2';
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_06_2015';
 MD(i).Session = 1;
 MD(i).Env = 'square track';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_45\8_06_2015\1 - square track';
 end
@@ -1411,7 +1433,7 @@ MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_06_2015';
 MD(i).Session = 2;
 MD(i).Env = 'square track';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_45\8_06_2015\2 - square track';
 end
@@ -1422,7 +1444,7 @@ MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_10_2015';
 MD(i).Session = 1;
 MD(i).Env = 'square open field';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_45\8_10_2015\1 - square open field';
 end
@@ -1433,9 +1455,11 @@ MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_11_2015';
 MD(i).Session = 1;
 MD(i).Env = 'triangle open field';
-MD(i).Room = '201a';
+MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_45\8_11_2015\1 - triangle open field';
+elseif strcmpi(userstr,'Nat')
+    MD(i).Location = 'E:\GCamp Mice\G45\open field\08_11_2015\Working';
 end
 MD(i).Notes = '';
 
