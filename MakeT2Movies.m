@@ -39,6 +39,7 @@ function MakeT2Movies(MotCorrh5)
     disp('Making Movies')
     info = h5info(MotCorrh5,'/Object');
     
+    disp('Step 1 of 3: Make smoothed and low-pass filter movies')
     % Initialized ProgressBar
     resol = 1; % Percent resolution for progress bar
     p = ProgressBar(100/resol);
@@ -62,10 +63,10 @@ function MakeT2Movies(MotCorrh5)
     end
     p.stop;
     
-    disp('Making SLPDF.h5...');         %DF/F of LP divide. 
+    disp('Step 2 of 3: Making SLPDF.h5...');         %DF/F of LP divide. 
     Make_DFF(tempfilename,SLPDFname);
 
-    disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
+    disp('Step 3 of 3: Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
     Make_DFF(threePixName,DFFname);
     
 %% Delete old files
