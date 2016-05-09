@@ -169,5 +169,4 @@ for i = 1:length(cc.PixelIdxList)
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
 end
 
-%display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
 end

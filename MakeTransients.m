@@ -1,4 +1,4 @@
-function [] = MakeTransients(varargin)
+function [] = MakeTransients()
 % [] = MakeTransients()
 %
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
