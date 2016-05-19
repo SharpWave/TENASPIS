@@ -17,12 +17,15 @@ function MakeT2Movies(MotCorrh5)
 %
 
 %% File names.
-    folder = fileparts(fileparts(MotCorrh5)); % Grab folder above the one containing MotCorrh5 movie
+    folder = fileparts(MotCorrh5); % Grab folder containing MotCorrh5 movie
     SLPDFname = fullfile(folder,'SLPDF.h5');
     DFFname = fullfile(folder,'DFF.h5'); 
     threePixName = fullfile(folder,'threePixSmooth.h5');
     tempfilename = fullfile(folder,'temp.h5');
     
+if exist(DFFname,'file') && exist(SLPDFname,'file')
+    disp('DFFmovie and SLPDFmovie already found in this directory - skipping')
+else
 %% Set up.
     info = h5info(MotCorrh5,'/Object'); 
     [~,Xdim,Ydim,nFrames] = loadframe(MotCorrh5,1);
@@ -72,5 +75,6 @@ function MakeT2Movies(MotCorrh5)
 %% Delete old files
     delete(tempfilename);
     delete(threePixName);
+end
 
 end
