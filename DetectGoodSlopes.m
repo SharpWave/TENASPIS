@@ -146,7 +146,7 @@ for i = 1:NumNeurons
             % If neuron i is the winner (mean greater than the maximum
             % buddy mean), set all transients in buddies to zero.
             if fmean > max(bmean)
-                display('winner');
+                %display('winner');
                 for k = 1:length(Buddyspikes)
                     aCaTr(Buddyspikes(k),CaEpochs(j,1):CaEpochs(j,2)) = 0;
                 end
@@ -170,6 +170,6 @@ NeuronPixels = NeuronPixels(ROIidx);
 
 %% Save variables
                
-save T2output.mat NeuronPixels NeuronImage FT; 
+save T2output.mat NeuronPixels NeuronImage FT ROIidx; 
 
 end
