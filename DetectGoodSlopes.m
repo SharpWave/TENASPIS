@@ -156,7 +156,17 @@ for i = 1:NumNeurons
 end
 
 % Rename aCaTr
-FT = aCaTr;    
+FT = aCaTr;
+
+% Check for ROIs with no transients
+for i = 1:size(FT,1)
+    GoodROI(i) = sum(FT(i,:) > 0);
+end
+ROIidx = find(GoodROI);
+FT = FT(ROIidx,:);
+NeuronImage = NeuronImage(ROIidx);
+NeuronPixels = NeuronPixels(ROIidx);
+
 
 %% Save variables
                
