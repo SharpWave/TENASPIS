@@ -50,6 +50,8 @@ load expPosTr.mat;
 load NormTraces.mat;
 load('ProcOut.mat','NeuronPixels','NeuronImage');
 
+MinDur = 6;
+
 NumNeurons = size(expPosTr,1);
 
 %% Calculate Good Slopes
@@ -96,6 +98,16 @@ for i = 1:NumNeurons
     p.progress; % update progress bar
 end
 p.stop; % terminate progress bar
+
+% kill transients lasting less than 6
+for i = 1:size(aCaTr,1)
+    tEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
+    for j = 1:size(tEpochs,1)
+        if ((tEpochs(j,2)-tEpochs(j,1)+1) < MinDur)
+            aCaTr(i,tEpochs(j,1):tEpochs(j,2)) = 0;
+        end
+    end
+end
 
 %% Calculate Overlaps, detect
 display('Calculating overlaps...');
