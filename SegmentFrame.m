@@ -52,6 +52,7 @@ minsolid = 0.9; % minimum blob solidity to be considered a neuron
 
 % Setup variables for below
 PeakPix = []; % Locations of peak pixels 
+threshlist = [];
 badpix = find(mask == 0); % Locations of pixels that are outside the mask and should be excluded
 
 % threshold and segment the frame
@@ -137,6 +138,7 @@ NumItsTaken = []; % Initialize Number of iterations to empty
 % exit if no blobs found
 if (isempty(newlist))
     PeakPix = [];
+    threshlist = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
     cc.ImageSize = size(frame);

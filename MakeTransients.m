@@ -47,7 +47,7 @@ function [] = MakeTransients()
 max_trans_dist = 2; % (default) maximum number of pixels a transient can travel without being discarded
 
 % Load pertinent blob variables
-load ('Blobs.mat','cc','PeakPix');
+load ('Blobs.mat','cc','PeakPix','ThreshList');
 
 % Get basic movie info
 info = h5info('DFF.h5','/Object');
