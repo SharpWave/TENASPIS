@@ -27,7 +27,7 @@ for i = 1:NumNeurons
     if (i == NeuronID)
         continue;
     end
-    if (CentDist(i,NeuronID) <= 15)
+    if (CentDist(i,NeuronID) <= 10)
         buddies = [buddies,i];
     end
     

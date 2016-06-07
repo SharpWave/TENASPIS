@@ -1,4 +1,4 @@
-function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
+function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -99,6 +99,7 @@ while BlobsInFrame
         % append new blob pixel lists
         currnewList = currnewList + 1;
         newlist{currnewList} = bb.PixelIdxList{newn(j)};
+        threshlist(currnewList) = thresh;
         tNumItsTaken(currnewList) = NumIts;
     end
        
