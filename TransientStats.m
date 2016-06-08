@@ -86,8 +86,8 @@ for i = 1:length(SegChain)
         
     elseif length(SegChain{i}) == 1 % Avoid doing any of the above if there is only one frame in the segment
         DistTrav(i) = 0;
-        frame = SegChain{i}{j}(1);
-        seg = SegChain{i}{j}(2);
+        frame = SegChain{i}{1}(1);
+        seg = SegChain{i}{1}(2);
         MeanThresh(i) = ThreshList{frame}(1);
     end
 
