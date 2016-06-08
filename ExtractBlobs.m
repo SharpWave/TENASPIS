@@ -42,13 +42,18 @@ NumItsTaken = cell(1,NumFrames);
 p = ProgressBar(NumFrames); % Initialize progress bar
 
 % Run through each frame and isolate all blobs
+
+[meanframe,stdframe] = moviestats(file);
+
+thresh = 4*mean(stdframe);
+
 parfor i = 1:NumFrames 
     
     % Read in each imaging frame
     tempFrame = loadframe(file,i,info);
 %     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
-    thresh = 0.04; %median(tempFrame(maskpix)); % Set threshold
+    %thresh = 0.04; %median(tempFrame(maskpix)); % Set threshold
 
     % Detect all blobs that are within the mask by adaptively thresholding
     % each frame

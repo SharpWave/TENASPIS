@@ -107,7 +107,7 @@ end
 
 % Get transients that move less than the distance threshold
 gooddist = find(DistTrav < max_trans_dist);
-goodthresh = find(MeanThresh > 0.02);
+goodthresh = find(MeanThresh > 0);
 goodstuff = intersect(gooddist,goodthresh);
 % Keep only transients that meet distance traveled criteria
 SegChain = SegChain(goodstuff);

@@ -147,7 +147,7 @@ for i = 1:NumNeurons
             %display('conflict');
             
             % Load frame from DFF movie
-            f = loadframe('DFF.h5',CaEpochs(j,2));
+            f = loadframe('SLPDF.h5',CaEpochs(j,2));
             fmean = mean(f(NeuronPixels{i})); % Get mean of pixels for neuron i
             bmean = zeros(1,length(Buddyspikes)); % Initialize buddy mean
             for k = 1:length(Buddyspikes)
