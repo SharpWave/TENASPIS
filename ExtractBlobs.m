@@ -38,6 +38,7 @@ maskpix = find(mask(:) > 0); % Get pixels to use when looking for blobs
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
 NumItsTaken = cell(1,NumFrames);
+ThreshList = cell(1,NumFrames);
 
 p = ProgressBar(NumFrames); % Initialize progress bar
 
@@ -52,13 +53,13 @@ parfor i = 1:NumFrames
 
     % Detect all blobs that are within the mask by adaptively thresholding
     % each frame
-    [cc{i},PeakPix{i},NumItsTaken{i}] = SegmentFrame(tempFrame,mask,thresh);
+    [cc{i},PeakPix{i},NumItsTaken{i},ThreshList{i}] = SegmentFrame(tempFrame,mask,thresh);
 
     p.progress; % update progress bar    
 end
 
 p.stop; % Shut-down progress bar
 
-save Blobs.mat cc mask PeakPix NumItsTaken;
+save Blobs.mat cc mask PeakPix NumItsTaken ThreshList;
 
 end

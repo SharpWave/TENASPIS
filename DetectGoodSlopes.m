@@ -2,11 +2,11 @@ function [] = DetectGoodSlopes()
 % DetectGoodSlopes
 %
 % Detects rising events for each neuron's transients.  Then,
-% detects any rising events in buddy neurons (those with overlapping pixels) that 
+% detects any rising events in buddy neurons (those with overlapping pixels) that
 % occur concurrently and assigns the rising event to the neuron with the
 % largest mean pixel intensity.
 %
-% 
+%
 % INPUTS - all loaded from workspace variables
 %
 %   from ProcOut.mat (see MakeNeurons): NeuronPixels, NeuronImage
@@ -30,17 +30,17 @@ function [] = DetectGoodSlopes()
 %% Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
-% 
+%
 %     Tenaspis is free software: you can redistribute it and/or modify
 %     it under the terms of the GNU General Public License as published by
 %     the Free Software Foundation, either version 3 of the License, or
 %     (at your option) any later version.
-% 
+%
 %     Tenaspis is distributed in the hope that it will be useful,
 %     but WITHOUT ANY WARRANTY; without even the implied warranty of
 %     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %     GNU General Public License for more details.
-% 
+%
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,6 +49,8 @@ function [] = DetectGoodSlopes()
 load expPosTr.mat;
 load NormTraces.mat;
 load('ProcOut.mat','NeuronPixels','NeuronImage');
+
+MinDur = 6;
 
 NumNeurons = size(expPosTr,1);
 
@@ -63,7 +65,7 @@ p = ProgressBar(NumNeurons);
 
 % Run through each neuron's transients and identify positive slopes
 for i = 1:NumNeurons
-
+    
     dfdt = zscore(difftrace(i,:)); % normalize difftrace (temporal derivative of trace)
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps); % ID epochs where transients occur
     
@@ -92,9 +94,20 @@ for i = 1:NumNeurons
             curr = curr + 1; % Move to next frame
         end
     end
+
     p.progress; % update progress bar
 end
 p.stop; % terminate progress bar
+
+% kill transients lasting less than 6
+for i = 1:size(aCaTr,1)
+    tEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
+    for j = 1:size(tEpochs,1)
+        if ((tEpochs(j,2)-tEpochs(j,1)+1) < MinDur)
+            aCaTr(i,tEpochs(j,1):tEpochs(j,2)) = 0;
+        end
+    end
+end
 
 %% Calculate Overlaps, detect
 overl = cell(1,NumNeurons);
@@ -118,7 +131,7 @@ p.stop; % terminate progress bar
 info = h5info('DFF.h5','/Object');
 for i = 1:NumNeurons
     % Grab epochs of good slope for neuron i
-    CaEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps); 
+    CaEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
     for j = 1:size(CaEpochs,1)
         Buddyspikes = []; % Initialize buddy spike variable
         
@@ -158,9 +171,23 @@ for i = 1:NumNeurons
 end
 
 % Rename aCaTr
-FT = aCaTr;    
+FT = aCaTr;
 
-%% Save variables             
-save T2output.mat NeuronPixels NeuronImage FT; 
+% Check for ROIs with no transients
+for i = 1:size(FT,1)
+    tEpochs = NP_FindSupraThresholdEpochs(FT(i,:),eps);
+    GoodROI(i) = size(tEpochs,1) > 0;
+    if (~GoodROI(i))
+        display(['ROI ',int2str(i),' had no transients']);
+    end
+end
+ROIidx = find(GoodROI);
+FT = FT(ROIidx,:);
+NeuronImage = NeuronImage(ROIidx);
+NeuronPixels = NeuronPixels(ROIidx);
+
+%% Save variables
+
+save T2output.mat NeuronPixels NeuronImage FT ROIidx;
 
 end
