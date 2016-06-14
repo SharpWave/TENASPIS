@@ -68,12 +68,13 @@ disp('Smoothing traces and normalizing')
 for i = 1:NumNeurons
     trace(i,:) = zscore(trace(i,:)); % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
     trace(i,:) = convtrim(trace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
-    trace(i,1:11) = 0; % Set 10 first frames to 0
-    trace(i,end-11:end) = 0; % Set 10 last frames to 0
     difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
-    difftrace(i,1:11) = 0; % Set 10 first frames to 0
-    difftrace(i,end-11:end) = 0; % Set 10 last frames to 0
 end
+
+trace(:,1:11) = 0; % Set 10 first frames to 0
+trace(:,end-11:end) = 0; % Set 10 last frames to 0
+difftrace(:,1:11) = 0; % Set 10 first frames to 0
+difftrace(:,end-11:end) = 0; % Set 10 last frames to 0
  
 save NormTraces.mat trace difftrace;
 

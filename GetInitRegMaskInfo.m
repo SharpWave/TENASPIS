@@ -68,8 +68,12 @@ AI(13).init_date = '04_01_2016';
 AI(13).init_sess = 1; 
 
 AI(14).animal = 'Aquila';
-AI(14).init_date = '04_20_2016';
+AI(14).init_date = '04_28_2016';
 AI(14).init_sess = 1; 
+
+AI(15).animal = 'Libra';
+AI(15).init_date = '05_13_2016';
+AI(15).init_sess = 1; 
 
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))
