@@ -9,6 +9,13 @@ MasterDirectory = 'C:\MasterData';
 % init_dir = ChangeDirectory(animal_id,init_date,init_sess);
 % init_tif = fullfile(init_dir,'ICmovie_min_proj.tif');
 
+if strcmp(init_date,sess_date) && ~exist('Initialmask.mat','file');
+    ChangeDirectory(animal_id,sess_date,sess_num); 
+    MakeInitialMask('ICmovie_min_proj.tif'); 
+    copyfile('Initialmask.mat',fullfile(MasterDirectory,[animal_id,'_initialmask.mat']));
+    copyfile('ICmovie_min_proj.tif',fullfile(MasterDirectory,[animal_id,'_init_min_proj.tif']));
+end
+
 init_mask_loc = fullfile(MasterDirectory,[animal_id,'_initialmask.mat']);
 
 reg_struct.Animal = animal_id;

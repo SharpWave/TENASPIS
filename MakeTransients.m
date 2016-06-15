@@ -105,8 +105,6 @@ end
 % Calculate distance traveled for each transient
 [DistTrav,MeanThresh] = TransientStats(SegChain);
 
-keyboard;
-
 % Get transients that move less than the distance threshold
 gooddist = find(DistTrav < max_trans_dist);
 

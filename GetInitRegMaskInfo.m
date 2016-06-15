@@ -75,6 +75,14 @@ AI(15).animal = 'Libra';
 AI(15).init_date = '05_13_2016';
 AI(15).init_sess = 1; 
 
+AI(16).animal = 'Bellatrix';
+AI(16).init_date = '06_13_2016';
+AI(16).init_sess = 1; 
+
+AI(17).animal = 'Polaris';
+AI(17).init_date = '06_14_2016';
+AI(17).init_sess = 1; 
+
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))
         init_date = AI(i).init_date;
