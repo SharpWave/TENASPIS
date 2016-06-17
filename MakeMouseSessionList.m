@@ -1088,7 +1088,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - square left';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_19_2014\1 - 2env square left 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_19_2014\1 - 2env square left 201B\Working';
 end
 MD(i).Notes = 'Left';
 
@@ -1099,7 +1099,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - square mid';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_19_2014\2 - 2env square mid 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_19_2014\2 - 2env square mid 201B\Working';
 end
 MD(i).Notes = 'Mid';
 
@@ -1110,7 +1110,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - octagon left';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_20_2014\1 - 2env octagon left\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_20_2014\1 - 2env octagon left\Working';
 end
 MD(i).Notes = 'Left';
 
@@ -1121,7 +1121,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - octagon right 90CCW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_20_2014\2 - 2env octagon right 90CCW\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_20_2014\2 - 2env octagon right 90CCW\Working';
 end
 MD(i).Notes = 'Right, Rotated 90CCW';
 
@@ -1132,7 +1132,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - octagon mid';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_21_2014\1 - 2env octagon mid 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_21_2014\1 - 2env octagon mid 201B\Working';
 end
 MD(i).Notes = 'Mid';
 
@@ -1143,7 +1143,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - octagon left 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_21_2014\2 - 2env octagon left 90CW 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_21_2014\2 - 2env octagon left 90CW 201B\Working';
 end
 MD(i).Notes = 'Left, rotated 90CW';
 
@@ -1155,7 +1155,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - square right';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_22_2014\1 - 2env square right 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_22_2014\1 - 2env square right 201B\Working';
 end
 MD(i).Notes = 'Right';
 
@@ -1166,7 +1166,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - square mid 90CW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_22_2014\2 - 2env square mid 90CW 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_22_2014\2 - 2env square mid 90CW 201B\Working';
 end
 MD(i).Notes = 'Mid 90CW';
 
@@ -1177,7 +1177,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - combined square';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_23_2014\2env standard\Working\square';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_23_2014\2env standard\Working\square';
 end
 MD(i).Notes = 'Mid - Standard';
 
@@ -1188,7 +1188,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - combined octagon';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_23_2014\2env standard\Working\octagon';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_23_2014\2env standard\Working\octagon';
 end
 MD(i).Notes = 'Mid - Standard';
 
@@ -1199,7 +1199,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - combined octagon';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_24_2014\2env 180\Working\octagon';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_24_2014\2env 180\Working\octagon';
 end
 MD(i).Notes = 'Mid, Rotated 180';
 
@@ -1210,7 +1210,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - combined square';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_24_2014\2env 180\Working\square';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_24_2014\2env 180\Working\square';
 end
 MD(i).Notes = 'Mid, Rotated 180';
 
@@ -1221,7 +1221,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - square left';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_25_2014\1 - 2env square left 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_25_2014\1 - 2env square left 201B\Working';
 end
 MD(i).Notes = 'Mid';
 
@@ -1232,7 +1232,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - square right 90CCW';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_25_2014\2 - 2env square right 90CCW 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_25_2014\2 - 2env square right 90CCW 201B\Working';
 end
 MD(i).Notes = 'Right 90CCW';
 
@@ -1243,7 +1243,7 @@ MD(i).Session = 3;
 MD(i).Env = '2env - octagon right';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_26_2014\1 - 2env octagon right 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_26_2014\1 - 2env octagon right 201B\Working';
 end
 MD(i).Notes = 'Right';
 
@@ -1254,7 +1254,7 @@ MD(i).Session = 4;
 MD(i).Env = '2env - octagon mid';
 MD(i).Room = '2 Cu 201B';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G30\2env T2\11_26_2014\2 - 2 env octagon mid 201B\Working';
+    MD(i).Location = 'D:\GCamp Mice\G30\2env T2\11_26_2014\2 - 2 env octagon mid 201B\Working';
 end
 MD(i).Notes = 'Mid';
 
@@ -2192,7 +2192,9 @@ MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\04_04_2016\Working';
 elseif (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_04_2016\Working';
+    MD(i).Location = 'D:\GCamp Mice\G45\DNMP\04_04_2015';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'D:\GCamp Mice\G45\DNMP\04_04_2015';
 end
 MD(i).Notes = 'Tenaspis 2';
 MD(i).exclude_frames = [2679:2975, 4592:4863, 6806:7040, 8295:10420, ...
@@ -2207,8 +2209,6 @@ MD(i).Env = 'DNMP';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'mouseimage'))
     MD(i).Location = 'M:\GCamp6f_45\04_05_2016\Working';
-elseif (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_05_2016\Working';
 end
 MD(i).Notes = 'Tenaspis 2';
 MD(i).exclude_frames = [];
@@ -2301,7 +2301,7 @@ MD(i).Session = 1;
 MD(i).Env = 'square right';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\08_29_2015\1 - square right\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\08_29_2015\1 - square right\Working';                     
 end
 MD(i).Notes = 'square right';
 
@@ -2312,7 +2312,7 @@ MD(i).Session = 2;
 MD(i).Env = 'square left 90CCW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\08_29_2015\2 - square left 90CCW\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\08_29_2015\2 - square left 90CCW\Working';
 end
 MD(i).Notes = 'square left 90CCW';
 
@@ -2323,7 +2323,7 @@ MD(i).Session = 1;
 MD(i).Env = 'octagon mid';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\08_30_2015\1 - oct mid\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\08_30_2015\1 - oct mid\Working';
 end
 MD(i).Notes = 'octagon mid';
 
@@ -2334,7 +2334,7 @@ MD(i).Session = 2;
 MD(i).Env = 'octagon left 90CCW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\08_30_2015\2 - oct left 90CCW\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\08_30_2015\2 - oct left 90CCW\Working';
 end
 MD(i).Notes = 'octagon left 90CCW';
 
@@ -2345,7 +2345,7 @@ MD(i).Session = 1;
 MD(i).Env = 'octagon right';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\08_31_2015\1 - oct right\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\08_31_2015\1 - oct right\Working';
 end
 MD(i).Notes = 'octagon right';
 
@@ -2356,7 +2356,7 @@ MD(i).Session = 2;
 MD(i).Env = 'octagon mid 90CW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\08_31_2015\2 - oct mid 90CW\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\08_31_2015\2 - oct mid 90CW\Working';
 end
 MD(i).Notes = 'octagon mid 90CW';
 
@@ -2367,7 +2367,7 @@ MD(i).Session = 1;
 MD(i).Env = 'square left';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_01_2015\1 - square left\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_01_2015\1 - square left\Working';
 end
 MD(i).Notes = 'square left';
 
@@ -2378,7 +2378,7 @@ MD(i).Session = 2;
 MD(i).Env = 'square mid 90CW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_01_2015\2 - square mid 90CW\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_01_2015\2 - square mid 90CW\Working';
 end
 MD(i).Notes = 'square mid 90CW';
 
@@ -2389,7 +2389,7 @@ MD(i).Session = 1;
 MD(i).Env = '2env standard - square';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_02_2015\2env standard\Working\square';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_02_2015\2env standard\Working\square';
 end
 MD(i).Notes = '2env standard - square';
 
@@ -2400,7 +2400,7 @@ MD(i).Session = 2;
 MD(i).Env = '2env standard - octagon';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_02_2015\2env standard\Working\octagon';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_02_2015\2env standard\Working\octagon';
 end
 MD(i).Notes = '2env standard - octagon';
 
@@ -2411,7 +2411,7 @@ MD(i).Session = 1;
 MD(i).Env = '2env 180 - octagon';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_03_2015\1 - 2env 180\Working\octagon';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_03_2015\1 - 2env 180\Working\octagon';
 end
 MD(i).Notes = '2env - Octagon Rotated 180';
 
@@ -2422,7 +2422,7 @@ MD(i).Session = 2;
 MD(i).Env = '2env 180 - square';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_03_2015\1 - 2env 180\Working\square';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_03_2015\1 - 2env 180\Working\square';
 end
 MD(i).Notes = '2env - Square Rotated 180';
 
@@ -2433,7 +2433,7 @@ MD(i).Session = 1;
 MD(i).Env = 'square right';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_04_2015\1 - square right\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_04_2015\1 - square right\Working';
 end
 MD(i).Notes = 'square right';
 
@@ -2444,7 +2444,7 @@ MD(i).Session = 2;
 MD(i).Env = 'square mid 90CW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_04_2015\2 - square mid 90CW\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_04_2015\2 - square mid 90CW\Working';
 end
 MD(i).Notes = 'square mid 90CW';
 
@@ -2455,7 +2455,7 @@ MD(i).Session = 1;
 MD(i).Env = 'octagon left';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_05_2015\1 - oct left\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_05_2015\1 - oct left\Working';
 end
 MD(i).Notes = 'octagon left';
 
@@ -2466,7 +2466,7 @@ MD(i).Session = 2;
 MD(i).Env = 'octagon right 90CCW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G48\2env\09_05_2015\2 - oct right 90CCW\Working';
+    MD(i).Location = 'D:\GCamp mice\G48\2env T2\09_05_2015\2 - oct right 90CCW\Working';
 end
 MD(i).Notes = 'octagon right 90CCW';
 
