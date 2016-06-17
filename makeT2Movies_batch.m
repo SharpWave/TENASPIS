@@ -3,7 +3,7 @@ function [ ] = makeT2Movies_batch( session_struct, movie_name )
 %   Takes all the sessions indicated in session_struct and runs
 %   MakeT2Movies on them.  Optional 2nd input to specify motion corrected
 %   movie name(s) - either a single string or a cell array of strings for
-%   each session in session_struct
+%   each session in session_struct (default = 'ICmovie.h5')
 
 %% Add default movie name
 if nargin < 2
