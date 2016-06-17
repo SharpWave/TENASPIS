@@ -40,7 +40,7 @@ else
 
 %% Writing. 
     disp('Making Movies')
-    info = h5info(MotCorrh5,'/Object');
+%     info = h5info(MotCorrh5,'/Object');
     
     disp('Step 1 of 3: Make smoothed and low-pass filter movies')
     % Initialized ProgressBar
@@ -75,6 +75,7 @@ else
 %% Delete old files
     delete(tempfilename);
     delete(threePixName);
+    fclose('all');
 end
 
 end
