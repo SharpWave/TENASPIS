@@ -51,6 +51,10 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 %   'use_neuron_masks' (optional): 1 uses neuron masks to register sessions, not the
 %   minimum projection.  0 = default
 %
+%   'initial_trans' (optional): using this followed by an affine2d
+%   transformation to start with sets the initial transformation to use.
+%   Good for debugging/correcting a bad registration.
+%
 % OUTPUTS
 % cell_map:     cell array with each row corresponding to a given neuron,
 %               and each column corresponding to a recording session.  The value
@@ -90,9 +94,9 @@ mono_relax = 0.5; %optimizer.RelaxationFactor = 0.5 default
 mono_gradient_tol = 1e-6; % optimizer.GradientMagnitudeTolerance = 1e-4 default
 % MULTIMODAL
 multi_max_iterations = 10000; % optimizer.MaximumIterations = 100 default
-multi_growth = 1.05; % optimizer.GrowthFactor = 1.05 default
+multi_growth = 1.1; % optimizer.GrowthFactor = 1.05 default
 multi_epsilon = 1.05e-6; % optimizer.Epsilon = 1.05e-6 default
-multi_init_rad = 6.25e-4; % optimizer.InitialRadius = 6.25e-3 default
+multi_init_rad = 6.25e-3; % optimizer.InitialRadius = 6.25e-3 default
 
 FigNum = 1; % Start off figures at this number
 
@@ -103,12 +107,18 @@ min_trans_thresh = 5;
 
 use_neuron_masks = 0; % default
 name_append = ''; % default
+initial_trans = false; % default
 for j = 1:length(varargin)
     if strcmpi('use_neuron_masks',varargin{j})
        use_neuron_masks = varargin{j+1}; 
        if use_neuron_masks == 1
            name_append = '_regbyneurons';
        end
+    end
+    
+    if strcmpi('initial_trans',varargin{j})
+       initial_trans = true;
+       trans_use = varargin{j+1};
     end
 end
 
@@ -206,8 +216,14 @@ elseif strcmp(configname,'multimodal')
 end
 
 % Run registration
-disp('Running Registration...');
-tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
+if ~initial_trans
+    disp('Running image registration...')
+    tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
+elseif initial_trans
+    disp('Running image registration with user-defined initial transformation...');
+    tform = imregtform(double(reg_image), double(base_image), regtype, ...
+        optimizer, metric,'InitialTransformation', trans_use);
+end
 %%
 % Create no registration variable
 tform_noreg = tform;
@@ -314,7 +330,7 @@ regstats.base_2nd_bw_diff_reg = sum(abs(base_image(:) - moving_reg(:)));
 
 % Determine if there are previously run versions of this registration
 % I think that this is no longer necessary since each registration is saved
-% with a unique filename, but keeping it for now
+% with a unique filename, but keeping it for now - need to clean up!
 if exist(unique_filename,'file') == 2
     load(unique_filename);
         size_info = size(RegistrationInfoX,2)+1;
@@ -336,6 +352,8 @@ RegistrationInfoX(size_info).exclude_pixels = exclude_pixels;
 RegistrationInfoX(size_info).regstats = regstats;
 RegistrationInfoX(size_info).base_ref = base_ref;
 RegistrationInfoX(size_info).use_neuron_masks = use_neuron_masks;
+RegistrationInfoX(size_info).optimizer = optimizer;
+RegistrationInfoX(size_info).metric = metric;
 
 if exist('T_manual','var')
     RegistrationInfoX(size_info).tform_manual = tform_manual;
