@@ -1,4 +1,4 @@
-function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
+function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -52,6 +52,7 @@ minsolid = 0.9; % minimum blob solidity to be considered a neuron
 
 % Setup variables for below
 PeakPix = []; % Locations of peak pixels 
+threshlist = [];
 badpix = find(mask == 0); % Locations of pixels that are outside the mask and should be excluded
 
 % threshold and segment the frame
@@ -99,6 +100,7 @@ while BlobsInFrame
         % append new blob pixel lists
         currnewList = currnewList + 1;
         newlist{currnewList} = bb.PixelIdxList{newn(j)};
+        threshlist(currnewList) = thresh;
         tNumItsTaken(currnewList) = NumIts;
     end
        
@@ -122,7 +124,9 @@ while BlobsInFrame
     % increase threshold
     thresh = thresh + threshinc;
     threshframe = temp > thresh;
-    threshframe = bwareaopen(threshframe,adjminpixels,4);
+    
+    % remove areas with less than adjminpixels
+    threshframe = bwareaopen(threshframe,adjminpixels,4); 
     
     % Run throuh while loop again to determine if new threshold has
     % produced any more legitimate blobs.
@@ -134,6 +138,7 @@ NumItsTaken = []; % Initialize Number of iterations to empty
 % exit if no blobs found
 if (isempty(newlist))
     PeakPix = [];
+    threshlist = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
     cc.ImageSize = size(frame);

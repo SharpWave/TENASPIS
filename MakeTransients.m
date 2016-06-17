@@ -47,7 +47,7 @@ function [] = MakeTransients()
 max_trans_dist = 2; % (default) maximum number of pixels a transient can travel without being discarded
 
 % Load pertinent blob variables
-load ('Blobs.mat','cc','PeakPix');
+load ('Blobs.mat','cc','PeakPix','ThreshList');
 
 % Get basic movie info
 info = h5info('DFF.h5','/Object');
@@ -103,7 +103,9 @@ for i = 1:length(SegChain)
 end
 
 % Calculate distance traveled for each transient
-DistTrav = TransientStats(SegChain);
+[DistTrav,MeanThresh] = TransientStats(SegChain);
+
+keyboard;
 
 % Get transients that move less than the distance threshold
 gooddist = find(DistTrav < max_trans_dist);
