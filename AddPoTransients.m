@@ -63,6 +63,7 @@ disp('Loading relevant variables')
 
 load('ExpTransients.mat','PosTr','PoPosTr','PoTrPeakIdx');
 load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage','Xdim','Ydim');
+load CorrTrace.mat;
 
 expPosTr = PosTr;
 
