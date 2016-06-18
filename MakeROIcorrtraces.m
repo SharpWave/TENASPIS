@@ -16,4 +16,9 @@ parfor i = 1:NumFrames
     p.progress; % Update progress bar
 end
 p.stop;
-save CorrTrace.mat CorrTrace;
+
+parfor i = 1:NumNeurons
+    fCorrTrace(i,:) = convtrim(CorrTrace(i,:),ones(1,10)./10);
+end
+
+save CorrTrace.mat CorrTrace fCorrTrace;

@@ -80,7 +80,7 @@ for i = 1:NumNeurons
     
 
     for j = 1:size(PoEpochs,1)
-        MaxCorr = max(CorrTrace(i,PoEpochs(j,1):PoEpochs(j,2)));
+        MaxCorr = max(fCorrTrace(i,PoEpochs(j,1):PoEpochs(j,2)));
         
 
         
