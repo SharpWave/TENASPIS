@@ -17,7 +17,7 @@ parfor i = 1:NumFrames
 end
 p.stop;
 
-parfor i = 1:NumNeurons
+parfor i = 1:length(NeuronPixels)
     fCorrTrace(i,:) = convtrim(CorrTrace(i,:),ones(1,10)./10);
 end
 
