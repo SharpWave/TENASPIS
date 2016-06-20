@@ -6,6 +6,8 @@ close all;
 
 load NormTraces.mat;
 load('T2output.mat');
+load MeanT.mat;
+
 NumFrames = size(FT,2);
 NumNeurons = size(FT,1);
 
@@ -16,6 +18,9 @@ buddies = [];
 for i = 1:NumNeurons
   Overlap(i) = length(intersect(NeuronPixels{NeuronID},NeuronPixels{i}))./length(union(NeuronPixels{NeuronID},NeuronPixels{i}));
   CaCorr(i) = corr(FT(NeuronID,:)',FT(i,:)');
+  pix = union(NeuronPixels{i},NeuronPixels{NeuronID});
+  [MeanTCorr(i),MeanTp(i)] = corr(MeanT{i}(pix),MeanT{NeuronID}(pix));
+  
   if ((i ~= NeuronID)&& (Overlap(i) > 0))
       buddies = [buddies,i];
   end
@@ -23,11 +28,11 @@ end
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
-plot((rawtrace(ROIidx(NeuronID),:)));hold on;plot(FT((NeuronID),:)*0.05);axis tight;
+plot((rawtrace(ROIidx(NeuronID),:)));hold on;plot(FT((NeuronID),:)*0.02);axis tight;
 
 for i = 1:length(buddies)
     a(i+1) = subplot(length(buddies)+1,1,i+1);
-    plot((rawtrace(ROIidx(buddies(i)),:)));hold on;plot(FT(buddies(i),:)*0.05,'-r');title([int2str(buddies(i)),' ',num2str(Overlap(buddies(i))),' ',num2str(CaCorr(buddies(i)))]);
+    plot((rawtrace(ROIidx(buddies(i)),:)));hold on;plot(FT(buddies(i),:)*0.02,'-r');title([int2str(buddies(i)),' ',num2str(Overlap(buddies(i))),' ',num2str(CaCorr(buddies(i))),' ',num2str(MeanTCorr(buddies(i))),' ',num2str(MeanTp(buddies(i)))]);
     axis tight;
 end
 linkaxes(a,'x');
