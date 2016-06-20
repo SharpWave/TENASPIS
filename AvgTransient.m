@@ -1,4 +1,4 @@
-function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc,Xdim,Ydim,PeakPix)
+function [PixelList,Xcent,Ycent,MeanArea,frames,PixelAvg] = AvgTransient(SegChain,cc,Xdim,Ydim,PeakPix)
 % [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
@@ -59,6 +59,8 @@ for i = 1:nSegChains
     
     frames = [frames,FrameNum];
     
+
+    
     % Get active pixels for each transient
     ts = regionprops(cc{FrameNum},'PixelIdxList');
     
@@ -75,6 +77,7 @@ end
 
 % Take averages of the blobs and centroids
 AvgN = single(AvgN./length(SegChain));
+
 Xcent = Xcent/length(SegChain);
 Ycent = Ycent/length(SegChain);
 
@@ -90,10 +93,26 @@ if (max(AvgN(:)) == 1) % If blob is relatively stable across all frames, continu
 %     Xcent = bstat(1).Centroid(1);
 %     Ycent = bstat(1).Centroid(2);
     MeanArea = bstat(1).Area; % Deal out area to usable variable
+    PixelAvg = zeros(size(PixelList));
+    
+    for i = 1:nSegChains
+      FrameNum = SegChain{i}(1);
+      ObjNum = SegChain{i}(2);
+      [isgood,goodloc] = ismember(PixelList,cc{FrameNum}.PixelIdxList{ObjNum});
+      
+      %keyboard;
+      
+      PixelAvg(isgood) = PixelAvg(isgood) + cc{FrameNum}.PixelVals{ObjNum}(goodloc(isgood));
+  
+    end
+     PixelAvg = PixelAvg ./nSegChains;
+     
 else % If blob is not that stable across all the frames, effectively discard by setting to empty/zero
     PixelList = [];
+    PixelAvg = [];
     Xcent = 0;
     Ycent = 0;
     MeanArea = 0;
 end
+
 end

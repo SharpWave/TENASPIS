@@ -141,6 +141,7 @@ if (isempty(newlist))
     threshlist = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
+    cc.PixelVals = [];
     cc.ImageSize = size(frame);
     cc.Connectivity = 0; 
     %display('no blobs detected');
@@ -157,6 +158,7 @@ for i = 1:length(newlist)
     if (isempty(intersect(newlist{i},badpix)))
         numlists = numlists + 1; % Count of number of blobs
         newcc.PixelIdxList{numlists} = single(newlist{i}); % Pixel indices for blob
+        newcc.PixelVals{numlists} = single(initframe(newlist{i}));
         NumItsTaken(numlists) = tNumItsTaken(i); % Save iterations required to ID each blob
     end
 end
