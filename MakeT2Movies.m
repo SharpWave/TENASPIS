@@ -1,5 +1,5 @@
-function MakeT2Movies
-% MakeT2Movies(MotCorrh5)
+function MakeT2Movies(d1)
+% MakeT2Movies
 %
 %   Takes cropped, motion-corrected movie and makes two movies from it. 
 %
@@ -69,6 +69,19 @@ function MakeT2Movies
 
     disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
     Make_DFF(threePixName,DFFname);
+    
+    if d1
+        disp('Making D1Movie.h5');      %First derivative movie.
+        TempSmoothMovie(threePixName,'SMovie.h5',20); 
+        
+        multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
+        if ~isempty(multiplier_use)
+            delete D1Movie.h5
+            multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5',multiplier_use);
+            save multiplier.mat multiplier_use
+        end
+        delete SMovie.h5
+    end
     
 %% Delete old files
     delete(tempfilename);

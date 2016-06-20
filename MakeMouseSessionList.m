@@ -3233,6 +3233,18 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_14_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_14_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
 %% Polaris
 i = i+1;
 MD(i).Animal = 'Polaris';
