@@ -5,16 +5,16 @@ function Tenaspis2singlesession()
 %% Extract Blobs
 load singlesessionmask.mat;
 disp('Extracting blobs...'); 
-%ExtractBlobs('SLPDF.h5',neuronmask);
+ExtractBlobs('SLPDF.h5',neuronmask);
 
 %% Connect blobs into transients
 disp('Making transients...');
-%MakeTransients; 
+MakeTransients; 
 !del InitClu.mat
 
 %% Group together individual transients under individual neurons
 disp('Making neurons...'); 
-%MakeNeurons('min_trans_length',10);
+MakeNeurons('min_trans_length',10);
 
 %% Pull traces out of each neuron using the High-pass movie
 disp('Normalizing traces...'); 
