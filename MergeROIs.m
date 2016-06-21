@@ -64,7 +64,7 @@ for i = 1:NumNeurons
 end
 
 save FinalOutput.mat NeuronPixels NeuronImage FT;
-keyboard;
+
 
 
 

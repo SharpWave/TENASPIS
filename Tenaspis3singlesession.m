@@ -37,7 +37,7 @@ load ('T2output.mat','FT','NeuronPixels');
 for i = 1:3
    indat{1} = FT;
    outdat = MakeTrigAvg(indat);
-   MergeROIs(outdat{1},NeuronPixels,MeanT);
+   MergeROIs(FT,NeuronPixels,outdat{1});
    load ('FinalOutput.mat','FT','NeuronPixels');
 end
 FinalTraces('SLPDF.h5');
