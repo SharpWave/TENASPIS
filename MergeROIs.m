@@ -1,8 +1,6 @@
-function [ output_args ] = MergeROIs()
+function [ output_args ] = MergeROIs(FT,NeuronPixels,MeanT)
 
 load('ProcOut.mat','Xdim','Ydim');
-load('T2output.mat','FT','NeuronPixels');
-load MeanT.mat;
 
 NumFrames = size(FT,2);
 NumNeurons = size(FT,1);
@@ -18,6 +16,9 @@ p = ProgressBar(NumNeurons); % Initialize progress bar
 for i = 1:NumNeurons
     for j = 1:NumNeurons
         Overlap(i,j) = length(intersect(NeuronPixels{j},NeuronPixels{i}))./length(union(NeuronPixels{j},NeuronPixels{i}));
+        if(Overlap(i,j) <= 0.2)
+            continue;
+        end
         pix = union(NeuronPixels{i},NeuronPixels{j});
         [MeanTCorr(i,j),MeanTp(i,j)] = corr(MeanT{i}(pix),MeanT{j}(pix));
         if ((MeanTCorr(i,j) > 0.2) && (MeanTp(i,j) < 0.05) && (Overlap(i,j) > 0.2) && (i ~= j))
