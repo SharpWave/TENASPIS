@@ -107,11 +107,12 @@ end
 
 % Get transients that move less than the distance threshold
 gooddist = find(DistTrav < max_trans_dist);
-
+goodthresh = find(MeanThresh > 0);
+goodstuff = intersect(gooddist,goodthresh);
 % Keep only transients that meet distance traveled criteria
-SegChain = SegChain(gooddist);
+SegChain = SegChain(goodstuff);
 NumSegments = length(SegChain);
-TransientLength = TransientLength(gooddist);
+TransientLength = TransientLength(goodstuff);
 
 save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'max_trans_dist', 'TransientLength')
 

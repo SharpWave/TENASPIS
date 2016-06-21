@@ -1,6 +1,6 @@
-function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
-    c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,...
-    meanareas,meanX,meanY,NumEvents,frames,disp_to_screen)
+function [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
+    c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames,ClustersToUpdate,...
+    meanareas,meanX,meanY,NumEvents,disp_to_screen)
 % [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
 %   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
 %   ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
@@ -23,13 +23,15 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-if nargin <= 6
-    ClustersToUpdate = unique(c);
+if(~exist('ClustersToUpdate','var'))
+     ClustersToUpdate = unique(c);
+    disp_to_screen = 1;
 end
-if nargin < 13
-    disp_to_screen = 0;
+
+if(~exist('disp_to_screen','var'))
+    disp_to_screen = 1;
 end
-    
+  
 for i = ClustersToUpdate'
     if disp_to_screen == 1
         display(['updated cluster # ',int2str(i)]);
@@ -38,6 +40,7 @@ for i = ClustersToUpdate'
     tempX = 0;
     tempY = 0;
     temp = zeros(Xdim,Ydim);
+    tempAvg = zeros(Xdim,Ydim);
     % for each transient in the cluster, accumulate stats
     for j = 1:length(cluidx)
         try
@@ -53,13 +56,21 @@ for i = ClustersToUpdate'
 %         end
         
         temp(validpixels) = temp(validpixels)+1;
-        if cluidx(j) ~= i
+        currAvg = zeros(Xdim,Ydim);
+        currAvg(PixelList{cluidx(j)}) = PixelAvg{cluidx(j)};
+        try
+        tempAvg(validpixels) = tempAvg(validpixels)+currAvg(validpixels)*length(frames{cluidx(j)});
+        catch
+            keyboard;
+        end
+        if (cluidx(j) ~= i)
             frames{i} = [frames{i},frames{cluidx(j)}];
         end
         tempX = tempX+Xcent(cluidx(j));
         tempY = tempY+Ycent(cluidx(j));
     end
     temp = temp./length(cluidx);
+    tempAvg = tempAvg./length(frames{i});
     newpixels = find(temp > ((1/length(cluidx))-eps));
     BitMap = false(Xdim,Ydim);
     BitMap(newpixels) = 1;
@@ -70,6 +81,7 @@ for i = ClustersToUpdate'
         keyboard;
     end
     PixelList{i} = newpixels;
+    PixelAvg{i} = tempAvg(newpixels);
     meanareas(i) = r(1).Area;
     meanX(i) = tempX/length(cluidx);
     meanY(i) = tempY/length(cluidx);
@@ -79,4 +91,3 @@ end
 
 
 end
-

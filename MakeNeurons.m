@@ -52,7 +52,7 @@ end
 %% 
 
 VersionString = '0.9.0.0-beta';
-MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4.5];
+MinPixelDist = 0:0.25:6;
 
 close all;
 
@@ -92,8 +92,8 @@ for i = 1:length(MinPixelDist)
         disp(['Merging neurons, iteration #',num2str(NumIterations+1)])
         
         % Iteratively merge spatially distant clusters together
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = ...
-            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~,PixelAvg] = ...
+            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,PixelAvg);
         NumIterations = NumIterations+1; % Update number of iterations
         NumClu(NumIterations) = length(unique(c)); % Update number of clusters
         DistUsed(NumIterations) = MinPixelDist(i); % Updated distance threshold used

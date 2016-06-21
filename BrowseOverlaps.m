@@ -2,44 +2,37 @@ function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx )
 close all;
 
 % load basic shit
-load('ProcOut.mat','NeuronPixels','NeuronImage','NumNeurons','NumFrames','FT');
-load ExpTransients.mat;
-load NormTraces.mat;
-load pPeak.mat;
-load expPosTr.mat;
 
+
+load FinalTraces.mat;
+load('FinalOutput.mat');
+load MeanT.mat;
+
+NumFrames = size(FT,2);
+NumNeurons = size(FT,1);
 
 t = (1:NumFrames)/20;
 
-for i = 1:length(NeuronImage)
-    b = bwconncomp(NeuronImage{i});
-    r = regionprops(b,'Centroid');
-    Cents(i,1:2) = r.Centroid;
-end
-
-temp = pdist(Cents);
-CentDist = squareform(temp);
-
 display('checking buddies');
-
 buddies = [];
 for i = 1:NumNeurons
-    if (i == NeuronID)
-        continue;
-    end
-    if (CentDist(i,NeuronID) <= 10)
-        buddies = [buddies,i];
-    end
-    
+  Overlap(i) = length(intersect(NeuronPixels{NeuronID},NeuronPixels{i}))./length(union(NeuronPixels{NeuronID},NeuronPixels{i}));
+  CaCorr(i) = corr(FT(NeuronID,:)',FT(i,:)');
+  pix = union(NeuronPixels{i},NeuronPixels{NeuronID});
+  [MeanTCorr(i),MeanTp(i)] = corr(MeanT{i}(pix),MeanT{NeuronID}(pix));
+  
+  if ((i ~= NeuronID)&& (Overlap(i) > 0))
+      buddies = [buddies,i];
+  end
 end
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
-plot(zscore(trace(NeuronID,:)));hold on;plot(FT(NeuronID,:)*5);axis tight;plot(expPosTr(NeuronID,:)*5,'-r','LineWidth',3);
+plot((rawtrace((NeuronID),:)));hold on;plot(FT((NeuronID),:)*0.02);axis tight;
 
 for i = 1:length(buddies)
     a(i+1) = subplot(length(buddies)+1,1,i+1);
-    plot(zscore(trace(buddies(i),:)));hold on;plot(expPosTr(buddies(i),:)*5,'-r');title(int2str(buddies(i)));
+    plot((rawtrace((buddies(i)),:)));hold on;plot(FT(buddies(i),:)*0.02,'-r');title([int2str(buddies(i)),' ',num2str(Overlap(buddies(i))),' ',num2str(CaCorr(buddies(i))),' ',num2str(MeanTCorr(buddies(i))),' ',num2str(MeanTp(buddies(i)))]);
     axis tight;
 end
 linkaxes(a,'x');
@@ -53,11 +46,7 @@ while(1)
     f = loadframe(moviefile,mx);
     figure(2);set(gcf,'Position',[1130         337         773         600]);
     
-    [~,maxidx] = max(f(NeuronPixels{NeuronID}));
-    peakpeak = pPeak{NeuronID}(maxidx);
-    peakrank = mRank{NeuronID}(maxidx);
-    
-    imagesc(f);caxis(cx);title(['peak=',num2str(peakpeak),' rank=',num2str(peakrank)]);
+    imagesc(f);caxis(cx);
     hold on
     [b] = bwboundaries(NeuronImage{NeuronID});
     b = b{1};
