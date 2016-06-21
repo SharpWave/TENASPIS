@@ -4,8 +4,8 @@ close all;
 % load basic shit
 
 
-load NormTraces.mat;
-load('T2output.mat');
+load FinalTraces.mat;
+load('FinalOutput.mat');
 load MeanT.mat;
 
 NumFrames = size(FT,2);
@@ -28,11 +28,11 @@ end
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
-plot((rawtrace(ROIidx(NeuronID),:)));hold on;plot(FT((NeuronID),:)*0.02);axis tight;
+plot((rawtrace((NeuronID),:)));hold on;plot(FT((NeuronID),:)*0.02);axis tight;
 
 for i = 1:length(buddies)
     a(i+1) = subplot(length(buddies)+1,1,i+1);
-    plot((rawtrace(ROIidx(buddies(i)),:)));hold on;plot(FT(buddies(i),:)*0.02,'-r');title([int2str(buddies(i)),' ',num2str(Overlap(buddies(i))),' ',num2str(CaCorr(buddies(i))),' ',num2str(MeanTCorr(buddies(i))),' ',num2str(MeanTp(buddies(i)))]);
+    plot((rawtrace((buddies(i)),:)));hold on;plot(FT(buddies(i),:)*0.02,'-r');title([int2str(buddies(i)),' ',num2str(Overlap(buddies(i))),' ',num2str(CaCorr(buddies(i))),' ',num2str(MeanTCorr(buddies(i))),' ',num2str(MeanTp(buddies(i)))]);
     axis tight;
 end
 linkaxes(a,'x');
