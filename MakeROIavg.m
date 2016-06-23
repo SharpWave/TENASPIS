@@ -3,7 +3,7 @@ load('ProcOut.mat','Xdim','Ydim','NumNeurons','FT');
 
 ROIavg = cell(1,NumNeurons); 
 [ROIavg{:}] = deal(zeros(Xdim,Ydim));
-
+NumFrames = size(FT,2);
 p=ProgressBar(NumFrames);
 
 for i = 1:NumFrames
