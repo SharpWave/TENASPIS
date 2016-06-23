@@ -5,6 +5,12 @@ load('ProcOut.mat','Xdim','Ydim');
 NumFrames = size(FT,2);
 NumNeurons = size(FT,1);
 
+OverlapThresh = 0.2;
+CorrThresh = 0.2;
+CorrpThresh = 0.05;
+
+
+
 t = (1:NumFrames)/20;
 ToMerge = zeros(NumNeurons,NumNeurons);
 MergeDest = zeros(1,NumNeurons);
@@ -21,12 +27,12 @@ p = ProgressBar(NumNeurons); % Initialize progress bar
 for i = 1:NumNeurons
     for j = 1:NumNeurons
         Overlap(i,j) = length(intersect(NeuronPixels{j},NeuronPixels{i}))./length(union(NeuronPixels{j},NeuronPixels{i}));
-        if Overlap(i,j) <= 0.2
+        if (Overlap(i,j) <= OverlapThresh)
             continue;
         end
         pix = union(NeuronPixels{i},NeuronPixels{j});
-        [MeanTCorr(i,j),MeanTp(i,j)] = corr(MeanT{i}(pix),MeanT{j}(pix));
-        if ((MeanTCorr(i,j) > 0.2) && (MeanTp(i,j) < 0.05) && (Overlap(i,j) > 0.2) && (i ~= j))
+        [MeanTCorr(i,j),MeanTp(i,j)] = corr(MeanT{i}(pix),MeanT{j}(pix),'type','Spearman');
+        if ((MeanTCorr(i,j) > CorrThresh) && (MeanTp(i,j) < CorrpThresh) && (i ~= j))
             ToMerge(i,j) = 1;
             
         end        

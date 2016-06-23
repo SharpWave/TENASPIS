@@ -51,7 +51,7 @@ load NormTraces.mat;
 load('ProcOut.mat','NeuronPixels','NeuronImage');
 load CorrTrace.mat;
 
-MinDur = 6;
+MinDur = 2;
 
 NumNeurons = size(expPosTr,1);
 
@@ -111,6 +111,15 @@ for i = 1:NumNeurons
    end
 end
 
+% kill transients lasting less than 2
+for i = 1:size(aCaTr,1)
+    tEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
+    for j = 1:size(tEpochs,1)
+        if ((tEpochs(j,2)-tEpochs(j,1)+1) < MinDur)
+            aCaTr(i,tEpochs(j,1):tEpochs(j,2)) = 0;
+        end
+    end
+end
 
 
 % Rename aCaTr
@@ -137,12 +146,4 @@ save T2output.mat NeuronPixels NeuronImage FT ROIidx;
 
 end
 
-% % kill transients lasting less than 6
-% for i = 1:size(aCaTr,1)
-%     tEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
-%     for j = 1:size(tEpochs,1)
-%         if ((tEpochs(j,2)-tEpochs(j,1)+1) < MinDur)
-%             aCaTr(i,tEpochs(j,1):tEpochs(j,2)) = 0;
-%         end
-%     end
-% end
+

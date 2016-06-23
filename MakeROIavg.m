@@ -3,7 +3,7 @@ load('ProcOut.mat','Xdim','Ydim','NumNeurons','FT');
 
 ROIavg = cell(1,NumNeurons); 
 [ROIavg{:}] = deal(zeros(Xdim,Ydim));
-
+NumFrames = size(FT,2);
 p=ProgressBar(NumFrames);
 
 for i = 1:NumFrames
@@ -19,7 +19,10 @@ p.stop;
 
 %Divide summed ROI frames by number of spikes.
 nSpikes = sum(FT,2);    %Number of transients per neuron. 
-cellfun(@(x,y) x./y, ROIavg, num2cell(nSpikes),'unif',0);
+for i = 1:NumNeurons
+    ROIavg{i} = ROIavg{i}./sum(FT(i,:));
+end
+
 
 save ROIavg.mat ROIavg;
 

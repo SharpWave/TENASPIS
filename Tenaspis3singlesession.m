@@ -34,10 +34,14 @@ AddPoTransients;
 DetectGoodSlopes;
 
 load ('T2output.mat','FT','NeuronPixels');
-for i = 1:3
+for i = 1:2
    indat{1} = FT;
    outdat = MakeTrigAvg(indat);
    MergeROIs(FT,NeuronPixels,outdat{1});
    load ('FinalOutput.mat','FT','NeuronPixels');
 end
-%FinalTraces('SLPDF.h5');
+indat{1} = FT;
+outdat = MakeTrigAvg(indat);
+MeanT = outdat{1};
+save MeanT.mat MeanT;
+FinalTraces('SLPDF.h5');
