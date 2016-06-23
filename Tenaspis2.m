@@ -9,6 +9,13 @@ MasterDirectory = 'C:\MasterData';
 % init_dir = ChangeDirectory(animal_id,init_date,init_sess);
 % init_tif = fullfile(init_dir,'ICmovie_min_proj.tif');
 
+if strcmp(init_date,sess_date) && ~exist('Initialmask.mat','file');
+    ChangeDirectory(animal_id,sess_date,sess_num); 
+    MakeInitialMask('ICmovie_min_proj.tif'); 
+    copyfile('Initialmask.mat',fullfile(MasterDirectory,[animal_id,'_initialmask.mat']));
+    copyfile('ICmovie_min_proj.tif',fullfile(MasterDirectory,[animal_id,'_init_min_proj.tif']));
+end
+
 init_mask_loc = fullfile(MasterDirectory,[animal_id,'_initialmask.mat']);
 
 reg_struct.Animal = animal_id;
@@ -17,16 +24,18 @@ reg_struct.Session = sess_num;
 
 mask_multi_image_reg(init_mask_loc,init_date,init_sess,reg_struct);
 
-load mask_reg
+ChangeDirectory(animal_id,sess_date,sess_num); 
+
+load(fullfile(pwd,'mask_reg.mat'))
 mask_reg = logical(mask_reg); 
 
 %% Extract Blobs
 disp('Extracting blobs...'); 
-ExtractBlobs('DFF.h5',mask_reg);
+ExtractBlobs(fullfile(pwd,'DFF.h5'),mask_reg);
 
 %% Connect blobs into transients
 disp('Making transients...');
-MakeTransients('DFF.h5',0); % Dave - the inputs to this are currently unused
+MakeTransients; % Dave - the inputs to this are currently unused
 !del InitClu.mat
 
 %% Group together individual transients under individual neurons
@@ -53,10 +62,8 @@ AddPoTransients;
 disp('Finalizing...');
 DetectGoodSlopes;
 
-%% Calculate place fields and accompanying statistics
-CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename',...
-    'PlaceMapsv2.mat','half_window',0,'minspeed',3);
-PFstats;
+%CalculatePlacefields('201b','alt_inputs','T2output.mat','half_window',0,'minspeed',3);
+%PFstats;
 
 end
 

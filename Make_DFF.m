@@ -1,4 +1,4 @@
-function [ output_args ] = Make_DFF(moviefile,outfile)
+function Make_DFF(moviefile,outfile)
 
 info = h5info(moviefile,'/Object');
 [~,XDim,YDim,NumFrames] = loadframe(moviefile,1,info);
@@ -41,6 +41,6 @@ for i = 1:NumFrames
     end
    
 end
+p.stop;
 
-
-
+end

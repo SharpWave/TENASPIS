@@ -76,7 +76,7 @@ for i = ClustersToUpdate'
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
     r = regionprops(b,'Area'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
-    if (length(r) == 0)
+    if isempty(r)
         display('foundit');
         keyboard;
     end
@@ -91,4 +91,3 @@ end
 
 
 end
-

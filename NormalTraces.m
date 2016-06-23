@@ -43,10 +43,11 @@ load('ProcOut.mat','NeuronImage','NumFrames','NeuronPixels');
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 NumNeurons = length(NeuronImage);
+trace = zeros(NumNeurons,NumFrames); 
 
 % Initialize progress bar
+disp('Calculating traces for each neuron');
 p=ProgressBar(NumFrames);
-disp('Calculating traces for each neuron')
 parfor i = 1:NumFrames
     
     % Read in each frame
@@ -62,22 +63,20 @@ end
 p.stop; % Terminate progress bar
 
 %% Smooth and normalize traces
+rawtrace = trace; 
+difftrace = zeros(size(trace)); 
 disp('Smoothing traces and normalizing')
 for i = 1:NumNeurons
-    rawtrace(i,:) = trace(i,:);
     trace(i,:) = zscore(trace(i,:)); % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
     trace(i,:) = convtrim(trace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
     trace(i,1:11) = 0; % Set 10 first frames to 0
     trace(i,end-11:end) = 0; % Set 10 last frames to 0
     
     rawtrace(i,:) = convtrim(rawtrace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
-    rawtrace(i,1:11) = 0; % Set 10 first frames to 0
-    rawtrace(i,end-11:end) = 0; % Set 10 last frames to 0
+
     
     difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
-    difftrace(i,1:11) = 0; % Set 10 first frames to 0
-    difftrace(i,end-11:end) = 0; % Set 10 last frames to 0
-    
+
 %     % re-zero the raw trace
 %     ftrace = convtrim(rawtrace(i,:),ones(1,100)./100); % very low pass filter
 %     fdiff = diff(ftrace);
@@ -85,7 +84,10 @@ for i = 1:NumNeurons
 %     fidx = find((fdiff.^2) < fthresh);
 %     rawtrace(i,:) = rawtrace(i,:) - mean(rawtrace(i,fidx));
 end
-
+rawtrace(:,1:11) = 0; % Set 10 first frames to 0
+rawtrace(:,end-11:end) = 0; % Set 10 last frames to 0
+difftrace(:,1:11) = 0; % Set 10 first frames to 0
+difftrace(:,end-11:end) = 0; % Set 10 last frames to 0
 
 save NormTraces.mat trace difftrace rawtrace;
 

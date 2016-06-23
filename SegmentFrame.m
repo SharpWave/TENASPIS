@@ -57,6 +57,7 @@ badpix = find(mask == 0); % Locations of pixels that are outside the mask and sh
 
 % threshold and segment the frame
 initframe = single(frame);
+
 blankframe = zeros(size(initframe));
 minval = min(initframe(:));
 threshframe = frame > thresh; % apply threshold, make it into a logical array
@@ -84,14 +85,8 @@ while BlobsInFrame
     
     % if there were blobs, check if any of them satisfy size and
     % solidity criteria
-    bsize = [];
-    bSolid = [];
-    
-    % Deal out size and solidity into usable format (data structures)
-    for j = 1:length(bb.PixelIdxList)
-        bsize(j) = rp(j).Area;
-        bSolid(j) = rp(j).Solidity;
-    end
+    bsize = deal([rp.Area]);
+    bSolid = deal([rp.Solidity]);
     
     % Look for new blobs that meet the maximum size AND minimum solidity criteria
     newn = intersect(find(bsize <= neuronthresh), find(bSolid >= minsolid));

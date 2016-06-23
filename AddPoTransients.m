@@ -84,7 +84,7 @@ for i = 1:NumNeurons
         
 
         
-        if (MaxCorr > CorrThresh)
+        if MaxCorr > CorrThresh
             %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1; % Add in new transient
         end
@@ -96,5 +96,3 @@ p.stop;
 save expPosTr.mat expPosTr;
 
 end
-
-

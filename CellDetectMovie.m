@@ -8,7 +8,7 @@ for i = 1:length(NeuronImage)
     x{i} = temp{1}(:,2);
 end
 
-load CC.mat;
+load Blobs.mat;
 
 figure1 = figure;
 set(gcf,'Position',[1          41        1920         964]);
@@ -52,10 +52,10 @@ for i = frames
       xg{j} = b{1}(:,2);
   end
   
-  for j = 1:length(xg)
-      hold on;
-      plot(xg{j},yg{j},'-r','LineWidth',3);
-  end
+%   for j = 1:length(xg)
+%       hold on;
+%       plot(xg{j},yg{j},'-r','LineWidth',3);
+%   end
   axis equal;
   axis off;
   

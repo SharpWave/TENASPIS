@@ -23,7 +23,7 @@ function [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,fram
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if (~exist('plotdist','var'))
+if ~exist('plotdist','var')
     plotdist = 0;
 end
 
@@ -63,18 +63,18 @@ end
 
 %% Run actual merging functionality
 % for each unique cluster index, find sufficiently close clusters and merge
-nClus = length(CluToMerge);
+%nClus = length(CluToMerge);
 maxdist = RadiusMultiplier;
 
 % Initialize ProgressBar
-resol = 10; % Percent resolution for progress bar, in this case 10%
-p = ProgressBar(100/resol);
-update_inc = round(nClus/(100/resol)); % Get increments for updating ProgressBar
+% resol = 10; % Percent resolution for progress bar, in this case 10%
+% p = ProgressBar(100/resol);
+% update_inc = round(nClus/(100/resol)); % Get increments for updating ProgressBar
 for i = CluToMerge'
     
-    if round(i/update_inc) == (i/update_inc)
-        p.progress; % Also percent = p.progress;
-    end
+%     if round(i/update_inc) == (i/update_inc)
+%         p.progress; % Also percent = p.progress;
+%     end
     
     % If the cluster is no longer valid (i.e it has already been merged
     % into a previous cluster), skip to next cluster
@@ -146,7 +146,7 @@ for i = CluToMerge'
     
     % If a merge happened, update all the cluster info for the next
     % iteration
-    if (DidMerge)
+    if DidMerge
         [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
             c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames,i,meanareas,meanX,meanY,NumEvents,0);
         temp = UpdateCluDistances(meanX,meanY,i); % Update distances for newly merged clusters to all other clusters
@@ -155,7 +155,6 @@ for i = CluToMerge'
     end
     
 end
-p.stop;
+%p.stop;
 
 end
-

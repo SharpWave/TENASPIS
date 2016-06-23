@@ -125,7 +125,7 @@ caltrain = cell(1,nClus);
 % Create neuron mask arrays and calcium transient trans
 for i = CluToPlot'
     CurrClu = CurrClu + 1; % Update cluster counter
-    NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim)); % Neuron mask
+    NeuronImage{CurrClu} = false(Xdim,Ydim); % Neuron mask
     NeuronImage{CurrClu}(PixelList{i}) = 1;
     NeuronPixels{CurrClu} = PixelList{i}; % Neuron mask pixel indices
     caltrain{CurrClu} = zeros(1,NumFrames); % Calicum transient train
@@ -173,4 +173,3 @@ save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim'
 
 
 end
-
