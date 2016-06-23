@@ -12,11 +12,16 @@ newFT = FT;
 
 % Determine Merges
 display('determining merges');
+
+%Preallocate. 
+Overlap = zeros(NumNeurons);
+MeanTCorr = zeros(NumNeurons);
+MeanTp = zeros(NumNeurons);
 p = ProgressBar(NumNeurons); % Initialize progress bar
 for i = 1:NumNeurons
     for j = 1:NumNeurons
         Overlap(i,j) = length(intersect(NeuronPixels{j},NeuronPixels{i}))./length(union(NeuronPixels{j},NeuronPixels{i}));
-        if(Overlap(i,j) <= 0.2)
+        if Overlap(i,j) <= 0.2
             continue;
         end
         pix = union(NeuronPixels{i},NeuronPixels{j});
@@ -26,11 +31,12 @@ for i = 1:NumNeurons
             
         end        
     end
-    NP{i} = NeuronPixels{i};
     MergeDest(i) = i;
     p.progress;
 end
 p.stop;
+
+NP = NeuronPixels;
 
 display('performing merges');
 for i = 1:NumNeurons
@@ -63,7 +69,7 @@ for i = 1:NumNeurons
     end
 end
 
-save FinalOutput.mat NeuronPixels NeuronImage FT;
+save('FinalOutput.mat', 'NeuronPixels', 'NeuronImage', 'FT', '-v7.3');
 
 
 

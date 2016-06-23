@@ -46,8 +46,9 @@ Ydim = size(NeuronImage{1},2);
 NumNeurons = length(NeuronImage);
 
 % Initialize progress bar
+disp('Calculating traces for each neuron');
+trace = zeros(NumNeurons,NumFrames);
 p=ProgressBar(NumFrames);
-disp('Calculating traces for each neuron')
 parfor i = 1:NumFrames
     
     % Read in each frame
