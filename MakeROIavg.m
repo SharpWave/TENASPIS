@@ -17,7 +17,9 @@ end
 
 p.stop;
 
-cellfun(@(x,y) x./y, ROIavg, num2cell(sum(FT,2)),'unif',0)
+%Divide summed ROI frames by number of spikes.
+nSpikes = sum(FT,2);    %Number of transients per neuron. 
+cellfun(@(x,y) x./y, ROIavg, num2cell(nSpikes),'unif',0);
 
 save ROIavg.mat ROIavg;
 
