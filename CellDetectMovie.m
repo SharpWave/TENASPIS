@@ -25,7 +25,7 @@ frameskip = 1;
 frames = 1:frameskip:size(FT,2);
 
 for i = frames
-  temp = h5read(infile,'/Object',[1 1 i+10 1],[Xdim Ydim 1 1]);
+  temp = h5read(infile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
  
   a = find(FT(:,i) > 0);
   imagesc(temp);caxis(climits);colormap gray;
