@@ -51,7 +51,6 @@ end
 
 %% 
 
-VersionString = '0.9.0.0-beta';
 MinPixelDist = 0:0.25:6;
 
 close all;
@@ -169,7 +168,7 @@ end
 
 save_name = 'ProcOut.mat';
 save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+    'MinPixelDist', 'DistUsed', 'InitPixelList', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
 
 
 end
