@@ -92,7 +92,6 @@ for i = 1:length(SegChain)
     end
 
 end
-
 p.stop;
 
 %% Debugging code

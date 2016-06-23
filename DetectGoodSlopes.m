@@ -117,10 +117,11 @@ end
 FT = aCaTr;
 
 % Check for ROIs with no transients
+GoodROI = zeros(1,size(FT,1));
 for i = 1:size(FT,1)
     tEpochs = NP_FindSupraThresholdEpochs(FT(i,:),eps);
     GoodROI(i) = size(tEpochs,1) > 0;
-    if (~GoodROI(i))
+    if ~GoodROI(i)
         display(['ROI ',int2str(i),' had no transients']);
     end
 end
@@ -145,4 +146,3 @@ end
 %         end
 %     end
 % end
-

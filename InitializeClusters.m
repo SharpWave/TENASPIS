@@ -27,8 +27,17 @@ if ~exist('min_trans_length','var')
     min_trans_length = 5;
 end
 
+GoodTr = zeros(1,NumSegments);
+
 %% Create segment averages
 disp('Initializing Clusters')
+
+PixelList = cell(1,NumSegments); 
+Xcent = zeros(1,NumSegments); 
+Ycent = zeros(1,NumSegments); 
+frames = cell(1,NumSegments); 
+PixelAvg = cell(1,NumSegments); 
+
 % Initialize ProgressBar
 resol = 1; % Percent resolution for progress bar, in this case 10%
 p = ProgressBar(100/resol);

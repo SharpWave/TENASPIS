@@ -38,12 +38,13 @@ maskpix = find(mask(:) > 0); % Get pixels to use when looking for blobs
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
 NumItsTaken = cell(1,NumFrames);
+ThreshList = cell(1,NumFrames);
 
 p = ProgressBar(NumFrames); % Initialize progress bar
 
 % Run through each frame and isolate all blobs
 
-[meanframe,stdframe] = moviestats(file);
+[~,stdframe] = moviestats(file);
 
 thresh = 4*mean(stdframe);
 

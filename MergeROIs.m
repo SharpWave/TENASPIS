@@ -1,4 +1,4 @@
-function [ output_args ] = MergeROIs(FT,NeuronPixels,MeanT)
+function MergeROIs(FT,NeuronPixels,MeanT)
 
 load('ProcOut.mat','Xdim','Ydim');
 

@@ -4,12 +4,13 @@ function [outdata] = MakeTrigAvg(indata)
 NumFrames = size(indata{1},2);
 load('ProcOut.mat','Xdim','Ydim');
 
+outdata = cell(1,length(indata));
 for k = 1:length(indata)
     NumNeurons = size(indata{k},1);
     clear TrigAvg;
-    for i = 1:NumNeurons
-        TrigAvg{i} = zeros(Xdim,Ydim);
-    end
+    
+    TrigAvg = cell(1,NumNeurons);
+    [TrigAvg{:}] = deal(zeros(Xdim,Ydim));
     outdata{k} = TrigAvg;
 end
 

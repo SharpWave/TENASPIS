@@ -51,13 +51,9 @@ AI(8).animal = 'GCamp6f_45_treadmill';
 AI(8).init_date = '11_09_2015';
 AI(8).init_sess = 2;
 
-AI(9).animal = 'GCamp6f_45_treadmill';
-AI(9).init_date = '11_09_2015';
-AI(9).init_sess = 1; 
-
 AI(10).animal = 'GCamp6f_48_treadmill';
-AI(10).init_date = '11_09_2015';
-AI(10).init_sess = 1; 
+AI(10).init_date = '11_30_2015';
+AI(10).init_sess = 2; 
 
 AI(11).animal = 'GCamp6f_45_altpilot';
 AI(11).init_date = '01_13_2016';
@@ -70,6 +66,22 @@ AI(12).init_sess = 1;
 AI(13).animal = 'GCamp6f_45_DNMP';
 AI(13).init_date = '04_01_2016';
 AI(13).init_sess = 1; 
+
+AI(14).animal = 'Aquila';
+AI(14).init_date = '04_28_2016';
+AI(14).init_sess = 1; 
+
+AI(15).animal = 'Libra';
+AI(15).init_date = '05_13_2016';
+AI(15).init_sess = 1; 
+
+AI(16).animal = 'Bellatrix';
+AI(16).init_date = '06_13_2016';
+AI(16).init_sess = 1; 
+
+AI(17).animal = 'Polaris';
+AI(17).init_date = '06_14_2016';
+AI(17).init_sess = 1; 
 
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))

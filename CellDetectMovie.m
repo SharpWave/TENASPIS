@@ -8,7 +8,7 @@ for i = 1:length(NeuronImage)
     x{i} = temp{1}(:,2);
 end
 
-load CC.mat;
+load Blobs.mat;
 
 figure1 = figure;
 set(gcf,'Position',[1          41        1920         964]);
@@ -25,7 +25,7 @@ frameskip = 1;
 frames = 1:frameskip:size(FT,2);
 
 for i = frames
-  temp = h5read(infile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+  temp = h5read(infile,'/Object',[1 1 i+10 1],[Xdim Ydim 1 1]);
  
   a = find(FT(:,i) > 0);
   imagesc(temp);caxis(climits);colormap gray;
@@ -52,10 +52,10 @@ for i = frames
       xg{j} = b{1}(:,2);
   end
   
-  for j = 1:length(xg)
-      hold on;
-      plot(xg{j},yg{j},'-r','LineWidth',3);
-  end
+%   for j = 1:length(xg)
+%       hold on;
+%       plot(xg{j},yg{j},'-r','LineWidth',3);
+%   end
   axis equal;
   axis off;
   
