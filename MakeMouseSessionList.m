@@ -3272,6 +3272,19 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_21_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:28:32.73 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_21_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
