@@ -75,6 +75,13 @@ for i = 1:NumNeurons
     rawtrace(i,:) = convtrim(rawtrace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
     
     difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
+
+    % re-zero the raw trace
+%     ftrace = convtrim(rawtrace(i,:),ones(1,100)./100); % very low pass filter
+%     fdiff = diff(ftrace);
+%     fthresh = PercentileCutoff(fdiff.^2,5);
+%     fidx = find((fdiff.^2) < fthresh);
+%     rawtrace(i,:) = rawtrace(i,:) - mean(rawtrace(i,fidx));
 end
 rawtrace(:,1:11) = 0;           % Set 10 first frames to 0
 rawtrace(:,end-11:end) = 0;     % Set 10 last frames to 0

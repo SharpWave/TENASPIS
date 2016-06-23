@@ -40,4 +40,4 @@ for i = 1:3
    MergeROIs(FT,NeuronPixels,outdat{1});
    load ('FinalOutput.mat','FT','NeuronPixels');
 end
-FinalTraces('SLPDF.h5');
+%FinalTraces('SLPDF.h5');
