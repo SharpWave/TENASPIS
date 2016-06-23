@@ -78,6 +78,13 @@ for i = 1:NumNeurons
     difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
     difftrace(i,1:11) = 0; % Set 10 first frames to 0
     difftrace(i,end-11:end) = 0; % Set 10 last frames to 0
+    
+    % re-zero the raw trace
+%     ftrace = convtrim(rawtrace(i,:),ones(1,100)./100); % very low pass filter
+%     fdiff = diff(ftrace);
+%     fthresh = PercentileCutoff(fdiff.^2,5);
+%     fidx = find((fdiff.^2) < fthresh);
+%     rawtrace(i,:) = rawtrace(i,:) - mean(rawtrace(i,fidx));
 end
 
 
