@@ -66,6 +66,7 @@ goodseg = find(TransientLength >= min_trans_length);
 SegChain = SegChain(goodseg);
 NumSegments = length(SegChain);
 
+
 % Intialize "clusters", which are segments that have been pared down a bit
 % to their average size/shape across all their active frames and grouped
 % together.  End result is groups
@@ -73,10 +74,11 @@ if ~exist(fullfile(pwd,'InitClu.mat'),'file');
     InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
 end
 
-load(fullfile(pwd,'InitClu.mat')); % Load initialized cluster data
+%%
+load InitClu.mat; % Load initialized cluster data
 NumIterations = 0;
 NumCT = length(c);
-%oldNumCT = NumCT;
+oldNumCT = NumCT;
 InitPixelList = PixelList;
 
 % run AutoMergeClu, each time incrementing the distance threshold
@@ -123,7 +125,7 @@ caltrain = cell(1,nClus);
 % Create neuron mask arrays and calcium transient trans
 for i = CluToPlot'
     CurrClu = CurrClu + 1; % Update cluster counter
-    NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim)); % Neuron mask
+    NeuronImage{CurrClu} = false(Xdim,Ydim); % Neuron mask
     NeuronImage{CurrClu}(PixelList{i}) = 1;
     NeuronPixels{CurrClu} = PixelList{i}; % Neuron mask pixel indices
     caltrain{CurrClu} = zeros(1,NumFrames); % Calicum transient train
@@ -149,7 +151,7 @@ try % Error catching clause: larger files are failing here for some reason
     
     % Plot all neurons and transients
     figure;
-    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage);
+    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage)
     
     % Plot iteration, cluster, and distance threshold info
     figure;
@@ -162,12 +164,12 @@ catch % Error catching clause
 end
 
 %% Save variables
+
 %[MeanBlobs,AllBlob] = MakeMeanBlobs(ActiveFrames,c);
 
 save_name = 'ProcOut.mat';
 save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length','GoodTrs', '-v7.3');
+    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
 
 
 end
-

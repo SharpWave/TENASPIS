@@ -62,8 +62,8 @@ SegList = zeros(NumFrames,100);
 
 % Initialize progress bar
 resol = 1; % Percent resolution for progress bar, in this case 10%
-p = ProgressBar(100/resol);
 update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 
 %% Run through loop to connect blobs between successive frames
 for i = 2:NumFrames
@@ -114,7 +114,8 @@ SegChain = SegChain(goodstuff);
 NumSegments = length(SegChain);
 TransientLength = TransientLength(goodstuff);
 
-save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'max_trans_dist', 'TransientLength')
+save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', ...
+    'max_trans_dist', 'TransientLength')
 
 end
 

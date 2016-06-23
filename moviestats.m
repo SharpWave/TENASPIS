@@ -22,14 +22,19 @@ function [meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 
-% Initialize Progress Bar
-resol = 1; % Percent resolution for progress bar, in this case 10%
-p = ProgressBar(100/resol);
-update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
-
 % Pre-allocate
 meanframe = zeros(1,NumFrames);
 stdframe = zeros(1,NumFrames);
+
+if nargout > 2
+    meanframepos = zeros(1,NumFrames);
+    stdframepos = zeros(1,NumFrames);
+end
+
+% Initialize Progress Bar
+resol = 1; % Percent resolution for progress bar, in this case 10%
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 
 % Calculate stats
 for i = 1:NumFrames

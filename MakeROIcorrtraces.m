@@ -1,9 +1,8 @@
 function [] = MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg)
 
 % Initialize progress bar
-p=ProgressBar(NumFrames);
 disp('Calculating traces for each neuron');
-
+p=ProgressBar(NumFrames);
 
 parfor i = 1:NumFrames
     

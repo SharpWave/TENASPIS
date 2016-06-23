@@ -46,8 +46,8 @@ NumNeurons = length(NeuronImage);
 trace = zeros(NumNeurons,NumFrames); 
 
 % Initialize progress bar
-p=ProgressBar(NumFrames);
 disp('Calculating traces for each neuron');
+p=ProgressBar(NumFrames);
 parfor i = 1:NumFrames
     
     % Read in each frame
@@ -73,11 +73,12 @@ for i = 1:NumNeurons
     trace(i,end-11:end) = 0; % Set 10 last frames to 0
     
     rawtrace(i,:) = convtrim(rawtrace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
-    rawtrace(i,1:11) = 0; % Set 10 first frames to 0
-    rawtrace(i,end-11:end) = 0; % Set 10 last frames to 0
+
     
     difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
 end
+rawtrace(:,1:11) = 0; % Set 10 first frames to 0
+rawtrace(:,end-11:end) = 0; % Set 10 last frames to 0
 difftrace(:,1:11) = 0; % Set 10 first frames to 0
 difftrace(:,end-11:end) = 0; % Set 10 last frames to 0
 
