@@ -16,7 +16,7 @@ t = (1:NumFrames)/20;
 display('checking buddies');
 buddies = [];
 for i = 1:NumNeurons
-  Overlap(i) = length(intersect(NeuronPixels{NeuronID},NeuronPixels{i}))./length(union(NeuronPixels{NeuronID},NeuronPixels{i}));
+  Overlap(i) = length(intersect(NeuronPixels{NeuronID},NeuronPixels{i}))./min(length(NeuronPixels{NeuronID}),length(NeuronPixels{i}));
   CaCorr(i) = corr(FT(NeuronID,:)',FT(i,:)');
   pix = union(NeuronPixels{i},NeuronPixels{NeuronID});
   [MeanTCorr(i),MeanTp(i)] = corr(MeanT{i}(pix),MeanT{NeuronID}(pix));
@@ -36,6 +36,32 @@ for i = 1:length(buddies)
     axis tight;
 end
 linkaxes(a,'x');
+set(gcf,'Position',[437    49   883   948])
+
+figure(3);
+fb(1) = subplot(length(buddies)+1,1,1);
+imagesc(MeanT{NeuronID});axis image;hold on;caxis([0 0.04]);
+    [b] = bwboundaries(NeuronImage{NeuronID});
+    b = b{1};
+    plot(b(:,2),b(:,1),'g');
+for i = 1:length(buddies)
+  [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+        b = b{1};
+        plot(b(:,2),b(:,1),'r');
+end
+for i = 1:length(buddies)
+    fb(i+1) = subplot(length(buddies)+1,1,i+1);
+    imagesc(MeanT{buddies(i)});
+     axis image;hold on;caxis([0 0.04]);
+     [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+        b = b{1};
+        plot(b(:,2),b(:,1),'r');
+            [b] = bwboundaries(NeuronImage{NeuronID});
+    b = b{1};
+    plot(b(:,2),b(:,1),'g');
+end
+
+linkaxes(fb,'xy');
 set(gcf,'Position',[437    49   883   948])
 
 while(1)
