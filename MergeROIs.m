@@ -2,16 +2,14 @@ function MergeROIs(FT,NeuronPixels,MeanT)
 
 load('ProcOut.mat','Xdim','Ydim');
 
-NumFrames = size(FT,2);
-NumNeurons = size(FT,1);
-
+[NumNeurons,NumFrames] = size(FT);
 OverlapThresh = 0.2;
 CorrThresh = 0.2;
 CorrpThresh = 0.05;
 
 
 
-t = (1:NumFrames)/20;
+%t = (1:NumFrames)/20;
 ToMerge = zeros(NumNeurons,NumNeurons);
 MergeDest = zeros(1,NumNeurons);
 newFT = FT;

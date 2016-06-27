@@ -3,6 +3,8 @@ function Tenaspis3singlesession()
 % Requires DFF.h5 and SLPDF.h5 be present
 
 %% Extract Blobs
+MakeMaskSingleSession;
+
 load singlesessionmask.mat;
 disp('Extracting blobs...'); 
 ExtractBlobs('SLPDF.h5',neuronmask);
@@ -43,5 +45,5 @@ end
 indat{1} = FT;
 outdat = MakeTrigAvg(indat);
 MeanT = outdat{1};
-save MeanT.mat MeanT;
+save('MeanT.mat', 'MeanT', '-v7.3');
 FinalTraces('SLPDF.h5');

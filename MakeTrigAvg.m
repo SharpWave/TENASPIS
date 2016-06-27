@@ -1,67 +1,94 @@
-function [outdata] = MakeTrigAvg(indata)
+function outdata = MakeTrigAvg(indata)
+%outdata = MakeTrigAvg(indata)
+%
+%   Creates spike-triggered average of the imaging frame for each version
+%   of FT present in indata.
+%
+%   INPUT
+%       indata: Cell array of any size, containing FTs. 
+%
+%   OUTPUT
+%       outdata: Cell array of the same size as indata, each containing a
+%       cell array, which in turn contains matrices representing the
+%       spike-triggered average of imaging frames. 
+%
 
-
+%% Set up. 
 NumFrames = size(indata{1},2);
 load('ProcOut.mat','Xdim','Ydim');
 
+%Some threshold.
 UseTime = 5;
 
 outdata = cell(1,length(indata));
 for k = 1:length(indata)
+    %Neurons may have merged as we go down k.
     NumNeurons = size(indata{k},1);
-    clear TrigAvg;
     
+    %Build a new cell array containing spike-triggered average matrices. 
     TrigAvg = cell(1,NumNeurons);
     [TrigAvg{:}] = deal(zeros(Xdim,Ydim));
+    
+    %Dump into outdata. 
     outdata{k} = TrigAvg;
     
-    
+    %Find large spikes. 
     for j = 1:NumNeurons
         ep = NP_FindSupraThresholdEpochs(indata{k}(j,:),eps);
         for i = 1:size(ep,1)
-            if ((ep(i,2)-ep(i,1)+1) > UseTime)
+            %If epoch is larger than UseTime...
+            if ((ep(i,2)-ep(i,1)+1) > UseTime)       
+                %Cross out the last 5 spikes. Not sure why this is
+                %happening...
                 indata{k}(j,ep(i,1):(ep(i,2)-UseTime+1)) = 0;
             end
         end
     end
 end
 
-FrameSkip = zeros(1,NumFrames);
+%Determine which frames to skip.
+activeNeurons = zeros(1,NumFrames);
 for i = 1:NumFrames
-    NumN = 0;
     for k = 1:length(indata)
-        NumN = NumN + sum(indata{k}(:,i));
-    end
-    if (NumN == 0)
-        FrameSkip(i) = 1;
-    end
+        %Number of active neurons on this frame. 
+        activeNeurons(i) = activeNeurons(i) + sum(indata{k}(:,i));
+    end 
 end
 
-p=ProgressBar(NumFrames);
+%Frames with no active neurons. 
+FrameSkip = activeNeurons==0;
 
-for i = 1:NumFrames
-     if (~FrameSkip(i))
-        tempFrame = h5read('SLPDF.h5','/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-        for k = 1:length(indata)
-            FT = indata{k};
-            nlist = find(FT(:,i));
-            for j = 1:length(nlist)
-                outdata{k}{nlist(j)} = outdata{k}{nlist(j)} + tempFrame;
-            end
-            % Update progress bar
-        end
+%Vector of frames with at least 1 active neuron. 
+goodFrames = 1:NumFrames;
+goodFrames = goodFrames(~FrameSkip);
+
+%% Spike-triggered average.
+%For each frame...
+p=ProgressBar(NumFrames);
+for i = goodFrames
+    tempFrame = h5read('SLPDF.h5','/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    for k = 1:length(indata)
+        %Grab FT. 
+        FT = indata{k};
+
+        %Active neurons. 
+        nlist = find(FT(:,i));
+        for j = nlist'
+            %Sum frame for active neuron. 
+            outdata{k}{j} = outdata{k}{j} + tempFrame;
+        end        
     end
     p.progress;
 end
 p.stop;
 
+%Normalize by number of spikes. 
 for k = 1:length(indata)
-    for i = 1:size(indata{k},1)
-        outdata{k}{i} = outdata{k}{i}./sum(indata{k}(i,:));
-    end
+    nSpikes = sum(indata{k},2)';
+    outdata{k} = cellfun(@(x,y) x./y, outdata{k},num2cell(nSpikes),'unif',0);
 end
 
-
+end
 
 
 

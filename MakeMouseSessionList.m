@@ -3245,6 +3245,19 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_20_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:15:04.69 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_20_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
 %% Polaris
 i = i+1;
 MD(i).Animal = 'Polaris';
@@ -3278,13 +3291,25 @@ MD(i).Date = '06_21_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '5:28:32.73 PM';
+MD(i).RecordStartTime = '6:14:34.20 PM';
 MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_21_2016\1 - Treadmill (left)';
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_22_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:41:53.25 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_22_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
 %% Compile session_ref
 
 session_ref.G30 = G30;
@@ -3299,3 +3324,5 @@ session_ref.G48 = G48;
 save MasterDirectory.mat MD;
 
 cd(CurrDir);
+
+loadMD;
