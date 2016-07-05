@@ -66,6 +66,7 @@ p.stop; % Terminate progress bar
 %% Smooth and normalize traces
 disp('Smoothing traces and normalizing');
 rawtrace = trace;
+difftrace = zeros(size(rawtrace));
 for i = 1:NumNeurons
     trace(i,:) = zscore(trace(i,:)); % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
     trace(i,:) = convtrim(trace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
