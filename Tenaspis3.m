@@ -24,7 +24,7 @@ function Tenaspis3(md,varargin)
 %
 %       varargin: 
 %           preprocess: logical, whether you want to run MakeT2Movies.
-%           Default=true.
+%           Default=whether SLPDF exists in your directory.
 %
 %           d1: logical, whether you want to make first derivative movie
 %           during MakeT2Movies. Default=false.

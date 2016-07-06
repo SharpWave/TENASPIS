@@ -150,7 +150,7 @@ try % Error catching clause: larger files are failing here for some reason
     
     % Plot all neurons and transients
     figure;
-    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage)
+    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage);
     
     % Plot iteration, cluster, and distance threshold info
     figure;
