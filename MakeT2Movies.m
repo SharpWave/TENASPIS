@@ -1,12 +1,16 @@
-function MakeT2Movies(d1)
+function MakeT2Movies(varargin)
 % MakeT2Movies
 %
 %   Takes cropped, motion-corrected movie and makes two movies from it. 
 %
 % INPUTS
+%   varargin:
+%       'path': string, path containing session usually in the form
+%       X:\Animal\Date\Session. Default=uigetfile. 
 %
-%   MotCorrh5: full pathname to motion-corrected, cropped movie
-%
+%       'd1': logical, whether or not you want to also make a first
+%       derivative movie from the 3-pixel smoothed movie. Default=false. 
+%   
 % OUTPUTS - saved to directory above MotCorr5
 %
 %   SLPDF.h5: Takes a 3-pixel smoothed version of the input movie and
@@ -16,14 +20,30 @@ function MakeT2Movies(d1)
 %   DFF.h5: DF/F of the 3-pixel smoothed movie. 
 %
 
+%% Parse inputs. 
+    p = inputParser; 
+    p.addParameter('path',false);
+    p.addParameter('d1',false,@(x) islogical(x));
+    p.parse(varargin{:});
+    
+    path = p.Results.path;
+    d1 = p.Results.d1; 
+    
 %% File names.
-    [MotCorrh5,folder] = uigetfile('*.h5');
-    MotCorrh5 = fullfile(folder,MotCorrh5);
-    folder = fileparts(fileparts(folder)); % Grab folder above the one containing MotCorrh5 movie
-    SLPDFname = fullfile(folder,'SLPDF.h5');
-    DFFname = fullfile(folder,'DFF.h5'); 
-    threePixName = fullfile(folder,'threePixSmooth.h5');
-    tempfilename = fullfile(folder,'temp.h5');
+    if ischar(path)
+        cd(fullfile(path,'MotCorrMovie-Objects')); 
+        h5 = ls('*.h5'); 
+        MotCorrh5 = fullfile(pwd,h5); 
+    else
+        [MotCorrh5,path] = uigetfile('*.h5');
+        MotCorrh5 = fullfile(path,MotCorrh5);
+        path = fileparts(fileparts(path)); % Grab folder above the one containing MotCorrh5 movie
+    end
+    
+    SLPDFname = fullfile(path,'SLPDF.h5');
+    DFFname = fullfile(path,'DFF.h5'); 
+    threePixName = fullfile(path,'threePixSmooth.h5');
+    tempfilename = fullfile(path,'temp.h5');
     
 %% Set up.
     info = h5info(MotCorrh5,'/Object'); 
@@ -71,9 +91,11 @@ function MakeT2Movies(d1)
     Make_DFF(threePixName,DFFname);
     
     if d1
-        disp('Making D1Movie.h5');      %First derivative movie.
+        disp('Making D1Movie.h5');     
+        %Temporal smooth. 
         TempSmoothMovie(threePixName,'SMovie.h5',20); 
         
+        %First derivative movie. 
         multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
         if ~isempty(multiplier_use)
             delete D1Movie.h5
