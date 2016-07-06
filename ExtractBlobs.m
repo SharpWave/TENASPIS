@@ -40,14 +40,13 @@ PeakPix = cell(1,NumFrames);
 NumItsTaken = cell(1,NumFrames);
 ThreshList = cell(1,NumFrames);
 
-p = ProgressBar(NumFrames); % Initialize progress bar
-
 % Run through each frame and isolate all blobs
-
+disp('Getting movie stats...');
 [~,stdframe] = moviestats(file);
 
 thresh = 4*mean(stdframe);
 
+p = ProgressBar(NumFrames); % Initialize progress bar
 parfor i = 1:NumFrames 
     
     % Read in each imaging frame
