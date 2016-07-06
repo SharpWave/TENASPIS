@@ -48,7 +48,7 @@ AI(7).init_date = '06_10_2015';
 AI(7).init_sess = 1;
 
 AI(8).animal = 'GCamp6f_45_treadmill';
-AI(8).init_date = '11_09_2015';
+AI(8).init_date = '11_30_2015';
 AI(8).init_sess = 2;
 
 AI(10).animal = 'GCamp6f_48_treadmill';
@@ -76,11 +76,11 @@ AI(15).init_date = '05_13_2016';
 AI(15).init_sess = 1; 
 
 AI(16).animal = 'Bellatrix';
-AI(16).init_date = '06_13_2016';
+AI(16).init_date = '06_21_2016';
 AI(16).init_sess = 1; 
 
 AI(17).animal = 'Polaris';
-AI(17).init_date = '06_14_2016';
+AI(17).init_date = '06_21_2016';
 AI(17).init_sess = 1; 
 
 for i = 1:length(AI)
