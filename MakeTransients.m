@@ -97,10 +97,7 @@ p.stop;
 % move excessively from start to finish
 
 % Get transient lengths from SegChain
-TransientLength = zeros(1,length(SegChain));
-for i = 1:length(SegChain)
-    TransientLength(i) = length(SegChain{i});
-end
+TransientLength = cellfun(@length,SegChain);
 
 % Calculate distance traveled for each transient
 [DistTrav,MeanThresh] = TransientStats(SegChain);

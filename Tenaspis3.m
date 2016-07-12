@@ -65,15 +65,15 @@ function Tenaspis3(md,varargin)
     end
 
 %% Register the masks.
-    %Check whether initial mask exists. 
-    maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
-    
     %Get directory for initial mask. 
     [initDate,initSession] = GetInitRegMaskInfo(md.Animal);
     initDir = ChangeDirectory(md.Animal,initDate,initSession); 
     
+    %Check whether initial mask exists. 
+    maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
+    
     %If initial mask doesn't exist or if manualmask is triggered...
-    if ~maskExist || manualmask
+    if maskExist==0 || manualmask
         disp('Mask does not exist or manual mask triggered. Draw mask now.');
         cd(initDir); 
         

@@ -13,7 +13,7 @@ resol = 1; % Percent resolution for progress bar
 p = ProgressBar(100/resol);
 update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 for i = 1:NumFrames
-   [frame,~,~,NumFrames] = loadframe(moviefile,i,info); 
+   [frame] = loadframe(moviefile,i,info); 
    avgframe = avgframe+single(frame);
    
    if round(i/update_inc) == (i/update_inc) % Update progress bar
