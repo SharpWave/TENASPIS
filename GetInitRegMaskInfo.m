@@ -52,8 +52,8 @@ AI(8).init_date = '11_30_2015';
 AI(8).init_sess = 4;
 
 AI(10).animal = 'GCamp6f_48_treadmill';
-AI(10).init_date = '11_30_2015';
-AI(10).init_sess = 2; 
+AI(10).init_date = '04_18_2016';
+AI(10).init_sess = 1; 
 
 AI(11).animal = 'GCamp6f_45_altpilot';
 AI(11).init_date = '01_13_2016';
@@ -76,7 +76,7 @@ AI(15).init_date = '05_13_2016';
 AI(15).init_sess = 1; 
 
 AI(16).animal = 'Bellatrix';
-AI(16).init_date = '06_21_2016';
+AI(16).init_date = '06_20_2016';
 AI(16).init_sess = 1; 
 
 AI(17).animal = 'Polaris';
