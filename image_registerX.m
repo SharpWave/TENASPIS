@@ -49,7 +49,12 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 % varargins
 %
 %   'use_neuron_masks' (optional): 1 uses neuron masks to register sessions, not the
-%   minimum projection.  0 = default
+%   minimum projection.  0 = default. 2 uses a custom input image of the masks
+%   you wish to use for each session.  Must be followed by a second input
+%   which is the name you wish to append on the saved registration file.
+%   You also must specify separately the bw image you wish to use for each
+%   session with the 'base_bw' and 'reg_bw' varargins.
+%
 %
 % OUTPUTS
 % cell_map:     cell array with each row corresponding to a given neuron,
@@ -78,8 +83,8 @@ close all;
 
 
 %% MAGIC VARIABLES
-configname = 'multimodal'; % For images taken with similar contrasts, e.g. from the same device, same gain, etc.
-regtype = 'rigid'; % rigid = Translation, Rotation % Similarity = Translation, Rotation, Scale
+configname = 'multimodal'; % monomodal: For images taken with similar contrasts, e.g. from the same device, same gain, etc. multimodal: good for sessions across multiple days
+regtype = 'rigid'; % rigid = Translation, Rotation 
 
 % Adjust registration algorithm values:
 % MONOMODAL
@@ -108,7 +113,15 @@ for j = 1:length(varargin)
        use_neuron_masks = varargin{j+1}; 
        if use_neuron_masks == 1
            name_append = '_regbyneurons';
+       elseif use_neuron_masks == 2
+           name_append = varargin{j+2};
        end
+    end
+    if strcmpi('base_bw',varargin{j})
+        base_bw_use = varargin{j+1};
+    end
+    if strcmpi('reg_bw',varargin{j})
+        reg_bw_use = varargin{j+1};
     end
 end
 
@@ -127,9 +140,14 @@ else
     % Create strings to point to minimum projection files in each working
     % directory for registration
     base_path = ChangeDirectory(mouse_name, base_date, base_session, 0);
-    base_file = fullfile(base_path,'ICmovie_min_proj.tif');
     reg_path = ChangeDirectory(mouse_name, reg_date, reg_session, 0);
-    register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
+    
+    if ~isempty(base_path) && ~isempty(reg_path)
+        base_file = fullfile(base_path,'ICmovie_min_proj.tif');
+        register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
+    else isempty(base_path)
+       error('No working directory in MakeMouseSessionList for base session or reg session')
+    end
 
 end
 
@@ -182,7 +200,9 @@ elseif use_neuron_masks == 1 % Create binary all neuron masks for registration
     load('MeanBlobs','BinBlobs')
     load('ProcOut.mat','NumTransients')
     reg_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
-    
+elseif use_neuron_masks == 2
+    base_image = base_bw_use;
+    reg_image = reg_bw_use;
 end
 
 
