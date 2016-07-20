@@ -1,4 +1,4 @@
-function MakeT2Movies(MotCorrh5)
+function MakeT2Movies(MotCorrh5,varargin)
 % MakeT2Movies(MotCorrh5)
 %
 %   Takes cropped, motion-corrected movie and makes two movies from it. 
@@ -15,6 +15,14 @@ function MakeT2Movies(MotCorrh5)
 %
 %   DFF.h5: DF/F of the 3-pixel smoothed movie. 
 %
+
+%% Process varargins
+gpu_use = 0; % default
+for j = 1:length(varargin)
+   if strcmpi('use_gpu',varargin{j};
+       gpu_use = varargin{j+1};
+   end
+end
 
 %% File names.
     folder = fileparts(fileparts(MotCorrh5)); % Grab folder above the one containing MotCorrh5 movie
@@ -46,10 +54,9 @@ function MakeT2Movies(MotCorrh5)
     
     for i=1:nFrames
         frame = single(loadframe(MotCorrh5,i,info));
-        
         LPframe = imfilter(frame,LPfilter,'same','replicate');              %20-pixel filter.
         threePixFrame = imfilter(frame,threePixfilter,'same','replicate');  %3-pixel filter.
-       
+
         h5write(threePixName,'/Object',threePixFrame,[1 1 i 1],...          %Write 3-pixel smoothed.
             [Xdim Ydim 1 1]); 
         h5write(tempfilename,'/Object',threePixFrame./LPframe,[1 1 i 1],...     %Write LP divide.
