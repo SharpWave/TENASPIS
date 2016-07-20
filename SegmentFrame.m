@@ -1,4 +1,4 @@
-function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
+function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -46,16 +46,18 @@ function [cc,PeakPix,NumItsTaken] = SegmentFrame(frame,mask,thresh)
 % Parameters
 minpixels = 60; % minimum blob size during initial segmentation
 adjminpixels = 40; % minimum blob size during re-segmentation attempts
-threshinc = 0.01; % how much to increase threshold by on each re-segmentation iteration
-neuronthresh = 150; % maximum blob size to be considered a neuron
+threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
+neuronthresh = 160; % maximum blob size to be considered a neuron
 minsolid = 0.9; % minimum blob solidity to be considered a neuron
 
 % Setup variables for below
 PeakPix = []; % Locations of peak pixels 
+threshlist = [];
 badpix = find(mask == 0); % Locations of pixels that are outside the mask and should be excluded
 
 % threshold and segment the frame
 initframe = single(frame);
+
 blankframe = zeros(size(initframe));
 minval = min(initframe(:));
 threshframe = frame > thresh; % apply threshold, make it into a logical array
@@ -83,14 +85,8 @@ while BlobsInFrame
     
     % if there were blobs, check if any of them satisfy size and
     % solidity criteria
-    bsize = [];
-    bSolid = [];
-    
-    % Deal out size and solidity into usable format (data structures)
-    for j = 1:length(bb.PixelIdxList)
-        bsize(j) = rp(j).Area;
-        bSolid(j) = rp(j).Solidity;
-    end
+    bsize = deal([rp.Area]);
+    bSolid = deal([rp.Solidity]);
     
     % Look for new blobs that meet the maximum size AND minimum solidity criteria
     newn = intersect(find(bsize <= neuronthresh), find(bSolid >= minsolid));
@@ -99,6 +95,7 @@ while BlobsInFrame
         % append new blob pixel lists
         currnewList = currnewList + 1;
         newlist{currnewList} = bb.PixelIdxList{newn(j)};
+        threshlist(currnewList) = thresh;
         tNumItsTaken(currnewList) = NumIts;
     end
        
@@ -122,7 +119,9 @@ while BlobsInFrame
     % increase threshold
     thresh = thresh + threshinc;
     threshframe = temp > thresh;
-    threshframe = bwareaopen(threshframe,adjminpixels,4);
+    
+    % remove areas with less than adjminpixels
+    threshframe = bwareaopen(threshframe,adjminpixels,4); 
     
     % Run throuh while loop again to determine if new threshold has
     % produced any more legitimate blobs.
@@ -134,8 +133,10 @@ NumItsTaken = []; % Initialize Number of iterations to empty
 % exit if no blobs found
 if (isempty(newlist))
     PeakPix = [];
+    threshlist = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
+    cc.PixelVals = [];
     cc.ImageSize = size(frame);
     cc.Connectivity = 0; 
     %display('no blobs detected');
@@ -152,6 +153,7 @@ for i = 1:length(newlist)
     if (isempty(intersect(newlist{i},badpix)))
         numlists = numlists + 1; % Count of number of blobs
         newcc.PixelIdxList{numlists} = single(newlist{i}); % Pixel indices for blob
+        newcc.PixelVals{numlists} = single(initframe(newlist{i}));
         NumItsTaken(numlists) = tNumItsTaken(i); % Save iterations required to ID each blob
     end
 end
@@ -169,5 +171,4 @@ for i = 1:length(cc.PixelIdxList)
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
 end
 
-%display([int2str(length(cc.PixelIdxList)),' Blobs Detected'])
 end

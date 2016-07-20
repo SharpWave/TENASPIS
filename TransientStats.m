@@ -1,4 +1,4 @@
-function [DistTrav] = TransientStats(SegChain)
+function [DistTrav,MeanThresh] = TransientStats(SegChain)
 % [DistTrav] = TransientStats(SegChain)
 %
 % Gets statistics on each Transient identified in SegChain
@@ -11,6 +11,8 @@ function [DistTrav] = TransientStats(SegChain)
 %   
 %   DistTrav: Absolute (not cumulative) distance traveled by the transient
 %   from start to finish
+%
+%   MeanThresh: mean threshold of the transient
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,10 +33,11 @@ function [DistTrav] = TransientStats(SegChain)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load needed cc variable
-load('Blobs.mat','cc','PeakPix');
+load('Blobs.mat','cc','PeakPix','ThreshList');
 
 %% Calculate distance traveled for each transient
 DistTrav = nan(1,length(SegChain));
+MeanThresh = nan(1,length(SegChain));
 
 disp('Calculating statistics for all transients')
 
@@ -51,7 +54,7 @@ for i = 1:length(SegChain)
     end
     
     if length(SegChain{i}) > 1
-        Xc = []; Yc = [];
+        Xc = []; Yc = []; thresh = [];
         for j = [1,length(SegChain{i})]
             % for each frame in the transient
             frame = SegChain{i}{j}(1);
@@ -67,16 +70,28 @@ for i = 1:length(SegChain)
             Xc(j) = r.Centroid(1);
             Yc(j) = r.Centroid(2);
             
+            % Get threshold
+            
+            
+        end
+        
+        for j = 1:length(SegChain{i})
+            frame = SegChain{i}{j}(1);
+            seg = SegChain{i}{j}(2);    
+            thresh(j) = ThreshList{frame}(seg);
         end
         
         DistTrav(i) = sqrt((Xc(end)-Xc(1))^2+(Yc(end)-Yc(1))^2);
-    
+        MeanThresh(i) = mean(thresh);
+        
     elseif length(SegChain{i}) == 1 % Avoid doing any of the above if there is only one frame in the segment
         DistTrav(i) = 0;
+        frame = SegChain{i}{1}(1);
+        seg = SegChain{i}{1}(2);
+        MeanThresh(i) = ThreshList{frame}(1);
     end
 
 end
-
 p.stop;
 
 %% Debugging code

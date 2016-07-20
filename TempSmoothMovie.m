@@ -1,4 +1,4 @@
-function [] = TempSmoothMovie(infile,outfile,smoothfr);
+function [] = TempSmoothMovie(infile,outfile,smoothfr)
 % [] = TempSmoothMovie(infile,outfile,smoothfr);
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,6 +28,7 @@ smfun = hann(smoothfr)./sum(hann(smoothfr));
 
 h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[XDim YDim 1 1],'Datatype','single');
 
+F=cell(1,smoothfr-1);
 for i = 1:smoothfr-1
     F{i} = single(h5read(infile,'/Object',[1 1 i 1],[XDim YDim 1 1]));
     h5write(outfile,'/Object',F{i},[1 1 i 1],[XDim YDim 1 1]);

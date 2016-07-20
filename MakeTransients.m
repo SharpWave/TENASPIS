@@ -1,4 +1,4 @@
-function [] = MakeTransients(varargin)
+function [] = MakeTransients()
 % [] = MakeTransients()
 %
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
@@ -47,7 +47,7 @@ function [] = MakeTransients(varargin)
 max_trans_dist = 2; % (default) maximum number of pixels a transient can travel without being discarded
 
 % Load pertinent blob variables
-load ('Blobs.mat','cc','PeakPix');
+load ('Blobs.mat','cc','PeakPix','ThreshList');
 
 % Get basic movie info
 info = h5info('DFF.h5','/Object');
@@ -62,8 +62,8 @@ SegList = zeros(NumFrames,100);
 
 % Initialize progress bar
 resol = 1; % Percent resolution for progress bar, in this case 10%
-p = ProgressBar(100/resol);
 update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 
 %% Run through loop to connect blobs between successive frames
 for i = 2:NumFrames
@@ -75,7 +75,7 @@ for i = 2:NumFrames
         [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),...
             stats(j).MinorAxisLength);
  
-        if (MatchingSeg == 0)
+        if MatchingSeg == 0
             % no match found, make a new segment
             NumSegments = NumSegments+1;
             SegChain{NumSegments} = {[i,j]};
@@ -97,23 +97,22 @@ p.stop;
 % move excessively from start to finish
 
 % Get transient lengths from SegChain
-TransientLength = zeros(1,length(SegChain));
-for i = 1:length(SegChain)
-    TransientLength(i) = length(SegChain{i});
-end
+TransientLength = cellfun(@length,SegChain);
 
 % Calculate distance traveled for each transient
-DistTrav = TransientStats(SegChain);
+[DistTrav,MeanThresh] = TransientStats(SegChain);
 
 % Get transients that move less than the distance threshold
 gooddist = find(DistTrav < max_trans_dist);
-
+goodthresh = find(MeanThresh > 0);
+goodstuff = intersect(gooddist,goodthresh);
 % Keep only transients that meet distance traveled criteria
-SegChain = SegChain(gooddist);
+SegChain = SegChain(goodstuff);
 NumSegments = length(SegChain);
-TransientLength = TransientLength(gooddist);
+TransientLength = TransientLength(goodstuff);
 
-save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'max_trans_dist', 'TransientLength')
+save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', ...
+    'max_trans_dist', 'TransientLength')
 
 end
 

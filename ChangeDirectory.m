@@ -42,23 +42,22 @@ load(fullfile(MasterDirectory,'MasterDirectory.mat'));
 
 % cd(CurrDir);
 
-NumEntries = length(MD);
+animals = {MD.Animal};
+dates = {MD.Date};
+sessions = [MD.Session];
 
-for i = 1:NumEntries
+i = find(strcmp(animals,animal_id) & strcmp(dates,sess_date) & sessions == sess_num);
 
-    if (strcmp(MD(i).Date,sess_date) && (MD(i).Session == sess_num) && strcmp(MD(i).Animal,animal_id))
-        
-        % Change to the appropriate directory if desired
-        if change_dir_flag == 1
-            cd(MD(i).Location);
-        end
-        
-        dirstr = (MD(i).Location);
-        
-        return;
+if length(i) > 1
+    disp('Multiple directories found! Check MakeMouseSessionList.'); 
+elseif isempty(i)
+    disp('Directory not found! Check MakeMouseSessionList.'); 
+else
+    dirstr = MD(i).Location; 
+    
+    if change_dir_flag
+        cd(dirstr); 
     end
 end
-
-display('Directory not found');
 
 end

@@ -1,4 +1,4 @@
-function Tenaspis2(animal_id,sess_date,sess_num)
+function Tenaspis2_NKprofile(animal_id,sess_date,sess_num)
 % Quick & dirty Tenaspis2
 % Requires DFF.h5, manualmask.mat, and SLPDF.h5 be present
 
@@ -56,7 +56,6 @@ AddPoTransients;
 disp('Finalizing...');
 DetectGoodSlopes;
 
-profile viewer
 
 %% Calculate place fields and accompanying statistics
 CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename',...
