@@ -1,4 +1,4 @@
-function [] = NormalTraces(moviefile)
+function [] = FinalTraces(moviefile)
 % This function takes the ROI output of MakeNeurons and extracts
 % traces in the straightfoward-most way (by summing up all the pixels in a
 % given neuron's ROI. Also normalizes traces at the end and get their
@@ -37,16 +37,17 @@ close all;
 
 %% Step 1: load up the ROIs
 disp('Loading relevant variables from ProcOut')
-load('ProcOut.mat','NeuronImage','NumFrames','NeuronPixels');
+load('ProcOut.mat','NumFrames');
+load('FinalOutput.mat');
 
 % Get image dimensions and number of neurons
 Xdim = size(NeuronImage{1},1);
 Ydim = size(NeuronImage{1},2);
 NumNeurons = length(NeuronImage);
-trace = zeros(NumNeurons,NumFrames); 
 
 % Initialize progress bar
 disp('Calculating traces for each neuron');
+trace = zeros(NumNeurons,NumFrames);
 p=ProgressBar(NumFrames);
 parfor i = 1:NumFrames
     
@@ -63,9 +64,9 @@ end
 p.stop; % Terminate progress bar
 
 %% Smooth and normalize traces
-rawtrace = trace; 
-difftrace = zeros(size(trace)); 
-disp('Smoothing traces and normalizing')
+disp('Smoothing traces and normalizing');
+rawtrace = trace;
+difftrace = zeros(size(rawtrace));
 for i = 1:NumNeurons
     trace(i,:) = zscore(trace(i,:)); % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
     trace(i,:) = convtrim(trace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
@@ -73,22 +74,21 @@ for i = 1:NumNeurons
     trace(i,end-11:end) = 0; % Set 10 last frames to 0
     
     rawtrace(i,:) = convtrim(rawtrace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
-
     
     difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
 
-%     % re-zero the raw trace
+    % re-zero the raw trace
 %     ftrace = convtrim(rawtrace(i,:),ones(1,100)./100); % very low pass filter
 %     fdiff = diff(ftrace);
 %     fthresh = PercentileCutoff(fdiff.^2,5);
 %     fidx = find((fdiff.^2) < fthresh);
 %     rawtrace(i,:) = rawtrace(i,:) - mean(rawtrace(i,fidx));
 end
-rawtrace(:,1:11) = 0; % Set 10 first frames to 0
-rawtrace(:,end-11:end) = 0; % Set 10 last frames to 0
+rawtrace(:,1:11) = 0;           % Set 10 first frames to 0
+rawtrace(:,end-11:end) = 0;     % Set 10 last frames to 0
 difftrace(:,1:11) = 0; % Set 10 first frames to 0
 difftrace(:,end-11:end) = 0; % Set 10 last frames to 0
 
-save NormTraces.mat trace difftrace rawtrace;
+save FinalTraces.mat trace difftrace rawtrace;
 
 end 

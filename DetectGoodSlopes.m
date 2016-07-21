@@ -27,7 +27,7 @@ function [] = DetectGoodSlopes()
 %   FT: a NumNeurons x NumFrames array where 1 = rising event, 0 = no
 %   detected calcium activity.
 %
-%% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+%% Copyright 2016 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 %
@@ -49,8 +49,9 @@ function [] = DetectGoodSlopes()
 load expPosTr.mat;
 load NormTraces.mat;
 load('ProcOut.mat','NeuronPixels','NeuronImage');
+load CorrTrace.mat;
 
-MinDur = 6;
+MinDur = 2;
 
 NumNeurons = size(expPosTr,1);
 
@@ -99,7 +100,18 @@ for i = 1:NumNeurons
 end
 p.stop; % terminate progress bar
 
-% kill transients lasting less than 6
+% check transients for correlation agreement
+for i = 1:NumNeurons
+   epochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps); % ID epochs where transients occur 
+   for j = 1:size(epochs,1)
+      if (fCorrTrace(i,epochs(j,2)) < 0.5)
+          % this slope of the transient is invalid
+          aCaTr(i,epochs(j,1):epochs(j,2)) = 0;
+      end
+   end
+end
+
+% kill transients lasting less than 2
 for i = 1:size(aCaTr,1)
     tEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
     for j = 1:size(tEpochs,1)
@@ -109,72 +121,16 @@ for i = 1:size(aCaTr,1)
     end
 end
 
-%% Calculate Overlaps, detect
-display('Calculating overlaps...');
-p = ProgressBar(NumNeurons);% Initialize ProgressBar
-for i = 1:NumNeurons
-    overl{i} = []; % Initialize overlap variable
-    for j = 1:NumNeurons
-        
-        % If pixels from neuron i and neuron j overlap, note in overlap
-        % variable
-        if(~isempty(intersect(NeuronPixels{i},NeuronPixels{j})) && (i ~= j))
-            overl{i} = [overl{i},j];
-        end
-    end
-    p.progress; % update progress bar
-end
-p.stop; % terminate progress bar
-
-% Do one last comparison for buddy spikes to make sure none slipped through
-for i = 1:NumNeurons
-    % Grab epochs of good slope for neuron i
-    CaEpochs = NP_FindSupraThresholdEpochs(aCaTr(i,:),eps);
-    for j = 1:size(CaEpochs,1)
-        Buddyspikes = []; % Initialize buddy spike variable
-        
-        % Step through each buddy/overlapping neuron and identify if it is
-        % spiking concurrently with neuron i
-        for k = 1:length(overl{i})
-            if (sum(aCaTr(overl{i}(k),CaEpochs(j,1):CaEpochs(j,2))) > 0)
-                Buddyspikes = [Buddyspikes,overl{i}(k)];
-            end
-        end
-        
-        % If buddy spikes are detected, resolve the conflict and designate
-        % the winner spike
-        if ~isempty(Buddyspikes)
-            %display('conflict');
-            
-            % Load frame from DFF movie
-            f = loadframe('DFF.h5',CaEpochs(j,2));
-            fmean = mean(f(NeuronPixels{i})); % Get mean of pixels for neuron i
-            bmean = zeros(1,length(Buddyspikes)); % Initialize buddy mean
-            for k = 1:length(Buddyspikes)
-                % Get mean of pixels for buddy neuron k
-                bmean(k) = mean(f(NeuronPixels{Buddyspikes(k)}));
-            end
-            
-            % If neuron i is the winner (mean greater than the maximum
-            % buddy mean), set all transients in buddies to zero.
-            if fmean > max(bmean)
-                %display('winner');
-                for k = 1:length(Buddyspikes)
-                    aCaTr(Buddyspikes(k),CaEpochs(j,1):CaEpochs(j,2)) = 0;
-                end
-            end
-        end
-    end
-end
 
 % Rename aCaTr
 FT = aCaTr;
 
 % Check for ROIs with no transients
+GoodROI = zeros(1,size(FT,1));
 for i = 1:size(FT,1)
     tEpochs = NP_FindSupraThresholdEpochs(FT(i,:),eps);
     GoodROI(i) = size(tEpochs,1) > 0;
-    if (~GoodROI(i))
+    if ~GoodROI(i)
         display(['ROI ',int2str(i),' had no transients']);
     end
 end
@@ -189,3 +145,5 @@ NeuronPixels = NeuronPixels(ROIidx);
 save T2output.mat NeuronPixels NeuronImage FT ROIidx;
 
 end
+
+

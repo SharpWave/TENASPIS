@@ -55,14 +55,11 @@ for i = 1:NumNeurons
     mRank{i} = zeros(size(NeuronPixels{i}));
 end
 
-%% Calculate statistics
-
 % Initialize progress bar
 resol = 1; % Percent resolution for progress bar, in this case 10%
+display('Calculating ranks and peaks...');
 p = ProgressBar(100/resol);
 update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
-
-display('Calculating ranks and peaks...');
 for i = 1:NumFrames
     ActiveN = find(FT(:,i)); % Identify active neurons in frame i
     frame = loadframe('SLPDF.h5',i,info); % Load the frame

@@ -51,8 +51,7 @@ end
 
 %% 
 
-VersionString = '0.9.0.0-beta';
-MinPixelDist = [0.5,1,1.5,2,2.5,3,3.5,4.5];
+MinPixelDist = 0:0.25:6;
 
 close all;
 
@@ -94,8 +93,8 @@ for i = 1:length(MinPixelDist)
         disp(['Merging neurons, iteration #',num2str(NumIterations+1)])
         
         % Iteratively merge spatially distant clusters together
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~] = ...
-            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames);
+        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~,PixelAvg] = ...
+            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,PixelAvg);
         NumIterations = NumIterations+1; % Update number of iterations
         NumClu(NumIterations) = length(unique(c)); % Update number of clusters
         DistUsed(NumIterations) = MinPixelDist(i); % Updated distance threshold used
@@ -125,7 +124,7 @@ caltrain = cell(1,nClus);
 % Create neuron mask arrays and calcium transient trans
 for i = CluToPlot'
     CurrClu = CurrClu + 1; % Update cluster counter
-    NeuronImage{CurrClu} = logical(zeros(Xdim,Ydim)); % Neuron mask
+    NeuronImage{CurrClu} = false(Xdim,Ydim); % Neuron mask
     NeuronImage{CurrClu}(PixelList{i}) = 1;
     NeuronPixels{CurrClu} = PixelList{i}; % Neuron mask pixel indices
     caltrain{CurrClu} = zeros(1,NumFrames); % Calicum transient train
@@ -151,7 +150,7 @@ try % Error catching clause: larger files are failing here for some reason
     
     % Plot all neurons and transients
     figure;
-    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage)
+    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage);
     
     % Plot iteration, cluster, and distance threshold info
     figure;
@@ -169,8 +168,7 @@ end
 
 save_name = 'ProcOut.mat';
 save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-    'MinPixelDist', 'DistUsed', 'InitPixelList', 'VersionString', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+    'MinPixelDist', 'DistUsed', 'InitPixelList', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
 
 
 end
-

@@ -61,20 +61,24 @@ end
 % calculate distance between input blob and all other blobs from previous
 % frame
 p1 = currstat; % Current blob peak location
-d = nan(1,length(oldstats));
-for i = 1:length(oldstats)
-    p2 = oldstats{i}; % Peak location for blob i from previous frame
-    
-%     d(i) = pdist([p1;p2],'euclidean'); % get distance
-    d(i) = sqrt(sum((p1 - p2).^2,2)); % DAVE - suggested change to improve speed.
-  
-end
+% d = nan(1,length(oldstats));
+% for i = 1:length(oldstats)
+%     p2 = oldstats{i}; % Peak location for blob i from previous frame
+%     
+% %     d(i) = pdist([p1;p2],'euclidean'); % get distance
+%     d(i) = sqrt(sum((p1 - p2).^2,2)); % DAVE - suggested change to improve speed.
+%   
+% end
+
+%WM edit - faster by ~0.001s per iteration of this function, but also more elegant.
+p2 = cell2mat(oldstats'); 
+d = sqrt(sum((repmat(p1,size(p2,1),1)-p2).^2,2))';
 
 % Locate the closest blob in oldstats and get the distance from its peak
 % pixel (mindist) as well as the pixel index (minidx)
 [mindist,minidx] = min(d); 
 
-if (mindist < distthresh)
+if mindist < distthresh
     % we'll consider this a match since it meet the min distance threshold
     MatchingSeg = SegList(minidx); % Pull the matching segment from the previous frame
 else

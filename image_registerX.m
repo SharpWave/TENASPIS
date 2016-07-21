@@ -1,3 +1,4 @@
+
 function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
     base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
 % RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, ...
@@ -102,7 +103,7 @@ FigNum = 1; % Start off figures at this number
 
 % Minimum number of transients a neuron must have in order to be included
 % when using neuron masks to do registration
-min_trans_thresh = 5; 
+min_trans_thresh = 3; 
 %% Step 0: Get varargins
 
 use_neuron_masks = 0; % default

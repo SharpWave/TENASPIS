@@ -1,4 +1,4 @@
-function ExpandTransients(Todebug)
+function [] = ExpandTransients(Todebug)
 % Takes the information from MakeNeurons (rough idea of when a transient is
 % occuring for each neuron) and NormalTraces and identifies when traces
 % actually start and end.  This is necessary because the output of
@@ -45,7 +45,7 @@ function ExpandTransients(Todebug)
 %   MinPeak: 1 x NumNeurons array containing the value of smallest peak of
 %   all transients identified in PosTr.
 %
-% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+% Copyright 2016 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 % 
@@ -66,7 +66,7 @@ function ExpandTransients(Todebug)
 
 %% Load relevant variables
 disp('Loading relevant variables from NormTraces and ProcOut')
-load('NormTraces.mat','trace','difftrace');
+load('NormTraces.mat','trace','difftrace','rawtrace');
 load('ProcOut.mat','NumNeurons','NumFrames','FT');
 
 %% Initialize variables
@@ -84,6 +84,8 @@ PoTrLength = TrLength; % Potential trace length
 PoTrPeakVal = TrPeakVal; % Potential Trace Peak Value
 PoTrPeakIdx = TrPeakIdx; % Potential Trace Peak Indices
 
+Threshold = 0.005;
+
 %% Part 1
 disp('Expanding transients part 1 (expand confirmed transients)...'); 
 
@@ -93,7 +95,7 @@ for i = 1:NumNeurons
     
     p.progress; % update progress bar
     
-    tr = trace(i,:); % Pull trace for neuron i
+    tr = rawtrace(i,:); % Pull trace for neuron i
     activefr = find(FT(i,:)); % Identify active frame indices determined from image segmentation for neuron i
     for j = 1:length(activefr)
         
@@ -157,11 +159,11 @@ PrePoPosTr = zeros(NumNeurons,NumFrames); % Initialize
 
 % Identify pre-expansion potential positive transients
 for i = 1:NumNeurons
-    tr = trace(i,:); % Get trace
+    tr = rawtrace(i,:); % Get trace
     
     % Potential transients must a) have trace values above 25% of the
     % minimum peak detected above, and b) not already be a valid transient
-    PrePoPosTr(i,1:NumFrames) = (tr >= MinPeak(i)*0.25).*(PosTr(i,:) == 0);
+    PrePoPosTr(i,1:NumFrames) = (tr >= Threshold).*(PosTr(i,:) == 0);
 end
 
 disp('Expanding transients part 2 (identify potential new transients)...'); 
@@ -219,4 +221,3 @@ if Todebug
 end
 
 end
-
