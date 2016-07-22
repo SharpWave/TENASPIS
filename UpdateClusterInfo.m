@@ -29,7 +29,7 @@ if(~exist('ClustersToUpdate','var'))
 end
 
 if(~exist('disp_to_screen','var'))
-    disp_to_screen = 1;
+    disp_to_screen = 0;
 end
   
 for i = ClustersToUpdate'
