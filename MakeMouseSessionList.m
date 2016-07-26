@@ -2775,6 +2775,32 @@ MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '02_08_2016';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Figure 8';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '4:00:08.16 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\02_08_2016\2 - Treadmill (free alternation)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '02_09_2016';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Figure 8';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '4:11:39.80 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\02_09_2016\2 - Treadmill (free alternation)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '02_18_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';

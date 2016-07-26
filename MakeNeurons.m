@@ -86,7 +86,7 @@ InitPixelList = PixelList;
 % close to one another into the same new cluster, then bumping up the
 % distance threshold incrementally until no new clusters are created or the
 % max distance threshold is reached.
-for i = 1:length(MinPixelDist)
+for i = MinPixelDist
     Cchanged = 1;
     oldNumCT = NumCT; % Update number
     while Cchanged == 1
@@ -94,10 +94,10 @@ for i = 1:length(MinPixelDist)
         
         % Iteratively merge spatially distant clusters together
         [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~,PixelAvg] = ...
-            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,PixelAvg);
+            AutoMergeClu(i,c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,PixelAvg);
         NumIterations = NumIterations+1; % Update number of iterations
         NumClu(NumIterations) = length(unique(c)); % Update number of clusters
-        DistUsed(NumIterations) = MinPixelDist(i); % Updated distance threshold used
+        DistUsed(NumIterations) = i; % Updated distance threshold used
         
         if (NumClu(NumIterations) == oldNumCT) 
             % If you end up with the same number of clusters as the previous iteration, exit
