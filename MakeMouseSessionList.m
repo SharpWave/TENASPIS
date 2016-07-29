@@ -3432,6 +3432,74 @@ if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_27_2016\1 - Treadmill (left)';
 end
 MD(i).Notes = [];
+
+%% Start Rats
+
+i = i+1;
+MD(i).Animal = 'Mace';
+MD(i).Date = '07_20_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201S';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'M:\Rat mPFC pilot\Mace\Imaging Sessions\07_20_2016\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Sol';
+MD(i).Date = '07_19_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201S';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'M:\Rat mPFC pilot\Sol\Imaging Sessions\07_19_2016\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Sol';
+MD(i).Date = '07_25_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201S';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'M:\Rat mPFC pilot\Sol\Imaging Sessions\07_25_2016\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Luke';
+MD(i).Date = '07_18_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201S';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'M:\Rat mPFC pilot\Luke\Imaging Sessions\07_18_2016\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Qui Gon';
+MD(i).Date = '07_25_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201S';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'M:\Rat mPFC pilot\Qui Gon\Imaging Sessions\07_25_2016\session 1\Working';
+end
+MD(i).Notes = [];
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
@@ -3447,4 +3515,4 @@ save MasterDirectory.mat MD;
 
 cd(CurrDir);
 
-loadMD;
+% loadMD; % What is this?
