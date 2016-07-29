@@ -33,5 +33,5 @@ p.stop;
 nSpikes = sum(FT,2)';    %Number of transients per neuron. 
 cellfun(@(x,y) x./y, ROIavg, num2cell(nSpikes),'unif',0);
 
-save ROIavg.mat ROIavg;
+save('ROIavg.mat','ROIavg','-v7.3');
 

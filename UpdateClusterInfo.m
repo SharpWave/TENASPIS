@@ -24,12 +24,12 @@ function [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = UpdateClu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 if(~exist('ClustersToUpdate','var'))
-     ClustersToUpdate = unique(c);
-    disp_to_screen = 1;
+    ClustersToUpdate = unique(c);
+    disp_to_screen = 0;
 end
 
 if(~exist('disp_to_screen','var'))
-    disp_to_screen = 1;
+    disp_to_screen = 0;
 end
   
 for i = ClustersToUpdate'

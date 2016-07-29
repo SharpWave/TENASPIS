@@ -50,11 +50,13 @@ function Tenaspis3(md,varargin)
     p.parse(md,varargin{:});
     
     %Compile. 
-    md = p.Results.md; 
     preprocess = p.Results.preprocess; 
     d1 = p.Results.d1; 
-    manualmask = p.Results.preprocess; 
+    manualmask = p.Results.manualmask; 
     MasterDirectory = p.Results.masterdirectory; 
+    
+    %Check whether initial mask exists. 
+    maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
     
 %% Make SLPDF and DFF movies. 
     if preprocess
@@ -68,9 +70,6 @@ function Tenaspis3(md,varargin)
     %Get directory for initial mask. 
     [initDate,initSession] = GetInitRegMaskInfo(md.Animal);
     initDir = ChangeDirectory(md.Animal,initDate,initSession); 
-    
-    %Check whether initial mask exists. 
-    maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
     
     %If initial mask doesn't exist or if manualmask is triggered...
     if maskExist==0 || manualmask

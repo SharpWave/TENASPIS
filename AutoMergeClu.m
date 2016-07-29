@@ -103,11 +103,12 @@ for i = CluToMerge'
         % too much
         [a,ia,ib] = intersect(PixelList{i},PixelList{cidx});
         
-        [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
-        
-        
-
-        
+        if ~isempty(ia)
+            [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
+        else
+            continue;
+        end
+ 
         if ((corrp > 0.05) || (corrval < 0.05))
 %             figure(1);
 %             subplot(1,4,1);

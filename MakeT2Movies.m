@@ -84,12 +84,6 @@ function MakeT2Movies(varargin)
     end
     p.stop;
     
-    disp('Making SLPDF.h5...');         %DF/F of LP divide. 
-    Make_DFF(tempfilename,SLPDFname);
-
-    disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
-    Make_DFF(threePixName,DFFname);
-    
     if d1
         disp('Making D1Movie.h5');     
         %Temporal smooth. 
@@ -105,8 +99,15 @@ function MakeT2Movies(varargin)
         delete SMovie.h5
     end
     
+    disp('Making SLPDF.h5...');         %DF/F of LP divide. 
+    Make_DFF(tempfilename,SLPDFname);
+
+    disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
+    Make_DFF(threePixName,DFFname);
+    
+    
 %% Delete old files
     delete(tempfilename);
     delete(threePixName);
-
+    
 end
