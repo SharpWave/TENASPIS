@@ -95,6 +95,10 @@ AI(20).animal = 'Luke';
 AI(20).init_date = '07_18_2016';
 AI(20).init_sess = 1;
 
+AI(21).animal = 'Qui Gon';
+AI(21).init_date = '07_31_2016';
+AI(21).init_sess = 1;
+
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))
         init_date = AI(i).init_date;
@@ -102,7 +106,12 @@ for i = 1:length(AI)
         return;
     end
 end
-        
+    
+% Send init_date and init_sess to NaN if they aren't found above
+if ~exist('init_date','var')
+    init_date = nan;
+    init_sess = nan;
+end
 
 end
 

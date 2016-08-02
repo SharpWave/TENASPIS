@@ -3584,7 +3584,7 @@ MD(i).Animal = 'Sol';
 MD(i).Date = '07_19_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Radial Arm Maze Center';
-MD(i).Room = '2 Cu 201S';
+MD(i).Room = '2 Cu 201D';
 MD(i).RecordStartTime = '';
 MD(i).Pix2CM = NaN; 
 if strcmp(userstr,'mouseimage')
@@ -3597,7 +3597,7 @@ MD(i).Animal = 'Sol';
 MD(i).Date = '07_25_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Radial Arm Maze Center';
-MD(i).Room = '2 Cu 201S';
+MD(i).Room = '2 Cu 201D';
 MD(i).RecordStartTime = '';
 MD(i).Pix2CM = NaN; 
 if strcmp(userstr,'mouseimage')
@@ -3610,7 +3610,7 @@ MD(i).Animal = 'Luke';
 MD(i).Date = '07_18_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Radial Arm Maze Center';
-MD(i).Room = '2 Cu 201S';
+MD(i).Room = '2 Cu 201D';
 MD(i).RecordStartTime = '';
 MD(i).Pix2CM = NaN; 
 if strcmp(userstr,'mouseimage')
@@ -3623,11 +3623,24 @@ MD(i).Animal = 'Qui Gon';
 MD(i).Date = '07_25_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Radial Arm Maze Center';
-MD(i).Room = '2 Cu 201S';
+MD(i).Room = '2 Cu 201D';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = []; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'M:\Rat mPFC pilot\Qui Gon\Imaging Sessions\07_25_2016\session 1\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Qui Gon';
+MD(i).Date = '07_31_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Object Context';
+MD(i).Room = 'Keene';
 MD(i).RecordStartTime = '';
 MD(i).Pix2CM = NaN; 
 if strcmp(userstr,'mouseimage')
-    MD(i).Location = 'M:\Rat mPFC pilot\Qui Gon\Imaging Sessions\07_25_2016\session 1\Working';
+    MD(i).Location = 'M:\Rat mPFC pilot\Qui Gon\Imaging Sessions\07_31_2016\Working';
 end
 MD(i).Notes = [];
 
@@ -3636,7 +3649,7 @@ MD(i).Animal = 'Mace';
 MD(i).Date = '07_20_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Radial Arm Maze Center';
-MD(i).Room = '2 Cu 201S';
+MD(i).Room = '2 Cu 201D';
 MD(i).RecordStartTime = '';
 MD(i).Pix2CM = NaN; 
 if strcmp(userstr,'mouseimage')
