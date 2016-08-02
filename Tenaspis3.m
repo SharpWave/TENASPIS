@@ -34,12 +34,15 @@ function Tenaspis3(md,varargin)
 %
 %           masterdirectory: string, path to master directory.
 %           Default='C:/MasterData'.
+%       
+%           Neuron extraction parameters: see SegmentFrame for options!
 %
 
 %% Parse inputs. 
     cd(md.Location);
     
     p = inputParser;
+    p.KeepUnmatched = true;
     p.addRequired('md',@(x) isstruct(x));
     p.addParameter('preprocess',~exist(fullfile(pwd,'SLPDF.h5'),'file'));      
                                             %Make SLPDF and DFF movies. 
@@ -94,7 +97,7 @@ function Tenaspis3(md,varargin)
     load(fullfile(pwd,'mask_reg.mat')); mask_reg = logical(mask_reg); 
 
     disp('Extracting blobs...');
-    ExtractBlobs('SLPDF.h5',mask_reg); 
+    ExtractBlobs('SLPDF.h5',mask_reg,varargin{:}); 
     
 %% Connect blobs into transients. 
     disp('Making transients...');

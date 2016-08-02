@@ -1,4 +1,4 @@
-function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
+function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh,varargin)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -14,6 +14,22 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %
 %       thresh: the starting value at which you will threshold the values in
 %       frame to being looking for blobs
+%
+%       varargin:
+%           minpixels: minimum blob size during initial segmentation.
+%           Default = 60.
+%
+%           adjminpixels: % minimum blob size during re-segmentation
+%           attempts. Default = 40.
+%
+%           threshinc: how much to increase threshold by on each
+%           re-segmentation iteration. Default = 0.001.
+%
+%           neuronthresh: maximum blob size to be considered a neuron.
+%           Default = 160.
+%
+%           minsolid: minimum blob solidity to be considered a neuron.
+%           Default = 0.9
 %
 %   OUTPUTS:
 %
@@ -44,11 +60,27 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Parameters
-minpixels = 60; % minimum blob size during initial segmentation
-adjminpixels = 40; % minimum blob size during re-segmentation attempts
-threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
-neuronthresh = 160; % maximum blob size to be considered a neuron
-minsolid = 0.9; % minimum blob solidity to be considered a neuron
+% minpixels = 60; % minimum blob size during initial segmentation
+% adjminpixels = 40; % minimum blob size during re-segmentation attempts
+% threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
+% neuronthresh = 160; % maximum blob size to be considered a neuron
+% minsolid = 0.9; % minimum blob solidity to be considered a neuron
+
+%% Parse inputs / assign parameters
+p = inputParser;
+p.KeepUnmatched = true;
+p.addParameter('minpixels',60,@(x) isnumeric(x)); % minimum blob size during initial segmentation
+p.addParameter('adjminpixels',40,@(x) isnumeric(x)); % minimum blob size during re-segmentation attempts
+p.addParameter('threshinc',0.001,@(x) isnumeric(x)); % how much to increase threshold by on each re-segmentation iteration
+p.addParameter('neuronthresh',160,@(x) isnumeric(x)); % maximum blob size to be considered a neuron
+p.addParameter('minsolid',0.9,@(x) isnumeric(x)); % minimum blob solidity to be considered a neuron
+p.parse(varargin{:});
+
+minpixels = p.Results.minpixels;
+adjminpixels = p.Results.adjminpixels;
+threshinc = p.Results.threshinc;
+neuronthresh = p.Results.neuronthresh;
+minsolid = p.Results.minsolid;
 
 % Setup variables for below
 PeakPix = []; % Locations of peak pixels 
@@ -170,5 +202,7 @@ for i = 1:length(cc.PixelIdxList)
     [~,idx] = max(initframe(cc.PixelIdxList{i}));
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));
 end
+
+% save BlobParameters minpixels adjminpixels threshinc neuronthresh minsolid
 
 end

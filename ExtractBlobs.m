@@ -1,4 +1,4 @@
-function [] = ExtractBlobs(file,mask)
+function [] = ExtractBlobs(file,mask,varargin)
 % [] = ExtractBlobs(file,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,6 +20,7 @@ function [] = ExtractBlobs(file,mask)
 % extract active cell "blobs" from movie in file
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
+% See SegmentFrame for varargin inputs.
 
 % Get Basic Movie Information
 info = h5info(file,'/Object');
@@ -46,6 +47,8 @@ disp('Getting movie stats...');
 
 thresh = 4*mean(stdframe);
 
+%%
+disp('Performing Frame Segmentation...')
 p = ProgressBar(NumFrames); % Initialize progress bar
 parfor i = 1:NumFrames 
     
@@ -57,13 +60,17 @@ parfor i = 1:NumFrames
 
     % Detect all blobs that are within the mask by adaptively thresholding
     % each frame
-    [cc{i},PeakPix{i},NumItsTaken{i},ThreshList{i}] = SegmentFrame(tempFrame,mask,thresh);
+    [cc{i},PeakPix{i},NumItsTaken{i},ThreshList{i}] = SegmentFrame(tempFrame,mask,thresh, varargin{:});
     
     p.progress; % update progress bar    
 end
 
 p.stop; % Shut-down progress bar
 
-save Blobs.mat cc mask PeakPix NumItsTaken ThreshList;
+%%
+
+varargin_params = varargin;
+
+save Blobs.mat cc mask PeakPix NumItsTaken ThreshList varargin_params
 
 end
