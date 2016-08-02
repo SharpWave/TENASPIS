@@ -145,22 +145,22 @@ for i = 1:length(caltrain)
 end
 
 %% Plot All neurons
-disp('Plotting neuron outlines')
-try % Error catching clause: larger files are failing here for some reason
+%disp('Plotting neuron outlines')
+%try % Error catching clause: larger files are failing here for some reason
     
     % Plot all neurons and transients
-    figure;
-    PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage);
+    %figure;
+    %PlotNeuronOutlines(InitPixelList,Xdim,Ydim,cTon,NeuronImage);
     
     % Plot iteration, cluster, and distance threshold info
-    figure;
-    [hax, ~, ~] = plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
-    xlabel('Iteration Number')
-    ylabel(hax(1),'Number of Clusters'); ylabel(hax(2),'Distance Threshold Used (pixels)')
+    %figure;
+    %[hax, ~, ~] = plotyy(1:length(NumClu),NumClu,1:length(NumClu),DistUsed);
+    %xlabel('Iteration Number')
+    %ylabel(hax(1),'Number of Clusters'); ylabel(hax(2),'Distance Threshold Used (pixels)')
     
-catch % Error catching clause
-    disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
-end
+%catch % Error catching clause
+    %disp('Error plotting Neuron outlines - Run PlotNeuronOutlines manually if you wish to see them')
+%end
 
 %% Save variables
 
