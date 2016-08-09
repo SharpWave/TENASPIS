@@ -53,7 +53,8 @@ function Tenaspis3(md,varargin)
     preprocess = p.Results.preprocess; 
     d1 = p.Results.d1; 
     manualmask = p.Results.manualmask; 
-    MasterDirectory = p.Results.masterdirectory; 
+    global MasterDirectory;                         %MasterDirectory is now a global variable. 
+    MasterDirectory = p.Results.masterdirectory;    %Insert line 'global MasterDirectory' to fetch. 
     
     %Check whether initial mask exists. 
     maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
