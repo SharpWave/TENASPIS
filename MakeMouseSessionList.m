@@ -3599,7 +3599,7 @@ MD(i).Date = '07_07_2016';
 MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '6:21:41.53 PM';
+MD(i).RecordStartTime = '6:28:13.34 PM';
 MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_07_2016\1 - Treadmill (left)';
