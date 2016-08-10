@@ -1,5 +1,5 @@
-function[Epochs] = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
-% [Epochs] = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
+function Epochs = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
+% Epochs = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
 %
 % Finds epochs where consecutive values of x are above InThresh.
 %
@@ -38,25 +38,38 @@ if (nargin < 3)
 end
 
 OverInThresh = (x > InThresh);
-InEpoch = 0;
-NumEpochs = 0;
+% InEpoch = 0;
+% NumEpochs = 0;
 
-ThreshEpochs = [];
+% ThreshEpochs= [];
+% 
+% for i = 1:length(x)
+%   if((OverInThresh(i) == 0) && (InEpoch == 1))
+%      ThreshEpochs(NumEpochs,2) = i-1;
+%      InEpoch = 0;
+%      continue;
+%    end
+% 
+%   if((OverInThresh(i) == 1) && (InEpoch == 0))
+%     % New Epoch
+%     NumEpochs = NumEpochs + 1;
+%     ThreshEpochs(NumEpochs,1) = i;
+%     InEpoch = 1;
+%     continue;
+%   end
+% end
 
-for i = 1:length(x)
-  if((OverInThresh(i) == 0) && (InEpoch == 1))
-     ThreshEpochs(NumEpochs,2) = i-1;
-     InEpoch = 0;
-     continue;
-   end
-
-  if((OverInThresh(i) == 1) && (InEpoch == 0))
-    % New Epoch
-    NumEpochs = NumEpochs + 1;
-    ThreshEpochs(NumEpochs,1) = i;
-    InEpoch = 1;
-    continue;
-  end
+% Simplistic and faster way to do the above. 
+deltaOverInThresh = diff(OverInThresh);
+onsets = find(deltaOverInThresh==1);
+offsets = find(deltaOverInThresh==-1);
+NumEpochs = size(onsets,2);
+ThreshEpochs(:,1) = onsets + 1;
+if size(offsets,2) == NumEpochs; 
+    ThreshEpochs(:,2) = offsets;
+else    %Handles the case for when the trace is still active when the recording cuts off. 
+    ThreshEpochs(1:size(offsets,2),2) = offsets;
+    ThreshEpochs(end,2) = 0;
 end
 
 if(OverInThresh(end) == 1)
@@ -78,12 +91,4 @@ end
 
 Epochs = ThreshEpochs;
 
-
-
-
-    
-
-
-    
-    
-    
+end
