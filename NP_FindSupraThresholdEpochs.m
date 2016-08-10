@@ -69,21 +69,21 @@ if size(offsets,2) == NumEpochs;
     ThreshEpochs(:,2) = offsets;
 else    %Handles the case for when the trace is still active when the recording cuts off. 
     ThreshEpochs(1:size(offsets,2),2) = offsets;
-    ThreshEpochs(end,2) = 0;
+    ThreshEpochs(end,2) = length(x);
 end
 
-if(OverInThresh(end) == 1)
-    ThreshEpochs(NumEpochs,2) = length(x);
-end
+% if(OverInThresh(end) == 1)
+%     ThreshEpochs(NumEpochs,2) = length(x);
+% end
 
 if (omitends == 1)
-    if (OverInThresh(end) == 1)
+    if (OverInThresh(end))
       %Still in an epoch at the end, omit it
       NumEpochs = NumEpochs - 1;
       ThreshEpochs = ThreshEpochs(1:NumEpochs,:);
     end
 
-    if (OverInThresh(1) == 1)
+    if (OverInThresh(1))
       NumEpochs = NumEpochs-1;
       ThreshEpochs = ThreshEpochs(2:NumEpochs+1,:);
     end
