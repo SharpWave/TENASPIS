@@ -1,5 +1,5 @@
 function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
-% [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
+% [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
 %   Does so in an adaptive manner by iteratively bumping up the threshold
@@ -25,6 +25,8 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %
 %       NumItsTaken: number of iterations taken to identify each blob.
 %
+%       threshlist: threshold at which each blob was found. 
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -44,14 +46,13 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Parameters
-minpixels = 60; % minimum blob size during initial segmentation
-adjminpixels = 40; % minimum blob size during re-segmentation attempts
-threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
+minpixels = 60;     % minimum blob size during initial segmentation
+adjminpixels = 40;  % minimum blob size during re-segmentation attempts
+threshinc = 0.001;  % how much to increase threshold by on each re-segmentation iteration
 neuronthresh = 160; % maximum blob size to be considered a neuron
-minsolid = 0.9; % minimum blob solidity to be considered a neuron
+minsolid = 0.9;     % minimum blob solidity to be considered a neuron
 
 % Setup variables for below
-PeakPix = []; % Locations of peak pixels 
 threshlist = [];
 badpix = find(mask == 0); % Locations of pixels that are outside the mask and should be excluded
 
@@ -60,21 +61,21 @@ initframe = single(frame);
 
 blankframe = zeros(size(initframe));
 minval = min(initframe(:));
-threshframe = frame > thresh; % apply threshold, make it into a logical array
-threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
+threshframe = frame > thresh;                       % apply threshold, make it into a logical array
+threshframe = bwareaopen(threshframe,minpixels,4);  % remove blobs smaller than minpixels
 
 % Set up variables for while loop below
 newlist = [];
 currnewList = 0;
-BlobsInFrame = 1;
+BlobsInFrame = true;
 NumIts = 0;
 tNumItsTaken = [];
 
 while BlobsInFrame
     NumIts = NumIts + 1;
-    BlobsInFrame = 0; % reset each loop
-    % threshold and segment the frame
+    BlobsInFrame = false; % reset each loop
     
+    % threshold and segment the frame
     bb = bwconncomp(threshframe,4); % Look for connected regions/blobs in threshframe
     rp = regionprops(bb,'Area','Solidity'); % Pull area and solidity properties
     
@@ -83,8 +84,7 @@ while BlobsInFrame
         break;
     end
     
-    % if there were blobs, check if any of them satisfy size and
-    % solidity criteria
+    % if there were blobs, deal them into a variable. 
     bsize = deal([rp.Area]);
     bSolid = deal([rp.Solidity]);
     
@@ -105,7 +105,7 @@ while BlobsInFrame
     end
     
     % If there are still blobs left
-    BlobsInFrame = 1;
+    BlobsInFrame = true;
     % Define old blobs as those that do NOT meet either the size OR solidity
     % criteria.
     oldn = union(find(bsize > neuronthresh), find(bSolid<minsolid));
@@ -123,7 +123,7 @@ while BlobsInFrame
     % remove areas with less than adjminpixels
     threshframe = bwareaopen(threshframe,adjminpixels,4); 
     
-    % Run throuh while loop again to determine if new threshold has
+    % Run through while loop again to determine if new threshold has
     % produced any more legitimate blobs.
     
 end
@@ -165,7 +165,7 @@ newcc.Connectivity = 4;
 cc = newcc;
 
 % get peak pixel
-PeakPix = cell(1,length(cc.PixelIdxList)); 
+PeakPix = cell(1,length(cc.PixelIdxList));  %Location of peak pixels. 
 for i = 1:length(cc.PixelIdxList)
     [~,idx] = max(initframe(cc.PixelIdxList{i}));
     [PeakPix{i}(1),PeakPix{i}(2)] = ind2sub(cc.ImageSize,cc.PixelIdxList{i}(idx));

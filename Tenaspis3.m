@@ -1,5 +1,25 @@
 function Tenaspis3(md,varargin)
 %Tenaspis3(md,varargin)
+%
+%   Highest level function for extracting neurons from single-photon
+%   imaging data.
+%
+%   INPUTS
+%       md: Master Directory entry. 
+%
+%       varargin: 
+%           preprocess: logical, whether you want to run MakeT2Movies.
+%           Default=whether SLPDF exists in your directory.
+%
+%           d1: logical, whether you want to make first derivative movie
+%           during MakeT2Movies. Default=false.
+%
+%           manualmask: logical, whether you want to draw mask manually.
+%           Default=false. 
+%
+%           masterdirectory: string, path to master directory.
+%           Default='C:/MasterData'.
+%
 % Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences 
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,23 +38,6 @@ function Tenaspis3(md,varargin)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%   INPUTS
-%       md: Master Directory entry. 
-%
-%       varargin: 
-%           preprocess: logical, whether you want to run MakeT2Movies.
-%           Default=whether SLPDF exists in your directory.
-%
-%           d1: logical, whether you want to make first derivative movie
-%           during MakeT2Movies. Default=false.
-%
-%           manualmask: logical, whether you want to draw mask manually.
-%           Default=false. 
-%
-%           masterdirectory: string, path to master directory.
-%           Default='C:/MasterData'.
-%
 
 %% Parse inputs. 
     cd(md.Location);
@@ -78,7 +81,9 @@ function Tenaspis3(md,varargin)
         cd(initDir); 
         
         %Draw mask on the initial session's minimum projection. 
-        MakeMaskSingleSession;
+        MakeMaskSingleSession('DFF.h5');
+        
+        %Save to MasterDirectory. 
         copyfile('singlesessionmask.mat',fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']));
         copyfile('ICmovie_min_proj.tif',fullfile(MasterDirectory,[md.Animal,'_init_min_proj.tif']));     
     end
@@ -99,7 +104,7 @@ function Tenaspis3(md,varargin)
     
 %% Connect blobs into transients. 
     disp('Making transients...');
-    MakeTransients; 
+    MakeTransients('DFF.h5'); 
     !del InitClu.mat
 
 %% Group together individual transients under individual neurons.

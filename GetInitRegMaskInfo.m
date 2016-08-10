@@ -1,5 +1,22 @@
 function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
 % [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
+%
+%   Gets the date and session number of the initial session for the animal
+%   specified as animal_id. This session will contain the minimum
+%   projection of the initial recording to which future recording sessions
+%   will be aligned. Animal entries and their respective initial dates and
+%   session numbers must be manually edited in this function prior to
+%   running it. 
+%
+%   INPUT
+%       animal_id: String, ID of the animal. Must be unique and must match one
+%       of the AI.animal fields below. 
+%
+%   OUTPUTS
+%       init_date: String, date of the initial session in the format
+%       MM_DD_YYYY. 
+%
+%       init_sess: Scalar, initial session number. 
 %  
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,24 +35,7 @@ function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%   Gets the date and session number of the initial session for the animal
-%   specified as animal_id. This session will contain the minimum
-%   projection of the initial recording to which future recording sessions
-%   will be aligned. Animal entries and their respective initial dates and
-%   session numbers must be manually edited in this function prior to
-%   running it. 
-%
-%   INPUT
-%       animal_id: String, ID of the animal. Must be unique and must match one
-%       of the AI.animal fields below. 
-%
-%   OUTPUTS
-%       init_date: String, date of the initial session in the format
-%       MM_DD_YYYY. 
-%
-%       init_sess: Scalar, initial session number. 
-%
+
 
 %% Initial session data.
 i = 1;

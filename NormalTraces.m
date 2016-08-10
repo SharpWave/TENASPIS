@@ -1,4 +1,4 @@
-function [] = NormalTraces(moviefile)
+function NormalTraces(moviefile)
 % This function takes the ROI output of MakeNeurons and extracts
 % traces in the straightfoward-most way (by summing up all the pixels in a
 % given neuron's ROI. Also normalizes traces at the end and get their
