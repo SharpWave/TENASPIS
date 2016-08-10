@@ -1,13 +1,34 @@
-function ExtractBlobs(movie,mask)
-% ExtractBlobs(movie,mask)
+function ExtractBlobs(moviefile,mask)
+% ExtractBlobs(moviefile,mask)
 %
 %   Extracts active neurons from "blob" images in movie frames. 
 %
 %   INPUTS
-%       file: Movie file. 
+%       moviefile: movie file (currently supports h5). 
 %
-%       Mask: Logical matrix with same dimensions as movie frame specifying
+%       mask: Logical matrix with same dimensions as movie frame specifying
 %       which areas to use and which not to use. 
+%
+%   OUTPUT variables in Blobs.mat
+%       cc: 1xF (F = # of frames) structure containing relevant data on the
+%       discovered blobs.
+%           fields...
+%               NumObjects, number of blobs.
+%               ImageSize, frame dimensions.
+%               Connectivity, 4.
+%
+%       mask: same as input.
+%
+%       PeakPix: 1xF cell array with nested 1xN (N = # of blobs detected
+%       that frame) cell array containing a 2-element vector, the XY
+%       coordinates of the peak pixel of that blob on that frame.
+%
+%       NumItsTaken: 1xF cell array with nested N-element vector containing
+%       the number of iterations of threshold increasing required to detect
+%       that blob in SegmentFrame.
+%       
+%       threshlist: 1xF cell array with nested (N+1)-element vector
+%       containing the thresholds used for each blob. 
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -28,7 +49,7 @@ function ExtractBlobs(movie,mask)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get Basic Movie Information
-info = h5info(movie,'/Object');
+info = h5info(moviefile,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
@@ -49,7 +70,7 @@ ThreshList = cell(1,NumFrames);
 % Run through each frame and get the standard deviation of each individual
 % frame. 
 disp('Getting movie stats...');
-[~,stdframe] = moviestats(movie);
+[~,stdframe] = moviestats(moviefile);
 
 %Make threshold above the 4th standard deviation. 
 thresh = 4*mean(stdframe);
@@ -58,7 +79,7 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 parfor i = 1:NumFrames 
     
     % Read in each imaging frame
-    tempFrame = loadframe(movie,i,info);
+    tempFrame = loadframe(moviefile,i,info);
 %     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
     
     %thresh = 0.04; %median(tempFrame(maskpix)); % Set threshold

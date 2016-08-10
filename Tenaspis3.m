@@ -7,20 +7,24 @@ function Tenaspis3(md,varargin)
 %   INPUTS
 %       md: Master Directory entry. 
 %
-%       varargin: 
-%           preprocess: logical, whether you want to run MakeT2Movies.
-%           Default=whether SLPDF exists in your directory.
+%   (optional)
+%       preprocess: logical, whether you want to run MakeT2Movies.
+%       Default=whether SLPDF exists in your directory.
 %
-%           d1: logical, whether you want to make first derivative movie
-%           during MakeT2Movies. Default=false.
+%       d1: logical, whether you want to make first derivative movie
+%       during MakeT2Movies. Default=false.
 %
-%           manualmask: logical, whether you want to draw mask manually.
-%           Default=false. 
+%       manualmask: logical, whether you want to draw mask manually.
+%       Default=false. 
 %
-%           masterdirectory: string, path to master directory.
-%           Default='C:/MasterData'.
+%       masterdirectory: string, path to master directory.
+%       Default='C:/MasterData'.
 %
-% Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences 
+%       min_trans_length: scalar, minimum transient frame duration to be
+%       included during MakeNeurons. Default=10.
+%
+% Tenaspis: Technique for Extracting Neuronal Activity from Single Photon
+% Image Sequences
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -44,13 +48,15 @@ function Tenaspis3(md,varargin)
     
     p = inputParser;
     p.addRequired('md',@(x) isstruct(x));
-    p.addParameter('preprocess',~exist(fullfile(pwd,'SLPDF.h5'),'file'));      
-                                            %Make SLPDF and DFF movies. 
-    p.addParameter('d1',false);             %Make first derivative movie. 
-    p.addParameter('manualmask',false);     %Draw mask manually.
-    p.addParameter('masterdirectory','C:/MasterData',@(x) ischar(x)); 
-                                            %Master directory.
-    p.parse(md,varargin{:});
+    p.addParameter('preprocess',...
+        ~exist(fullfile(pwd,'SLPDF.h5'),'file'));   %Make SLPDF and DFF movies.                              
+    p.addParameter('d1',false);                     %Make first derivative movie. 
+    p.addParameter('manualmask',false);             %Draw mask manually.
+    p.addParameter('masterdirectory',...    
+        'C:/MasterData',@(x) ischar(x));            %Master directory.               
+    p.addParameter('min_trans_length',...           %Minimum transient length. 
+        10,@(x) isnumeric(x) && isscalar(x));
+    p.parse(md,varargin{:});                
     
     %Compile. 
     preprocess = p.Results.preprocess; 
@@ -58,6 +64,7 @@ function Tenaspis3(md,varargin)
     manualmask = p.Results.manualmask; 
     global MasterDirectory;                         %MasterDirectory is now a global variable. 
     MasterDirectory = p.Results.masterdirectory;    %Insert line 'global MasterDirectory' to fetch. 
+    min_trans_length = p.Results.min_trans_length;
     
     %Check whether initial mask exists. 
     maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
@@ -109,12 +116,12 @@ function Tenaspis3(md,varargin)
 
 %% Group together individual transients under individual neurons.
     disp('Making neurons...'); 
-    MakeNeurons('min_trans_length',10);
+    MakeNeurons('min_trans_length',min_trans_length);
 
 %% Pull traces out of each neuron using the High-pass movie.
     disp('Normalizing traces...'); 
     NormalTraces('SLPDF.h5');
-    MakeROIavg;
+    MakeROIavg('SLPDF.h5');
     load('ProcOut.mat','NeuronPixels','Xdim','Ydim','NumFrames');
     load('ROIavg.mat');
     MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg);
@@ -128,8 +135,8 @@ function Tenaspis3(md,varargin)
 
 %% Determine rising events/on-times for all transients.
     DetectGoodSlopes;
-
-    %Merge ambiguous neurons.
+    
+%% Merge ambiguous neurons.
     load ('T2output.mat','FT','NeuronPixels');
     for i = 1:2
        indat{1} = FT;

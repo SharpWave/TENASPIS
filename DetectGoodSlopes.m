@@ -1,4 +1,4 @@
-function [] = DetectGoodSlopes()
+function DetectGoodSlopes()
 % DetectGoodSlopes
 %
 % Detects rising events for each neuron's transients.  Then,
@@ -70,7 +70,7 @@ for i = 1:NumNeurons
     dfdt = zscore(difftrace(i,:)); % normalize difftrace (temporal derivative of trace)
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps); % ID epochs where transients occur
     
-    % Step throuh each epoch for neuron i
+    % Step through each epoch for neuron i
     for j = 1:size(epochs,1)
         curr = epochs(j,1); % set current frame to epoch start
         inTr = 0; % set inTransient variable to 0 to start

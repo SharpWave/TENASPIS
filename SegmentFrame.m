@@ -16,16 +16,23 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %       frame to being looking for blobs
 %
 %   OUTPUTS:
+%       cc: 1xF (F = # of frames) structure containing relevant data on the
+%       discovered blobs.
+%           fields...
+%               NumObjects, number of blobs.
+%               ImageSize, frame dimensions.
+%               Connectivity, 4.
 %
-%       cc: structure variable containing all the relevant data/statistics 
-%       about the blobs discovered (e.g. the pixel indices for each blob) 
+%       PeakPix: 1xF cell array with nested 1xN (N = # of blobs detected
+%       that frame) cell array containing a 2-element vector, the XY
+%       coordinates of the peak pixel of that blob on that frame.
 %
-%       PeakPix: a cell array with the x/y pixel indices for the location 
-%       of the peak pixel intensity for each blob.
+%       NumItsTaken: 1xF cell array with nested N-element vector containing
+%       the number of iterations of threshold increasing required to detect
+%       that blob in SegmentFrame.
 %
-%       NumItsTaken: number of iterations taken to identify each blob.
-%
-%       threshlist: threshold at which each blob was found. 
+%       threshlist: 1xF cell array with nested (N+1)-element vector
+%       containing the thresholds used for each blob. 
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

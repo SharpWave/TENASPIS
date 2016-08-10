@@ -1,5 +1,5 @@
-function MakeTransients(movie)
-% MakeTransients(movie)
+function MakeTransients(moviefile)
+% MakeTransients(moviefile)
 %
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
 % one, whether there was one on the previous frame that matched it and if
@@ -17,7 +17,7 @@ function MakeTransients(movie)
 %       Xdim, Ydim: x/y size of all the imaging frames
 %
 %       SegChain: A cell array containing a list of all the transients
-%       identified, of the form: SegChain{Transient_number}.{[frame1,
+%       identified, of the form: SegChain{Transient_number}{[frame1,
 %       object_num1], [frame2, object_num2],...}, where object_numx is the
 %       object number in the cc variable from ExtractBlobs for frame x.
 %
@@ -52,7 +52,7 @@ max_trans_dist = 2; % (default) maximum number of pixels a transient can travel 
 load ('Blobs.mat','cc','PeakPix','ThreshList');
 
 % Get basic movie info
-info = h5info(movie,'/Object');
+info = h5info(moviefile,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
