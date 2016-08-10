@@ -64,12 +64,18 @@ deltaOverInThresh = diff(OverInThresh);
 onsets = find(deltaOverInThresh==1);
 offsets = find(deltaOverInThresh==-1);
 NumEpochs = size(onsets,2);
-ThreshEpochs(:,1) = onsets + 1;
-if size(offsets,2) == NumEpochs; 
-    ThreshEpochs(:,2) = offsets;
-else    %Handles the case for when the trace is still active when the recording cuts off. 
-    ThreshEpochs(1:size(offsets,2),2) = offsets;
-    ThreshEpochs(end,2) = length(x);
+if NumEpochs > 0
+    ThreshEpochs(:,1) = onsets + 1;
+    
+    if size(offsets,2) == NumEpochs; 
+        ThreshEpochs(:,2) = offsets;
+    else    %Handles the case for when the trace is still active when the recording cuts off. 
+        ThreshEpochs(1:size(offsets,2),2) = offsets;
+        ThreshEpochs(end,2) = length(x);
+    end
+    
+else
+    ThreshEpochs = [];
 end
 
 % if(OverInThresh(end) == 1)
