@@ -56,6 +56,7 @@ elseif isempty(i)
     disp('Directory not found! Check MakeMouseSessionList.'); 
 else
     dirstr = MD(i).Location; 
+    session_struct = MD(i);
     
     if change_dir_flag
         cd(dirstr); 
