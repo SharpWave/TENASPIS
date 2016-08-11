@@ -142,7 +142,7 @@ NeuronPixels = NeuronPixels(ROIidx);
 
 %% Save variables
 
-save T2output.mat NeuronPixels NeuronImage FT ROIidx;
+save T3output.mat NeuronPixels NeuronImage FT ROIidx;
 
 end
 
