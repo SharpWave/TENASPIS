@@ -70,26 +70,30 @@ expPosTr = PosTr;
 %% Add potential transients
 
 disp('Adding potential transients...');
-p = ProgressBar(NumNeurons); 
+% Initialize progress bar
+resol = 1;                                  % Percent resolution for progress bar, in this case 1%
+update_inc = round(NumNeurons/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 for i = 1:NumNeurons
     % Identify potential epochs where there may be a spike for neuron i
     PoEpochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps); 
     
     % Loop through each epoch and check if the correlation between the
     % pixels in that epoch and the averaged ROI ever exceeds the threshold
-    
-
     for j = 1:size(PoEpochs,1)
         MaxCorr = max(fCorrTrace(i,PoEpochs(j,1):PoEpochs(j,2)));
-        
-
         
         if MaxCorr > CorrThresh
             %display('new transient!');
             expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1; % Add in new transient
         end
+        
     end
-    p.progress;
+    
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
+    
 end
 p.stop; 
 

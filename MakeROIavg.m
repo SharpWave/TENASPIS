@@ -14,8 +14,10 @@ Ydim = info.Dataspace.Size(2);
 ROIavg = cell(1,NumNeurons); 
 [ROIavg{:}] = deal(zeros(Xdim,Ydim));
 NumFrames = size(FT,2);
-p=ProgressBar(NumFrames);
 
+resol = 1; % Percent resolution for progress bar, in this case 10%
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 %For each frame..
 for i = 1:NumFrames
     %Grab the frame from SLPDF.h5. 
@@ -29,7 +31,10 @@ for i = 1:NumFrames
         ROIavg{j} = ROIavg{j} + tempFrame;
     end
     
-    p.progress; 
+    % Update progress bar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop;
 

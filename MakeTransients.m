@@ -63,8 +63,8 @@ SegChain = [];
 SegList = zeros(NumFrames,100); 
 
 % Initialize progress bar
-resol = 1; % Percent resolution for progress bar, in this case 10%
-update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+resol = 1;                                  % Percent resolution for progress bar, in this case 1%
+update_inc = round(NumFrames/(100/resol));  % Get increments for updating ProgressBar
 p = ProgressBar(100/resol);
 
 %% Run through loop to connect blobs between successive frames

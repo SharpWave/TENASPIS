@@ -1,4 +1,6 @@
 function NormalTraces(moviefile)
+% NormalTraces(moviefile)
+%
 % This function takes the ROI output of MakeNeurons and extracts
 % traces in the straightfoward-most way (by summing up all the pixels in a
 % given neuron's ROI. Also normalizes traces at the end and get their
@@ -46,7 +48,10 @@ trace = zeros(NumNeurons,NumFrames);
 
 % Initialize progress bar
 disp('Calculating traces for each neuron');
-p=ProgressBar(NumFrames);
+% Initialize progress bar
+resol = 10;                                 % Percent resolution for progress bar, in this case 10%
+update_inc = round(NumFrames/(100/resol));  % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 parfor i = 1:NumFrames
     % Read in each frame
     tempFrame = loadframe(moviefile,i,info);
@@ -56,7 +61,10 @@ parfor i = 1:NumFrames
     for j = 1:NumNeurons
         trace(j,i) = mean(tempFrame(NeuronPixels{j}));
     end
-    p.progress; % Update progress bar
+    
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop; % Terminate progress bar
 
