@@ -83,6 +83,14 @@ AI(17).animal = 'Polaris';
 AI(17).init_date = '06_21_2016';
 AI(17).init_sess = 1; 
 
+AI(18).animal = 'Qui Gon';
+AI(18).init_date = '07_18_2016';
+AI(18).init_sess = 1; 
+
+AI(19).animal = 'Obi Won';
+AI(19).init_date = '07_19_2016';
+AI(19).init_sess = 1; 
+
 for i = 1:length(AI)
     if (strcmpi(AI(i).animal,animal_id))
         init_date = AI(i).init_date;

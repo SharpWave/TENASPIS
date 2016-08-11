@@ -1763,7 +1763,7 @@ i = i+1;
 MD(i).Animal = 'GCamp6f_45';
 MD(i).Date = '08_30_2015';
 MD(i).Session = 2;
-MD(i).Env = '2env - octagon mid';
+MD(i).Env = '2env - octagon left 90CW';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
     MD(i).Location = 'J:\GCamp Mice\Working\G45\2env\08_30_2015\2 - oct left 90CW\Working';
@@ -3629,6 +3629,35 @@ if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_27_2016\1 - Treadmill (left)';
 end
 MD(i).Notes = [];
+
+%% Rat Sessions
+
+i = i+1;
+MD(i).Animal = 'Qui Gon';
+MD(i).Date = '07_18_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201D';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'Nat')
+    MD(i).Location = 'D:\Rats\mPFC Pilots\Qui Gon\07_18_2016\Working';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Obi Won';
+MD(i).Date = '07_19_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Radial Arm Maze Center';
+MD(i).Room = '2 Cu 201D';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'Nat')
+    MD(i).Location = 'D:\Rats\mPFC Pilots\Obi Won\07_19_2016\Working';
+end
+MD(i).Notes = [];
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
