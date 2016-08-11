@@ -52,6 +52,10 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 %   'use_neuron_masks' (optional): 1 uses neuron masks to register sessions, not the
 %   minimum projection.  0 = default
 %
+%   'use_allmask' (optional): use this followed by the base mask and the
+%   reg mask to register using your own custom masks.  use in conjunction
+%   with create_allICMask and/or make_allactive_mask
+%
 %   'initial_trans' (optional): using this followed by an affine2d
 %   transformation to start with sets the initial transformation to use.
 %   Good for debugging/correcting a bad registration.
@@ -77,7 +81,7 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 % 180 degrees...
 % - Automatically fill in expected neuron for base mapping
 
-close all;
+% close all;
 
 %% User inputs - if set the same the function should run without any user input during the mapping portion
 
@@ -99,7 +103,7 @@ multi_growth = 1.1; % optimizer.GrowthFactor = 1.05 default
 multi_epsilon = 1.05e-6; % optimizer.Epsilon = 1.05e-6 default
 multi_init_rad = 6.25e-3; % optimizer.InitialRadius = 6.25e-3 default
 
-FigNum = 1; % Start off figures at this number
+% FigNum = 1; % Start off figures at this number
 
 % Minimum number of transients a neuron must have in order to be included
 % when using neuron masks to do registration
@@ -115,6 +119,13 @@ for j = 1:length(varargin)
        if use_neuron_masks == 1
            name_append = '_regbyneurons';
        end
+    end
+    
+    if strcmpi('use_allmask',varargin{j})
+        use_neuron_masks = 2;
+        name_append = '_regbyallactive';
+        base_mask = varargin{j+1};
+        reg_mask = varargin{j+2};
     end
     
     if strcmpi('initial_trans',varargin{j})
@@ -194,6 +205,9 @@ elseif use_neuron_masks == 1 % Create binary all neuron masks for registration
     load('ProcOut.mat','NumTransients')
     reg_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
     
+elseif use_neuron_masks == 2
+    base_image = base_mask;
+    reg_image = reg_mask;
 end
 
 
@@ -307,8 +321,9 @@ while strcmpi(manual_flag,'y')
     tform_manual.T = T_manual;
     moving_reg_manual = imwarp(reg_image,tform_manual,'OutputView',imref2d(size(base_image)),'InterpolationMethod','nearest');
    
-    FigNum = FigNum + 1;
-    figure(FigNum)
+%     FigNum = FigNum + 1;
+%     figure(FigNum)
+    figure
     imagesc(abs(moving_reg_manual - base_image)); colormap(gray); colorbar
     title('Registered Image - Base Image after manual adjust')
     
@@ -338,7 +353,7 @@ if exist(unique_filename,'file') == 2
 else
     size_info = 1;
 end
-FigNum = FigNum + 1;
+% FigNum = FigNum + 1;
 
 % Save info into RegistrationInfo data structure.
 RegistrationInfoX(size_info).mouse = mouse_name;
