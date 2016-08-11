@@ -49,10 +49,10 @@ trace = zeros(NumNeurons,NumFrames);
 % Initialize progress bar
 disp('Calculating traces for each neuron');
 % Initialize progress bar
-resol = 10;                                 % Percent resolution for progress bar, in this case 10%
+resol = 5;                                  % Percent resolution for progress bar, in this case 5%
 update_inc = round(NumFrames/(100/resol));  % Get increments for updating ProgressBar
 p = ProgressBar(100/resol);
-parfor i = 1:NumFrames
+for i = 1:NumFrames
     % Read in each frame
     tempFrame = loadframe(moviefile,i,info);
     tempFrame = tempFrame(:);
