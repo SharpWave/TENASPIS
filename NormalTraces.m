@@ -90,7 +90,7 @@ for i = 1:NumNeurons
 end
 rawtrace(:,1:11) = 0;                           % Set 10 first frames to 0
 rawtrace(:,end-11:end) = 0;                     % Set 10 last frames to 0
-difftrace(i,2:NumFrames) = diff(trace,[],2);    % Temporal derivative. 
+difftrace(:,2:NumFrames) = diff(trace,[],2);    % Temporal derivative. 
 difftrace(:,1:11) = 0;                          % Set 10 first frames to 0
 difftrace(:,end-11:end) = 0;                    % Set 10 last frames to 0
 
