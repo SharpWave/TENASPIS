@@ -60,21 +60,21 @@ OverInThresh = (x > InThresh);
 % end
 
 % Simplistic and faster way to do the above. 
-deltaOverInThresh = diff(OverInThresh);
-onsets = find(deltaOverInThresh==1);
-offsets = find(deltaOverInThresh==-1);
-NumEpochs = size(onsets,2);
-if NumEpochs > 0
-    ThreshEpochs(:,1) = onsets + 1;
+deltaOverInThresh = diff([0 OverInThresh]); %Take the difference of the logical vector.
+onsets = find(deltaOverInThresh==1);        %Find indices where OverInThresh went from 0 to 1.
+offsets = find(deltaOverInThresh==-1) - 1;  %Find indices where OverInThresh went from 1 to 0. 
+NumEpochs = size(onsets,2);                 %Number of epochs. 
+if NumEpochs > 0    %If there is ever a suprathreshold event...
+    ThreshEpochs(:,1) = onsets;          
     
     if size(offsets,2) == NumEpochs; 
-        ThreshEpochs(:,2) = offsets;
+        ThreshEpochs(:,2) = offsets;        
     else    %Handles the case for when the trace is still active when the recording cuts off. 
         ThreshEpochs(1:size(offsets,2),2) = offsets;
         ThreshEpochs(end,2) = length(x);
     end
     
-else
+else                %Otherwise, set empty. 
     ThreshEpochs = [];
 end
 
