@@ -139,14 +139,14 @@ function Tenaspis3(md,varargin)
 %% Merge ambiguous neurons.
     load ('T2output.mat','FT','NeuronPixels');
     for i = 1:2
-       indat{1} = FT;
-       outdat = MakeTrigAvg(indat);
-       MergeROIs(FT,NeuronPixels,outdat{1});
+       FTs{1} = FT;
+       TrigAvgs = MakeTrigAvg(FTs);
+       MergeROIs(FT,NeuronPixels,TrigAvgs{1});
        load ('FinalOutput.mat','FT','NeuronPixels');
     end
-    indat{1} = FT;
-    outdat = MakeTrigAvg(indat);
-    MeanT = outdat{1};
+    FTs{1} = FT;
+    TrigAvgs = MakeTrigAvg(FTs);
+    MeanT = TrigAvgs{1};
     save('MeanT.mat', 'MeanT', '-v7.3');
 
     FinalTraces('SLPDF.h5');    

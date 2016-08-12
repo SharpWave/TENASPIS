@@ -27,15 +27,10 @@ function AddPoTransients()
 %   NeuronPixels, NeuronImage, Xdim, Ydim.
 %
 %
-% OUTPUTS - saved in expPosTr.mat
+% OUTPUT - saved in expPosTr.mat
 %
 %   expPosTr - expanded positive transients, a NumNeurons x NumFrames
 %   logical array for final calcium transient activity
-%
-%   expPosIdx - indices to the mean-maximum pixel for each added transient
-%   in expPosTr
-%
-%   buddies - indices to the each neuron's buddies
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
