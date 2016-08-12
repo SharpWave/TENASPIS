@@ -50,7 +50,7 @@ end
 p.stop;
 
 %% Smooth.
-parfor i = 1:length(NeuronPixels)
+for i = 1:length(NeuronPixels)
     fCorrTrace(i,:) = convtrim(CorrTrace(i,:),ones(1,10)./10);
 end
 
