@@ -122,9 +122,9 @@ function Tenaspis3(md,varargin)
     disp('Normalizing traces...'); 
     NormalTraces('SLPDF.h5');
     MakeROIavg('SLPDF.h5');
-    load('ProcOut.mat','NeuronPixels','Xdim','Ydim','NumFrames');
+    load('ProcOut.mat','NeuronPixels');
     load('ROIavg.mat');
-    MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg);
+    MakeROIcorrtraces(NeuronPixels,ROIavg,'SLPDF.h5');
     
 %% Expand transients.
     disp('Expanding transients...'); 
