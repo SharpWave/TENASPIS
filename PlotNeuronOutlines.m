@@ -93,11 +93,13 @@ end
 
 colors = rand(length(clusterlist),3);
 
+x = cell(1,length(clusterlist));
+y = cell(1,length(clusterlist));
+color_use = zeros(length(clusterlist),3);
 % Initialize ProgressBar
-resol = 5; % Percent resolution for progress bar
-p = ProgressBar(100/resol);
-update_inc = round(length(clusterlist)/(100/resol)); % Get increments for updating ProgressBar
-
+resol = 10; % Percent resolution for progress bar
+p = ProgressBar(resol);
+update_inc = round(length(clusterlist)/resol); % Get increments for updating ProgressBar
 for i = 1:length(clusterlist)
     
     % Update progress bar at set increment

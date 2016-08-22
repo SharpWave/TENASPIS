@@ -1,29 +1,31 @@
-function [] = MakeTransients(varargin)
-% [] = MakeTransients()
+function MakeTransients(moviefile)
+% MakeTransients(moviefile)
 %
 % Take all of those blobs found in ExtractBlobs.m and figure out, for each
 % one, whether there was one on the previous frame that matched it and if
-% so which one, thus deducing calcium transients across frames
+% so which one, thus deducing calcium transients across frames.
 %
-% OUTPUTS:
+%   INPUT
+%       movie: movie file (DFF.h5).        
 %
-%   NumSegments: total number of valid segments identified from blobs
+%   OUTPUTS
 %
-%   NumFrames: total number of frames in the movie
+%       NumSegments: total number of valid segments identified from blobs
 %
-%   Xdim, Ydim: x/y size of all the imaging frames
+%       NumFrames: total number of frames in the movie
 %
-%   SegChain: A cell array containing a list of all the transients
-%   identified, of the form:
-%   SegChain{Transient_number}.{[frame1, object_num1], [frame2, object_num2],...},
-%   where object_numx is the object number in the cc variable from
-%   ExtractBlobs for frame x.
+%       Xdim, Ydim: x/y size of all the imaging frames
 %
-%   max_trans_dist: maximum number of pixels a transient can travel without 
-%   being discarded
+%       SegChain: A cell array containing a list of all the transients
+%       identified, of the form: SegChain{Transient_number}{[frame1,
+%       object_num1], [frame2, object_num2],...}, where object_numx is the
+%       object number in the cc variable from ExtractBlobs for frame x.
 %
-%   TransientLength: length of each corresponding transient from SegChain
-%   in frames
+%       max_trans_dist: maximum number of pixels a transient can travel
+%       without being discarded
+%
+%       TransientLength: length of each corresponding transient from
+%       SegChain in frames
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,10 +49,10 @@ function [] = MakeTransients(varargin)
 max_trans_dist = 2; % (default) maximum number of pixels a transient can travel without being discarded
 
 % Load pertinent blob variables
-load ('Blobs.mat','cc','PeakPix');
+load ('Blobs.mat','cc','PeakPix','ThreshList');
 
 % Get basic movie info
-info = h5info('DFF.h5','/Object');
+info = h5info(moviefile,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
@@ -61,7 +63,9 @@ SegChain = [];
 SegList = zeros(NumFrames,100); 
 
 % Initialize progress bar
-p = ProgressBar(NumFrames); 
+resol = 1;                                  % Percent resolution for progress bar, in this case 1%
+update_inc = round(NumFrames/(100/resol));  % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 
 %% Run through loop to connect blobs between successive frames
 for i = 2:NumFrames
@@ -73,7 +77,7 @@ for i = 2:NumFrames
         [MatchingSeg,~] = MatchSeg(Peaks{j},OldPeaks,SegList(i-1,:),...
             stats(j).MinorAxisLength);
  
-        if (MatchingSeg == 0)
+        if MatchingSeg == 0
             % no match found, make a new segment
             NumSegments = NumSegments+1;
             SegChain{NumSegments} = {[i,j]};
@@ -84,31 +88,33 @@ for i = 2:NumFrames
             SegList(i,j) = MatchingSeg;
         end
     end
-
-    p.progress;
+    
+    % Update progress bar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop;
 %% Parse Segment data into transients by making sure each segment does not 
 % move excessively from start to finish
 
 % Get transient lengths from SegChain
-TransientLength = zeros(1,length(SegChain));
-for i = 1:length(SegChain)
-    TransientLength(i) = length(SegChain{i});
-end
+TransientLength = cellfun(@length,SegChain);
 
 % Calculate distance traveled for each transient
-DistTrav = TransientStats(SegChain);
+[DistTrav,MeanThresh] = TransientStats(SegChain);
 
 % Get transients that move less than the distance threshold
-gooddist = find(DistTrav < max_trans_dist);
-
+underthreshold = find(DistTrav < max_trans_dist);   %Under distance threshold.
+goodthresh = find(MeanThresh > 0);                  %Non-zero intensity threshold. 
+goodstuff = intersect(underthreshold,goodthresh);   %Intersect of the two. 
 % Keep only transients that meet distance traveled criteria
-SegChain = SegChain(gooddist);
+SegChain = SegChain(goodstuff);
 NumSegments = length(SegChain);
-TransientLength = TransientLength(gooddist);
+TransientLength = TransientLength(goodstuff);
 
-save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', 'max_trans_dist', 'TransientLength')
+save('Transients.mat', 'NumSegments', 'SegChain', 'NumFrames', 'Xdim', 'Ydim', ...
+    'max_trans_dist', 'TransientLength')
 
 end
 

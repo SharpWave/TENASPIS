@@ -1,120 +1,97 @@
 function AddPoTransients()
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
+% AddPoTransients()
+%
+% Takes neuron and transient information in ExpTransients.mat, ProcOut.mat,
+% and pPeak.mat and adds in missed transients.  For each potential
+% transient for a given neuron, this function looks for calcium activity in
+% each neighboring (buddy) neuron that is within the buddy distance
+% threshold noted in the code below.  
+%
+% A new transient is added if three conditions are met: 
+% 1) there are no transients in any of the buddy neurons identified on the 
+% potentially active frames prior to the peak of the potential transient, 
+% and 2) the peak of the transient is located in a plausible position 
+% (where at least one prior transient peak occurred), and
+% 3) the rank of the peak pixel across all transients is greater than the 
+% threshold in the code below, calculated using all the previously
+% confirmed transients.
+%
+%
+% INPUTS - all are loaded from workspace variables
+%
+%   from pPeak.mat (see Calc_pPeak): pPeak and mRank
+%
+%   from ExpTransients (see ExpandTransients): PosTr, PoPosTr, PoTrPeakIdx
+%
+%   from ProcOut.mat (see MakeNeurons): NumNeurons, NumFrames, 
+%   NeuronPixels, NeuronImage, Xdim, Ydim.
+%
+%
+% OUTPUT - saved in expPosTr.mat
+%
+%   expPosTr - expanded positive transients, a NumNeurons x NumFrames
+%   logical array for final calcium transient activity
+%
+% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This file is part of Tenaspis.
+% 
+%     Tenaspis is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     Tenaspis is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Parameters
+CorrThresh = 0.5;
+
+%% Load variables and calculate pre-requisite data
 disp('Loading relevant variables')
-load pPeak.mat;
+
 load('ExpTransients.mat','PosTr','PoPosTr','PoTrPeakIdx');
 load('ProcOut.mat','NumNeurons','NumFrames','NeuronPixels','NeuronImage','Xdim','Ydim');
+load CorrTrace.mat;
 
 expPosTr = PosTr;
 
-Cents = zeros(length(NeuronImage),2); 
-rankthresh = 0.55;
+%% Add potential transients
 
-for i = 1:length(NeuronImage)
-    b = bwconncomp(NeuronImage{i});
-    r = regionprops(b,'Centroid');
-    Cents(i,1:2) = r.Centroid;
-end
-clear NeuronImage 
-
-temp = pdist(Cents);
-CentDist = squareform(temp);
-
-info = h5info('SLPDF.h5','/Object'); % Get movie info for loadframe below
-
-%display('checking buddies');
-for j = 1:NumNeurons
-    buddies{j} = [];
-    for i = 1:NumNeurons
-        if (i == j)
-            continue;
-        end
-        if (CentDist(i,j) <= 15)
-            buddies{j} = [buddies{j},i];
-        end
-        
-    end
-end
-
-%%
 disp('Adding potential transients...');
-p = ProgressBar(NumNeurons); 
+% Initialize progress bar
+resol = 1;                                  % Percent resolution for progress bar, in this case 1%
+update_inc = round(NumNeurons/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 for i = 1:NumNeurons
-    %display(['Neuron ',int2str(i)]);
-
-    PoEpochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps);
+    % Identify potential epochs where there may be a spike for neuron i
+    PoEpochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps); 
+    
+    % Loop through each epoch and check if the correlation between the
+    % pixels in that epoch and the averaged ROI ever exceeds the threshold
     for j = 1:size(PoEpochs,1)
-        % check for buddies
-        buddyspike = 0;
-        buddyconfs = [];
+        MaxCorr = max(fCorrTrace(i,PoEpochs(j,1):PoEpochs(j,2)));
         
-        for k = 1:length(buddies{i})
-            if sum(expPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0
-                buddyspike = 1;    
-            end
-            
-            if (sum(PoPosTr(buddies{i}(k),PoEpochs(j,1):PoEpochs(j,2))) > 0)
-                buddyconfs = [buddyconfs,buddies{i}(k)];            
-            end
-        end
-        
-        if buddyspike
-            %display('buddy spike');
-            continue;
-        end
-        
-        maxidx = [];
-        % no buddy spike, check peak
-
-        ps = PoTrPeakIdx{i}(j)-10;
-        for k = ps:PoTrPeakIdx{i}(j)
-            
-            f = loadframe('SLPDF.h5', k, info);
-            [~,maxidx(k)] = max(f(NeuronPixels{i}));
-            
-        end
-        
-        meanpix = [];
-        if ~isempty(buddyconfs)
-            %display('buddy conflict');
-            for k = 1:length(buddyconfs)
-                meanpix(k) = mean(f(NeuronPixels{buddyconfs(k)}));
-            end
-            if (mean(f(NeuronPixels{i})) < max(meanpix))
-                %display('lost conflict');
-                continue;
-            end
-        end
-        
-        [xp,yp] = ind2sub([Xdim,Ydim],maxidx(end-10:end));
-        
-        meanmaxidx = sub2ind([Xdim,Ydim],round(median(xp)),median(mean(yp)));
-        peakpeak = pPeak{i}(meanmaxidx);
-        peakrank = mRank{i}(meanmaxidx);
-        
-        if (peakpeak > 0) && (peakrank > rankthresh)
+        if MaxCorr > CorrThresh
             %display('new transient!');
-            expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1;
-        else
-            %display('pixels off kilter');
-            if peakpeak == 0
-                %display('this pixel is never the peak');
-            end
-            if peakrank < rankthresh
-                %display('mean rank of the peak not high enough');
-            end
+            expPosTr(i,PoEpochs(j,1):PoEpochs(j,2)) = 1; % Add in new transient
         end
         
     end
     
-    p.progress;
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
+    
 end
 p.stop; 
 
-%%
 save expPosTr.mat expPosTr;
 
 end
-

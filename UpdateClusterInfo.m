@@ -1,9 +1,12 @@
-function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
-    c,Xdim,Ydim,PixelList,Xcent,Ycent,ClustersToUpdate,...
-    meanareas,meanX,meanY,NumEvents,frames,disp_to_screen)
-% [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
-%   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
-%   ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
+function [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = ...
+    UpdateClusterInfo(c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames,...
+    ClustersToUpdate,meanareas,meanX,meanY,NumEvents,disp_to_screen)
+%[PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = ...
+%    UpdateClusterInfo(c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames,...
+%    ClustersToUpdate,meanareas,meanX,meanY,NumEvents,disp_to_screen)
+%
+%   General purpose function for updating relevant cluster information
+%   after modification (usually merging).
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,60 +26,75 @@ function [PixelList,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-if nargin <= 6
+if(~exist('ClustersToUpdate','var'))
     ClustersToUpdate = unique(c);
-    disp_to_screen = 1;
-elseif nargin < 13
-    disp_to_screen = 1;
+    disp_to_screen = 0;
 end
+
+if(~exist('disp_to_screen','var'))
+    disp_to_screen = 0;
+end
+  
+for thisCluster = ClustersToUpdate'
+    if disp_to_screen, display(['updated cluster # ',int2str(thisCluster)]); end
     
-for i = ClustersToUpdate'
-    if disp_to_screen == 1
-        display(['updated cluster # ',int2str(i)]);
-    end
-    cluidx = find(c == i);
+    cluidx = find(c == thisCluster);
     tempX = 0;
     tempY = 0;
-    temp = zeros(Xdim,Ydim);
+    temp = zeros(Xdim,Ydim);        %Bitmap.
+    tempAvg = zeros(Xdim,Ydim);     %Bitmap for later averaging.
+    
     % for each transient in the cluster, accumulate stats
-    for j = 1:length(cluidx)
-        try
-          validpixels = PixelList{cluidx(j)};
-        catch
-          keyboard;
-        end
-        
+    for thisInstance = 1:length(cluidx)
+          validpixels = PixelList{cluidx(thisInstance)};
+     
 %         if (j == 1)
 %           newpixels = validpixels;
 %         else
 %           newpixels = union(newpixels,validpixels);
 %         end
         
-        temp(validpixels) = temp(validpixels)+1;
-        if (cluidx(j) ~= i)
-            frames{i} = [frames{i},frames{cluidx(j)}];
+        temp(validpixels) = temp(validpixels)+1;    %Add to bitmap. 
+        currAvg = zeros(Xdim,Ydim);                 %Set this variable to the corresponding PixelAvg. 
+        currAvg(PixelList{cluidx(thisInstance)}) = PixelAvg{cluidx(thisInstance)};
+        
+        %Sum average pixel intensity to average again later. 
+        tempAvg(validpixels) = tempAvg(validpixels)+currAvg(validpixels)*length(frames{cluidx(thisInstance)});
+        
+        if (cluidx(thisInstance) ~= thisCluster)
+            frames{thisCluster} = [frames{thisCluster},frames{cluidx(thisInstance)}];
         end
-        tempX = tempX+Xcent(cluidx(j));
-        tempY = tempY+Ycent(cluidx(j));
+        
+        %Sum for later averaging. 
+        tempX = tempX+Xcent(cluidx(thisInstance));
+        tempY = tempY+Ycent(cluidx(thisInstance));
     end
-    temp = temp./length(cluidx);
+    
+    temp = temp./length(cluidx);                %Average bit map. Bound to [0,1].
+    tempAvg = tempAvg./length(frames{thisCluster});       %Average pixel intensity. 
+    
+    %Get pixels active for more than one frame, then build BitMap. 
     newpixels = find(temp > ((1/length(cluidx))-eps));
     BitMap = false(Xdim,Ydim);
     BitMap(newpixels) = 1;
     b = bwconncomp(BitMap,4);
-    r = regionprops(b,'Area'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
-    if (length(r) == 0)
-        display('foundit');
-        keyboard;
-    end
-    PixelList{i} = newpixels;
-    meanareas(i) = r(1).Area;
-    meanX(i) = tempX/length(cluidx);
-    meanY(i) = tempY/length(cluidx);
-    NumEvents(i) = length(cluidx);
+    r = regionprops(b,'Area'); 
+    
+    %Use the new pixel list for everything. 
+    PixelList{thisCluster} = newpixels;
+    PixelAvg{thisCluster} = tempAvg(newpixels);
+    
+    %Get the area of the blob in BitMap. 
+    meanareas(thisCluster) = r(1).Area;
+    
+    %Average X/Y coordinates of centroids. 
+    meanX(thisCluster) = tempX/length(cluidx);            
+    meanY(thisCluster) = tempY/length(cluidx);
+    
+    %Number of transients. 
+    NumEvents(thisCluster) = length(cluidx);
 
 end
 
 
 end
-

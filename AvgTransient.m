@@ -1,29 +1,48 @@
-function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc,Xdim,Ydim,PeakPix)
-% [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
+function [PixelList,Xcent,Ycent,MeanArea,frames,PixelAvg] = ...
+    AvgTransient(SegChain,cc,Xdim,Ydim,PeakPix)
+% [PixelList,Xcent,Ycent,MeanArea,frames,PixelAvg] = ...
+%   AvgSeg(SegChain,cc,Xdim,Ydim,PeakPix)
+%
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
 %
-% INPUTS:
-%   cc, PeakPix: see ExtractBlobs help
+%   INPUTS
+%       SegChain: A cell array containing a list of all the transients
+%       identified, of the form: SegChain{Transient_number}{[frame1,
+%       object_num1], [frame2, object_num2],...}, where object_numx is the
+%       object number in the cc variable from ExtractBlobs for frame x. For
+%       more, see MakeTransients.m. 
 %
-%   SegChain, Xdim, Ydim: see MakeTransients help.  SegChain is for an
-%   individual segment only.
+%       cc: 1xF (F = # of frames) structure containing relevant data on the
+%       discovered blobs.
+%           fields...
+%               NumObjects, number of blobs.
+%               ImageSize, frame dimensions.
+%               Connectivity, 4.
+%       For more, see ExtractBlobs.m.
 %
-% OUTPUTS:
+%       Xdim, Ydim: Dimensions of frame.
 %
-%   PixelList: List of pixel indices which are active on 80% or more of the
-%   transient frames - corresponds to array of size Ydim x Xdim
+%       PeakPix: 1xF cell array with nested 1xN (N = # of blobs detected
+%       that frame) cell array containing a 2-element vector, the XY
+%       coordinates of the peak pixel of that blob on that frame. For more,
+%       see ExtractBlobs. 
 %
-%   Xcent, Ycent: the average location of the peak pixel across all the
-%   frames for the transient
+%   OUTPUTS
+%       PixelList: List of pixel indices which are active on 80% or more of
+%       the transient frames - corresponds to array of size Ydim x Xdim
 %
-%   MeanArea: Area of active pixels identified in PixelList
+%       Xcent, Ycent: the average location of the peak pixel across all the
+%       frames for the transient
 %
-%   frames: array of active frames for the transient
+%       MeanArea: area of active pixels identified in PixelList
 %
-%   AvgN: not currently used for other functions
+%       frames: cell array with nested vectors containing active frames for
+%       the transient
+%
+%       PixelAvg: cell array with nested vectors containing the average
+%       pixel intensity for each pixel over the course of the transient. 
 %      
-%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -43,22 +62,21 @@ function [PixelList,Xcent,Ycent,MeanArea,frames,AvgN] = AvgTransient(SegChain,cc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Initialize variables
-Xcent = 0; % Xcentroid location in pixels
-Ycent = 0; % Ycentroid location in pixels
-%MeanArea = 0;
-frames = [];
+Xcent = 0;                      % Xcentroid location in pixels
+Ycent = 0;                      % Ycentroid location in pixels
+AvgN = zeros(Xdim,Ydim);        % Average bitmap for a detected blob. 
+nSegChains = length(SegChain);  % Duration of transient.
+frames = zeros(1,nSegChains);   % Frames with active transient. 
 
-AvgN = zeros(Xdim,Ydim);
-
-nSegChains = length(SegChain);
 for i = 1:nSegChains
     
     % Pull identifying information about each transient from SegChain
     FrameNum = SegChain{i}(1);
     ObjNum = SegChain{i}(2);
     
-    frames = [frames,FrameNum];
-    
+    % Dump into frames variable. 
+    frames(i) = FrameNum;
+
     % Get active pixels for each transient
     ts = regionprops(cc{FrameNum},'PixelIdxList');
     
@@ -67,18 +85,18 @@ for i = 1:nSegChains
     temp = zeros(Xdim,Ydim);
     temp(ts(ObjNum).PixelIdxList) = 1;
     
-    AvgN = AvgN + temp; % Add up blobs from each frame
+    AvgN = AvgN + temp;                         % Add up blobs from each frame to later take the average. 
     Xcent = Xcent+PeakPix{FrameNum}{ObjNum}(1); % Add up all centroid/peak locations from each frame
     Ycent = Ycent+PeakPix{FrameNum}{ObjNum}(2); % Add up all centroid/peak locations from each frame
     
 end
 
-% Take averages of the blobs and centroids
-AvgN = single(AvgN./length(SegChain));
+% Take averages of the blobs and centroids.
+AvgN = single(AvgN./length(SegChain));          % Bound to [0,1].
 Xcent = Xcent/length(SegChain);
 Ycent = Ycent/length(SegChain);
 
-if (max(AvgN(:)) == 1) % If blob is relatively stable across all frames, continue
+if (max(AvgN(:)) == 1)  % If blob is relatively stable across all frames, continue
     BoolN = AvgN > 0.8; % Find areas where 80% or more of the blobs occur for valid pixels across all frames
     
     PixelList = find(BoolN); % Get pixel indices
@@ -90,10 +108,31 @@ if (max(AvgN(:)) == 1) % If blob is relatively stable across all frames, continu
 %     Xcent = bstat(1).Centroid(1);
 %     Ycent = bstat(1).Centroid(2);
     MeanArea = bstat(1).Area; % Deal out area to usable variable
+    PixelAvg = zeros(size(PixelList));
+    
+    for i = 1:nSegChains
+      FrameNum = SegChain{i}(1);
+      ObjNum = SegChain{i}(2);
+      
+      %Check that the pixels that were active >80% of the time are in the
+      %original Blob cc variable. 
+      [isgood,goodloc] = ismember(PixelList,...
+          cc{FrameNum}.PixelIdxList{ObjNum});
+
+      %Sum up the pixel intensities for the good pixels. 
+      PixelAvg(isgood) = PixelAvg(isgood) + ...
+          cc{FrameNum}.PixelVals{ObjNum}(goodloc(isgood));
+  
+    end
+    %Take the average of the pixel intensity. 
+    PixelAvg = PixelAvg ./nSegChains;
+     
 else % If blob is not that stable across all the frames, effectively discard by setting to empty/zero
     PixelList = [];
+    PixelAvg = [];
     Xcent = 0;
     Ycent = 0;
     MeanArea = 0;
 end
+
 end

@@ -1,6 +1,8 @@
-function [temp] = UpdateCluDistances(meanX,meanY,CluToUpdate)
-%function [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,CluToUpdate)
-% [CluDist] = UpdateCluDistances(CluDist,meanX,meanY,ValidClu,CluToUpdate)
+function temp = UpdateCluDistances(meanX,meanY,CluToUpdate)
+%temp = UpdateCluDistances(meanX,meanY,CluToUpdate)
+% 
+%   Gets the distance between the CluToUpdate and all other clusters. 
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -24,3 +26,4 @@ temp = sqrt((meanX-meanX(CluToUpdate)).^2+(meanY-meanY(CluToUpdate)).^2);
 % CluDist(:,CluToUpdate) = temp;
 
 
+end

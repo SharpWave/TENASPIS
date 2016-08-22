@@ -35,8 +35,8 @@ function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,h5_size_info)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum)
 
+% Pull info about video file
 if nargin < 3
     info = h5info(file,'/Object');
 else
@@ -47,3 +47,5 @@ Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
 frame = h5read(file,'/Object',[1 1 framenum 1],[Xdim Ydim 1 1]);
+
+end

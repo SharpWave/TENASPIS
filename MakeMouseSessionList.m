@@ -1958,6 +1958,71 @@ MD(i).exclude_frames = [10971:11371, 35211:35441, 45871:46175];
 
 G45.alternation_delay_pilot(2) = i;
 G45.alternation_delay_pilot_good(2) = i;
+
+%% G45 DNMP Task 
+G45.DNMP(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_DNMP';
+MD(i).Date = '04_01_2016';
+MD(i).Session = 1;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\04_01_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_01_2016\Working';
+end
+MD(i).Notes = 'Tenaspis 2';
+MD(i).exclude_frames = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_DNMP';
+MD(i).Date = '04_04_2016';
+MD(i).Session = 1;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\04_04_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_04_2016\Working';
+end
+MD(i).Notes = 'Tenaspis 2';
+MD(i).exclude_frames = [2679:2975, 4592:4863, 6806:7040, 8295:10420, ...
+    15850:16075, 17113:17318, 17520:18336, 25831:26053, 28009:29419, ...
+    29668:31476, 33282:33661, 36544:36986];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_DNMP';
+MD(i).Date = '04_05_2016';
+MD(i).Session = 1;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\04_05_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_05_2016\Working';
+end
+MD(i).Notes = 'Tenaspis 2';
+MD(i).exclude_frames = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_DNMP';
+MD(i).Date = '04_05_2016';
+MD(i).Session = 2;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201a - 2015';
+if (strcmp(userstr,'mouseimage'))
+    MD(i).Location = 'M:\GCamp6f_45\04_05_2016\Working';
+elseif (strcmp(userstr,'Nat'))
+    MD(i).Location = 'E:\GCamp Mice\G45\DNMP\04_05_2016\Working after Nat_T2edits';
+end
+MD(i).Notes = 'Tenaspis 2';
+MD(i).exclude_frames = [];
+
+
+
+G45.DNMP(2) = i;
 G45.all(2) = i;
 
 %% Start G41
@@ -2494,36 +2559,39 @@ MD(i).Notes = [];
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_20_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '10:47:51 AM';
+MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_20_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_20_2015\3 - Treadmill (left) T2';
 end
 MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_23_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '5:50:28 PM';
+MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_23_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_23_2015\3 - Treadmill (left) T2';
 end
 MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_25_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '12:52:50 PM';
+MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_25_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_25_2015\3 - Treadmill (left) T2';
 end
 MD(i).Notes = [];
 
@@ -2542,60 +2610,127 @@ MD(i).Notes = [];
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_27_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '2:03:07 PM';
+MD(i).RecordStartTime = '1:14:29 PM';
+MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_27_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_27_2015\3 - Treadmill (left) T2';
 end
 MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '11_30_2015';
-MD(i).Session = 2;
+MD(i).Session = 1;
+MD(i).Env = 'Homecage';
+MD(i).Room = '2 Cu 201B';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_30_2015\1 - Homecage';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_30_2015';
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '11:07:40.34 AM';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_30_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_30_2015\3 - Treadmill (left) T2';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_30_2015';
+MD(i).Session = 4;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+MD(i).RecordStartTime = '11:07:40.34 AM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\11_30_2015\4 - Treadmill (left) T3';
 end
 MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_01_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
 MD(i).RecordStartTime = '2:22:59.00 PM';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\3 - Treadmill (left) T2';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_01_2015';
+MD(i).Session = 4;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '2:22:59.00 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_01_2015\4 - Treadmill (left) T3';
 end
 MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_02_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
 MD(i).RecordStartTime = '5:22:31.31 PM';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_02_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_02_2015\3 - Treadmill (left) T2';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_02_2015';
+MD(i).Session = 4;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '5:22:31.31 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_02_2015\4 - Treadmill (left) T3';
 end
 MD(i).Notes = [];
 
 i = i+1;
 MD(i).Animal = 'GCamp6f_45_treadmill';
 MD(i).Date = '12_03_2015';
-MD(i).Session = 2;
+MD(i).Session = 3;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
 MD(i).RecordStartTime = '5:38:20.92 PM';
 if strcmp(userstr,'Will')
-    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_03_2015\2 - Treadmill (left)';
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_03_2015\3 - Treadmill (left) T2';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_03_2015';
+MD(i).Session = 4;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '5:38:20.92 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\12_03_2015\4 - Treadmill (left) T3';
 end
 MD(i).Notes = [];
 
@@ -2605,6 +2740,7 @@ MD(i).Date = '01_12_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
 MD(i).RecordStartTime = '5:16:21.83 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\01_12_2016\2 - Treadmill (right)';
@@ -2617,6 +2753,7 @@ MD(i).Date = '01_28_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Figure 8';
 MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
 MD(i).RecordStartTime = '1:50:26.59 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\01_28_2016\2 - Treadmill (blocked alternation)';
@@ -2629,9 +2766,49 @@ MD(i).Date = '02_01_2016';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Figure 8';
 MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
 MD(i).RecordStartTime = '2:56:04.34 PM';
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\02_01_2016\2 - Treadmill (blocked alternation)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '02_08_2016';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Figure 8';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '4:00:10.06 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\02_08_2016\2 - Treadmill (free alternation)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '02_09_2016';
+MD(i).Session = 2;
+MD(i).Env = 'Treadmill Figure 8';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '4:11:39.80 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\02_09_2016\2 - Treadmill (free alternation)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '02_18_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:40:48.25 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_45\Treadmill\02_18_2016\1 - Treadmill (free alternation) T2';
 end
 MD(i).Notes = [];
 
@@ -2842,7 +3019,7 @@ MD(i).Notes = [];
 i = i+1;
 MD(i).Animal = 'GCamp6f_48_treadmill';
 MD(i).Date = '11_27_2015';
-MD(i).Session = 2;
+MD(i).Session = 1;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '2:03:07 PM';
@@ -2858,6 +3035,7 @@ MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '2:02:31.75 PM';
+MD(i).Pix2CM = 0.1256;
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\11_30_2015\2 - Treadmill (left)';
 end
@@ -2869,7 +3047,8 @@ MD(i).Date = '12_01_2015';
 MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '1:04:05.66 PM';
+MD(i).RecordStartTime = '1:04:08.66 PM';
+MD(i).Pix2CM = 0.1256;
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\12_01_2015\2 - Treadmill (left)';
 end
@@ -2883,6 +3062,7 @@ MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '2:04:48.33 PM';
+MD(i).Pix2CM = 0.1256;
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\12_02_2015\2 - Treadmill (left)';
 end
@@ -2895,6 +3075,7 @@ MD(i).Session = 2;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
 MD(i).RecordStartTime = '1:00:54.06 PM';
+MD(i).Pix2CM = 0.1256;
 if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\12_03_2015\2 - Treadmill (left)';
 end
@@ -2912,6 +3093,544 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_14_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '3:29:50.92 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_14_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_15_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '3:38:45.95 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_15_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_18_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '11:31:16 AM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_18_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_19_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '3:25:21.51 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_19_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_20_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:24:30.31 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_20_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_21_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:48:07.95 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_21_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_25_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '1:52:33.25 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_25_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_26_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '11:57:19.58 AM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_26_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_27_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '2:35:24.94 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_27_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_28_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:44:57.88 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_28_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_29_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '1:21:17.19 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\GCaMP6f_48\Treadmill\04_29_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+
+%% T2 folders
+
+
+%% Aquila
+i = i+1;
+MD(i).Animal = 'Aquila';
+MD(i).Date = '04_20_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Aquila\Treadmill\04_20_2016\1 - Acclimation';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Aquila';
+MD(i).Date = '04_28_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:05:55.98 PM'; 
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Aquila\Treadmill\04_28_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Aquila';
+MD(i).Date = '05_13_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '2:47:59.26 PM'; 
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Aquila\Treadmill\05_13_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+%% Libra
+i = i+1;
+MD(i).Animal = 'Libra';
+MD(i).Date = '05_02_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Libra\Treadmill\05_02_2016\1 - Acclimation (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Libra';
+MD(i).Date = '05_13_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '3:18:33.34 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Libra\Treadmill\05_13_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+%% Bellatrix
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_13_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '4:07:35.95 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_13_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_14_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_14_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_20_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:15:04.69 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_20_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_22_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '6:18:52.22 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_22_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_23_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '3:42:53.73 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_23_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_24_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '4:57:00.53 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_24_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '06_25_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:47:40.66 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\06_25_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_05_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:34:18.66 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\07_05_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_06_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:47:38.56 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\07_06_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_07_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:41:52.92 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\07_07_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_08_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:25:56.42 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\07_08_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_09_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '6:09:02.94 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Bellatrix\07_09_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+
+%% Polaris
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_13_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '3:33:09.45 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_13_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_14_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:30:26.36 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_14_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_21_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:14:34.20 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_21_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_22_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:41:53.25 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_22_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_23_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '4:20:40.95 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_23_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_24_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '4:24:36.89 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_24_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_25_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:34:45.64 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_25_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '06_27_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '4:56:47.22 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\06_27_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_05_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:13:59.78 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_05_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_06_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:13:19.14 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_06_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_07_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:28:13.34 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_07_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_08_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '4:38:16.86 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_08_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_09_2016';
+MD(i).Session = 1;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:50:27.53 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_09_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
 %% Compile session_ref
 
 session_ref.G30 = G30;
@@ -2926,3 +3645,5 @@ session_ref.G48 = G48;
 save MasterDirectory.mat MD;
 
 cd(CurrDir);
+
+loadMD;
