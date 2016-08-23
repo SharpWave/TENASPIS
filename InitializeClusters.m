@@ -1,5 +1,7 @@
-function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length)
-% [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
+function InitializeClusters(NumSegments,SegChain,cc,NumFrames,Xdim,Ydim,...
+    PeakPix,min_trans_length)
+% InitializeClusters(NumSegments,SegChain,cc,NumFrames,Xdim,Ydim,...
+%    PeakPix,min_trans_length)
 %
 % Initial shot at stringing together transients from all Segments
 % identified in MakeTransients
@@ -44,7 +46,8 @@ p = ProgressBar(100/resol);
 update_inc = round(NumSegments/(100/resol)); % Get increments for updating ProgressBar
 parfor i = 1:NumSegments
     %display(['initializing transient # ',int2str(i)]);
-    [PixelList{i},Xcent(i),Ycent(i),~,frames{i},PixelAvg{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
+    [PixelList{i},Xcent(i),Ycent(i),~,frames{i},PixelAvg{i}] = ...
+        AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
     %length(SegChain{i})
     
     GoodTr(i) = ~isempty(PixelList{i}); % If trace has valid active pixels, keep
@@ -66,14 +69,15 @@ Ycent = Ycent(GoodTrs);
 frames = frames(GoodTrs);
 PixelAvg = PixelAvg(GoodTrs);
 
-c = (1:length(frames))'; 
+% Cluster IDs. 
+c = (1:length(PixelList))'; 
 
 % Updates cluster statistics for newly merged clusters
-[PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames);
+[PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents] = ...
+    UpdateClusterInfo(c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames);
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents PixelAvg min_trans_length -v7.3;
-
-    
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX ...
+    meanY NumFrames NumEvents PixelAvg min_trans_length -v7.3;
 
 end
 

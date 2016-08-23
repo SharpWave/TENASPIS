@@ -1,6 +1,30 @@
 function Tenaspis3(md,varargin)
 %Tenaspis3(md,varargin)
-% Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences 
+%
+%   Highest level function for extracting neurons from single-photon
+%   imaging data.
+%
+%   INPUTS
+%       md: Master Directory entry. 
+%
+%   (optional)
+%       preprocess: logical, whether you want to run MakeT2Movies.
+%       Default=whether SLPDF exists in your directory.
+%
+%       d1: logical, whether you want to make first derivative movie
+%       during MakeT2Movies. Default=false.
+%
+%       manualmask: logical, whether you want to draw mask manually.
+%       Default=false. 
+%
+%       masterdirectory: string, path to master directory.
+%       Default='C:/MasterData'.
+%
+%       min_trans_length: scalar, minimum transient frame duration to be
+%       included during MakeNeurons. Default=10.
+%
+% Tenaspis: Technique for Extracting Neuronal Activity from Single Photon
+% Image Sequences
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -44,19 +68,23 @@ function Tenaspis3(md,varargin)
     p = inputParser;
     p.KeepUnmatched = true;
     p.addRequired('md',@(x) isstruct(x));
-    p.addParameter('preprocess',~exist(fullfile(pwd,'SLPDF.h5'),'file'));      
-                                            %Make SLPDF and DFF movies. 
-    p.addParameter('d1',false);             %Make first derivative movie. 
-    p.addParameter('manualmask',false);     %Draw mask manually.
-    p.addParameter('masterdirectory','C:/MasterData',@(x) ischar(x)); 
-                                            %Master directory.
-    p.parse(md,varargin{:});
+    p.addParameter('preprocess',...
+        ~exist(fullfile(pwd,'SLPDF.h5'),'file'));   %Make SLPDF and DFF movies.                              
+    p.addParameter('d1',false);                     %Make first derivative movie. 
+    p.addParameter('manualmask',false);             %Draw mask manually.
+    p.addParameter('masterdirectory',...    
+        'C:/MasterData',@(x) ischar(x));            %Master directory.               
+    p.addParameter('min_trans_length',...           %Minimum transient length. 
+        10,@(x) isnumeric(x) && isscalar(x));
+    p.parse(md,varargin{:});                
     
     %Compile. 
     preprocess = p.Results.preprocess; 
     d1 = p.Results.d1; 
     manualmask = p.Results.manualmask; 
-    MasterDirectory = p.Results.masterdirectory; 
+    global MasterDirectory;                         %MasterDirectory is now a global variable. 
+    MasterDirectory = p.Results.masterdirectory;    %Insert line 'global MasterDirectory' to fetch. 
+    min_trans_length = p.Results.min_trans_length;
     
     %Check whether initial mask exists. 
     maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
@@ -80,7 +108,9 @@ function Tenaspis3(md,varargin)
         cd(initDir); 
         
         %Draw mask on the initial session's minimum projection. 
-        MakeMaskSingleSession;
+        MakeMaskSingleSession('DFF.h5');
+        
+        %Save to MasterDirectory. 
         copyfile('singlesessionmask.mat',fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']));
         copyfile('ICmovie_min_proj.tif',fullfile(MasterDirectory,[md.Animal,'_init_min_proj.tif']));     
     end
@@ -101,20 +131,20 @@ function Tenaspis3(md,varargin)
     
 %% Connect blobs into transients. 
     disp('Making transients...');
-    MakeTransients; 
+    MakeTransients('DFF.h5'); 
     !del InitClu.mat
 
 %% Group together individual transients under individual neurons.
     disp('Making neurons...'); 
-    MakeNeurons('min_trans_length',10);
+    MakeNeurons('min_trans_length',min_trans_length);
 
 %% Pull traces out of each neuron using the High-pass movie.
     disp('Normalizing traces...'); 
     NormalTraces('SLPDF.h5');
-    MakeROIavg;
-    load('ProcOut.mat','NeuronPixels','Xdim','Ydim','NumFrames');
+    MakeROIavg('SLPDF.h5');
+    load('ProcOut.mat','NeuronPixels');
     load('ROIavg.mat');
-    MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg);
+    MakeROIcorrtraces(NeuronPixels,ROIavg,'SLPDF.h5');
     
 %% Expand transients.
     disp('Expanding transients...'); 
@@ -125,18 +155,18 @@ function Tenaspis3(md,varargin)
 
 %% Determine rising events/on-times for all transients.
     DetectGoodSlopes;
-
-    %Merge ambiguous neurons.
+    
+%% Merge ambiguous neurons.
     load ('T2output.mat','FT','NeuronPixels');
     for i = 1:2
-       indat{1} = FT;
-       outdat = MakeTrigAvg(indat);
-       MergeROIs(FT,NeuronPixels,outdat{1});
+       FTs{1} = FT;
+       TrigAvgs = MakeTrigAvg(FTs);
+       MergeROIs(FT,NeuronPixels,TrigAvgs{1});
        load ('FinalOutput.mat','FT','NeuronPixels');
     end
-    indat{1} = FT;
-    outdat = MakeTrigAvg(indat);
-    MeanT = outdat{1};
+    FTs{1} = FT;
+    TrigAvgs = MakeTrigAvg(FTs);
+    MeanT = TrigAvgs{1};
     save('MeanT.mat', 'MeanT', '-v7.3');
 
     FinalTraces('SLPDF.h5');    

@@ -1,5 +1,5 @@
 function [DistTrav,MeanThresh] = TransientStats(SegChain)
-% [DistTrav] = TransientStats(SegChain)
+% [DistTrav,MeanThresh] = TransientStats(SegChain)
 %
 % Gets statistics on each Transient identified in SegChain
 %
@@ -71,8 +71,6 @@ for i = 1:length(SegChain)
             Yc(j) = r.Centroid(2);
             
             % Get threshold
-            
-            
         end
         
         for j = 1:length(SegChain{i})

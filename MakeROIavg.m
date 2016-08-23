@@ -1,21 +1,27 @@
-function MakeROIavg()
-%MakeROIavg
+function MakeROIavg(moviefile)
+%MakeROIavg(moviefile)
 %
 %   Finds the average spike-triggered frame still for each neuron based
 %   on FT from ProcOut.
 
 %% MakeROIavg
-load('ProcOut.mat','Xdim','Ydim','NumNeurons','FT');
+load('ProcOut.mat','NumNeurons','FT');
+
+info = h5info(moviefile,'/Object');
+Xdim = info.Dataspace.Size(1);
+Ydim = info.Dataspace.Size(2);
 
 ROIavg = cell(1,NumNeurons); 
 [ROIavg{:}] = deal(zeros(Xdim,Ydim));
 NumFrames = size(FT,2);
-p=ProgressBar(NumFrames);
 
+resol = 1; % Percent resolution for progress bar, in this case 10%
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 %For each frame..
 for i = 1:NumFrames
     %Grab the frame from SLPDF.h5. 
-    tempFrame = h5read('SLPDF.h5','/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    tempFrame = loadframe(moviefile,i,info);
     
     %Get active neurons. 
     nlist = find(FT(:,i));
@@ -25,7 +31,10 @@ for i = 1:NumFrames
         ROIavg{j} = ROIavg{j} + tempFrame;
     end
     
-    p.progress; 
+    % Update progress bar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop;
 

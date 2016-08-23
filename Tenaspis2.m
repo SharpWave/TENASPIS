@@ -51,6 +51,7 @@ disp('Expanding transients...');
 ExpandTransients(0);
 
 %% Calculate peak of all transients
+
 disp('Calculating pPeak...'); 
 Calc_pPeak;
 
@@ -58,12 +59,15 @@ Calc_pPeak;
 disp('Adding potential transients...')
 AddPoTransients;
 
-%% Determine rising events/on-times for all transients
+% Determine rising events/on-times for all transients
 disp('Finalizing...');
 DetectGoodSlopes;
 
-%CalculatePlacefields('201b','alt_inputs','T2output.mat','half_window',0,'minspeed',3);
-%PFstats;
+%% Calculate place fields and accompanying statistics
+% CalculatePlacefields('201b','alt_inputs','T2output.mat','man_savename',...
+%     'PlaceMapsv2.mat','half_window',0,'minspeed',3);
+% PFstats;
+
 
 end
 

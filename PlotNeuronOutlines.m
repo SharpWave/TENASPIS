@@ -136,7 +136,6 @@ if new_fig == 1
         'FitBoxToText','off');
     
     line([140 210.5],[400 400],'LineWidth',5,'Color','k')
-
 end
 
 %% Old code 
