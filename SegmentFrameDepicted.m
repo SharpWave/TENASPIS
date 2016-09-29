@@ -45,13 +45,18 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrameDepicted(frame,mask,t
 
 currdir = pwd;
 
-% Parameters
-minpixels = 60; % minimum blob size during initial segmentation
-adjminpixels = 40; % minimum blob size during re-segmentation attempts
-threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
-neuronthresh = 160; % maximum blob size to be considered a neuron
-minsolid = 0.9; % minimum blob solidity to be considered a neuron
+aviobj = VideoWriter('blobdemo','MPEG-4');
+aviobj.FrameRate = 4;
+aviobj.Quality = 100;
+open(aviobj);
 
+% Parameters
+minpixels = 150; %60 minimum blob size during initial segmentation
+adjminpixels = 150; %40 minimum blob size during re-segmentation attempts
+threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
+neuronthresh = 300; %160 maximum blob size to be considered a neuron
+minsolid = 0.9; % minimum blob solidity to be considered a neuron
+axisRatioMax = 2;
 % Setup variables for below
 PeakPix = []; % Locations of peak pixels 
 threshlist = [];
@@ -68,7 +73,11 @@ imagesc(initframe);
 caxis([0 max(initframe(:))]);
 colorbar;
 title('raw frame');
-saveas(gcf,[currdir,'\','SegShot',int2str(FigCount)],'jpeg');
+axis image;
+set(gcf,'Position',[181          68        1059         910]);
+F = getframe(gcf);
+% write to avi
+writeVideo(aviobj,F);
 %!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 blankframe = zeros(size(initframe));
@@ -82,8 +91,11 @@ imagesc(threshframe);
 caxis([0 1]);
 colorbar;
 title('threshold frame');
-saveas(gcf,[currdir,'\','SegShot',int2str(FigCount)],'jpeg');
-
+axis image;
+set(gcf,'Position',[181          68        1059         910]);
+F = getframe(gcf);
+% write to avi
+writeVideo(aviobj,F);
 
 % Figure 3: 
 threshframe = bwareaopen(threshframe,minpixels,4); % remove blobs smaller than minpixels
@@ -93,8 +105,11 @@ imagesc(threshframe);
 caxis([0 1]);
 colorbar;
 title(['removed blobs < ',int2str(minpixels),' pixels']);
-saveas(gcf,[currdir,'\','SegShot',int2str(FigCount)],'jpeg');
-
+axis image;
+set(gcf,'Position',[181          68        1059         910]);
+F = getframe(gcf);
+% write to avi
+writeVideo(aviobj,F);
 
 
 % Set up variables for while loop below
@@ -110,7 +125,7 @@ while BlobsInFrame
     % threshold and segment the frame
     
     bb = bwconncomp(threshframe,4); % Look for connected regions/blobs in threshframe
-    rp = regionprops(bb,'Area','Solidity'); % Pull area and solidity properties
+    rp = regionprops(bb,'Area','Solidity','MajorAxisLength','MinorAxisLength'); % Pull area and solidity properties
     
     % Break while loop if no blobs meeting all the criteria are found
     if (isempty(bb.PixelIdxList))
@@ -119,19 +134,47 @@ while BlobsInFrame
     
     FigCount = FigCount+1;
     figure(1);
-    imagesc(initframe);
+    displayframe = initframe;
+    displayframe(find(initframe < thresh)) = 0;
+    imagesc(displayframe);
     caxis([0 max(initframe(:))]);
     colorbar;
     title(['all blobs']);
-    keyboard;
+    axis image;
+    hold on;
+    set(gcf,'Position',[181          68        1059         910]);
+    % plot all neuron outlines
+    for i = 1:length(bb.PixelIdxList)
+        temp = zeros(size(initframe));
+        temp(bb.PixelIdxList{i}) = 1;
+        btemp = bwboundaries(temp,4);
+        plot(btemp{1}(:,2),btemp{1}(:,1),'-r','LineWidth',3)
+    end
+    set(gcf,'Position',[181          68        1059         910]);
+    hold off;
+
     
     % if there were blobs, check if any of them satisfy size and
     % solidity criteria
     bsize = deal([rp.Area]);
     bSolid = deal([rp.Solidity]);
+    bMaj = deal([rp.MajorAxisLength]);
+    bMin = deal([rp.MinorAxisLength]);
+    bRat = bMaj./bMin;
     
     % Look for new blobs that meet the maximum size AND minimum solidity criteria
     newn = intersect(find(bsize <= neuronthresh), find(bSolid >= minsolid));
+    newn = intersect(newn,find(bRat < axisRatioMax));
+    
+    hold on;
+    
+    % plot old ROIs
+    for j = 1:currnewList
+        temp = zeros(size(initframe));
+        temp(newlist{j}) = 1;
+        btemp = bwboundaries(temp,4);
+        plot(btemp{1}(:,2),btemp{1}(:,1),'-k','LineWidth',3)   
+    end
     
     for j = 1:length(newn)
         % append new blob pixel lists
@@ -139,6 +182,11 @@ while BlobsInFrame
         newlist{currnewList} = bb.PixelIdxList{newn(j)};
         threshlist(currnewList) = thresh;
         tNumItsTaken(currnewList) = NumIts;
+        
+        temp = zeros(size(initframe));
+        temp(bb.PixelIdxList{newn(j)}) = 1;
+        btemp = bwboundaries(temp,4);
+        plot(btemp{1}(:,2),btemp{1}(:,1),'-g','LineWidth',3)
     end
        
     % If nothing is left to split, break out of the while loop
@@ -146,6 +194,13 @@ while BlobsInFrame
         break;
     end
     
+    FigCount = FigCount+1;
+    set(gcf,'Position',[181          68        1059         910]);
+    hold off;
+    title(int2str(NumIts));
+    F = getframe(gcf);
+    % write to avi
+    writeVideo(aviobj,F);
     % If there are still blobs left
     BlobsInFrame = 1;
     % Define old blobs as those that do NOT meet either the size OR solidity
@@ -170,6 +225,16 @@ while BlobsInFrame
     
 end
 
+imagesc(initframe)
+    for j = 1:currnewList
+        temp = zeros(size(initframe));
+        temp(newlist{j}) = 1;
+        btemp = bwboundaries(temp,4);
+        plot(btemp{1}(:,2),btemp{1}(:,1),'-k','LineWidth',3)   
+    end
+F = getframe(gcf);
+% write to avi
+writeVideo(aviobj,F);    
 NumItsTaken = []; % Initialize Number of iterations to empty
 
 % exit if no blobs found
