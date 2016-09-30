@@ -46,7 +46,7 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 
 [~,stdframe] = moviestats(file);
 
-thresh = 4*mean(stdframe);
+thresh = 2*mean(stdframe);
 
 parfor i = 1:NumFrames 
     

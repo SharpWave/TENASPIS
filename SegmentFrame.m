@@ -44,12 +44,12 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Parameters
-minpixels = 60; % minimum blob size during initial segmentation
-adjminpixels = 40; % minimum blob size during re-segmentation attempts
-threshinc = 0.001; % how much to increase threshold by on each re-segmentation iteration
-neuronthresh = 160; % maximum blob size to be considered a neuron
+minpixels = 150; % minimum blob size during initial segmentation
+adjminpixels = 150; % minimum blob size during re-segmentation attempts
+threshinc = 0.004; % how much to increase threshold by on each re-segmentation iteration
+neuronthresh = 300; % maximum blob size to be considered a neuron
 minsolid = 0.9; % minimum blob solidity to be considered a neuron
-
+axisRatioMax = 2;
 % Setup variables for below
 PeakPix = []; % Locations of peak pixels 
 threshlist = [];
@@ -76,7 +76,7 @@ while BlobsInFrame
     % threshold and segment the frame
     
     bb = bwconncomp(threshframe,4); % Look for connected regions/blobs in threshframe
-    rp = regionprops(bb,'Area','Solidity'); % Pull area and solidity properties
+    rp = regionprops(bb,'Area','Solidity','MajorAxisLength','MinorAxisLength'); % Pull area and solidity properties
     
     % Break while loop if no blobs meeting all the criteria are found
     if (isempty(bb.PixelIdxList))
@@ -87,9 +87,12 @@ while BlobsInFrame
     % solidity criteria
     bsize = deal([rp.Area]);
     bSolid = deal([rp.Solidity]);
-    
+    bMaj = deal([rp.MajorAxisLength]);
+    bMin = deal([rp.MinorAxisLength]);
+    bRat = bMaj./bMin;
     % Look for new blobs that meet the maximum size AND minimum solidity criteria
     newn = intersect(find(bsize <= neuronthresh), find(bSolid >= minsolid));
+    newn = intersect(newn,find(bRat < axisRatioMax));
     
     for j = 1:length(newn)
         % append new blob pixel lists
