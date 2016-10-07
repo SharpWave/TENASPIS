@@ -44,10 +44,10 @@ function [cc,PeakPix,NumItsTaken,threshlist] = SegmentFrame(frame,mask,thresh)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Parameters
-minpixels = 150; % minimum blob size during initial segmentation
+minpixels = 80; % minimum blob size during initial segmentation
 adjminpixels = 150; % minimum blob size during re-segmentation attempts
 threshinc = 0.004; % how much to increase threshold by on each re-segmentation iteration
-neuronthresh = 300; % maximum blob size to be considered a neuron
+neuronthresh = 700; % maximum blob size to be considered a neuron
 minsolid = 0.9; % minimum blob solidity to be considered a neuron
 axisRatioMax = 2;
 % Setup variables for below

@@ -44,9 +44,7 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 
 % Run through each frame and isolate all blobs
 
-[~,stdframe] = moviestats(file);
-
-thresh = 2*mean(stdframe);
+thresh = 0.01;
 
 parfor i = 1:NumFrames 
     
@@ -58,13 +56,13 @@ parfor i = 1:NumFrames
 
     % Detect all blobs that are within the mask by adaptively thresholding
     % each frame
-    [cc{i},PeakPix{i},NumItsTaken{i},ThreshList{i}] = SegmentFrame(tempFrame,mask,thresh);
+    [cc{i},PeakPix{i}] = SegmentFrame2(tempFrame,mask,thresh);
     
     p.progress; % update progress bar    
 end
 
 p.stop; % Shut-down progress bar
 
-save Blobs.mat cc mask PeakPix NumItsTaken ThreshList;
+save Blobs.mat cc mask PeakPix;
 
 end
