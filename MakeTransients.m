@@ -103,12 +103,11 @@ for i = 1:length(SegChain)
 end
 
 % Calculate distance traveled for each transient
-[DistTrav,MeanThresh] = TransientStats(SegChain);
+DistTrav = TransientStats(SegChain);
 
 % Get transients that move less than the distance threshold
-gooddist = find(DistTrav < max_trans_dist);
-goodthresh = find(MeanThresh > 0);
-goodstuff = intersect(gooddist,goodthresh);
+goodstuff = find(DistTrav < max_trans_dist);
+
 % Keep only transients that meet distance traveled criteria
 SegChain = SegChain(goodstuff);
 NumSegments = length(SegChain);

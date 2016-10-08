@@ -49,7 +49,7 @@ MinNeuronRadius = 5;
 
 initthreshold = 0.01;
 MaxAxisRatio = 2; % maxium ratio of the major to minor axis
-MinSolidity = 0.9; % minimum blob "solidity"
+MinSolidity = 0.95; % minimum blob "solidity"
 threshsteps = 20; % number of increments of threshold to check for each blob
 
 % Derived Parameters
