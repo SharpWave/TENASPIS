@@ -124,17 +124,7 @@ for i = CluToMerge'
 %             plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');pause
             continue;
         end
-        
-        %         if (length(intersect(currpix,targpix)) < 0.67*(length(union(currpix,targpix))-length(intersect(currpix,targpix))))
-        %             %display('Merge would inflate cluster too much');
-        %             continue;
-        %         end
-        
-        %         if (length(union(currpix,targpix)) > max(length(currpix),length(targpix))*1.3)
-        %             display('Merge would inflate cluster too much');
-        %             continue;
-        %         end
-        
+
         c(c == cidx) = i; % Update cluster number for merged clusters
         DidMerge = 1; % Flag that you have merged at least one of these clusters
         %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);

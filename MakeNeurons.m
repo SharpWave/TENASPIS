@@ -118,7 +118,8 @@ nClus = length(CluToPlot); % Final number of clusters
 % Initialize variables
 CurrClu = 0; % Set cluster counter for below
 NeuronImage = cell(1,nClus); 
-NeuronPixels = cell(1,nClus); 
+NeuronPixels = cell(1,nClus);
+NeuronAvg = cell(1,nClus); 
 caltrain = cell(1,nClus); 
 
 % Create neuron mask arrays and calcium transient trans
@@ -127,6 +128,7 @@ for i = CluToPlot'
     NeuronImage{CurrClu} = false(Xdim,Ydim); % Neuron mask
     NeuronImage{CurrClu}(PixelList{i}) = 1;
     NeuronPixels{CurrClu} = PixelList{i}; % Neuron mask pixel indices
+    NeuronAvg{CurrClu} = PixelAvg{i};
     caltrain{CurrClu} = zeros(1,NumFrames); % Calicum transient train
     caltrain{CurrClu}(frames{i}) = 1;
 end
@@ -168,7 +170,7 @@ end
 
 save_name = 'ProcOut.mat';
 save(save_name, 'NeuronImage', 'NeuronPixels', 'NumNeurons', 'c', 'Xdim', 'Ydim', 'FT', 'NumFrames', 'NumTransients', ...
-    'MinPixelDist', 'DistUsed', 'InitPixelList', 'nToc', 'cTon', 'min_trans_length', '-v7.3');
+    'MinPixelDist', 'ActiveFrames', 'DistUsed', 'InitPixelList', 'nToc', 'cTon', 'NeuronAvg', 'min_trans_length', '-v7.3');
 
 
 end

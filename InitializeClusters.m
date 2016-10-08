@@ -65,7 +65,6 @@ Ycent = Ycent(GoodTrs);
 %MeanArea = MeanArea(GoodTrs);
 frames = frames(GoodTrs);
 PixelAvg = PixelAvg(GoodTrs);
-
 c = (1:length(frames))'; 
 
 % Updates cluster statistics for newly merged clusters
