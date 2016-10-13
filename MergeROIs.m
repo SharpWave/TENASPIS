@@ -1,4 +1,4 @@
-function MergeROIs(FT,NeuronPixels,MeanT)
+function MergeROIs(FT,NeuronPixels,MeanT,NeuronImage,AdjAct)
 
 load('ProcOut.mat','Xdim','Ydim');
 
@@ -32,9 +32,32 @@ for i = 1:NumNeurons
         end
         pix = union(NeuronPixels{i},NeuronPixels{j});
         [MeanTCorr(i,j),MeanTp(i,j)] = corr(MeanT{i}(pix),MeanT{j}(pix),'type','Spearman');
+        
         if ((MeanTCorr(i,j) > CorrThresh) && (MeanTp(i,j) < CorrpThresh) && (i ~= j))
             ToMerge(i,j) = 1;
+            b1 = bwboundaries(NeuronImage{i},4);
+            b2 = bwboundaries(NeuronImage{j},4);
             
+            figure(1);
+            a(1) = subplot(1,3,1);
+            imagesc(MeanT{i});axis image;caxis([0 max(MeanT{i}(NeuronPixels{i}))]);
+            hold on;plot(b1{1}(:,2),b1{1}(:,1),'-r');hold off;
+            hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
+            
+            a(2) = subplot(1,3,2);
+            imagesc(MeanT{j});axis image;caxis([0 max(MeanT{j}(NeuronPixels{j}))]);
+            hold on;plot(b1{1}(:,2),b1{1}(:,1),'-r');hold off;
+            hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
+            
+            a(3) = subplot(1,3,3);
+            imagesc((MeanT{j}*AdjAct(j)+MeanT{i}*AdjAct(i))./(AdjAct(i)+AdjAct(j)));axis image;caxis([0 max(MeanT{j}(NeuronPixels{j}))]);
+            hold on;plot(b1{1}(:,2),b1{1}(:,1),'-r');hold off;
+            hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
+            
+            linkaxes(a);
+            MeanTCorr(i,j),MeanTp(i,j),Overlap(i,j),
+            
+            pause;
         end        
     end
     MergeDest(i) = i;

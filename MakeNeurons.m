@@ -42,6 +42,7 @@ function [] = MakeNeurons(varargin)
 
 %% Process varargins
 min_trans_length = 5; % default: minimum number of frames a transient must last in order to be included
+mean_DFF_thresh = 0.01;
 
 for j = 1:length(varargin)
     if strcmpi(varargin{j},'min_trans_length')
@@ -125,10 +126,12 @@ caltrain = cell(1,nClus);
 % Create neuron mask arrays and calcium transient trans
 for i = CluToPlot'
     CurrClu = CurrClu + 1; % Update cluster counter
-    NeuronImage{CurrClu} = false(Xdim,Ydim); % Neuron mask
-    NeuronImage{CurrClu}(PixelList{i}) = 1;
-    NeuronPixels{CurrClu} = PixelList{i}; % Neuron mask pixel indices
-    NeuronAvg{CurrClu} = PixelAvg{i};
+   
+    NeuronPixels{CurrClu} = PixelList{i}(find(PixelAvg{i} > mean_DFF_thresh));
+    NeuronImage{CurrClu} = false(Xdim,Ydim);
+    NeuronImage{CurrClu}(NeuronPixels{CurrClu}) = 1;
+    
+    NeuronAvg{CurrClu} = PixelAvg{i}(find(PixelAvg{i} > mean_DFF_thresh));
     caltrain{CurrClu} = zeros(1,NumFrames); % Calicum transient train
     caltrain{CurrClu}(frames{i}) = 1;
 end

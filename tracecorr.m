@@ -4,7 +4,7 @@ function [CorrTrace] = tracecorr(tempFrame,ROIavg,NeuronPixels)
 
     CorrTrace = zeros(1,length(NeuronPixels));
     for j = 1:length(NeuronPixels)
-        CorrTrace(j) = corr(tempFrame(NeuronPixels{j}),ROIavg{j}(NeuronPixels{j}));
+        CorrTrace(j) = corr(tempFrame(NeuronPixels{j}),ROIavg{j});
     end
 
 end
