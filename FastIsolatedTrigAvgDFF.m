@@ -1,6 +1,6 @@
 function [ output_args ] = FastIsolatedTrigAvgDFF(FT,NeuronPixels)
 
-info = h5info('SLPDF.h5','/Object');
+info = h5info('DFF.h5','/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
@@ -45,7 +45,7 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 for i = 1:NumFrames
     ActiveN = find(NewFT(:,i));
     if(~isempty(ActiveN))
-        frame = loadframe('SLPDF.h5',i,info);
+        frame = loadframe('DFF.h5',i,info);
         for j = 1:length(ActiveN)
             TrigAvg{ActiveN(j)} = TrigAvg{ActiveN(j)}+frame;
         end
@@ -58,6 +58,6 @@ for i = 1:NumNeurons
     TrigAvg{i} = TrigAvg{i}./sum(NewFT(i,:));
 end
 
-save TrigAvg.mat TrigAvg NewFT OrigAct AdjAct;
+save TrigAvgDFF.mat TrigAvg;
 
 

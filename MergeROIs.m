@@ -1,4 +1,4 @@
-function MergeROIs(FT,NeuronPixels,MeanT,NeuronImage,AdjAct)
+function MergeROIs(FT,NeuronPixels,MeanT,NeuronImage,AdjAct,TMap)
 
 load('ProcOut.mat','Xdim','Ydim');
 
@@ -8,8 +8,6 @@ NumNeurons = size(FT,1);
 OverlapThresh = 0.2;
 CorrThresh = 0.2;
 CorrpThresh = 0.05;
-
-
 
 t = (1:NumFrames)/20;
 ToMerge = zeros(NumNeurons,NumNeurons);
@@ -55,8 +53,10 @@ for i = 1:NumNeurons
             hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
             
             linkaxes(a);
-            MeanTCorr(i,j),MeanTp(i,j),Overlap(i,j),
-            
+            display(['Correlation r value: ',num2str(MeanTCorr(i,j))]);
+            display(['Correlation p value: ',num2str(MeanTp(i,j))]);
+            display(['ROI overlap: ',num2str(Overlap(i,j))]);
+                        
             pause;
         end        
     end
