@@ -72,9 +72,9 @@ maxdist = RadiusMultiplier;
 % update_inc = round(nClus/(100/resol)); % Get increments for updating ProgressBar
 for i = CluToMerge'
     
-%     if round(i/update_inc) == (i/update_inc)
-%         p.progress; % Also percent = p.progress;
-%     end
+    %     if round(i/update_inc) == (i/update_inc)
+    %         p.progress; % Also percent = p.progress;
+    %     end
     
     % If the cluster is no longer valid (i.e it has already been merged
     % into a previous cluster), skip to next cluster
@@ -106,25 +106,30 @@ for i = CluToMerge'
         [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
         
         
-
+        figure(1);
+        subh(1) = subplot(1,4,1);
+        temp = zeros(Xdim,Ydim);
+        temp(PixelList{i}) = PixelAvg{i};
+        imagesc(temp);
+        subh(2)=subplot(1,4,2);
+        temp1 = zeros(Xdim,Ydim);
+        temp1(PixelList{cidx}) = PixelAvg{cidx};
+        imagesc(temp1);
+        subh(3)=subplot(1,4,3);
+        imagesc(temp1+temp);
+        subplot(1,4,4);
+        plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
+        
+        corrp,corrval,linkaxes(subh);
+        pause
+        
+        
         
         if ((corrp > 0.05) || (corrval < 0.05))
-%             figure(1);
-%             subplot(1,4,1);
-%             temp = zeros(Xdim,Ydim);
-%             temp(PixelList{i}) = PixelAvg{i};
-%             imagesc(temp);
-%             subplot(1,4,2);
-%             temp1 = zeros(Xdim,Ydim);
-%             temp1(PixelList{cidx}) = PixelAvg{cidx};
-%             imagesc(temp1);
-%             subplot(1,4,3);
-%             imagesc(temp1+temp);
-%             subplot(1,4,4);
-%             plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');pause
+            
             continue;
         end
-
+        
         c(c == cidx) = i; % Update cluster number for merged clusters
         DidMerge = 1; % Flag that you have merged at least one of these clusters
         %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);

@@ -43,18 +43,8 @@ for i = ClustersToUpdate'
     tempAvg = zeros(Xdim,Ydim);
     % for each transient in the cluster, accumulate stats
     for j = 1:length(cluidx)
-        try
-          validpixels = PixelList{cluidx(j)};
-        catch
-          keyboard;
-        end
         
-%         if (j == 1)
-%           newpixels = validpixels;
-%         else
-%           newpixels = union(newpixels,validpixels);
-%         end
-        
+        validpixels = PixelList{cluidx(j)};
         temp(validpixels) = temp(validpixels)+1;
         currAvg = zeros(Xdim,Ydim);
         currAvg(PixelList{cluidx(j)}) = PixelAvg{cluidx(j)};
