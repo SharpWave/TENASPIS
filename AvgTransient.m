@@ -42,7 +42,7 @@ function [PixelList,Xcent,Ycent,MeanArea,frames,PixelAvg] = AvgTransient(SegChai
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MinPercentPresent = 0.9;
+MinPercentPresent = 1;
 
 % Initialize variables
 Xcent = 0; % Xcentroid location in pixels
@@ -84,7 +84,7 @@ Xcent = Xcent/length(SegChain);
 Ycent = Ycent/length(SegChain);
 %imagesc(AvgN);colorbar;axis image;pause;
 if (max(AvgN(:)) == 1) % If blob is relatively stable across all frames, continue
-    BoolN = AvgN > MinPercentPresent; % Find areas where 80% or more of the blobs occur for valid pixels across all frames
+    BoolN = AvgN >= MinPercentPresent; % Find areas where 80% or more of the blobs occur for valid pixels across all frames
     
     PixelList = find(BoolN); % Get pixel indices
         

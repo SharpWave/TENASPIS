@@ -1,11 +1,13 @@
-function [ output_args ] = FastIsolatedTrigAvgDFF(FT,NeuronPixels)
+function [ output_args ] = FastIsolatedTrigAvgDFF(FT,NeuronPixels,WindowLen)
 
 info = h5info('DFF.h5','/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-WindowLen = 1;
+if (~exist('WindowLen','var'))
+  WindowLen = 1;
+end
 
 NumNeurons = size(FT,1);
 

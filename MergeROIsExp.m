@@ -52,6 +52,12 @@ for i = 1:NumNeurons
         yc = rptemp.Centroid(2);
         
         if ((MeanTCorr(i,j) > CorrThresh) && (MeanTp(i,j) < CorrpThresh) && (i ~= j))
+            
+            
+           
+            
+            
+            
             ToMerge(i,j) = 1;
             b1 = bwboundaries(NeuronImage{i},4);
             b2 = bwboundaries(NeuronImage{j},4);
@@ -91,18 +97,22 @@ for i = 1:NumNeurons
             
             linkaxes(a);
             
-            subplot(3,3,7);
-            imagesc(TMap{i});axis image;title(num2str(pval(i)));
-            
-            subplot(3,3,8);
-            imagesc(TMap{j});axis image;title(num2str(pval(j)));
-            
-            subplot(3,3,9);
-            imagesc(TMap{i}+TMap{j});axis image;
+%             subplot(3,3,7);
+%             imagesc(TMap{i});axis image;title(num2str(pval(i)));
+%             
+%             subplot(3,3,8);
+%             imagesc(TMap{j});axis image;title(num2str(pval(j)));
+%             
+%             subplot(3,3,9);
+%             imagesc(TMap{i}+TMap{j});axis image;
             
             display(['Correlation r value: ',num2str(MeanTCorr(i,j))]);
             display(['Correlation p value: ',num2str(MeanTp(i,j))]);
             display(['ROI overlap: ',num2str(Overlap(i,j))]);
+            display(['Num Frames in first ',int2str(sum(FT(i,:)))]);
+            display(['Num Frames in second ',int2str(sum(FT(j,:)))]);
+            rtemp = corr(FT(i,:)',FT(j,:)');
+            display(['Temporal correlation ',num2str(rtemp)]);
             display('HIT ENTER AFTER INSPECTING]');
             pause;
             ToMerge = input('actually merge these two? [y/n] -->','s');
