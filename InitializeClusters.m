@@ -40,7 +40,7 @@ PixelAvg = cell(1,NumTransients);
 
 resol = 1; % Percent resolution for progress bar, in this case 10%
 p = ProgressBar(100/resol);
-update_inc = round(NumSegments/(100/resol)); % Get increments for updating ProgressBar
+update_inc = round(NumTransients/(100/resol)); % Get increments for updating ProgressBar
 
 disp('Finding initial ROI outline for each putative transient')
 parfor i = 1:NumTransients
@@ -71,6 +71,8 @@ for i = 1:length(GoodTrs)
     TransientBool(i,frames{i}) = 1;
 end
 
+display('finding circle masks');
+
 % get circular masks
 for i = 1:length(GoodTrs)
     cm{i} = CircMask(Xdim,Ydim,CircRad,Xcent(i),Ycent(i));
@@ -79,14 +81,26 @@ for i = 1:length(GoodTrs)
 end
 
 % for each transient, across all of its frames, make an average within a certain radius
+resol = 1; % Percent resolution for progress bar, in this case 10%
+p = ProgressBar(100/resol);
+update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
+display('averaging a circular window around each transient');
+
 for i = 1:NumFrames
     ActList = find(TransientBool(:,i));
     inframe = loadframe('SLPDF.h5',i);
     for j = 1:length(ActList)
-        BigPixelAvg{ActList(j)} = BigPixelAvg{ActList(j)} + inframe(cm{i});
-        PixelAvg{ActList(j)} = PixelAvg{ActList(j)} + inframe(PixelList{i});
+        curr = ActList(j);
+        BigPixelAvg{curr} = BigPixelAvg{curr} + inframe(cm{curr});
+        PixelAvg{curr} = PixelAvg{curr} + inframe(PixelList{curr});
+    end
+
+    % Update ProgressBar
+    if round(i/update_inc) == (i/update_inc)
+        p.progress; % Also percent = p.progress;
     end
 end
+p.stop;
 
 for i = 1:length(GoodTrs)
     BigPixelAvg{i} = BigPixelAvg{i}./length(frames{i});
@@ -94,10 +108,9 @@ for i = 1:length(GoodTrs)
 end
 
 % FOR SOME REASON I RUN THIS THING HERE
-ROIidx = (1:length(GoodTrs))';
-[PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents] = UpdateClusterInfo(ROIidx,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames);
+c = (1:length(GoodTrs))';
 
-save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames meanareas meanX meanY NumFrames NumEvents PixelAvg min_trans_length -v7.3;
+save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames NumFrames PixelAvg BigPixelAvg cm min_trans_length -v7.3;
 
 
 

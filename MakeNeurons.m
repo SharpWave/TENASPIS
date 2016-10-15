@@ -57,7 +57,7 @@ MinPixelDist = 0:0.25:6;
 close all;
 
 % Load relevant variables
-disp('Loading relevant variables')
+disp('Loading Blob and Transient info')
 load('Blobs.mat','PeakPix','cc');
 load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %NumSegments SegChain cc NumFrames Xdim Ydim --- not loading and passing here breaks parallelization
 
@@ -92,8 +92,7 @@ for i = 1:length(MinPixelDist)
         disp(['Merging neurons, iteration #',num2str(NumIterations+1)])
         
         % Iteratively merge spatially distant clusters together
-        [c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,~,PixelAvg] = ...
-            AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,meanareas,meanX,meanY,NumEvents,frames,PixelAvg);
+        [c,PixelList,Xcent,Ycent,frames,PixelAvg,BigPixelAvg] = AutoMergeClu(MinPixelDist(i),c,Xdim,Ydim,PixelList,Xcent,Ycent,frames,PixelAvg,BigPixelAvg,cm);
         NumIterations = NumIterations+1; % Update number of iterations
         NumClu(NumIterations) = length(unique(c)); % Update number of clusters
         DistUsed(NumIterations) = MinPixelDist(i); % Updated distance threshold used

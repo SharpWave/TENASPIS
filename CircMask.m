@@ -1,7 +1,7 @@
 function [cmask] = CircMask(Xdim,Ydim,radius,Xcent,Ycent)
 % Based on a stackoverflow response from user Amro
 
-t = linspace(0, 2*pi, 500);   %# approximate circle with 50 points
+t = linspace(0, 2*pi, 50);   %# approximate circle with 50 points
 r = radius;                      %# radius
 c = [Xcent Ycent];
 

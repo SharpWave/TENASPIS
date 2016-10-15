@@ -1,6 +1,6 @@
-function [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
-    c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames,ClustersToUpdate,...
-    meanareas,meanX,meanY,NumEvents,disp_to_screen)
+function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,frames] = UpdateClusterInfo(...
+    c,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,cmpix,Xcent,Ycent,frames,ClustersToUpdate)
+
 % [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
 %   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
 %   ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
@@ -25,57 +25,65 @@ function [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = UpdateClu
 %
 if(~exist('ClustersToUpdate','var'))
     ClustersToUpdate = unique(c);
-    disp_to_screen = 1;
 end
 
-if(~exist('disp_to_screen','var'))
-    disp_to_screen = 1;
-end
 
 for i = ClustersToUpdate'
-    if disp_to_screen == 1
-        display(['updated cluster # ',int2str(i)]);
-    end
+    
     cluidx = find(c == i);
     tempX = 0;
     tempY = 0;
-    TempFrameCount = zeros(Xdim,Ydim);
+    tempFrameCount = 0;
     tempAvg = zeros(Xdim,Ydim);
-    % for each transient in the cluster, accumulate stats
+    
+    
+    % merge ROI pixel sets
     newpixels = [];
     
     for j = 1:length(cluidx)
         
-        validpixels = PixelList{cluidx(j)};
+        mergepixels = PixelList{cluidx(j)};
         if (j == 1)
-            newpixels = validpixels;
+            newpixels = mergepixels;
         else
-            newpixels = intersect(newpixels,validpixels);
+            newpixels = union(newpixels,mergepixels);
         end
         
-        % increment pixel cluster counts
-        TempFrameCount(validpixels) = TempFrameCount(validpixels)+length(frames{cluidx(j)});
-        
-        % increment pixel intensity average
-        currAvg = zeros(Xdim,Ydim);
-        currAvg(validpixels) = PixelAvg{cluidx(j)};
-        tempAvg(validpixels) = tempAvg(validpixels)+currAvg(validpixels)*length(frames{cluidx(j)});
-        
-        if (cluidx(j) ~= i)
-            frames{i} = [frames{i},frames{cluidx(j)}];
-        end
         tempX = tempX+Xcent(cluidx(j));
         tempY = tempY+Ycent(cluidx(j));
     end
     
+    PixelList{i} = newpixels;
+    Xcent(i) = tempX/length(cluidx);
+    Ycent(i) = tempY/length(cluidx);
+    
+    if (cluidx(j) ~= i)
+        frames{i} = [frames{i},frames{cluidx(j)}];
+    end
+    
+    
+    for j = 1:length(cluidx)
+        
+        % increment pixel frame counts
+        tempFrameCount = tempFrameCount+length(frames{cluidx(j)});
+        
+        % grab average pixel values for new unioned ROI
+        currAvg = zeros(Xdim,Ydim);
+        % NPidx is index into BigPixelAvg
+        NPidx = 
+        currAvg(newpixels) = BigPixelAvg{cluidx(j)}(newpixel index(global) into BigPixel;
+        tempAvg(newpixels) = tempAvg(newpixels)+currAvg(newpixels)*length(frames{cluidx(j)});
+        
+        
+    end
+    
     tempAvg = tempAvg./TempFrameCount;
     
-    PixelList{i} = newpixels;
+    
     PixelAvg{i} = tempAvg(newpixels);
-    meanareas(i) = length(newpixels);
-    meanX(i) = tempX/length(cluidx);
-    meanY(i) = tempY/length(cluidx);
-    NumEvents(i) = length(cluidx);
+    
+    
+    
     
 end
 
