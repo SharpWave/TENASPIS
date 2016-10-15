@@ -60,7 +60,7 @@ for i = CluToMerge'
     currpix = PixelList{i};
     
     % Merge all clusters in nearclust into i
-    DidMerge = 0;
+    MergeClus = [];
     for k = 1:length(nearclust)
         % Grab pixels for the nearest cluster
         cidx = nearclust(k); % cidx is cluster number of close transient
@@ -93,18 +93,18 @@ for i = CluToMerge'
             % reject the merge
             continue;
         end
-        
+        MergeClus = [MergeClus,cidx];
         c(c == cidx) = i; % Update cluster number for merged clusters
-        DidMerge = 1; % Flag that you have merged at least one of these clusters
-        %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
+
     end
     ValidClu = unique(c);
     
     % If a merge happened, update all the cluster info for the next
     % iteration
-    if DidMerge
+    if ~isempty(MergeClus)
+        MergeClus = [i,MergeClus];
         [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,frames] = UpdateClusterInfo(...
-            c,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,cm,Xcent,Ycent,frames,i);
+            MergeClus,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,cm,Xcent,Ycent,frames,i);
         temp = UpdateCluDistances(Xcent,Ycent,i); % Update distances for newly merged clusters to all other clusters
         CluDist(i,:) = temp;
         CluDist(:,i) = temp;

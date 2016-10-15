@@ -1,5 +1,5 @@
 function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,frames] = UpdateClusterInfo(...
-    c,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,cmpix,Xcent,Ycent,frames,ClustersToUpdate)
+    MergeClus,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,cmpix,Xcent,Ycent,frames,ClustersToUpdate)
 
 % [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
 %   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
@@ -28,63 +28,66 @@ if(~exist('ClustersToUpdate','var'))
 end
 
 
-for i = ClustersToUpdate'
+i = ClustersToUpdate;
+
+cluidx = MergeClus;
+tempX = 0;
+tempY = 0;
+tempFrameCount = 0;
+tempAvg = zeros(Xdim,Ydim);
+
+% merge ROI pixel sets
+newpixels = [];
+
+for j = 1:length(cluidx)
     
-    cluidx = find(c == i);
-    tempX = 0;
-    tempY = 0;
-    tempFrameCount = 0;
-    tempAvg = zeros(Xdim,Ydim);
-    
-    
-    % merge ROI pixel sets
-    newpixels = [];
-    
-    for j = 1:length(cluidx)
-        
-        mergepixels = PixelList{cluidx(j)};
-        if (j == 1)
-            newpixels = mergepixels;
-        else
-            newpixels = union(newpixels,mergepixels);
-        end
-        
-        tempX = tempX+Xcent(cluidx(j));
-        tempY = tempY+Ycent(cluidx(j));
+    mergepixels = PixelList{cluidx(j)};
+    if (j == 1)
+        newpixels = mergepixels;
+    else
+        newpixels = union(newpixels,mergepixels);
     end
     
-    PixelList{i} = newpixels;
-    Xcent(i) = tempX/length(cluidx);
-    Ycent(i) = tempY/length(cluidx);
+    tempX = tempX+Xcent(cluidx(j));
+    tempY = tempY+Ycent(cluidx(j));
+end
+
+PixelList{i} = newpixels;
+Xcent(i) = tempX/length(cluidx);
+Ycent(i) = tempY/length(cluidx);
+
+if (cluidx(j) ~= i)
+    frames{i} = [frames{i},frames{cluidx(j)}];
+end
+
+
+for j = 1:length(cluidx)
     
-    if (cluidx(j) ~= i)
-        frames{i} = [frames{i},frames{cluidx(j)}];
-    end
+    % increment pixel frame counts
+    tempFrameCount = tempFrameCount+length(frames{cluidx(j)});
     
-    
-    for j = 1:length(cluidx)
-        
-        % increment pixel frame counts
-        tempFrameCount = tempFrameCount+length(frames{cluidx(j)});
-        
-        % grab average pixel values for new unioned ROI
-        currAvg = zeros(Xdim,Ydim);
-        % NPidx is index into BigPixelAvg
-        NPidx = 
-        currAvg(newpixels) = BigPixelAvg{cluidx(j)}(newpixel index(global) into BigPixel;
-        tempAvg(newpixels) = tempAvg(newpixels)+currAvg(newpixels)*length(frames{cluidx(j)});
-        
-        
-    end
-    
-    tempAvg = tempAvg./TempFrameCount;
-    
-    
-    PixelAvg{i} = tempAvg(newpixels);
+    % grab average pixel values for new unioned ROI
+    currAvg = zeros(size(newpixels));
+    % NPidx is index into BigPixelAvg
+    [binans,firstidx] = ismember(newpixels,cm{cluidx(j)});
+    okpix = find(binans);
     
     
     
+    currAvg(newpixels(okpix)) = BigPixelAvg{cluidx(j)}(firstidx(okpix)); 
+    tempAvg(newpixels) = tempAvg(newpixels)+currAvg(newpixels)*length(frames{cluidx(j)});
     
+    
+end
+
+tempAvg = tempAvg./TempFrameCount;
+
+
+PixelAvg{i} = tempAvg(newpixels);
+
+
+
+
 end
 
 
