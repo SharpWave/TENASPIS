@@ -1,4 +1,4 @@
-function [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length)
+function [] = InitializeClusters(SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length)
 % [] = InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim)
 %
 % Initial shot at stringing together transients from all Segments
@@ -38,14 +38,16 @@ Ycent = zeros(1,NumSegments);
 frames = cell(1,NumSegments); 
 PixelAvg = cell(1,NumSegments); 
 
+NumTransients = length(SegChain);
+
 % Initialize ProgressBar
 resol = 1; % Percent resolution for progress bar, in this case 10%
 p = ProgressBar(100/resol);
 update_inc = round(NumSegments/(100/resol)); % Get increments for updating ProgressBar
-parfor i = 1:NumSegments
-    %display(['initializing transient # ',int2str(i)]);
-    [PixelList{i},Xcent(i),Ycent(i),~,frames{i},PixelAvg{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim,PeakPix);
-    %length(SegChain{i})
+parfor i = 1:NumTransients
+    
+    [PixelList{i},frames{i}] = AvgTransient(SegChain{i},cc,Xdim,Ydim);
+    
     
     GoodTr(i) = ~isempty(PixelList{i}); % If trace has valid active pixels, keep
    

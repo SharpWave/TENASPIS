@@ -105,24 +105,24 @@ for i = CluToMerge'
         
         [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
         
-        
+        if (maxdist >= 4)
         figure(1);
         subh(1) = subplot(1,4,1);
         temp = zeros(Xdim,Ydim);
         temp(PixelList{i}) = PixelAvg{i};
-        imagesc(temp);
+        imagesc(temp);axis image;
         subh(2)=subplot(1,4,2);
         temp1 = zeros(Xdim,Ydim);
         temp1(PixelList{cidx}) = PixelAvg{cidx};
-        imagesc(temp1);
+        imagesc(temp1);axis image;
         subh(3)=subplot(1,4,3);
-        imagesc(temp1+temp);
+        imagesc(temp1+temp);axis image;
         subplot(1,4,4);
         plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
         
         corrp,corrval,linkaxes(subh);
         pause
-        
+        end
         
         
         if ((corrp > 0.05) || (corrval < 0.05))

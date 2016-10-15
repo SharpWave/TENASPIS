@@ -1,4 +1,4 @@
-function [PixelList,Xcent,Ycent,MeanArea,frames,PixelAvg] = AvgTransient(SegChain,cc,Xdim,Ydim,PeakPix)
+function [PixelList,frames] = AvgTransient(SegChain,cc,Xdim,Ydim)
 % [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
@@ -45,23 +45,16 @@ function [PixelList,Xcent,Ycent,MeanArea,frames,PixelAvg] = AvgTransient(SegChai
 MinPercentPresent = 1;
 
 % Initialize variables
-Xcent = 0; % Xcentroid location in pixels
-Ycent = 0; % Ycentroid location in pixels
-%MeanArea = 0;
 frames = [];
-
 AvgN = zeros(Xdim,Ydim);
+nFrames = length(SegChain);
 
-nSegChains = length(SegChain);
-for i = 1:nSegChains
-    
+for i = 1:nFrames    
     % Pull identifying information about each transient from SegChain
     FrameNum = SegChain{i}(1);
     ObjNum = SegChain{i}(2);
     
     frames = [frames,FrameNum];
-    
-
     
     % Get active pixels for each transient
     ts = regionprops(cc{FrameNum},'PixelIdxList');
@@ -71,50 +64,15 @@ for i = 1:nSegChains
     temp = zeros(Xdim,Ydim);
     temp(ts(ObjNum).PixelIdxList) = 1;
     
-    AvgN = AvgN + temp; % Add up blobs from each frame
-    Xcent = Xcent+PeakPix{FrameNum}{ObjNum}(1); % Add up all centroid/peak locations from each frame
-    Ycent = Ycent+PeakPix{FrameNum}{ObjNum}(2); % Add up all centroid/peak locations from each frame
-    
+    AvgN = AvgN + temp; % Add up blob mask    
 end
 
-% Take averages of the blobs and centroids
-AvgN = single(AvgN./length(SegChain));
+% AvgN is fraction of frames including that pixel 
+AvgN = single(AvgN./nFrames);
 
-Xcent = Xcent/length(SegChain);
-Ycent = Ycent/length(SegChain);
-%imagesc(AvgN);colorbar;axis image;pause;
-if (max(AvgN(:)) == 1) % If blob is relatively stable across all frames, continue
-    BoolN = AvgN >= MinPercentPresent; % Find areas where 80% or more of the blobs occur for valid pixels across all frames
-    
-    PixelList = find(BoolN); % Get pixel indices
-        
-    % Get area of valid pixels
-    b = bwconncomp(BoolN,4);
-    bstat = regionprops(b,'Area');
-    
-%     Xcent = bstat(1).Centroid(1);
-%     Ycent = bstat(1).Centroid(2);
-    MeanArea = bstat(1).Area; % Deal out area to usable variable
-    PixelAvg = zeros(size(PixelList));
-    
-    for i = 1:nSegChains
-      FrameNum = SegChain{i}(1);
-      ObjNum = SegChain{i}(2);
-      [isgood,goodloc] = ismember(PixelList,cc{FrameNum}.PixelIdxList{ObjNum});
-      
-      %keyboard;
-      
-      PixelAvg(isgood) = PixelAvg(isgood) + cc{FrameNum}.PixelVals{ObjNum}(goodloc(isgood));
-  
-    end
-     PixelAvg = PixelAvg ./nSegChains;
-     
-else % If blob is not that stable across all the frames, effectively discard by setting to empty/zero
-    PixelList = [];
-    PixelAvg = [];
-    Xcent = 0;
-    Ycent = 0;
-    MeanArea = 0;
+if (max(AvgN(:)) < 1) % SHOULD be redundant with the motion criterion
+  error('putative calcium transient on the go, something is wrong with MakeTransients');
 end
+
 
 end

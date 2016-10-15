@@ -56,7 +56,8 @@ parfor i = 1:NumFrames
 
     % Detect all blobs that are within the mask by adaptively thresholding
     % each frame
-    [cc{i},PeakPix{i}] = SegmentFrame2(tempFrame,mask,thresh);
+    [cc{i},PeakPix{i}] = 
+    (tempFrame,mask,thresh);
     
     p.progress; % update progress bar    
 end

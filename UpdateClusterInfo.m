@@ -39,40 +39,40 @@ for i = ClustersToUpdate'
     cluidx = find(c == i);
     tempX = 0;
     tempY = 0;
-    temp = zeros(Xdim,Ydim);
+    TempFrameCount = zeros(Xdim,Ydim);
     tempAvg = zeros(Xdim,Ydim);
     % for each transient in the cluster, accumulate stats
+    newpixels = [];
+    
     for j = 1:length(cluidx)
         
         validpixels = PixelList{cluidx(j)};
-        temp(validpixels) = temp(validpixels)+1;
-        currAvg = zeros(Xdim,Ydim);
-        currAvg(PixelList{cluidx(j)}) = PixelAvg{cluidx(j)};
-        try
-        tempAvg(validpixels) = tempAvg(validpixels)+currAvg(validpixels)*length(frames{cluidx(j)});
-        catch
-            keyboard;
+        if (j == 1)
+            newpixels = validpixels;
+        else
+                    newpixels = intersect(newpixels,validpixels);
         end
+        
+        % increment pixel cluster counts
+        TempFrameCount(validpixels) = TempFrameCount(validpixels)+length(frames{cluidx(j)});
+        
+        % increment pixel intensity average
+        currAvg = zeros(Xdim,Ydim);
+        currAvg(validpixels) = PixelAvg{cluidx(j)};
+        tempAvg(validpixels) = tempAvg(validpixels)+currAvg(validpixels)*length(frames{cluidx(j)});
+
         if (cluidx(j) ~= i)
             frames{i} = [frames{i},frames{cluidx(j)}];
         end
         tempX = tempX+Xcent(cluidx(j));
         tempY = tempY+Ycent(cluidx(j));
     end
-    temp = temp./length(cluidx);
-    tempAvg = tempAvg./length(frames{i});
-    newpixels = find(temp > ((1/length(cluidx))-eps));
-    BitMap = false(Xdim,Ydim);
-    BitMap(newpixels) = 1;
-    b = bwconncomp(BitMap,4);
-    r = regionprops(b,'Area'); % known issue where sometimes the merge creates two discontiguous areas. if changes to AutoMergeClu don't fix the problem then the fix will be here.
-    if isempty(r)
-        display('foundit');
-        keyboard;
-    end
+    
+    tempAvg = tempAvg./TempFrameCount;
+ 
     PixelList{i} = newpixels;
     PixelAvg{i} = tempAvg(newpixels);
-    meanareas(i) = r(1).Area;
+    meanareas(i) = length(newpixels);
     meanX(i) = tempX/length(cluidx);
     meanY(i) = tempY/length(cluidx);
     NumEvents(i) = length(cluidx);

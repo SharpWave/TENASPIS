@@ -64,14 +64,12 @@ load('Transients.mat','TransientLength','SegChain','NumFrames','Xdim','Ydim') %N
 % Identify good segments that are longer than the minimum transient length
 goodseg = find(TransientLength >= min_trans_length);
 SegChain = SegChain(goodseg);
-NumSegments = length(SegChain);
-
 
 % Intialize "clusters", which are segments that have been pared down a bit
 % to their average size/shape across all their active frames and grouped
 % together.  End result is groups
 if ~exist(fullfile(pwd,'InitClu.mat'),'file'); 
-    InitializeClusters(NumSegments, SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
+    InitializeClusters(SegChain, cc, NumFrames, Xdim, Ydim, PeakPix, min_trans_length);
 end
 
 %%
