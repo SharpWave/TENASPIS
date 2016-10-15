@@ -106,22 +106,22 @@ for i = CluToMerge'
         [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
         
         if (maxdist >= 4)
-        figure(1);
-        subh(1) = subplot(1,4,1);
-        temp = zeros(Xdim,Ydim);
-        temp(PixelList{i}) = PixelAvg{i};
-        imagesc(temp);axis image;
-        subh(2)=subplot(1,4,2);
-        temp1 = zeros(Xdim,Ydim);
-        temp1(PixelList{cidx}) = PixelAvg{cidx};
-        imagesc(temp1);axis image;
-        subh(3)=subplot(1,4,3);
-        imagesc(temp1+temp);axis image;
-        subplot(1,4,4);
-        plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
-        
-        corrp,corrval,linkaxes(subh);
-        pause
+            figure(1);
+            subh(1) = subplot(1,4,1);
+            temp = zeros(Xdim,Ydim);
+            temp(PixelList{i}) = PixelAvg{i};
+            imagesc(temp);axis image;
+            subh(2)=subplot(1,4,2);
+            temp1 = zeros(Xdim,Ydim);
+            temp1(PixelList{cidx}) = PixelAvg{cidx};
+            imagesc(temp1);axis image;
+            subh(3)=subplot(1,4,3);
+            imagesc(temp1+temp);axis image;
+            subplot(1,4,4);
+            plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
+            
+            corrp,corrval,linkaxes(subh);
+            pause
         end
         
         
@@ -133,9 +133,6 @@ for i = CluToMerge'
         c(c == cidx) = i; % Update cluster number for merged clusters
         DidMerge = 1; % Flag that you have merged at least one of these clusters
         %display(['merging cluster # ',int2str(i),' and ',int2str(cidx)]);
-        [PixelList,PixelAvg,meanareas,meanX,meanY,NumEvents,frames] = UpdateClusterInfo(...
-            c,Xdim,Ydim,PixelList,PixelAvg,Xcent,Ycent,frames,i,meanareas,meanX,meanY,NumEvents,0);
-        
     end
     ValidClu = unique(c);
     

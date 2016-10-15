@@ -1,4 +1,4 @@
-function [PixelList,frames] = AvgTransient(SegChain,cc,Xdim,Ydim)
+function [PixelList,frames,Xcent,Ycent] = AvgTransient(SegChain,cc,Xdim,Ydim)
 % [seg,Xcent,Ycent,MeanArea,frames] = AvgSeg(SegChain,cc,Xdim,Ydim)
 % goes through all of the frames of a particular transient and calculates
 % some basic stats
@@ -73,6 +73,14 @@ AvgN = single(AvgN./nFrames);
 if (max(AvgN(:)) < 1) % SHOULD be redundant with the motion criterion
   error('putative calcium transient on the go, something is wrong with MakeTransients');
 end
+
+PixelList = find(AvgN >= MinPercentPresent);
+temp = zeros(Xdim,Ydim);
+temp(PixelList) = 1;
+r = regionprops(temp,'Centroid');
+Xcent = r.Centroid(1);
+Ycent = r.Centroid(2);
+
 
 
 end
