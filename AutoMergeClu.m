@@ -32,7 +32,7 @@ end
 % Identify unique clusters
 CluToMerge = unique(c);
 ValidClu = unique(c);
-
+display([int2str(length(ValidClu)),' clusters left']);
 % Get distance from each cluster to all the others
 CluDist = pdist([Xcent',Ycent'],'euclidean');
 CluDist = squareform(CluDist);
@@ -69,24 +69,24 @@ for i = CluToMerge'
         
         [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
         
-        if (maxdist >= 0.5)
-            figure(1);
-            subh(1) = subplot(1,4,1);
-            temp = zeros(Xdim,Ydim);
-            temp(PixelList{i}) = PixelAvg{i};
-            imagesc(temp);axis image;
-            subh(2)=subplot(1,4,2);
-            temp1 = zeros(Xdim,Ydim);
-            temp1(PixelList{cidx}) = PixelAvg{cidx};
-            imagesc(temp1);axis image;
-            subh(3)=subplot(1,4,3);
-            imagesc(temp1+temp);axis image;
-            subplot(1,4,4);
-            plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
-            
-            corrp,corrval,linkaxes(subh);
-            pause
-        end
+%         if (maxdist >= 3)
+%             figure(1);
+%             subh(1) = subplot(1,4,1);
+%             temp = zeros(Xdim,Ydim);
+%             temp(PixelList{i}) = PixelAvg{i};
+%             imagesc(temp);axis image;
+%             subh(2)=subplot(1,4,2);
+%             temp1 = zeros(Xdim,Ydim);
+%             temp1(PixelList{cidx}) = PixelAvg{cidx};
+%             imagesc(temp1);axis image;
+%             subh(3)=subplot(1,4,3);
+%             imagesc(temp1+temp);axis image;
+%             subplot(1,4,4);
+%             plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
+%             
+%             corrp,corrval,linkaxes(subh);
+%             pause
+%         end
         
         
         if ((corrp > 0.05) || (corrval < 0.05))

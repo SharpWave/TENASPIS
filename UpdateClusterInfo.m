@@ -27,14 +27,13 @@ if(~exist('ClustersToUpdate','var'))
     ClustersToUpdate = unique(c);
 end
 
-
 i = ClustersToUpdate;
 
 cluidx = MergeClus;
 tempX = 0;
 tempY = 0;
-tempFrameCount = 0;
-tempAvg = zeros(Xdim,Ydim);
+tempFrameCount = zeros(size(cmpix{i}));
+tempAvg = zeros(size(cmpix{i}));
 
 % merge ROI pixel sets
 newpixels = [];
@@ -56,39 +55,35 @@ PixelList{i} = newpixels;
 Xcent(i) = tempX/length(cluidx);
 Ycent(i) = tempY/length(cluidx);
 
-if (cluidx(j) ~= i)
-    frames{i} = [frames{i},frames{cluidx(j)}];
-end
-
-
+% for each cluster, add pixels that overlap with cm(i)
 for j = 1:length(cluidx)
     
-    % increment pixel frame counts
-    tempFrameCount = tempFrameCount+length(frames{cluidx(j)});
-    
-    % grab average pixel values for new unioned ROI
-    currAvg = zeros(size(newpixels));
     % NPidx is index into BigPixelAvg
-    [binans,firstidx] = ismember(newpixels,cm{cluidx(j)});
+    [binans,firstidx] = ismember(cmpix{i},cmpix{cluidx(j)});
     okpix = find(binans);
-    
-    
-    
-    currAvg(newpixels(okpix)) = BigPixelAvg{cluidx(j)}(firstidx(okpix)); 
-    tempAvg(newpixels) = tempAvg(newpixels)+currAvg(newpixels)*length(frames{cluidx(j)});
-    
-    
+    try
+    tempFrameCount(okpix) = tempFrameCount(okpix)+length(frames{cluidx(j)});
+    catch
+        keyboard;
+    end
+    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{cluidx(j)}(firstidx(okpix))*length(frames{cluidx(j)});
 end
+BigPixelAvg{i} = tempAvg./tempFrameCount;
 
-tempAvg = tempAvg./TempFrameCount;
+% now create new PixelAvg from BigPixelAvg
 
-
-PixelAvg{i} = tempAvg(newpixels);
-
-
-
-
+for j = 1:length(cluidx)
+    if (cluidx(j) ~= i)
+        frames{i} = [frames{i},frames{cluidx(j)}];
+    end
 end
-
+% update Pixel Avg
+[~,idx] = ismember(PixelList{i},cmpix{i});
+try
+PixelAvg{i} = BigPixelAvg{i}(idx);
+catch
+    keyboard;
+end
+  
 
 end

@@ -27,7 +27,7 @@ if ~exist('min_trans_length','var')
     min_trans_length = 5;
 end
 
-CircRad = 20;
+CircRad = 25;
 
 NumTransients = length(SegChain);
 GoodTr = zeros(1,NumTransients);
