@@ -1,4 +1,4 @@
-function [] = ExtractBlobs(file,mask)
+function [] = ExtractBlobs(file,mask,FrameChunkSize)
 % [] = ExtractBlobs(file,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,12 +21,21 @@ function [] = ExtractBlobs(file,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
+%FrameChunkSize = 1000; % how many frames to load at a time;
+
+
 % Get Basic Movie Information
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
+NumFrames = 5000; %%%%%%%%%%%%%%%%%%TESTING ONLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ChunkStarts = 1:FrameChunkSize:NumFrames;
+ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
+ChunkEnds(length(ChunkStarts)) = NumFrames;
+NumChunks = length(ChunkStarts)
 % Pull neuron mask if specified, otherwise set mask to include the whole
 % image
 if ~exist('mask','var')
@@ -35,6 +44,9 @@ end
 maskpix = find(mask(:) > 0); % Get pixels to use when looking for blobs
 
 % Pre-allocate variables
+cchunk = cell(1,NumChunks);
+pchunk = cell(1,NumChunks);
+
 cc = cell(1,NumFrames); 
 PeakPix = cell(1,NumFrames); 
 NumItsTaken = cell(1,NumFrames);
@@ -46,24 +58,27 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 
 thresh = 0.01;
 
-parfor i = 1:NumFrames 
-    
-    % Read in each imaging frame
-    tempFrame = loadframe(file,i,info);
-%     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-    
-    %thresh = 0.04; %median(tempFrame(maskpix)); % Set threshold
-
-    % Detect all blobs that are within the mask by adaptively thresholding
-    % each frame
-    [cc{i},PeakPix{i}] = 
-    (tempFrame,mask,thresh);
-    
-    p.progress; % update progress bar    
+for i = 1:NumChunks
+    FrameList = ChunkStarts(i):ChunkEnds(i);
+    FrameChunk = LoadFrames('SLPDF.h5',FrameList);
+    tempcc = [];
+    tempPeakPix = [];
+    NumChunkFrames = length(FrameList);
+    tempcc = cell(1,NumChunkFrames);
+    tempPeakPix = cell(1,NumChunkFrames);
+    parfor j = 1:NumChunkFrames
+      currFrame = FrameList(j);  
+      [tempcc{j},tempPeakPix{j}] = SegmentFrame2(squeeze(FrameChunk(:,:,j)),mask,thresh); 
+       p.progress;
+    end
+    cc(FrameList) = tempcc;
+    PeakPix(FrameList) = tempPeakPix;
+     % update progress bar    
 end
 
 p.stop; % Shut-down progress bar
 
+%cc(ChunkStarts(i):ChunkEnds(i)),PeakPix(ChunkStarts(i):ChunkEnds(i))
 save Blobs.mat cc mask PeakPix;
 
 end

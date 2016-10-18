@@ -1,4 +1,4 @@
-function [cc,PeakPix] = SegmentFrame(frame,mask,thresh)
+function [cc,PeakPix] = SegmentFrame2(frame,mask,thresh)
 % [frame,cc,ccprops] = SegmentFrame(frame,mask,thresh)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -50,7 +50,7 @@ MinNeuronRadius = 5;
 initthreshold = 0.01;
 MaxAxisRatio = 2; % maxium ratio of the major to minor axis
 MinSolidity = 0.95; % minimum blob "solidity"
-threshsteps = 20; % number of increments of threshold to check for each blob
+threshsteps = 10; % number of increments of threshold to check for each blob
 
 % Derived Parameters
 MaxBlobArea = ceil((MaxNeuronRadius^2)*pi);
