@@ -86,16 +86,22 @@ for i = 1:length(rp)
     SmallImage = frame(props.SubarrayIdx{1},props.SubarrayIdx{2});
     SmallImage(find(props.Image == 0)) = 0;
     BinImage = SmallImage > tempthresh;
-    MaxIntensity = max(SmallImage(:));
-    ThresholdInc = MaxIntensity/threshsteps;
+    
+    smsort = sort(SmallImage(:));
+    smsort = smsort(find(smsort > 0));
+    MaxIntensity = smsort(end);
+    PixPerThresh = ceil(length(smsort)./threshsteps);
+
+    threshlist = smsort(PixPerThresh:PixPerThresh:length(smsort));
+    currthresh = 1;
     
     AxisRatio = props.MajorAxisLength/props.MinorAxisLength;
     
     CriteriaOK = (props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (props.Area < MaxBlobArea);
     
-    while(~CriteriaOK && (tempthresh < MaxIntensity))
+    while(~CriteriaOK && (currthresh <= length(threshlist)))
         % First increase threshold and take a new binary image
-        tempthresh = tempthresh+ThresholdInc;
+        tempthresh = threshlist(currthresh);
         BinImage = SmallImage > tempthresh;
         BinImage = bwareaopen(BinImage,MinBlobArea,4);
         
@@ -109,6 +115,7 @@ for i = 1:length(rp)
         
         AxisRatio = temp_props.MajorAxisLength/temp_props.MinorAxisLength;
         CriteriaOK = (temp_props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (temp_props.Area < MaxBlobArea);
+        currthresh = currthresh + 1;
     end
     
     if (~CriteriaOK)
@@ -120,19 +127,22 @@ for i = 1:length(rp)
     CritThresh = tempthresh;
     CritBinImage = BinImage;
     
-    while (tempthresh < MaxIntensity)
-        tempthresh = tempthresh+ThresholdInc;
-        BinImage = SmallImage >= tempthresh;
+    while (currthresh <= length(threshlist)) 
+        tempthresh = threshlist(currthresh);
+        BinImage = SmallImage > tempthresh;
         temp_conn = bwconncomp(BinImage,8);
         if (temp_conn.NumObjects > 1)
             GoodBlob(i) = 0;
             break;
         end
-        
+        if (temp_conn.NumObjects == 0)
+            
+            break;
+        end
         if (length(temp_conn.PixelIdxList{1}) < MinBlobArea)
             break;
         end
-        
+        currthresh = currthresh + 1;
     end
     
     if(GoodBlob(i))

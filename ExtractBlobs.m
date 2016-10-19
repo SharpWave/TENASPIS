@@ -1,4 +1,4 @@
-function [] = ExtractBlobs(file,mask,FrameChunkSize)
+function [] = ExtractBlobs(file,mask)
 % [] = ExtractBlobs(file,mask)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -30,8 +30,8 @@ NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-NumFrames = 5000; %%%%%%%%%%%%%%%%%%TESTING ONLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+%NumFrames = 5000; %%%%%%%%%%%%%%%%%%TESTING ONLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+FrameChunkSize = 1250;
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
@@ -60,7 +60,7 @@ thresh = 0.01;
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames('SLPDF.h5',FrameList);
+    FrameChunk = LoadFrames('SLPDF.h5',FrameList,info);
     tempcc = [];
     tempPeakPix = [];
     NumChunkFrames = length(FrameList);
@@ -78,7 +78,7 @@ end
 
 p.stop; % Shut-down progress bar
 
-%cc(ChunkStarts(i):ChunkEnds(i)),PeakPix(ChunkStarts(i):ChunkEnds(i))
-%save Blobs.mat cc mask PeakPix;
+
+save Blobs.mat cc mask PeakPix thresh;
 
 end
