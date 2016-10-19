@@ -1,10 +1,12 @@
-function [] = FinalTraces(moviefile)
+function FinalTraces(moviefile)
+%FinalTraces(moviefile)
 % This function takes the ROI output of MakeNeurons and extracts
 % traces in the straightfoward-most way (by summing up all the pixels in a
 % given neuron's ROI. Also normalizes traces at the end and get their
 % temporal derivative
 %
-% INPUTS - all loaded from workspace variables
+% INPUT
+%   moviefile: movie file (SLPDF.h5).
 %
 %   from ProcOut.mat (see MakeNeurons): NeuronImage, NumFrames,
 %   NeuronPixels
@@ -14,6 +16,8 @@ function [] = FinalTraces(moviefile)
 %   trace: a smoothed, normalized (z-scored) trace for each neuron
 %
 %   difftrace: temporal derivative of trace
+%
+%   rawtrace: smoothed, not-normalized trace for each neuron.
 %
 % Copyright 2016 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,25 +45,30 @@ load('ProcOut.mat','NumFrames');
 load('FinalOutput.mat');
 
 % Get image dimensions and number of neurons
-Xdim = size(NeuronImage{1},1);
-Ydim = size(NeuronImage{1},2);
+info = h5info(moviefile,'/Object'); 
 NumNeurons = length(NeuronImage);
 
 % Initialize progress bar
 disp('Calculating traces for each neuron');
 trace = zeros(NumNeurons,NumFrames);
-p=ProgressBar(NumFrames);
-parfor i = 1:NumFrames
+%For each frame...
+resol = 5;                                  % Percent resolution for progress bar, in this case 5%
+update_inc = round(NumFrames/(100/resol));  % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
+for i = 1:NumFrames
     
     % Read in each frame
-    tempFrame = h5read(moviefile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    tempFrame = loadframe(moviefile,i,info);
     tempFrame = tempFrame(:);
  
     % Sum up the number of pixels active in each frame for each neuron
     for j = 1:NumNeurons
         trace(j,i) = mean(tempFrame(NeuronPixels{j}));
     end
-    p.progress; % Update progress bar
+    
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop; % Terminate progress bar
 

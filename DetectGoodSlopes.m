@@ -1,4 +1,4 @@
-function [] = DetectGoodSlopes()
+function DetectGoodSlopes()
 % DetectGoodSlopes
 %
 % Detects rising events for each neuron's transients.  Then,
@@ -61,44 +61,49 @@ disp('Calculating good slopes...')
 % Initialize variable
 aCaTr = zeros(size(expPosTr));
 
-% Initialize ProgressBar
-p = ProgressBar(NumNeurons);
+% normalize difftrace (temporal derivative of trace)
+dfdt = zscore(difftrace,[],2); 
 
+% Initialize ProgressBar
+resol = 1;                                  % Percent resolution for progress bar, in this case 1%
+update_inc = round(NumNeurons/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
 % Run through each neuron's transients and identify positive slopes
 for i = 1:NumNeurons
     
-    dfdt = zscore(difftrace(i,:)); % normalize difftrace (temporal derivative of trace)
     epochs = NP_FindSupraThresholdEpochs(expPosTr(i,:),eps); % ID epochs where transients occur
     
-    % Step throuh each epoch for neuron i
+    % Step through each epoch for neuron i
     for j = 1:size(epochs,1)
         curr = epochs(j,1); % set current frame to epoch start
         inTr = 0; % set inTransient variable to 0 to start
         while (curr <= epochs(j,2)) % Continue until you reach end of epoch j
             
             % If slope is >= 2stds above the mean, keep as a good slope
-            if (dfdt(curr) >= 2)
+            if (dfdt(i,curr) >= 2)
                 aCaTr(i,curr) = 1;
                 inTr = 1; % Set inTransient to 1
             end
             
             % If the previous frame is already within a good transient,
             % keep as a good slope if slope is above the mean (is positive)
-            if (dfdt(curr) > 0) && inTr
+            if (dfdt(i,curr) > 0) && inTr
                 aCaTr(i,curr) = 1;
             end
             
             % If slope goes negative, do not add a good slope
-            if inTr && (dfdt(curr) < 0)
+            if inTr && (dfdt(i,curr) < 0)
                 inTr = 0;
             end
             curr = curr + 1; % Move to next frame
         end
     end
     
-    p.progress; % update progress bar
+     if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
-p.stop; % terminate progress bar
+p.stop; % terminate progress bar 
 
 % check transients for correlation agreement
 for i = 1:NumNeurons
@@ -120,7 +125,6 @@ for i = 1:size(aCaTr,1)
         end
     end
 end
-
 
 % Rename aCaTr
 FT = aCaTr;

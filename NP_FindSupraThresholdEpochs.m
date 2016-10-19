@@ -1,5 +1,5 @@
-function[Epochs] = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
-% [Epochs] = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
+function Epochs = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
+% Epochs = NP_FindSupraThresholdEpochs(x,InThresh,omitends)
 %
 % Finds epochs where consecutive values of x are above InThresh.
 %
@@ -38,39 +38,58 @@ if (nargin < 3)
 end
 
 OverInThresh = (x > InThresh);
-InEpoch = 0;
-NumEpochs = 0;
+% InEpoch = 0;
+% NumEpochs = 0;
 
-ThreshEpochs = [];
+% ThreshEpochs= [];
+% 
+% for i = 1:length(x)
+%   if((OverInThresh(i) == 0) && (InEpoch == 1))
+%      ThreshEpochs(NumEpochs,2) = i-1;
+%      InEpoch = 0;
+%      continue;
+%    end
+% 
+%   if((OverInThresh(i) == 1) && (InEpoch == 0))
+%     % New Epoch
+%     NumEpochs = NumEpochs + 1;
+%     ThreshEpochs(NumEpochs,1) = i;
+%     InEpoch = 1;
+%     continue;
+%   end
+% end
 
-for i = 1:length(x)
-  if((OverInThresh(i) == 0) && (InEpoch == 1))
-     ThreshEpochs(NumEpochs,2) = i-1;
-     InEpoch = 0;
-     continue;
-   end
-
-  if((OverInThresh(i) == 1) && (InEpoch == 0))
-    % New Epoch
-    NumEpochs = NumEpochs + 1;
-    ThreshEpochs(NumEpochs,1) = i;
-    InEpoch = 1;
-    continue;
-  end
+% Simplistic and faster way to do the above. 
+deltaOverInThresh = diff([0 OverInThresh]); %Take the difference of the logical vector.
+onsets = find(deltaOverInThresh==1);        %Find indices where OverInThresh went from 0 to 1.
+offsets = find(deltaOverInThresh==-1) - 1;  %Find indices where OverInThresh went from 1 to 0. 
+NumEpochs = size(onsets,2);                 %Number of epochs. 
+if NumEpochs > 0    %If there is ever a suprathreshold event...
+    ThreshEpochs(:,1) = onsets;          
+    
+    if size(offsets,2) == NumEpochs; 
+        ThreshEpochs(:,2) = offsets;        
+    else    %Handles the case for when the trace is still active when the recording cuts off. 
+        ThreshEpochs(1:size(offsets,2),2) = offsets;
+        ThreshEpochs(end,2) = length(x);
+    end
+    
+else                %Otherwise, set empty. 
+    ThreshEpochs = [];
 end
 
-if(OverInThresh(end) == 1)
-    ThreshEpochs(NumEpochs,2) = length(x);
-end
+% if(OverInThresh(end) == 1)
+%     ThreshEpochs(NumEpochs,2) = length(x);
+% end
 
 if (omitends == 1)
-    if (OverInThresh(end) == 1)
+    if (OverInThresh(end))
       %Still in an epoch at the end, omit it
       NumEpochs = NumEpochs - 1;
       ThreshEpochs = ThreshEpochs(1:NumEpochs,:);
     end
 
-    if (OverInThresh(1) == 1)
+    if (OverInThresh(1))
       NumEpochs = NumEpochs-1;
       ThreshEpochs = ThreshEpochs(2:NumEpochs+1,:);
     end
@@ -78,12 +97,4 @@ end
 
 Epochs = ThreshEpochs;
 
-
-
-
-    
-
-
-    
-    
-    
+end

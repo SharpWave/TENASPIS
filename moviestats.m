@@ -1,5 +1,5 @@
 function [meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
-%[meanframe,stdframe] = moviestats(file)
+%[meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,7 +18,26 @@ function [meanframe,stdframe,meanframepos,stdframepos] = moviestats(file)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   Gets basic statistics about movie frames. 
+%
+%   INPUT
+%       file: Movie file. 
+%
+%   OUTPUTS
+%       meanframe: 1xF vector (F = number of frames), mean value of pixels
+%       per frame.
+%
+%       stdframe: 1xF vector, standard deviation of pixel intensity per
+%       frame.
+%
+%       meanframepos: 1xF vector, mean value of positive pixels per frame.
+%
+%       stdframepos: 1xF vector, SD of positive pixel intensity per frame. 
+%
 
+%% Set up.
+%Get movie info. 
 info = h5info(file,'/Object');
 NumFrames = info.Dataspace.Size(3);
 
@@ -26,6 +45,8 @@ NumFrames = info.Dataspace.Size(3);
 meanframe = zeros(1,NumFrames);
 stdframe = zeros(1,NumFrames);
 
+%If demanded, also provide the mean values and standard deviations of
+%positive pixels.
 if nargout > 2
     meanframepos = zeros(1,NumFrames);
     stdframepos = zeros(1,NumFrames);
@@ -36,16 +57,16 @@ resol = 1; % Percent resolution for progress bar, in this case 10%
 update_inc = round(NumFrames/(100/resol)); % Get increments for updating ProgressBar
 p = ProgressBar(100/resol);
 
-% Calculate stats
+%% Calculate stats.
 for i = 1:NumFrames
     frame = double(loadframe(file,i,info));
-    meanframe(i) = mean(frame(:));
-    stdframe(i) = std(frame(:));
+    meanframe(i) = mean(frame(:));          %Take the mean of the pixels. 
+    stdframe(i) = std(frame(:));            %Take the standard deviation of the pixels. 
     
     if (nargout > 2)
-        pos = find(frame(:) > 0);
-        meanframepos(i) = mean(frame(pos));
-        stdframepos(i) = std(frame(pos));
+        pos = find(frame(:) > 0);           %Get positive pixels.
+        meanframepos(i) = mean(frame(pos)); %Mean of positive pixels.
+        stdframepos(i) = std(frame(pos));   %SD of positive pixels.
     end
     
     % Update progress bar

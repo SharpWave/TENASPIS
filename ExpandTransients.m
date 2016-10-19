@@ -1,4 +1,4 @@
-function [] = ExpandTransients(Todebug)
+function ExpandTransients(Todebug)
 % Takes the information from MakeNeurons (rough idea of when a transient is
 % occuring for each neuron) and NormalTraces and identifies when traces
 % actually start and end.  This is necessary because the output of
@@ -70,19 +70,19 @@ load('NormTraces.mat','trace','difftrace','rawtrace');
 load('ProcOut.mat','NumNeurons','NumFrames','FT');
 
 %% Initialize variables
-PosTr = zeros(NumNeurons,NumFrames); % Positive transients
-NumTr = zeros(1,NumNeurons); % Number transients         
-TrLength = cell(1,NumNeurons); % Trace Length       
-TrPeakVal = cell(1,NumNeurons); % Trace Peak Value       
-TrPeakIdx = cell(1,NumNeurons); % Trace Peak Indices     
-MinPeak = zeros(1,NumNeurons); % Value of the smallest transient peak       
-MaxPeak = zeros(1,NumNeurons); % Value of the largest transient peak
-AvgLength = zeros(1,NumNeurons); % Average length (in frames) of all the transients
-PoPosTr = PosTr; % Potential positive transients
-PoNumTr = NumTr; % Potential number traces
-PoTrLength = TrLength; % Potential trace length
-PoTrPeakVal = TrPeakVal; % Potential Trace Peak Value
-PoTrPeakIdx = TrPeakIdx; % Potential Trace Peak Indices
+PosTr = zeros(NumNeurons,NumFrames);    % Positive transients
+NumTr = zeros(1,NumNeurons);            % Number transients         
+TrLength = cell(1,NumNeurons);          % Trace Length       
+TrPeakVal = cell(1,NumNeurons);         % Trace Peak Value       
+TrPeakIdx = cell(1,NumNeurons);         % Trace Peak Indices     
+MinPeak = zeros(1,NumNeurons);          % Value of the smallest transient peak       
+MaxPeak = zeros(1,NumNeurons);          % Value of the largest transient peak
+AvgLength = zeros(1,NumNeurons);        % Average length (in frames) of all the transients
+PoPosTr = PosTr;                        % Potential positive transients
+PoNumTr = NumTr;                        % Potential number traces
+PoTrLength = TrLength;                  % Potential trace length
+PoTrPeakVal = TrPeakVal;                % Potential Trace Peak Value
+PoTrPeakIdx = TrPeakIdx;                % Potential Trace Peak Indices
 
 Threshold = 0.005;
 
@@ -91,64 +91,64 @@ disp('Expanding transients part 1 (expand confirmed transients)...');
 
 % Initialize progress bar
 p = ProgressBar(NumNeurons);
-for i = 1:NumNeurons
+for n = 1:NumNeurons
     
     p.progress; % update progress bar
     
-    tr = rawtrace(i,:); % Pull trace for neuron i
-    activefr = find(FT(i,:)); % Identify active frame indices determined from image segmentation for neuron i
-    for j = 1:length(activefr)
+    tr = rawtrace(n,:); % Pull trace for neuron n
+    activefr = find(FT(n,:)); % Identify active frame indices determined from image segmentation for neuron i
+    for f = activefr
         
-        % If active frame j has already been identified as a positive
+        % If active frame f has already been identified as a positive
         % transient, continue to next active frame without doing any
         % calculations below
-        if (PosTr(i,activefr(j)))
+        if (PosTr(n,f))
             continue;
         end
                
         % Find forward extent of transient (since trace is z-scored, valid 
         % extent of trace continues as long as the trace is above its mean 
         % value - i.e. trace is above 0)
-         curr = activefr(j); % Grab 1st active frame of normalized trace
+        curr = f; % Grab 1st active frame of normalized trace
         while (tr(curr) > 0) && (curr < NumFrames) 
             curr = curr + 1; % Step through until you don't meet criteria
         end
         
-        TrEnd = max(curr - 1,activefr(j)); % Identify frame number at end of trace
+        TrEnd = max(curr - 1,f); % Identify frame number at end of trace
         
         % Find backward extent of transient (trace is above its mean
         % value)
-        curr = activefr(j);
+        curr = f;
         while (tr(curr) > 0) && (curr > 1)
             curr = curr - 1; % Step backward until you don't meet criteria
         end
         
-        TrStart = min(curr + 1,activefr(j)); % Identify frame number at start of trace
+        TrStart = min(curr + 1,f); % Identify frame number at start of trace
         
-        PosTr(i,TrStart:TrEnd) = 1; % Set all frames where a positive trace is detected to one
+        PosTr(n,TrStart:TrEnd) = 1; % Set all frames where a positive trace is detected to one
         
     end
     
-    Epochs = NP_FindSupraThresholdEpochs(PosTr(i,:),eps); % Identify epochs of activity
-    NumTr(i) = size(Epochs,1); % Get number of traces for each neuron
+    Epochs = NP_FindSupraThresholdEpochs(PosTr(n,:),eps); % Identify epochs of activity
+    NumTr(n) = size(Epochs,1); % Get number of traces for each neuron
     
     % Pull out trace information
-    for j = 1:NumTr(i)
-        TrLength{i}(j) = Epochs(j,2)-Epochs(j,1)+1; % Length of trace in frames for neuron i
-        [TrPeakVal{i}(j),idx] = max(tr(Epochs(j,1):Epochs(j,2))); % The peak value and index for trace j of neuron i
-        TrPeakIdx{i}(j) = idx+Epochs(j,1)-1; % transform frame index within of peak for trace j to frame number index
+    for thisTrace = 1:NumTr(n)
+        TrLength{n}(thisTrace) = Epochs(thisTrace,2)-Epochs(thisTrace,1)+1;                 % Length of trace in frames for neuron n
+        [TrPeakVal{n}(thisTrace),idx] = max(tr(Epochs(thisTrace,1):Epochs(thisTrace,2)));   % The peak value and index for thisTrace of neuron n
+        TrPeakIdx{n}(thisTrace) = idx+Epochs(thisTrace,1)-1;                                % transform frame index within of peak for thisTrace to frame number index
     end
     
     % Calculate the smallest peak, largest peak, and average transient
     % length
-    if (NumTr(i) == 0) % If no transients detected, set values to those below
-        MinPeak(i) = -inf;
-        MaxPeak(i) = -inf;
-        AvgLength(i) = 0;
+    if (NumTr(n) == 0) % If no transients detected, set values to those below
+        MinPeak(n) = -inf;
+        MaxPeak(n) = -inf;
+        AvgLength(n) = 0;
     else % If there are transients, actually calculate these values
-        MinPeak(i) = min(TrPeakVal{i});
-        MaxPeak(i) = max(TrPeakVal{i});
-        AvgLength(i) = mean(TrLength{i});
+        MinPeak(n) = min(TrPeakVal{n});
+        MaxPeak(n) = max(TrPeakVal{n});
+        AvgLength(n) = mean(TrLength{n});
     end
     
 end
@@ -158,54 +158,54 @@ p.stop;
 PrePoPosTr = zeros(NumNeurons,NumFrames); % Initialize
 
 % Identify pre-expansion potential positive transients
-for i = 1:NumNeurons
-    tr = rawtrace(i,:); % Get trace
+for n = 1:NumNeurons
+    tr = rawtrace(n,:); % Get trace
     
     % Potential transients must a) have trace values above 25% of the
     % minimum peak detected above, and b) not already be a valid transient
-    PrePoPosTr(i,1:NumFrames) = (tr >= Threshold).*(PosTr(i,:) == 0);
+    PrePoPosTr(n,1:NumFrames) = (tr >= Threshold).*(PosTr(n,:) == 0);
 end
 
 disp('Expanding transients part 2 (identify potential new transients)...'); 
 p = ProgressBar(NumNeurons);
-for i = 1:NumNeurons
-    tr = trace(i,:);
-    PoPosTr(i,1:NumFrames) = 0;
-    activefr = find(PrePoPosTr(i,:));
-    PoNumTr(i) = 0;
-    for j = 1:length(activefr)
-        if (PoPosTr(i,activefr(j)))
+for n = 1:NumNeurons
+    tr = trace(n,:);
+    PoPosTr(n,1:NumFrames) = 0;
+    activefr = find(PrePoPosTr(n,:));
+    PoNumTr(n) = 0;
+    for f = activefr
+        if (PoPosTr(n,f))
             continue;
         end
                
         % Find forward extent of transient (intensity above mean value)
-        curr = activefr(j);
+        curr = f;
         
         while (tr(curr) > 0) && (curr < NumFrames)
             curr = curr + 1;
         end
         
-        TrEnd = max(curr - 1,activefr(j));
+        TrEnd = max(curr - 1,f);
         
-        curr = activefr(j);
+        curr = f;
         
          % Find backward extent of transient (intensity above mean value)
         while (tr(curr) > 0) && (curr > 1)
             curr = curr - 1;
         end
         
-        TrStart = min(curr + 1,activefr(j));
+        TrStart = min(curr + 1,f);
         
-        PoPosTr(i,TrStart:TrEnd) = 1;
+        PoPosTr(n,TrStart:TrEnd) = 1;
         
     end
 
-    Epochs = NP_FindSupraThresholdEpochs(PoPosTr(i,:),eps);
-    PoNumTr(i) = size(Epochs,1); % Get number of potential transients
-    for j = 1:PoNumTr(i)
-        PoTrLength{i}(j) = Epochs(j,2)-Epochs(j,1)+1; % Save potential transient length for epoch j
-        [PoTrPeakVal{i}(j),idx] = max(tr(Epochs(j,1):Epochs(j,2))); % ID the peak potential transient value and index in epoch j
-        PoTrPeakIdx{i}(j) = idx+Epochs(j,1)-1; % Convert index for peak value from epoch j numbering to frame number
+    Epochs = NP_FindSupraThresholdEpochs(PoPosTr(n,:),eps);
+    PoNumTr(n) = size(Epochs,1); % Get number of potential transients
+    for thisTrace = 1:PoNumTr(n)
+        PoTrLength{n}(thisTrace) = Epochs(thisTrace,2)-Epochs(thisTrace,1)+1; % Save potential transient length for epoch j
+        [PoTrPeakVal{n}(thisTrace),idx] = max(tr(Epochs(thisTrace,1):Epochs(thisTrace,2))); % ID the peak potential transient value and index in epoch j
+        PoTrPeakIdx{n}(thisTrace) = idx+Epochs(thisTrace,1)-1; % Convert index for peak value from epoch j numbering to frame number
     end
     
     p.progress;
@@ -215,8 +215,8 @@ p.stop;
 save ExpTransients.mat MaxPeak MinPeak PosTr PoPosTr PrePoPosTr PoTrPeakIdx PoNumTr;  
 
 if Todebug
-    for i = 1:NumNeurons
-        plot(FT(i,:)*5);hold on;plot(PosTr(i,:)*5);plot(trace(i,:));plot(zscore(difftrace(i,:)));plot(PoPosTr(i,:),'-r','LineWidth',2);hold off;set(gca,'YLim',[-10 10]);pause;
+    for n = 1:NumNeurons
+        plot(FT(n,:)*5);hold on;plot(PosTr(n,:)*5);plot(trace(n,:));plot(zscore(difftrace(n,:)));plot(PoPosTr(n,:),'-r','LineWidth',2);hold off;set(gca,'YLim',[-10 10]);pause;
     end
 end
 

@@ -1,5 +1,22 @@
 function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
 % [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
+%
+%   Gets the date and session number of the initial session for the animal
+%   specified as animal_id. This session will contain the minimum
+%   projection of the initial recording to which future recording sessions
+%   will be aligned. Animal entries and their respective initial dates and
+%   session numbers must be manually edited in this function prior to
+%   running it. 
+%
+%   INPUT
+%       animal_id: String, ID of the animal. Must be unique and must match one
+%       of the AI.animal fields below. 
+%
+%   OUTPUTS
+%       init_date: String, date of the initial session in the format
+%       MM_DD_YYYY. 
+%
+%       init_sess: Scalar, initial session number. 
 %  
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,86 +36,110 @@ function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-AI(1).animal = 'GCaMP6f_31';
-AI(1).init_date = '09_29_2014';
-AI(1).init_sess = 1;
+% Initial Session Info
 
-AI(2).animal = 'GCamp6f_30';
-AI(2).init_date = '11_11_2014';
-AI(2).init_sess = 1;
+i = 1;
+AI(i).animal = 'GCaMP6f_31';
+AI(i).init_date = '09_29_2014';
+AI(i).init_sess = 1;
 
-AI(3).animal = 'GCamp6f_44';
-AI(3).init_date = '07_10_2015';
-AI(3).init_sess = 2; 
+i = i+1;
+AI(i).animal = 'GCamp6f_30';
+AI(i).init_date = '11_11_2014';
+AI(i).init_sess = 1;
 
-AI(4).animal = 'GCamp6f_45';
-AI(4).init_date = '08_05_2015';
-AI(4).init_sess = 1;
+i = i+1;
+AI(i).animal = 'GCamp6f_44';
+AI(i).init_date = '07_10_2015';
+AI(i).init_sess = 2;
 
-AI(5).animal = 'GCamp6f_41';
-AI(5).init_date = '08_05_2015';
-AI(5).init_sess = 1;
+i = i+1;
+AI(i).animal = 'GCamp6f_45';
+AI(i).init_date = '08_05_2015';
+AI(i).init_sess = 1;
 
-AI(6).animal = 'GCamp6f_46';
-AI(6).init_date = '08_14_2015';
-AI(6).init_sess = 1;
+i = i+1;
+AI(i).animal = 'GCamp6f_41';
+AI(i).init_date = '08_05_2015';
+AI(i).init_sess = 1;
 
-AI(7).animal = 'GCamp6f_30_2';
-AI(7).init_date = '06_10_2015';
-AI(7).init_sess = 1;
+i = i+1;
+AI(i).animal = 'GCamp6f_46';
+AI(i).init_date = '08_14_2015';
+AI(i).init_sess = 1;
 
-AI(8).animal = 'GCamp6f_45_treadmill';
-AI(8).init_date = '11_30_2015';
-AI(8).init_sess = 4;
+i = i+1;
+AI(i).animal = 'GCamp6f_30_2';
+AI(i).init_date = '06_10_2015';
+AI(i).init_sess = 1;
 
-AI(10).animal = 'GCamp6f_48_treadmill';
-AI(10).init_date = '04_18_2016';
-AI(10).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'GCamp6f_45_treadmill';
+AI(i).init_date = '11_30_2015';
+AI(i).init_sess = 4;
 
-AI(11).animal = 'GCamp6f_45_altpilot';
-AI(11).init_date = '01_13_2016';
-AI(11).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'GCamp6f_48_treadmill';
+AI(i).init_date = '04_18_2016';
+AI(i).init_sess = 1; 
 
-AI(12).animal = 'GCamp6f_48';
-AI(12).init_date = '08_29_2015';
-AI(12).init_sess = 1;
+i = i+1;
+AI(i).animal = 'GCamp6f_45_altpilot';
+AI(i).init_date = '01_13_2016';
+AI(i).init_sess = 1; 
 
-AI(13).animal = 'GCamp6f_45_DNMP';
-AI(13).init_date = '04_01_2016';
-AI(13).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'GCamp6f_48';
+AI(i).init_date = '08_29_2015';
+AI(i).init_sess = 1;
 
-AI(14).animal = 'Aquila';
-AI(14).init_date = '04_28_2016';
-AI(14).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'GCamp6f_45_DNMP';
+AI(i).init_date = '04_01_2016';
+AI(i).init_sess = 1; 
 
-AI(15).animal = 'Libra';
-AI(15).init_date = '05_13_2016';
-AI(15).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'Aquila';
+AI(i).init_date = '04_28_2016';
+AI(i).init_sess = 1; 
 
-AI(16).animal = 'Bellatrix';
-AI(16).init_date = '06_20_2016';
-AI(16).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'Libra';
+AI(i).init_date = '05_13_2016';
+AI(i).init_sess = 1; 
 
-AI(17).animal = 'Polaris';
-AI(17).init_date = '06_21_2016';
-AI(17).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'Bellatrix';
+AI(i).init_date = '06_20_2016';
+AI(i).init_sess = 1; 
 
-AI(18).animal = 'Qui Gon';
-AI(18).init_date = '07_18_2016';
-AI(18).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'Polaris';
+AI(i).init_date = '06_21_2016';
+AI(i).init_sess = 1; 
 
-AI(19).animal = 'Obi Won';
-AI(19).init_date = '07_19_2016';
-AI(19).init_sess = 1; 
+i = i+1;
+AI(i).animal = 'Qui Gon';
+AI(i).init_date = '07_18_2016';
+AI(i).init_sess = 1; 
 
-for i = 1:length(AI)
-    if (strcmpi(AI(i).animal,animal_id))
-        init_date = AI(i).init_date;
-        init_sess = AI(i).init_sess;
-        return;
-    end
-end
+i = i+1;
+AI(i).animal = 'Obi Won';
+AI(i).init_date = '07_19_2016';
+AI(i).init_sess = 1;
+
+% For each animal you have, add onto the structure array: 
+% i = i+1;
+% AI(i).animal = _ANIMAL NAME HERE_
+% AI(i).init_date = _INITIAL DATE HERE_
+% AI(i).init_sess = _INITIAL SESSION NUMBER HERE_
+
+%% Perform search. 
+all_ids = {AI.animal};                      %Cell array of all names.
+ind = find(strcmpi(animal_id,all_ids));     %Find name that matches input.
+
+%Set outputs. 
+init_date = AI(ind).init_date;               
+init_sess = AI(ind).init_sess;
         
-
 end
-

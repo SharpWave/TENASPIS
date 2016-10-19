@@ -1,4 +1,6 @@
-function [] = NormalTraces(moviefile)
+function NormalTraces(moviefile)
+% NormalTraces(moviefile)
+%
 % This function takes the ROI output of MakeNeurons and extracts
 % traces in the straightfoward-most way (by summing up all the pixels in a
 % given neuron's ROI. Also normalizes traces at the end and get their
@@ -40,25 +42,29 @@ disp('Loading relevant variables from ProcOut')
 load('ProcOut.mat','NeuronImage','NumFrames','NeuronPixels');
 
 % Get image dimensions and number of neurons
-Xdim = size(NeuronImage{1},1);
-Ydim = size(NeuronImage{1},2);
+info = h5info(moviefile,'/Object');
 NumNeurons = length(NeuronImage);
 trace = zeros(NumNeurons,NumFrames); 
 
 % Initialize progress bar
 disp('Calculating traces for each neuron');
-p=ProgressBar(NumFrames);
-parfor i = 1:NumFrames
-    
+% Initialize progress bar
+resol = 5;                                  % Percent resolution for progress bar, in this case 5%
+update_inc = round(NumFrames/(100/resol));  % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
+for i = 1:NumFrames
     % Read in each frame
-    tempFrame = h5read(moviefile,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
+    tempFrame = loadframe(moviefile,i,info);
     tempFrame = tempFrame(:);
  
     % Sum up the number of pixels active in each frame for each neuron
     for j = 1:NumNeurons
         trace(j,i) = mean(tempFrame(NeuronPixels{j}));
     end
-    p.progress; % Update progress bar
+    
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop; % Terminate progress bar
 
@@ -67,15 +73,13 @@ rawtrace = trace;
 difftrace = zeros(size(trace)); 
 disp('Smoothing traces and normalizing')
 for i = 1:NumNeurons
-    trace(i,:) = zscore(trace(i,:)); % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
-    trace(i,:) = convtrim(trace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
-    trace(i,1:11) = 0; % Set 10 first frames to 0
-    trace(i,end-11:end) = 0; % Set 10 last frames to 0
+    trace(i,:) = zscore(trace(i,:));                        % Z-score all the calcium activity for neuron i - effectively thresholds trace later in ExpandTransients
+    trace(i,:) = convtrim(trace(i,:),ones(10,1)/10);        % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
+    trace(i,1:11) = 0;                                      % Set 10 first frames to 0
+    trace(i,end-11:end) = 0;                                % Set 10 last frames to 0
     
-    rawtrace(i,:) = convtrim(rawtrace(i,:),ones(10,1)/10); % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
-
-    
-    difftrace(i,2:NumFrames) = diff(trace(i,:)); % Get temporal derivative of each trace
+    % Convolve the trace with a ten frame rectangular smoothing window, divide by 10
+    rawtrace(i,:) = convtrim(rawtrace(i,:),ones(10,1)/10);  
 
 %     % re-zero the raw trace
 %     ftrace = convtrim(rawtrace(i,:),ones(1,100)./100); % very low pass filter
@@ -84,10 +88,11 @@ for i = 1:NumNeurons
 %     fidx = find((fdiff.^2) < fthresh);
 %     rawtrace(i,:) = rawtrace(i,:) - mean(rawtrace(i,fidx));
 end
-rawtrace(:,1:11) = 0; % Set 10 first frames to 0
-rawtrace(:,end-11:end) = 0; % Set 10 last frames to 0
-difftrace(:,1:11) = 0; % Set 10 first frames to 0
-difftrace(:,end-11:end) = 0; % Set 10 last frames to 0
+rawtrace(:,1:11) = 0;                           % Set 10 first frames to 0
+rawtrace(:,end-11:end) = 0;                     % Set 10 last frames to 0
+difftrace(:,2:NumFrames) = diff(trace,[],2);    % Temporal derivative. 
+difftrace(:,1:11) = 0;                          % Set 10 first frames to 0
+difftrace(:,end-11:end) = 0;                    % Set 10 last frames to 0
 
 save NormTraces.mat trace difftrace rawtrace;
 
