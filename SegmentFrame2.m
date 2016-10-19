@@ -17,10 +17,10 @@ function [cc,PeakPix] = SegmentFrame2(frame,mask,thresh)
 %
 %   OUTPUTS:
 %
-%       cc: structure variable containing all the relevant data/statistics 
-%       about the blobs discovered (e.g. the pixel indices for each blob) 
+%       cc: structure variable containing all the relevant data/statistics
+%       about the blobs discovered (e.g. the pixel indices for each blob)
 %
-%       PeakPix: a cell array with the x/y pixel indices for the location 
+%       PeakPix: a cell array with the x/y pixel indices for the location
 %       of the peak pixel intensity for each blob.
 %
 %       NumItsTaken: number of iterations taken to identify each blob.
@@ -57,7 +57,7 @@ MaxBlobArea = ceil((MaxNeuronRadius^2)*pi);
 MinBlobArea = ceil((MinNeuronRadius^2)*pi);
 
 % Setup variables for below
-PeakPix = []; % Locations of peak pixels 
+PeakPix = []; % Locations of peak pixels
 threshlist = [];
 badpix = find(mask == 0); % Locations of pixels that are outside the mask and should be excluded
 frame = single(frame); % work with single precision to save memory
@@ -67,14 +67,14 @@ blankframe = zeros(size(frame));
 threshframe = frame > thresh; % apply threshold, make it into a logical array
 threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than minpixels
 
-% Set up variables 
+% Set up variables
 newlist = [];
 currnewList = 0;
 BlobsInFrame = 1;
 NumIts = 0;
 tNumItsTaken = [];
 
-% Determine initial blobs and measurements 
+% Determine initial blobs and measurements
 rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
 
 % investigate whether initialblobs can be refined into legal blobs
@@ -92,26 +92,26 @@ for i = 1:length(rp)
     AxisRatio = props.MajorAxisLength/props.MinorAxisLength;
     
     CriteriaOK = (props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (props.Area < MaxBlobArea);
-            
+    
     while(~CriteriaOK && (tempthresh < MaxIntensity))
-      % First increase threshold and take a new binary image
-      tempthresh = tempthresh+ThresholdInc;
-      BinImage = SmallImage > tempthresh;
-      BinImage = bwareaopen(BinImage,MinBlobArea,4);
-      
-      % then check for the blob criteria again
-      temp_props = regionprops(bwconncomp(BinImage,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
-      
-      if (length(temp_props) ~= 1)
-          % multiple areas in the blob
-          break; % CriteriaOK is still 0
-      end
-      
-      AxisRatio = temp_props.MajorAxisLength/temp_props.MinorAxisLength;
-      CriteriaOK = (temp_props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (temp_props.Area < MaxBlobArea);
+        % First increase threshold and take a new binary image
+        tempthresh = tempthresh+ThresholdInc;
+        BinImage = SmallImage > tempthresh;
+        BinImage = bwareaopen(BinImage,MinBlobArea,4);
+        
+        % then check for the blob criteria again
+        temp_props = regionprops(bwconncomp(BinImage,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
+        
+        if (length(temp_props) ~= 1)
+            % multiple areas in the blob
+            break; % CriteriaOK is still 0
+        end
+        
+        AxisRatio = temp_props.MajorAxisLength/temp_props.MinorAxisLength;
+        CriteriaOK = (temp_props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (temp_props.Area < MaxBlobArea);
     end
     
-    if (~CriteriaOK) 
+    if (~CriteriaOK)
         GoodBlob(i) = 0;
         continue;
     end
@@ -122,23 +122,27 @@ for i = 1:length(rp)
     
     while (tempthresh < MaxIntensity)
         tempthresh = tempthresh+ThresholdInc;
-        BinImage = SmallImage > tempthresh;
+        BinImage = SmallImage >= tempthresh;
         temp_conn = bwconncomp(BinImage,8);
         if (temp_conn.NumObjects > 1)
             GoodBlob(i) = 0;
             break;
         end
+        
+        if (length(temp_conn.PixelIdxList{1}) < MinBlobArea)
+            break;
+        end
+        
     end
-      
+    
     if(GoodBlob(i))
-        CritImage{i} = SmallImage.*CritBinImage;
-        tempframe = blankframe;
-        tempframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritImage{i};
+        %         CritImage{i} = SmallImage.*CritBinImage;
+        %         tempframe = blankframe;
+        %         tempframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritImage{i};
         tempbinframe = blankframe;
         tempbinframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritBinImage;
-        temp_props = regionprops(bwconncomp(tempbinframe,4),tempframe,'PixelIdxList','PixelValues','WeightedCentroid');
+        temp_props = regionprops(bwconncomp(tempbinframe,4),frame,'PixelIdxList','WeightedCentroid');
         PixelIdxList{i} = temp_props.PixelIdxList;
-        PixelValues{i} = temp_props.PixelValues;
         WeightedCentroid{i} = temp_props.WeightedCentroid;
         
         if (~isempty(intersect(badpix,PixelIdxList{i})))
@@ -149,12 +153,10 @@ end
 
 if(sum(GoodBlob) == 0)
     PeakPix = [];
-    threshlist = [];
     cc.NumObjects = 0;
     cc.PixelIdxList = [];
-    cc.PixelVals = [];
     cc.ImageSize = size(frame);
-    cc.Connectivity = 0; 
+    cc.Connectivity = 0;
     return;
 end
 
@@ -166,7 +168,6 @@ GB = find(GoodBlob);
 
 for i = 1:length(GB)
     cc.PixelIdxList{i} = single(PixelIdxList{GB(i)});
-    cc.PixelVals{i} = single(PixelValues{GB(i)});
     PeakPix{i}(1) = WeightedCentroid{GB(i)}(1);
     PeakPix{i}(2) = WeightedCentroid{GB(i)}(2);
 end

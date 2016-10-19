@@ -79,6 +79,6 @@ end
 p.stop; % Shut-down progress bar
 
 %cc(ChunkStarts(i):ChunkEnds(i)),PeakPix(ChunkStarts(i):ChunkEnds(i))
-save Blobs.mat cc mask PeakPix;
+%save Blobs.mat cc mask PeakPix;
 
 end
