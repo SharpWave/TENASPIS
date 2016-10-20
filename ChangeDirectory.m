@@ -52,7 +52,11 @@ end
 
 %Fetch Master Directory from upper level function(s). 
 global MasterDirectory;
-load(fullfile(MasterDirectory,'MasterDirectory.mat'));
+if isempty(MasterDirectory)
+    MasterDirectory = 'C:\MasterData'; % default location
+else
+    load(fullfile(MasterDirectory,'MasterDirectory.mat'));
+end
 
 %Concatenate fields for searching. 
 animals = {MD.Animal};

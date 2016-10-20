@@ -42,25 +42,6 @@ function Tenaspis3(md,varargin)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%   INPUTS
-%       md: Master Directory entry. 
-%
-%       varargin: 
-%           preprocess: logical, whether you want to run MakeT2Movies.
-%           Default=whether SLPDF exists in your directory.
-%
-%           d1: logical, whether you want to make first derivative movie
-%           during MakeT2Movies. Default=false.
-%
-%           manualmask: logical, whether you want to draw mask manually.
-%           Default=false. 
-%
-%           masterdirectory: string, path to master directory.
-%           Default='C:/MasterData'.
-%       
-%           Neuron extraction parameters: see SegmentFrame for options!
-%
 
 %% Parse inputs. 
     cd(md.Location);
