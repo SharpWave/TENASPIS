@@ -24,16 +24,20 @@ function [] = Set_T_Params(moviefile);
 clear T_PARAMS;
 global T_PARAMS;
 
-% Get the dimensionality of the movie
+%% The dimensions of the movie
 info = h5info(moviefile,'/Object');
 T_PARAMS.Xdim = info.Dataspace.Size(1);
 T_PARAMS.Ydim = info.Dataspace.Size(2);
 T_PARAMS.NumFrames = info.Dataspace.Size(3);
 
-% General parameters used by multiple scripts
+%% General parameters used by multiple scripts
 T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various functions
 
-% ExtractBlobs / SegmentFrame params
+%% MakeFilteredMovies
+T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass filtering
+T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass filtering
+
+%% ExtractBlobs / SegmentFrame params
 T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs
 
 

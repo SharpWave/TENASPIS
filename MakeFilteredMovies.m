@@ -1,5 +1,5 @@
 function MakeFilteredMovies(varargin)
-% MakeFilteredMovies(NAME,VALUE)
+% MakeFilteredMovies(varargin)
 %
 % Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
@@ -33,14 +33,14 @@ function MakeFilteredMovies(varargin)
 %
 % OUTPUTS - saved to directory above motion-corrected movie path.
 %
-%   SHPDFF.h5: SpatialHighPass DFF. Takes a 3-pixel smoothed version of the input movie and
+%   BPDFF.h5: SpatialBandPass DFF. Takes a 3-pixel smoothed version of the input movie and
 %   divides it by the 20-pixel smoothed version of the same movie. Then,
 %   take the DF/F of the quotient.
 %
-%   3PDFF.h5: DF/F of the 3-pixel smoothed movie.
-%
+%   LPDFF.h5: DF/F of the 3-pixel smoothed movie.
 
-[Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
+%% Get Parameters and setup frame chunking
+[Xdim,Ydim,NumFrames,FrameChunkSize,HighPassRadius,LowPassRadius] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','HighPassRadius','LowPassRadius');
 
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
@@ -50,14 +50,14 @@ NumChunks = length(ChunkStarts);
 %% Parse inputs.
 p = inputParser;
 p.addParameter('path',false);
-p.addParameter('d1',false,@(x) islogical(x));
+
 p.parse(varargin{:});
 
 path = p.Results.path;  %File path.
-d1 = p.Results.d1;      %Temporal first derivative movie?
 
-%% File names.
-%If the path is specified, grab the h5 file name.
+
+%% Input File names.
+% If the path is specified, grab the h5 file name.
 if ischar(path)
     cd(fullfile(path,'MotCorrMovie-Objects'));
     h5 = ls('*.h5');
@@ -69,26 +69,26 @@ else
     path = fileparts(fileparts(path)); % Grab folder above the one containing MotCorrh5 movie
 end
 
-%File names.
-SHPDFF = fullfile(path,'SHPDFF.h5');              %Spatial high pass divide DF/F.
-3PDFF = fullfile(path,'3PDFF.h5');                  %DF/F of spatially smoothed movie.
-threePixName = fullfile(path,'threePixSmooth.h5');  %Spatially smoothed movie.
-tempfilename = fullfile(path,'temp.h5');            %Spatial high pass divide (before DF/F).
+%% Output File names.
+BPDFF = fullfile(path,'BPDFF.h5');              % DF/F normalized spatial band pass filtered movie
+LPDFF = fullfile(path,'LPDFF.h5');                % DF/F normalized Low pass filtered movie
+LowPassName = fullfile(path,'LowPass.h5');        % Low pass filtered movie
+BandPassName = fullfile(path,'BandPass.h5');      % High pass filtered movie
 
 %% Set up.
-%Make files.
+% create output files
 
-h5create(tempfilename,'/Object',info.Dataspace.Size,'ChunkSize',...
+h5create(BandPassName,'/Object',info.Dataspace.Size,'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
-h5create(threePixName,'/Object',info.Dataspace.Size,'ChunkSize',...
+h5create(LowPassName,'/Object',info.Dataspace.Size,'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
 
-%Spatial filters.
-LPfilter = fspecial('disk',20);
-threePixfilter = fspecial('disk',3);
+% create Spatial filters.
+HighPassFilter = fspecial('disk',HighPassRadius);
+LowPassFilter = fspecial('disk',LowPassRadius);
 
 %% Writing.
-disp('Making Movies')
+disp('Filtering Movies')
 
 % Initialized ProgressBar
 p = ProgressBar(NumChunks);
@@ -96,50 +96,29 @@ p = ProgressBar(NumChunks);
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     FrameChunk = LoadFrames(MotCorrh5,FrameList);
-    LPframe = imfilter(frame,LPfilter,'same','replicate');              %20-pixel filter.
     
-for i=1:NumFrames
-    frame = single(LoadFrames(MotCorrh5,i));
+    HPChunk = imfilter(FrameChunk,HighPassFilter,'same','replicate'); % Big radius filter to smooth out background
+    LPChunk = imfilter(FrameChunk,LowPassFilter,'same','replicate'); % Small radius filter to reduce pixel noise
     
-    LPframe = imfilter(frame,LPfilter,'same','replicate');              %20-pixel filter.
-    threePixFrame = imfilter(frame,threePixfilter,'same','replicate');  %3-pixel filter.
+    h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
+        [Xdim Ydim length(FrameList) 1]);
     
-    h5write(threePixName,'/Object',threePixFrame,[1 1 i 1],...          %Write 3-pixel smoothed.
-        [Xdim Ydim 1 1]);
-    h5write(tempfilename,'/Object',threePixFrame./LPframe,[1 1 i 1],... %Write LP divide.
-        [Xdim Ydim 1 1]);
+    h5write(BandPassName,'/Object',LPChunk./HPChunk,[1 1 ChunkStarts(i) 1],... %Write LP divide.
+        [Xdim Ydim length(FrameList) 1]);
     
-    if round(i/update_inc) == (i/update_inc) % Update progress bar
-        p.progress;
-    end
-    
+    p.progress;
 end
 p.stop;
 
-%     if d1
-%         disp('Making D1Movie.h5');
-%         %Temporal smooth.
-%         TempSmoothMovie(threePixName,'SMovie.h5',20);
-%
-%         %First derivative movie.
-%         multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
-%         if ~isempty(multiplier_use)
-%             delete D1Movie.h5
-%             multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5',multiplier_use);
-%             save multiplier.mat multiplier_use
-%         end
-%         delete SMovie.h5
-%     end
+%% Calculate DF/F 
+disp('Making BPDFF.h5...');    %DF/F of BP
+Make_DFF(BandPassName,BPDFF);
 
-disp('Making SHPDFF.h5...');         %DF/F of LP divide.
-Make_DFF(tempfilename,SHPDFF);
-
-disp('Making 3PDFF.h5...');           %DF/F of 3-pixel smoothed.
-Make_DFF(threePixName,3PDFF);
-
+disp('Making LPDFF.h5...');    %DF/F of Low Pass
+Make_DFF(LowPassName,LPDFF);
 
 %% Delete temporary files
-delete(tempfilename);
-delete(threePixName);
+delete(BandPassName);
+delete(LowPassName);
 
 end
