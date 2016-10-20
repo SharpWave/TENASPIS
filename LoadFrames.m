@@ -1,4 +1,4 @@
-function [frames,Xdim,Ydim,NumFrames] = LoadFrames(file,framenums,h5_size_info)
+function [frames] = LoadFrames(file,framenums)
 % [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,...)
 %
 % Loads a frame from an h5 file
@@ -8,15 +8,8 @@ function [frames,Xdim,Ydim,NumFrames] = LoadFrames(file,framenums,h5_size_info)
 %
 %   framenum: frame number of file to load
 %
-%   h5_size_info (optional): data structure obtained by running info =
-%   h5info(file,'/Object') on the movie beforehand.  Will save lots of time
-%   if you are loading many frames, not necessary for loading small numbers
-%   of frames.
-%
 % OUTPUTS:
 %   frame: an array of the frame you loaded
-%
-%   Xdim, Ydim, NumFrames: movie size info obtained using h5info.
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,30 +29,22 @@ function [frames,Xdim,Ydim,NumFrames] = LoadFrames(file,framenums,h5_size_info)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Pull info about video file
-if nargin < 3
-    info = h5info(file,'/Object');
-else
-    info = h5_size_info;
-end
-NumFrames = info.Dataspace.Size(3);
-Xdim = info.Dataspace.Size(1);
-Ydim = info.Dataspace.Size(2);
+[Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
 fmap = zeros(1,max(framenums));
 fmap(framenums) = 1;
 fep = NP_FindSupraThresholdEpochs(fmap,eps,0);
 loadchunks = [];
 
+% find sets of consecutive frames in framenums
 for i = 1:size(fep,1)
     chunksize = fep(i,2)-fep(i,1)+1;
     loadchunks(i,1:2) = [fep(i,1),chunksize];
 end
 
 curr = 1;
-
+% load the frames
 for i = 1:size(fep,1)
-
   frames(:,:,curr:(curr+loadchunks(i,2)-1)) = h5read(file,'/Object',[1 1 loadchunks(i,1) 1],[Xdim Ydim loadchunks(i,2) 1]);
   curr = curr+loadchunks(i,2);
 end

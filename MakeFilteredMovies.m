@@ -1,5 +1,5 @@
-function MakeT2Movies(varargin)
-% MakeT2Movies(NAME,VALUE)
+function MakeFilteredMovies(varargin)
+% MakeFilteredMovies(NAME,VALUE)
 %
 % Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences 
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
@@ -33,11 +33,11 @@ function MakeT2Movies(varargin)
 %   
 % OUTPUTS - saved to directory above motion-corrected movie path.
 %
-%   SLPDF.h5: Takes a 3-pixel smoothed version of the input movie and
+%   SHPDFF.h5: Highpass DFF. Takes a 3-pixel smoothed version of the input movie and
 %   divides it by the 20-pixel smoothed version of the same movie. Then,
 %   take the DF/F of the quotient. 
 %
-%   DFF.h5: DF/F of the 3-pixel smoothed movie. 
+%   3PDFF.h5: DF/F of the 3-pixel smoothed movie. 
 %
 
 %% Parse inputs. 
@@ -63,10 +63,10 @@ function MakeT2Movies(varargin)
     end
     
     %File names. 
-    SLPDFname = fullfile(path,'SLPDF.h5');              %Spatial low pass divide DF/F.
-    DFFname = fullfile(path,'DFF.h5');                  %DF/F of spatially smoothed movie.
+    SHPDFF = fullfile(path,'SHPDFF.h5');              %Spatial high pass divide DF/F.
+    3PDFF = fullfile(path,'3PDFF.h5');                  %DF/F of spatially smoothed movie.
     threePixName = fullfile(path,'threePixSmooth.h5');  %Spatially smoothed movie.
-    tempfilename = fullfile(path,'temp.h5');            %Spatial low pass divide (before DF/F).
+    tempfilename = fullfile(path,'temp.h5');            %Spatial high pass divide (before DF/F).
     
 %% Set up.
     %Make files. 
@@ -108,26 +108,26 @@ function MakeT2Movies(varargin)
     end
     p.stop;
     
-    if d1
-        disp('Making D1Movie.h5');     
-        %Temporal smooth. 
-        TempSmoothMovie(threePixName,'SMovie.h5',20); 
-        
-        %First derivative movie. 
-        multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
-        if ~isempty(multiplier_use)
-            delete D1Movie.h5
-            multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5',multiplier_use);
-            save multiplier.mat multiplier_use
-        end
-        delete SMovie.h5
-    end
+%     if d1
+%         disp('Making D1Movie.h5');     
+%         %Temporal smooth. 
+%         TempSmoothMovie(threePixName,'SMovie.h5',20); 
+%         
+%         %First derivative movie. 
+%         multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
+%         if ~isempty(multiplier_use)
+%             delete D1Movie.h5
+%             multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5',multiplier_use);
+%             save multiplier.mat multiplier_use
+%         end
+%         delete SMovie.h5
+%     end
     
-    disp('Making SLPDF.h5...');         %DF/F of LP divide. 
-    Make_DFF(tempfilename,SLPDFname);
+    disp('Making SHPDFF.h5...');         %DF/F of LP divide. 
+    Make_DFF(tempfilename,SHPDFF);
 
-    disp('Making DFF.h5...');           %DF/F of 3-pixel smoothed. 
-    Make_DFF(threePixName,DFFname);
+    disp('Making 3PDFF.h5...');           %DF/F of 3-pixel smoothed. 
+    Make_DFF(threePixName,3PDFF);
     
     
 %% Delete temporary files
