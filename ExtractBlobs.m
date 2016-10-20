@@ -21,21 +21,12 @@ function [] = ExtractBlobs(file,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
-%FrameChunkSize = 1000; % how many frames to load at a time;
+[Xdim,Ydim,NumFrames,FrameChunkSize,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','threshold');
 
-
-% Get Basic Movie Information
-info = h5info(file,'/Object');
-NumFrames = info.Dataspace.Size(3);
-Xdim = info.Dataspace.Size(1);
-Ydim = info.Dataspace.Size(2);
-
-%NumFrames = 5000; %%%%%%%%%%%%%%%%%%TESTING ONLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-FrameChunkSize = 1250;
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
-NumChunks = length(ChunkStarts)
+NumChunks = length(ChunkStarts);
 % Pull neuron mask if specified, otherwise set mask to include the whole
 % image
 if ~exist('mask','var')
@@ -56,11 +47,9 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 
 % Run through each frame and isolate all blobs
 
-thresh = 0.01;
-
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames('SLPDF.h5',FrameList,info);
+    FrameChunk = LoadFrames('SLPDF.h5',FrameList);
     tempcc = [];
     tempPeakPix = [];
     NumChunkFrames = length(FrameList);
@@ -68,7 +57,7 @@ for i = 1:NumChunks
     tempPeakPix = cell(1,NumChunkFrames);
     parfor j = 1:NumChunkFrames
       currFrame = FrameList(j);  
-      [tempcc{j},tempPeakPix{j}] = SegmentFrame2(squeeze(FrameChunk(:,:,j)),mask,thresh); 
+      [tempcc{j},tempPeakPix{j}] = SegmentFrame2(squeeze(FrameChunk(:,:,j)),mask,threshold); 
        p.progress;
     end
     cc(FrameList) = tempcc;

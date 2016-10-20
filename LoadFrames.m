@@ -1,17 +1,18 @@
 function [frames] = LoadFrames(file,framenums)
-% [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,...)
+% [frames] = loadframe(file,framenums)
 %
-% Loads a frame from an h5 file
+% Loads frames from an h5 file
 %
 % INPUTS:
 %   file: fullpath to h5 file
 %
-%   framenum: frame number of file to load
+%   framenums: frame numbers of file to load
 %
 % OUTPUTS:
-%   frame: an array of the frame you loaded
+%   frames: an array of the frames you loaded
 %
-% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+%%
+% Copyright 2015 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 % 
@@ -28,22 +29,24 @@ function [frames] = LoadFrames(file,framenums)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
+%% Get parameters
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
+%% find sets of consecutive frames in framenums and grab their indices
 fmap = zeros(1,max(framenums));
 fmap(framenums) = 1;
 fep = NP_FindSupraThresholdEpochs(fmap,eps,0);
 loadchunks = [];
 
-% find sets of consecutive frames in framenums
 for i = 1:size(fep,1)
     chunksize = fep(i,2)-fep(i,1)+1;
     loadchunks(i,1:2) = [fep(i,1),chunksize];
 end
 
+%% load the frames
 curr = 1;
-% load the frames
+
 for i = 1:size(fep,1)
   frames(:,:,curr:(curr+loadchunks(i,2)-1)) = h5read(file,'/Object',[1 1 loadchunks(i,1) 1],[Xdim Ydim loadchunks(i,2) 1]);
   curr = curr+loadchunks(i,2);

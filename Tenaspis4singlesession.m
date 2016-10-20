@@ -1,27 +1,30 @@
-function Tenaspis3singlesession()
+function Tenaspis4singlesession()
 % Quick & dirty Tenaspis2
-% Requires DFF.h5 and SLPDF.h5 be present
+% Requires singlesessionmask.mat be present for automated runs
+% use MakeMaskSingleSession if needed
+
+% set global parameter variable
+Set_T_Params;
+
+% Make the movie files
+MakeFilteredMovies();
 
 %% Extract Blobs
-MakeMaskSingleSession;
-
 load singlesessionmask.mat;
-disp('Extracting blobs...'); 
-ExtractBlobs('SLPDF.h5',neuronmask);
+ExtractBlobs('SHPDFF.h5',neuronmask);
 
 %% Connect blobs into transients
-disp('Making transients...');
 MakeTransients; 
 !del InitClu.mat
 
 %% Group together individual transients under individual neurons
-disp('Making neurons...'); 
-MakeNeurons;
+MakeROIs;
 
 %% Pull traces out of each neuron using the High-pass movie
-disp('Normalizing traces...'); 
 NormalTraces('SLPDF.h5');
 MakeROIavg;
+
+
 load ProcOut.mat;
 load ROIavg.mat;
 MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg);
