@@ -66,30 +66,65 @@ for i = CluToMerge'
         cidx = nearclust(k); % cidx is cluster number of close transient
 
         [a,ia,ib] = intersect(PixelList{i},PixelList{cidx});
+        u = union(PixelList{i},PixelList{cidx});
+        [~,idx1] = ismember(u,cm{i});
+        [~,idx2] = ismember(u,cm{cidx});
+        
+        [Bigcorrval,Bigcorrp] = corr(BigPixelAvg{i}(idx1),BigPixelAvg{cidx}(idx2));
         
         [corrval,corrp] = corr(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'type','Spearman');
         
-%         if (maxdist >= 3)
+
+        
+        
+        if ((Bigcorrp > 0.001) || (Bigcorrval < 0.05))
+                    
 %             figure(1);
-%             subh(1) = subplot(1,4,1);
+%             
+%             lf1 = length(frames{i});
+%             lf2 = length(frames{cidx});
+%             
+%             subh(1) = subplot(2,4,1);
 %             temp = zeros(Xdim,Ydim);
 %             temp(PixelList{i}) = PixelAvg{i};
-%             imagesc(temp);axis image;
-%             subh(2)=subplot(1,4,2);
+%             imagesc(temp);axis image;caxis([0.01 max(PixelAvg{i})]);
+%             title(int2str(length(frames{i})));
+%             
+%             subh(2)=subplot(2,4,2);
 %             temp1 = zeros(Xdim,Ydim);
 %             temp1(PixelList{cidx}) = PixelAvg{cidx};
-%             imagesc(temp1);axis image;
-%             subh(3)=subplot(1,4,3);
-%             imagesc(temp1+temp);axis image;
-%             subplot(1,4,4);
-%             plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');
+%             imagesc(temp1);axis image;caxis([0.01 max(PixelAvg{cidx})]);
+%             title(int2str(length(frames{cidx})));
 %             
-%             corrp,corrval,linkaxes(subh);
+%             subh(3)=subplot(2,4,3);
+%             imsum = (temp1*lf2+temp*lf1)./(lf1+lf2);
+%             imagesc(imsum);axis image;caxis([0.01 max(imsum(:))]);
+%             
+%             subplot(2,4,4);
+%             plot(PixelAvg{i}(ia),PixelAvg{cidx}(ib),'*');axis equal;
+%             
+%             subh(4) = subplot(2,4,5);
+%             temp = zeros(Xdim,Ydim);
+%             temp(cm{i}) = BigPixelAvg{i};
+%             imagesc(temp);axis image;caxis([0.01 max(PixelAvg{i})]);
+%             
+%             subh(5) = subplot(2,4,6);
+%             temp1 = zeros(Xdim,Ydim);
+%             temp1(cm{cidx}) = BigPixelAvg{cidx};
+%             imagesc(temp1);axis image;caxis([0.01 max(PixelAvg{cidx})]);
+%             
+%             subh(6) = subplot(2,4,7);
+%             imsum = (temp1*lf2+temp*lf1)./(lf1+lf2);
+%             imagesc(imsum);axis image;caxis([0.01 max(imsum(:))]);
+%             
+%             subplot(2,4,8);
+%             plot(BigPixelAvg{i}(idx1),BigPixelAvg{cidx}(idx2),'*');axis equal;
+%             
+%             
+%             
+%             corrp,corrval,Bigcorrval,Bigcorrp,linkaxes(subh);
 %             pause
-%         end
         
-        
-        if ((corrp > 0.05) || (corrval < 0.05))
             % reject the merge
             continue;
         end

@@ -42,7 +42,7 @@ function [PixelList,frames,Xcent,Ycent] = AvgTransient(SegChain,cc,Xdim,Ydim)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MinPercentPresent = 1;
+MinPercentPresent = 0.5;
 
 % Initialize variables
 frames = [];
