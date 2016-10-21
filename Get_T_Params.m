@@ -42,11 +42,11 @@ for i = 1:length(varargin)
     end
     
     if (strcmp(varargin{i},'LowPassRadius')) 
-        varargout(i) = {T_PARAMS.FrameChunkSize};
+        varargout(i) = {T_PARAMS.LowPassRadius};
     end
     
     if (strcmp(varargin{i},'HighPassRadius')) 
-        varargout(i) = {T_PARAMS.FrameChunkSize};
+        varargout(i) = {T_PARAMS.HighPassRadius};
     end
         
 

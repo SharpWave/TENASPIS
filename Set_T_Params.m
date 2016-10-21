@@ -35,7 +35,7 @@ T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various f
 
 %% MakeFilteredMovies
 T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass filtering
-T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass filtering
+T_PARAMS.LowPassRadius = 1; % Smoothing radius for low pass filtering
 
 %% ExtractBlobs / SegmentFrame params
 T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs

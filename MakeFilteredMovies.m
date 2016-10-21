@@ -42,8 +42,6 @@ function MakeFilteredMovies(MotCorrh5)
 %% Get Parameters and setup frame chunking
 [Xdim,Ydim,NumFrames,FrameChunkSize,HighPassRadius,LowPassRadius] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','HighPassRadius','LowPassRadius');
 
-FrameChunkSize = FrameChunkSize / 2; 
-
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
@@ -52,12 +50,12 @@ NumChunks = length(ChunkStarts);
 %% Parse inputs.
 % p = inputParser;
 % p.addParameter('path',false);
-% 
+%
 % p.parse(varargin{:});
-% 
+%
 % path = p.Results.path;  %File path.
-% 
-% 
+%
+%
 % %% Input File names.
 % % If the path is specified, grab the h5 file name.
 % if ischar(path)
@@ -100,22 +98,24 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames(MotCorrh5,FrameList);
+    FrameChunk = single(LoadFrames(MotCorrh5,FrameList));
+    HPChunk = zeros(size(FrameChunk));
+    LPChunk = zeros(size(FrameChunk));
     
-    HPChunk = imfilter(FrameChunk,HighPassFilter,'same','replicate'); % Big radius filter to smooth out background
-    LPChunk = imfilter(FrameChunk,LowPassFilter,'same','replicate'); % Small radius filter to reduce pixel noise
-    
+    HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
+    LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
+
     h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
         [Xdim Ydim length(FrameList) 1]);
     
     h5write(BandPassName,'/Object',LPChunk./HPChunk,[1 1 ChunkStarts(i) 1],... %Write LP divide.
         [Xdim Ydim length(FrameList) 1]);
-    
     p.progress;
+    
 end
 p.stop;
 
-%% Calculate DF/F 
+%% Calculate DF/F
 disp('Making BPDFF.h5...');    %DF/F of BP
 Make_DFF(BandPassName,BPDFF);
 
