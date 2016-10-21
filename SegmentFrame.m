@@ -1,5 +1,5 @@
-function [cc,PeakPix] = SegmentFrame(frame,PrepMask)
-% [frame,cc,ccprops] = SegmentFrame(frame,mask)
+function [BlobPixelIdxList,BlobWeightedCentroids] = SegmentFrame(frame,PrepMask)
+% [frame,cc,ccprops] = SegmentFrame(frame,PrepMask)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
 %   Does so in an adaptive manner by iteratively bumping up the threshold
@@ -9,23 +9,19 @@ function [cc,PeakPix] = SegmentFrame(frame,PrepMask)
 %
 %       frame: a frame from an braing imaging movie
 %
-%       mask: a logical array the same size as frame indicating which areas
-%       have valid neurons (ones) and which do not (zeros)
-%
-%       thresh: the starting value at which you will threshold the values in
-%       frame to being looking for blobs
+%       PrepMask: a logical array the same size as frame indicating which areas
+%       should be used for blob detection (ones) and which should be excluded
+%       (zeros).
 %
 %   OUTPUTS:
 %
-%       cc: structure variable containing all the relevant data/statistics
-%       about the blobs discovered (e.g. the pixel indices for each blob)
+%       BlobPixelIdxList: Cell array of lists of pixel indices belonging to
+%       each blob
 %
-%       PeakPix: a cell array with the x/y pixel indices for the location
-%       of the peak pixel intensity for each blob.
+%       BlobWeightedCentroids: Cell array of weighted centroid values for each
+%       blob
 %
-%       NumItsTaken: number of iterations taken to identify each blob.
-%
-% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+% Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 %
@@ -44,141 +40,122 @@ function [cc,PeakPix] = SegmentFrame(frame,PrepMask)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Get Parameters
-[Xdim,Ydim,NumFrames,FrameChunkSize,threshold,threshsteps,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
-    Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','threshold','threshsteps','MaxNeuronRadius','MinNeuronRadius','MaxAxisRatio','MinSolidity');
-
-MaxAxisRatio = 2; % maxium ratio of the major to minor axis
-MinSolidity = 0.95; % minimum blob "solidity"
-threshsteps = 10; % number of increments of threshold to check for each blob
+[Xdim,Ydim,threshold,threshsteps,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
+    Get_T_Params('Xdim','Ydim','threshold','threshsteps','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
 
 % Derived Parameters
 MaxBlobArea = ceil((MaxBlobRadius^2)*pi);
 MinBlobArea = ceil((MinBlobRadius^2)*pi);
 
-% Setup variables for below
-PeakPix = []; % Locations of peak pixels
-threshlist = [];
+%% Setup variables for below
 badpix = find(PrepMask == 0); % Locations of pixels that are outside the mask and should be excluded
-frame = single(frame); % work with single precision to save memory
-blankframe = zeros(size(frame));
+blankframe = zeros(Xdim,Ydim);
 
-% threshold and segment the frame
-threshframe = frame > thresh; % apply threshold, make it into a logical array
+%% segment the frame at initial threshold
+threshframe = frame > threshold; % apply threshold, make it into a logical array
 threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than minpixels
 
-% Set up variables
-newlist = [];
-currnewList = 0;
-BlobsInFrame = 1;
-NumIts = 0;
-tNumItsTaken = [];
-
-% Determine initial blobs and measurements
+% Determine initial blobs and measurements, use this to intialize a few
+% variables
 rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
+GoodBlob = ones(length(rp),1);
+BlobPixelIdxList = cell(1,length(rp));
+BlobWeightedCentroids = cell(1,length(rp));
 
-% investigate whether initialblobs can be refined into legal blobs
+%% Test each blob for blob shape criteria; raise threshold and re-test if test fails
 for i = 1:length(rp)
     
-    GoodBlob(i) = 1;
     props = rp(i);
-    tempthresh = initthreshold;
+    currthresh = initthreshold;
+    
+    % Make a small matrix with actual and binarized pixel data for the blob
     SmallImage = frame(props.SubarrayIdx{1},props.SubarrayIdx{2});
-    SmallImage(find(props.Image == 0)) = 0;
-    BinImage = SmallImage > tempthresh;
+    SmallImage(props.Image == 0) = 0;
+    BinImage = SmallImage > currthresh;
     
+    % Sort the pixel matrix to determine the set of thresholds that will be used
     smsort = sort(SmallImage(:));
-    smsort = smsort(find(smsort > 0));
-    MaxIntensity = smsort(end);
+    smsort = smsort(smsort > 0);
     PixPerThresh = ceil(length(smsort)./threshsteps);
-
     threshlist = smsort(PixPerThresh:PixPerThresh:length(smsort));
-    currthresh = 1;
+    ThreshIdx = 1;
     
+    % Determine whether initial blob passes size and shape criteria
     AxisRatio = props.MajorAxisLength/props.MinorAxisLength;
-    
     CriteriaOK = (props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (props.Area < MaxBlobArea);
     
-    while(~CriteriaOK && (currthresh <= length(threshlist)))
-        % First increase threshold and take a new binary image
-        tempthresh = threshlist(currthresh);
-        BinImage = SmallImage > tempthresh;
+    while(~CriteriaOK && (ThreshIdx <= length(threshlist)))
+        % Criteria not met on last check, but still thresholds to check
+        
+        % First increase threshold and take new binarized pixel data
+        currthresh = threshlist(ThreshIdx);
+        BinImage = SmallImage > currthresh;
         BinImage = bwareaopen(BinImage,MinBlobArea,4);
         
         % then check for the blob criteria again
         temp_props = regionprops(bwconncomp(BinImage,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
         
         if (length(temp_props) ~= 1)
-            % multiple areas in the blob
+            % zero or multiple areas in the blob, abandon blob
             break; % CriteriaOK is still 0
         end
         
         AxisRatio = temp_props.MajorAxisLength/temp_props.MinorAxisLength;
         CriteriaOK = (temp_props.Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (temp_props.Area < MaxBlobArea);
-        currthresh = currthresh + 1;
+        ThreshIdx = ThreshIdx + 1;
     end
     
     if (~CriteriaOK)
+        % Couldn't find threshold that satisfied criteria
         GoodBlob(i) = 0;
         continue;
     end
     
     % Criteria satisfied, test for multiple peaks
-    CritThresh = tempthresh;
     CritBinImage = BinImage;
     
-    while (currthresh <= length(threshlist)) 
-        tempthresh = threshlist(currthresh);
-        BinImage = SmallImage > tempthresh;
+    while (ThreshIdx <= length(threshlist))
+        % while more thresholds to check
+        % take new binarized pixel data
+        currthresh = threshlist(ThreshIdx);
+        BinImage = SmallImage > currthresh;
         temp_conn = bwconncomp(BinImage,8);
         if (temp_conn.NumObjects > 1)
+            % multiple peaks, abandon ship!
             GoodBlob(i) = 0;
             break;
         end
         if (temp_conn.NumObjects == 0)
-            
+            % this probably never happens
             break;
         end
         if (length(temp_conn.PixelIdxList{1}) < MinBlobArea)
+            % Blob got small after raising threshold. At this point there
+            % wouldn't be multiple peaks that we care about so the blob
+            % will be included
             break;
         end
-        currthresh = currthresh + 1;
+        ThreshIdx = ThreshIdx + 1;
     end
     
     if(GoodBlob(i))
-        %         CritImage{i} = SmallImage.*CritBinImage;
-        %         tempframe = blankframe;
-        %         tempframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritImage{i};
+        % Blob passed shape, size, and "multiple peak" criteria, so determine Pixel List and centroids in full frame coordinates
         tempbinframe = blankframe;
         tempbinframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritBinImage;
         temp_props = regionprops(bwconncomp(tempbinframe,4),frame,'PixelIdxList','WeightedCentroid');
-        PixelIdxList{i} = temp_props.PixelIdxList;
-        WeightedCentroid{i} = temp_props.WeightedCentroid;
+        BlobPixelIdxList{i} = temp_props.PixelIdxList;
+        BlobWeightedCentroids{i} = temp_props.WeightedCentroid;
         
-        if (~isempty(intersect(badpix,PixelIdxList{i})))
+        % if any part of the blob is off the edge of the prepmask, discard
+        % the blob
+        if (~isempty(intersect(badpix,BlobPixelIdxList{i})))
             GoodBlob(i) = 0;
         end
     end
 end
 
-if(sum(GoodBlob) == 0)
-    PeakPix = [];
-    cc.NumObjects = 0;
-    cc.PixelIdxList = [];
-    cc.ImageSize = size(frame);
-    cc.Connectivity = 0;
-    return;
-end
-
-cc.NumObjects = sum(GoodBlob);
-cc.ImageSize = size(frame);
-cc.Connectivity = 4;
-
-GB = find(GoodBlob);
-
-for i = 1:length(GB)
-    cc.PixelIdxList{i} = single(PixelIdxList{GB(i)});
-    PeakPix{i}(1) = WeightedCentroid{GB(i)}(1);
-    PeakPix{i}(2) = WeightedCentroid{GB(i)}(2);
-end
+%% Keep only blobs passing the shape, size, peak, and mask criteria
+BlobPixelIdxList = BlobPixelIdxList(GoodBlob);
+BlobWeightedCentroids = BlobWeightedCentroids(GoodBlob);
 
 end
