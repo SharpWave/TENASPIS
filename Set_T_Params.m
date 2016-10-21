@@ -35,11 +35,15 @@ T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various f
 
 %% MakeFilteredMovies
 T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass filtering
-T_PARAMS.LowPassRadius = 1; % Smoothing radius for low pass filtering
+T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass filtering
 
 %% ExtractBlobs / SegmentFrame params
 T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs
-
+T_PARAMS.threshsteps = 10; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
+T_PARAMS.MaxBlobRadius = 15; % Maximum radius for a circular shaped blob to be included
+T_PARAMS.MinBlobRadius = 5; % Minimum radius for circular shaped blob to be included
+T_PARAMS.MaxAxisRatio = 2; % Maximum ratio of major to minor axis length for blobs. Keeps overly slivery blobs and some juxtaposition artifacts out of the data
+T_PARAMS.MinSolidity = 0.95; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. Prevents jagged and strange shaped blobs
 
 
 

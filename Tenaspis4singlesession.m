@@ -24,7 +24,6 @@ MakeROIs;
 NormalTraces('SLPDF.h5');
 MakeROIavg;
 
-
 load ProcOut.mat;
 load ROIavg.mat;
 MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg);

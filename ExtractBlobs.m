@@ -21,7 +21,7 @@ function [] = ExtractBlobs(file,mask)
 % mask is the binary mask of which areas to use and not to use
 % use MakeBlobMask to make a mask
 
-[Xdim,Ydim,NumFrames,FrameChunkSize,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','threshold');
+[Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','threshold');
 
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
@@ -57,7 +57,7 @@ for i = 1:NumChunks
     tempPeakPix = cell(1,NumChunkFrames);
     parfor j = 1:NumChunkFrames
       currFrame = FrameList(j);  
-      [tempcc{j},tempPeakPix{j}] = SegmentFrame2(squeeze(FrameChunk(:,:,j)),mask,threshold); 
+      [tempcc{j},tempPeakPix{j}] = SegmentFrame(squeeze(FrameChunk(:,:,j)),mask); 
        p.progress;
     end
     cc(FrameList) = tempcc;
