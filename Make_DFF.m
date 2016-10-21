@@ -30,7 +30,7 @@ ChunkEnds(length(ChunkStarts)) = NumFrames;
 NumChunks = length(ChunkStarts);
 
 %% create output file ('ChunkSize' here not related to FrameChunkSize)
-h5create(outfile,'/Object',info.Dataspace.Size,'ChunkSize',[Xdim Ydim 1 1],'Datatype','single');
+h5create(outfile,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',[Xdim Ydim 1 1],'Datatype','single');
 
 %% Get the average frame of the movie
 display('determining average frame');
@@ -40,7 +40,7 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames(moviefile,FrameList);
+    FrameChunk = single(LoadFrames(moviefile,FrameList));
     avgframe = avgframe+sum(FrameChunk,3);
     p.progress;
 end
@@ -54,9 +54,9 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames(moviefile,FrameList);
+    FrameChunk = single(LoadFrames(moviefile,FrameList));
     
-    NewChunk = (FrameChunk-avgFrame)./avgFrame;
+    NewChunk = (FrameChunk-avgframe)./avgframe;
     
     h5write(outfile,'/Object',NewChunk,[1 1 ChunkStarts(i) 1],[Xdim Ydim length(FrameList) 1]);
     p.progress;  

@@ -1,4 +1,4 @@
-function MakeFilteredMovies(varargin)
+function MakeFilteredMovies(MotCorrh5)
 % MakeFilteredMovies(varargin)
 %
 % Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences
@@ -42,32 +42,37 @@ function MakeFilteredMovies(varargin)
 %% Get Parameters and setup frame chunking
 [Xdim,Ydim,NumFrames,FrameChunkSize,HighPassRadius,LowPassRadius] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','HighPassRadius','LowPassRadius');
 
+FrameChunkSize = FrameChunkSize / 2; 
+
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
 NumChunks = length(ChunkStarts);
 
 %% Parse inputs.
-p = inputParser;
-p.addParameter('path',false);
+% p = inputParser;
+% p.addParameter('path',false);
+% 
+% p.parse(varargin{:});
+% 
+% path = p.Results.path;  %File path.
+% 
+% 
+% %% Input File names.
+% % If the path is specified, grab the h5 file name.
+% if ischar(path)
+%     cd(fullfile(path,'MotCorrMovie-Objects'));
+%     h5 = ls('*.h5');
+%     MotCorrh5 = fullfile(pwd,h5);
+%     %Otherwise, select the file with a UI.
+% else
+%     [MotCorrh5,path] = uigetfile('*.h5');
+%     MotCorrh5 = fullfile(path,MotCorrh5);
+%     path = fileparts(fileparts(path)); % Grab folder above the one containing MotCorrh5 movie
+% end
 
-p.parse(varargin{:});
-
-path = p.Results.path;  %File path.
-
-
-%% Input File names.
-% If the path is specified, grab the h5 file name.
-if ischar(path)
-    cd(fullfile(path,'MotCorrMovie-Objects'));
-    h5 = ls('*.h5');
-    MotCorrh5 = fullfile(pwd,h5);
-    %Otherwise, select the file with a UI.
-else
-    [MotCorrh5,path] = uigetfile('*.h5');
-    MotCorrh5 = fullfile(path,MotCorrh5);
-    path = fileparts(fileparts(path)); % Grab folder above the one containing MotCorrh5 movie
-end
+%% more simple way to do this
+path = pwd;
 
 %% Output File names.
 BPDFF = fullfile(path,'BPDFF.h5');              % DF/F normalized spatial band pass filtered movie
@@ -78,9 +83,9 @@ BandPassName = fullfile(path,'BandPass.h5');      % High pass filtered movie
 %% Set up.
 % create output files
 
-h5create(BandPassName,'/Object',info.Dataspace.Size,'ChunkSize',...
+h5create(BandPassName,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
-h5create(LowPassName,'/Object',info.Dataspace.Size,'ChunkSize',...
+h5create(LowPassName,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
 
 % create Spatial filters.
