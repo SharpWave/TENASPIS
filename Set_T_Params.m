@@ -53,8 +53,20 @@ T_PARAMS.MinBlobRadius = 5; % Minimum radius for circular shaped blob to be incl
 T_PARAMS.MaxAxisRatio = 2; % Maximum ratio of major to minor axis length for blobs. Keeps overly slivery blobs and some juxtaposition artifacts out of the data
 T_PARAMS.MinSolidity = 0.95; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. Prevents jagged and strange shaped blobs
 
-%% MakeTransients params
-T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid of a transient can travel
+%% LinkBlobs params
+T_PARAMS.BlobLinkThresholdCoeff = 1; % multiplier for the blob minor axis length to determine whether to link blobs across frames
+
+%% RejectBadTransients params
+T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid of a transient can travel. Eliminates artifacts from overlapping transients.
+T_PARAMS.MinNumFrames = 5; % minimum number of frames for transient to be included
+
+%% MakeTransientROIs params
+T_PARAMS.MinPixelPresence = 0.5; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
+% Setting to 1 means the pixels in the smallest blob in the transient will be chosen. To 0 means the maximum blob extent
+
+
+
+%% MergeTransientROIs params
 
 
 

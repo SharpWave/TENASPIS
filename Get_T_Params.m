@@ -74,6 +74,10 @@ for i = 1:length(varargin)
     if (strcmp(varargin{i},'MinSolidity')) 
         varargout(i) = {T_PARAMS.MinSolidity};
     end
+    
+    if (strcmp(varargin{i},'BlobLinkThresholdCoeff')) 
+        varargout(i) = {T_PARAMS.BlobLinkThresholdCoeff};
+    end
         
 
 
