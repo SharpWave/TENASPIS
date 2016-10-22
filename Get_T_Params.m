@@ -86,6 +86,14 @@ for i = 1:length(varargin)
     if (strcmp(varargin{i},'MaxCentroidTravelDistance')) 
         varargout(i) = {T_PARAMS.MaxCentroidTravelDistance};
     end
+    
+    if (strcmp(varargin{i},'MinPixelPresence')) 
+        varargout(i) = {T_PARAMS.MinPixelPresence};
+    end
+    
+    
+    
+    
         
 
 

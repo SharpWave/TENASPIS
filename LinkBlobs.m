@@ -1,5 +1,8 @@
 function [] = LinkBlobs()
-
+%[] = LinkBlobs()
+% Load the output of ExtractBlobs.m and find sets of blobs that appear in
+% the same spot on consectuive frames - putative calcium transients
+%
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,16 +21,17 @@ function [] = LinkBlobs()
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-display('Processing blobs into calcium transient ROIs');
+disp('Processing blobs into calcium transient ROIs: first step is to link blobs that appear in the same spot on consecutive frames');
 
 %% load parameters
-[Xdim,Ydim,NumFrames,FrameChunkSize,BlobLinkThresholdCoeff] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','BlobLinkThresholdCoeff');
+[NumFrames,FrameChunkSize,BlobLinkThresholdCoeff] = Get_T_Params('NumFrames','FrameChunkSize','BlobLinkThresholdCoeff');
 
 % Load Blob pixel lists and centroids
 disp('Loading blobs');
 load('Blobs.mat','BlobPixelIdxList','BlobWeightedCentroids','BlobMinorAxisLength');
 
 %% set up some variables
+TransientIdx = cell(1,NumFrames);
 InitNumBlobs = length(BlobPixelIdxList{1});
 if (InitNumBlobs > 0)
     TransientIdx{1} = (1:InitNumBlobs);

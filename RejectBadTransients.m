@@ -14,7 +14,7 @@ load('Blobs.mat','BlobWeightedCentroids');
 
 %% setup vars
 NumTransients = length(FrameList);
-GoodTransient = true(1,NumTransients);
+[GoodTransient,NotFirstFrame] = deal(true(1,NumTransients));
 
 %% Analyze transient and apply criteria
 disp('analyzing transients for rejection');
@@ -27,7 +27,9 @@ for i = 1:NumTransients
     LastCent = BlobWeightedCentroids{LastFrame}{ObjList{i}(end)};
     TravelDist(i) = sqrt((FirstCent(1)-LastCent(1))^2+(FirstCent(2)-LastCent(2))^2);
     
-    GoodTransient(i) = (TransientLength(i) >= MinNumFrames) && (TravelDist(i) < MaxCentroidTravelDistance);
+    NotFirstFrame(i) = ~ismember(1,FrameList{i});
+    
+    GoodTransient(i) = (TransientLength(i) >= MinNumFrames) && (TravelDist(i) < MaxCentroidTravelDistance) && NotFirstFrame(i);
 end
 
 %% save data for analysis purposes
