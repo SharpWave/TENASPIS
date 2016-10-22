@@ -40,6 +40,8 @@ function [BlobPixelIdxList,BlobWeightedCentroids] = SegmentFrame(frame,PrepMask)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Get Parameters
+Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+
 [Xdim,Ydim,threshold,threshsteps,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
     Get_T_Params('Xdim','Ydim','threshold','threshsteps','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
 

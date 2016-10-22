@@ -39,18 +39,14 @@ BlobWeightedCentroids = cell(1,NumFrames);
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     FrameChunk = LoadFrames('BPDFF.h5',FrameList);
-    
     parfor j = ChunkStarts(i):ChunkEnds(i)
-        currFrame = FrameList(j);
-        [BlobPixelIdxList{j},BlobWeightedCentroids{j}] = SegmentFrame(squeeze(FrameChunk(:,:,j)),PrepMask);
-        
+        [BlobPixelIdxList{j},BlobWeightedCentroids{j}] = SegmentFrame(squeeze(FrameChunk(:,:,j-ChunkStarts(i)+1)),PrepMask);        
     end
     p.progress;
 end
-
 p.stop; % Shut-down progress bar
 
-
+%% outputs get saved to disk
 save Blobs.mat BlobPixelIdxList BlobWeightedCentroids;
 
 end
