@@ -48,6 +48,30 @@ for i = 1:length(varargin)
     if (strcmp(varargin{i},'HighPassRadius')) 
         varargout(i) = {T_PARAMS.HighPassRadius};
     end
+    
+    if (strcmp(varargin{i},'threshold')) 
+        varargout(i) = {T_PARAMS.threshold};
+    end
+    
+    if (strcmp(varargin{i},'threshsteps')) 
+        varargout(i) = {T_PARAMS.threshsteps};
+    end
+    
+    if (strcmp(varargin{i},'MaxBlobRadius')) 
+        varargout(i) = {T_PARAMS.MaxBlobRadius};
+    end
+    
+    if (strcmp(varargin{i},'MinBlobRadius')) 
+        varargout(i) = {T_PARAMS.MinBlobRadius};
+    end
+    
+    if (strcmp(varargin{i},'MaxAxisRatio')) 
+        varargout(i) = {T_PARAMS.MaxAxisRatio};
+    end
+    
+    if (strcmp(varargin{i},'MinSolidity')) 
+        varargout(i) = {T_PARAMS.MinSolidity};
+    end
         
 
 

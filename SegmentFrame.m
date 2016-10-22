@@ -58,7 +58,7 @@ threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than
 % Determine initial blobs and measurements, use this to intialize a few
 % variables
 rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
-GoodBlob = ones(length(rp),1);
+GoodBlob = logical(ones(length(rp),1));
 BlobPixelIdxList = cell(1,length(rp));
 BlobWeightedCentroids = cell(1,length(rp));
 
@@ -66,7 +66,7 @@ BlobWeightedCentroids = cell(1,length(rp));
 for i = 1:length(rp)
     
     props = rp(i);
-    currthresh = initthreshold;
+    currthresh = threshold;
     
     % Make a small matrix with actual and binarized pixel data for the blob
     SmallImage = frame(props.SubarrayIdx{1},props.SubarrayIdx{2});
@@ -155,6 +155,7 @@ for i = 1:length(rp)
 end
 
 %% Keep only blobs passing the shape, size, peak, and mask criteria
+
 BlobPixelIdxList = BlobPixelIdxList(GoodBlob);
 BlobWeightedCentroids = BlobWeightedCentroids(GoodBlob);
 

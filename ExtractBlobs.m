@@ -1,6 +1,6 @@
-function [] = ExtractBlobs(file,mask)
+function [] = ExtractBlobs(PrepMask)
 % [] = ExtractBlobs(file,mask)
-% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+% Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 %
@@ -17,57 +17,40 @@ function [] = ExtractBlobs(file,mask)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% extract active cell "blobs" from movie in file
-% mask is the binary mask of which areas to use and not to use
-% use MakeBlobMask to make a mask
-
+%
+%% Get parameters and set up Chunking variables
 [Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','threshold');
 
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
 NumChunks = length(ChunkStarts);
-% Pull neuron mask if specified, otherwise set mask to include the whole
-% image
-if ~exist('mask','var')
-    mask = ones(Xdim,Ydim);
+
+%% set up the PrepMask; i.e., which areas to exclude
+if ~exist('PrepMask','var')
+    PrepMask = ones(Xdim,Ydim);
 end
-maskpix = find(mask(:) > 0); % Get pixels to use when looking for blobs
 
-% Pre-allocate variables
-cchunk = cell(1,NumChunks);
-pchunk = cell(1,NumChunks);
-
-cc = cell(1,NumFrames); 
-PeakPix = cell(1,NumFrames); 
-NumItsTaken = cell(1,NumFrames);
-ThreshList = cell(1,NumFrames);
-
-p = ProgressBar(NumFrames); % Initialize progress bar
-
-% Run through each frame and isolate all blobs
+%% Find the blobs in each frame
+p = ProgressBar(NumChunks); % Initialize progress bar
+BlobPixelIdxList = cell(1,NumFrames);
+BlobWeightedCentroids = cell(1,NumFrames);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames('SLPDF.h5',FrameList);
-    tempcc = [];
-    tempPeakPix = [];
-    NumChunkFrames = length(FrameList);
-    tempcc = cell(1,NumChunkFrames);
-    tempPeakPix = cell(1,NumChunkFrames);
-    parfor j = 1:NumChunkFrames
-      currFrame = FrameList(j);  
-      [tempcc{j},tempPeakPix{j}] = SegmentFrame(squeeze(FrameChunk(:,:,j)),mask); 
-       p.progress;
+    FrameChunk = LoadFrames('BPDFF.h5',FrameList);
+    
+    parfor j = ChunkStarts(i):ChunkEnds(i)
+        currFrame = FrameList(j);
+        [BlobPixelIdxList{j},BlobWeightedCentroids{j}] = SegmentFrame(squeeze(FrameChunk(:,:,j)),PrepMask);
+        
     end
-    cc(FrameList) = tempcc;
-    PeakPix(FrameList) = tempPeakPix;
-     % update progress bar    
+    p.progress;
 end
 
 p.stop; % Shut-down progress bar
 
 
-save Blobs.mat cc mask PeakPix thresh;
+save Blobs.mat BlobPixelIdxList BlobWeightedCentroids;
 
 end
