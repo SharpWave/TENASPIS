@@ -14,11 +14,12 @@ load singlesessionmask.mat;
 ExtractBlobs('SHPDFF.h5',neuronmask);
 
 %% Connect blobs into transients
-MakeTransients; 
-!del InitClu.mat
+LinkBlobs();
+RejectBadTransients();
+MakeTransientROIs();
 
 %% Group together individual transients under individual neurons
-MakeROIs;
+MergeTransientROIs;
 
 %% Pull traces out of each neuron using the High-pass movie
 NormalTraces('SLPDF.h5');

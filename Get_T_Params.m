@@ -78,6 +78,14 @@ for i = 1:length(varargin)
     if (strcmp(varargin{i},'BlobLinkThresholdCoeff')) 
         varargout(i) = {T_PARAMS.BlobLinkThresholdCoeff};
     end
+    
+    if (strcmp(varargin{i},'MinNumFrames')) 
+        varargout(i) = {T_PARAMS.MinNumFrames};
+    end
+    
+    if (strcmp(varargin{i},'MaxCentroidTravelDistance')) 
+        varargout(i) = {T_PARAMS.MaxCentroidTravelDistance};
+    end
         
 
 
