@@ -40,7 +40,7 @@ function [BlobPixelIdxList,BlobWeightedCentroids] = SegmentFrame(frame,PrepMask)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Get Parameters
-Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+
 
 [Xdim,Ydim,threshold,threshsteps,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
     Get_T_Params('Xdim','Ydim','threshold','threshsteps','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
@@ -57,10 +57,18 @@ blankframe = zeros(Xdim,Ydim);
 threshframe = frame > threshold; % apply threshold, make it into a logical array
 threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than minpixels
 
-% Determine initial blobs and measurements, use this to intialize a few
-% variables
-rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
-GoodBlob = logical(ones(length(rp),1));
+% Determine initial blobs and measurements
+rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image','PixelIdxList');
+GoodBlob = true(length(rp),1);
+
+% Determine whether any of the blobs go off of the mask and eliminate them
+for i = 1:length(rp)
+    if (~isempty(intersect(rp(i).PixelIdxList,badpix)))
+        GoodBlob(i) = false;
+    end
+end
+rp = rp(GoodBlob);
+GoodBlob = true(length(rp),1);
 BlobPixelIdxList = cell(1,length(rp));
 BlobWeightedCentroids = cell(1,length(rp));
 
@@ -140,23 +148,17 @@ for i = 1:length(rp)
         ThreshIdx = ThreshIdx + 1;
     end
     
-    if(GoodBlob(i))
+    if (GoodBlob(i))
         % Blob passed shape, size, and "multiple peak" criteria, so determine Pixel List and centroids in full frame coordinates
         tempbinframe = blankframe;
         tempbinframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritBinImage;
         temp_props = regionprops(bwconncomp(tempbinframe,4),frame,'PixelIdxList','WeightedCentroid');
-        BlobPixelIdxList{i} = temp_props.PixelIdxList;
-        BlobWeightedCentroids{i} = temp_props.WeightedCentroid;
-        
-        % if any part of the blob is off the edge of the prepmask, discard
-        % the blob
-        if (~isempty(intersect(badpix,BlobPixelIdxList{i})))
-            GoodBlob(i) = 0;
-        end
+        BlobPixelIdxList{i} = single(temp_props.PixelIdxList);
+        BlobWeightedCentroids{i} = single(temp_props.WeightedCentroid);
     end
 end
 
-%% Keep only blobs passing the shape, size, peak, and mask criteria
+%% Keep only blobs passing the shape, size, and peak criteria
 
 BlobPixelIdxList = BlobPixelIdxList(GoodBlob);
 BlobWeightedCentroids = BlobWeightedCentroids(GoodBlob);

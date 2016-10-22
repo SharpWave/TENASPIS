@@ -24,6 +24,8 @@ function [varargout] = Get_T_Params(varargin)
 
 global T_PARAMS;
 
+varargout = cell(1,length(varargin));
+
 for i = 1:length(varargin)
     if (strcmp(varargin{i},'Xdim')) 
         varargout(i) = {T_PARAMS.Xdim};
