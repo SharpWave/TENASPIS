@@ -1,4 +1,4 @@
-function [BlobPixelIdxList,BlobWeightedCentroids] = SegmentFrame(frame,PrepMask)
+function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask)
 % [frame,cc,ccprops] = SegmentFrame(frame,PrepMask)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -71,6 +71,7 @@ rp = rp(GoodBlob);
 GoodBlob = true(length(rp),1);
 BlobPixelIdxList = cell(1,length(rp));
 BlobWeightedCentroids = cell(1,length(rp));
+BlobMinorAxisLength = zeros(1,length(rp));
 
 %% Test each blob for blob shape criteria; raise threshold and re-test if test fails
 for i = 1:length(rp)
@@ -152,9 +153,10 @@ for i = 1:length(rp)
         % Blob passed shape, size, and "multiple peak" criteria, so determine Pixel List and centroids in full frame coordinates
         tempbinframe = blankframe;
         tempbinframe(props.SubarrayIdx{1},props.SubarrayIdx{2}) = CritBinImage;
-        temp_props = regionprops(bwconncomp(tempbinframe,4),frame,'PixelIdxList','WeightedCentroid');
+        temp_props = regionprops(bwconncomp(tempbinframe,4),frame,'PixelIdxList','WeightedCentroid','MinorAxisLength');
         BlobPixelIdxList{i} = single(temp_props.PixelIdxList);
         BlobWeightedCentroids{i} = single(temp_props.WeightedCentroid);
+        BlobMinorAxisLength(i) = single(temp_props.MinorAxisLength);
     end
 end
 
@@ -162,5 +164,6 @@ end
 
 BlobPixelIdxList = BlobPixelIdxList(GoodBlob);
 BlobWeightedCentroids = BlobWeightedCentroids(GoodBlob);
+BlobMinorAxisLength = BlobMinorAxisLength(GoodBlob);
 
 end

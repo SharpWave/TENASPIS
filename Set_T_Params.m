@@ -53,6 +53,10 @@ T_PARAMS.MinBlobRadius = 5; % Minimum radius for circular shaped blob to be incl
 T_PARAMS.MaxAxisRatio = 2; % Maximum ratio of major to minor axis length for blobs. Keeps overly slivery blobs and some juxtaposition artifacts out of the data
 T_PARAMS.MinSolidity = 0.95; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. Prevents jagged and strange shaped blobs
 
+%% MakeTransients params
+T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid of a transient can travel
+
+
 
 
 
