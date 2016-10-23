@@ -91,6 +91,11 @@ for i = 1:length(varargin)
         varargout(i) = {T_PARAMS.MinPixelPresence};
     end
     
+    if (strcmp(varargin{i},'ROICircleWindowRadius')) 
+        varargout(i) = {T_PARAMS.ROICircleWindowRadius};
+    end    
+    
+    
     
     
     
