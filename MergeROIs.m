@@ -1,92 +1,107 @@
-function MergeROIs(FT,NeuronPixels,MeanT,NeuronImage,AdjAct,TMap)
+function MergeROIs(FT,NeuronPixels,TrigAvgs)
+% MergeROIs(FT,NeuronPixels,MeanT)
+%
+%
+% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This file is part of Tenaspis.
+% 
+%     Tenaspis is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     Tenaspis is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Set up.
 load('ProcOut.mat','Xdim','Ydim');
 
-NumFrames = size(FT,2);
-NumNeurons = size(FT,1);
-
+%Get basic stats and set thresholds. 
+[NumNeurons,NumFrames] = size(FT);
 OverlapThresh = 0.2;
 CorrThresh = 0.2;
 CorrpThresh = 0.05;
 
-t = (1:NumFrames)/20;
-ToMerge = zeros(NumNeurons,NumNeurons);
-MergeDest = zeros(1,NumNeurons);
-newFT = FT;
-
-% Determine Merges
-display('determining merges');
+%t = (1:NumFrames)/20;
 
 %Preallocate. 
-Overlap = zeros(NumNeurons);
-MeanTCorr = zeros(NumNeurons);
-MeanTp = zeros(NumNeurons);
-p = ProgressBar(NumNeurons); % Initialize progress bar
+ToMerge = zeros(NumNeurons);        %Logical matrix for merging. 
+MergeDest = 1:NumNeurons;           %Destination of merge. 
+Overlap = zeros(NumNeurons);        %Pixel overlap.
+MeanTrigCorr = zeros(NumNeurons);
+MeanTrigp = zeros(NumNeurons);
+newFT = FT;
+
+%% Determine Merges
+display('determining merges');
+
+%Progress bar. 
+resol = 5;                                  % Percent resolution for progress bar, in this case 5%
+update_inc = round(NumNeurons/(100/resol)); % Get increments for updating ProgressBar
+p = ProgressBar(100/resol);
+
 for i = 1:NumNeurons
     for j = 1:NumNeurons
+        %Number of overlapping pixels. 
         Overlap(i,j) = length(intersect(NeuronPixels{j},NeuronPixels{i}))./length(union(NeuronPixels{j},NeuronPixels{i}));
-        if (Overlap(i,j) <= OverlapThresh)
+        
+        if (Overlap(i,j) <= OverlapThresh)  %If not overlapping, skip the below.
             continue;
         end
-        pix = union(NeuronPixels{i},NeuronPixels{j});
-        [MeanTCorr(i,j),MeanTp(i,j)] = corr(MeanT{i}(pix),MeanT{j}(pix),'type','Spearman');
         
-        if ((MeanTCorr(i,j) > CorrThresh) && (MeanTp(i,j) < CorrpThresh) && (i ~= j))
-            ToMerge(i,j) = 1;
-            b1 = bwboundaries(NeuronImage{i},4);
-            b2 = bwboundaries(NeuronImage{j},4);
-            
-            figure(1);
-            a(1) = subplot(1,3,1);
-            imagesc(MeanT{i});axis image;caxis([0 max(MeanT{i}(NeuronPixels{i}))]);
-            hold on;plot(b1{1}(:,2),b1{1}(:,1),'-r');hold off;
-            hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
-            
-            a(2) = subplot(1,3,2);
-            imagesc(MeanT{j});axis image;caxis([0 max(MeanT{j}(NeuronPixels{j}))]);
-            hold on;plot(b1{1}(:,2),b1{1}(:,1),'-r');hold off;
-            hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
-            
-            a(3) = subplot(1,3,3);
-            imagesc((MeanT{j}*AdjAct(j)+MeanT{i}*AdjAct(i))./(AdjAct(i)+AdjAct(j)));axis image;caxis([0 max(MeanT{j}(NeuronPixels{j}))]);
-            hold on;plot(b1{1}(:,2),b1{1}(:,1),'-r');hold off;
-            hold on;plot(b2{1}(:,2),b2{1}(:,1),'-r');hold off;
-            
-            linkaxes(a);
-            display(['Correlation r value: ',num2str(MeanTCorr(i,j))]);
-            display(['Correlation p value: ',num2str(MeanTp(i,j))]);
-            display(['ROI overlap: ',num2str(Overlap(i,j))]);
-                        
-            pause;
+        %Correlate the transient-trigger averages of the pixels in the
+        %frame.
+        overlapPix = union(NeuronPixels{i},NeuronPixels{j});   %Common pixels.
+        [MeanTrigCorr(i,j),MeanTrigp(i,j)] = corr(TrigAvgs{i}(overlapPix),TrigAvgs{j}(overlapPix),'type','Spearman');
+        
+        %If the correlation meets criteria, earmark it for merging.
+        if ((MeanTrigCorr(i,j) > CorrThresh) && (MeanTrigp(i,j) < CorrpThresh) && (i ~= j))
+            ToMerge(i,j) = 1;    
         end        
     end
-    MergeDest(i) = i;
-    p.progress;
+   
+    if round(i/update_inc) == (i/update_inc)
+        p.progress;
+    end
 end
 p.stop;
 
 NP = NeuronPixels;
 
+%% Do the merging.
 display('performing merges');
 for i = 1:NumNeurons
     for j = (i+1):NumNeurons
         if (ToMerge(i,j))
             % try to merge j into i
             newDest = MergeDest(i);
+            
+            %Not sure why this line is ever needed..
             while(newDest ~= MergeDest(newDest))
                 newDest = MergeDest(newDest);
             end
-            display(['merging ',int2str(newDest),' ',int2str(j)]);
-            NP{newDest} = union(NP{j},NP{newDest});
-            newFT(newDest,:) = newFT(newDest,:) | newFT(j,:);
+            
+            %Do the merge. 
+            %display(['merging ',int2str(newDest),' ',int2str(j)]);
+            NP{newDest} = union(NP{j},NP{newDest});             %Neuron mask.
+            newFT(newDest,:) = newFT(newDest,:) | newFT(j,:);   %Trace.
             MergeDest(j) = newDest;
         end
     end
 end
 
+%Reset these. 
 clear NeuronPixels;
 clear FT;
 
+%Assign new values to NeuronPixels, NeuronImage, and FT. .
 curr = 1;
 for i = 1:NumNeurons
     if (MergeDest(i) == i)
@@ -100,8 +115,4 @@ end
 
 save('FinalOutput.mat', 'NeuronPixels', 'NeuronImage', 'FT', '-v7.3');
 
-
-
-
-            
-
+end

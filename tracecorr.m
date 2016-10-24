@@ -1,10 +1,15 @@
-function [CorrTrace] = tracecorr(tempFrame,ROIavg,NeuronPixels)
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
+function CorrTrace = tracecorr(tempFrame,ROIavg,NeuronPixels)
+%CorrTrace = tracecorr(tempFrame,ROIavg,NeuronPixels)
+%   
+%   Correlates the ROI from a frame to the average spike-triggered ROI
+%   calculated from MakeROIavg. 
+%
 
-    CorrTrace = zeros(1,length(NeuronPixels));
-    for j = 1:length(NeuronPixels)
-        CorrTrace(j) = corr(tempFrame(NeuronPixels{j}),ROIavg{j});
+%% Correlate ROI. 
+    nNeurons = length(NeuronPixels);
+    CorrTrace = zeros(1,nNeurons);
+    for j = 1:nNeurons
+        CorrTrace(j) = corr(tempFrame(NeuronPixels{j}),ROIavg{j}(NeuronPixels{j}));
     end
 
 end
