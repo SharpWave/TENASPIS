@@ -1,5 +1,5 @@
-function [DistTrav,MeanThresh] = TransientStats(SegChain)
-% [DistTrav,MeanThresh] = TransientStats(SegChain)
+function [DistTrav] = TransientStats(SegChain)
+% [DistTrav] = TransientStats(SegChain)
 %
 % Gets statistics on each Transient identified in SegChain
 %
@@ -33,11 +33,10 @@ function [DistTrav,MeanThresh] = TransientStats(SegChain)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load needed cc variable
-load('Blobs.mat','cc','PeakPix','ThreshList');
+load('Blobs.mat','cc','PeakPix');
 
 %% Calculate distance traveled for each transient
 DistTrav = nan(1,length(SegChain));
-MeanThresh = nan(1,length(SegChain));
 
 disp('Calculating statistics for all transients')
 
@@ -71,22 +70,24 @@ for i = 1:length(SegChain)
             Yc(j) = r.Centroid(2);
             
             % Get threshold
+            
+            
         end
         
         for j = 1:length(SegChain{i})
             frame = SegChain{i}{j}(1);
             seg = SegChain{i}{j}(2);    
-            thresh(j) = ThreshList{frame}(seg);
+            
         end
         
         DistTrav(i) = sqrt((Xc(end)-Xc(1))^2+(Yc(end)-Yc(1))^2);
-        MeanThresh(i) = mean(thresh);
+        
         
     elseif length(SegChain{i}) == 1 % Avoid doing any of the above if there is only one frame in the segment
         DistTrav(i) = 0;
         frame = SegChain{i}{1}(1);
         seg = SegChain{i}{1}(2);
-        MeanThresh(i) = ThreshList{frame}(1);
+        
     end
 
 end

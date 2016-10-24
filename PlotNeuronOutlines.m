@@ -1,4 +1,4 @@
-function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
+function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,NeuronImage,varargin)
 % [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 %
 % Plots outlines of each neuron's transients in the same color.
@@ -123,6 +123,13 @@ for i = 1:length(clusterlist)
     color_use(i,:) = colors(clusterlist(i),:); % Make each neuron's clusters a different color
 end
 p.stop;
+
+for i = 1:length(NeuronImage)
+    b = bwboundaries(NeuronImage{i},'noholes');
+    xn = b{1}(:,1);
+    yn = b{1}(:,2);
+    plot(yn,xn,'Color',colors(i,:),'LineWidth',4);hold on;
+end
 hold off;
 axis equal;
 

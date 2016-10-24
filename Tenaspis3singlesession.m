@@ -16,7 +16,7 @@ MakeTransients;
 
 %% Group together individual transients under individual neurons
 disp('Making neurons...'); 
-MakeNeurons('min_trans_length',10);
+MakeNeurons;
 
 %% Pull traces out of each neuron using the High-pass movie
 disp('Normalizing traces...'); 
