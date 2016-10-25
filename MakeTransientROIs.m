@@ -13,7 +13,7 @@ load('Blobs.mat','BlobPixelIdxList');
 
 %% setup some variables
 NumTransients = length(FrameList);
-[PixelList,BinCent,BigAvg,CircMask,PixelAvg] = deal(cell(1,NumTransients));
+[PixelIdxList,BinCent,BigAvg,CircMask,PixelAvg] = deal(cell(1,NumTransients));
 TranBool = false(NumTransients,NumFrames);
 
 %% get pixel participation average and determine ROI
@@ -27,25 +27,25 @@ for i = 1:NumTransients
     end
     PixFreq = PixFreq./length(FrameList{i});
     InROI = PixFreq > MinPixelPresence;
-    PixelList{i} = find(InROI);
+    PixelIdxList{i} = find(InROI);
     props = regionprops(InROI,'Centroid');
     BinCent{i} = props.Centroid;
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
     BigAvg{i} = zeros(size(CircMask{i}),'single');
-    PixelAvg{i} = zeros(size(PixelList{i}),'single');
+    PixelAvg{i} = zeros(size(PixelIdxList{i}),'single');
     TranBool(i,FrameList{i}) = true;
 end
 
 %% go through the movie and get the average pixel values
 disp('averaging ROIs over the movie');
-[BigPixelAvg,PixelAvg] = PixelSetMovieAvg(TranBool,CircMask,TranBool,PixelList);
+[BigPixelAvg,PixelAvg] = PixelSetMovieAvg(TranBool,CircMask,TranBool,PixelIdxList);
 
 disp('calculating weighted centroids');
 for i = 1:NumTransients
     boolframe = blankframe;
-    boolframe(PixelList{i}) = 1;
+    boolframe(PixelIdxList{i}) = 1;
     valframe = blankframe;
-    valframe(PixelList{i}) = PixelAvg{i};
+    valframe(PixelIdxList{i}) = PixelAvg{i};
     props = regionprops(boolframe,valframe,'WeightedCentroid');
     Xcent(i) = props.WeightedCentroid(1);
     Ycent(i) = props.WeightedCentroid(2);
@@ -54,7 +54,7 @@ end
 %% save outputs
 disp('saving data');
 Trans2ROI = (1:NumTransients);
-save TransientROIs.mat Trans2ROI Xcent Ycent FrameList PixelAvg BigPixelAvg CircMask;
+save TransientROIs.mat Trans2ROI Xcent Ycent FrameList PixelAvg PixelIdxList BigPixelAvg CircMask;
 
 end
 
