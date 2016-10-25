@@ -13,7 +13,7 @@ load('Blobs.mat','BlobPixelIdxList');
 
 %% setup some variables
 NumTransients = length(FrameList);
-[PixelList,BinCent,BigAvg,CircMask,PixelAvg] = cell(1,NumTransients);
+[PixelList,BinCent,BigAvg,CircMask,PixelAvg] = deal(cell(1,NumTransients));
 TranBool = false(NumTransients,NumFrames);
 
 %% get pixel participation average and determine ROI
