@@ -51,7 +51,7 @@ MinBlobArea = ceil((MinBlobRadius^2)*pi);
 
 %% Setup variables for below
 badpix = find(PrepMask == 0); % Locations of pixels that are outside the mask and should be excluded
-blankframe = zeros(Xdim,Ydim);
+blankframe = zeros(Xdim,Ydim,'single');
 
 %% segment the frame at initial threshold
 threshframe = frame > threshold; % apply threshold, make it into a logical array

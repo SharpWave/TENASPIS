@@ -98,7 +98,7 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = single(LoadFrames(MotCorrh5,FrameList));
+    FrameChunk = LoadFrames(MotCorrh5,FrameList);
     HPChunk = zeros(size(FrameChunk));
     LPChunk = zeros(size(FrameChunk));
     

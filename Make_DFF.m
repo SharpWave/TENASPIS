@@ -40,7 +40,7 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = single(LoadFrames(moviefile,FrameList));
+    FrameChunk = LoadFrames(moviefile,FrameList);
     avgframe = avgframe+sum(FrameChunk,3);
     p.progress;
 end

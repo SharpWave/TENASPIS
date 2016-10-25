@@ -47,6 +47,8 @@ end
 %% load the frames
 curr = 1;
 
+frames = zeros(Xdim,Ydim,length(framenums),'single');
+
 for i = 1:size(fep,1)
     frames(:,:,curr:(curr+loadchunks(i,2)-1)) = h5read(file,'/Object',[1 1 loadchunks(i,1) 1],[Xdim Ydim loadchunks(i,2) 1]);
     curr = curr+loadchunks(i,2);

@@ -18,6 +18,7 @@ ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
 NumChunks = length(ChunkStarts);
+ChunkSums = cell(1,NumChunks);
 
 %% initialize outputs and unpack some variables from varargin for clarity
 for i = 1:NumInputs
@@ -29,28 +30,21 @@ for i = 1:NumInputs
     end
 end
 
-%% load the movie chunks and average that shit!
+%% average the chunks in parallel
 p = ProgressBar(NumChunks);
-for i = 1:1 % this can be parallelized
-    % load chunk
-    tic
+parfor i = 1:NumChunks
+    Set_T_Params;
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    %FrameChunk = LoadFrames('BPDFF.h5',FrameList);
-    FrameChunk = LoadFrames('BPDFF.h5',FrameList);
-    % average each pixel set
-    
-    ChunkAvg{i} = AvgChunk(FrameChunk,FrameList,NumInputs,NumROIs,PixelIdx,ActBool);
-    
-
-    p.progress;
-    toc,
+    ChunkSums{i} = CalcChunkSums(FrameList,NumInputs,NumROIs,PixelIdx,ActBool);
+    p.progress;    
 end
 p.stop;
-keyboard;
+
+%% unpack the parallelized data, calculate the mean from the sum
 for j = 1:NumInputs
     for k = 1:NumROIs(j)
         for i = 1:NumChunks
-          PixelAvg{j}{k} = PixelAvg{j}{k} + ChunkAvg{i}{j}{k};
+          PixelAvg{j}{k} = PixelAvg{j}{k} + ChunkSums{i}{j}{k};
         end
         PixelAvg{j}{k}./sum(ActBool{j}{k});
     end
