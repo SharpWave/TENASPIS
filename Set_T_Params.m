@@ -65,11 +65,17 @@ T_PARAMS.MinPixelPresence = 0.5; % minimum fraction of frames in the transient f
 % Setting to 1 means the pixels in the smallest blob in the transient (often right before fadeout) will be chosen. 
 % Setting to 0 means the maximum blob extent will be used. 
 T_PARAMS.ROICircleWindowRadius = 25;
+
+%% MergeTransientROIs params
+T_PARAMS.DistanceThresholdList = 0.25:0.25:7;
+T_PARAMS.MaxTransientMergeCorrP = 0.05;
+T_PARAMS.MinTransientMergeCorrR = 0.05;
+
 %% 
 
 
 
-%% MergeTransientROIs params
+
 
 
 

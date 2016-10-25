@@ -93,7 +93,25 @@ for i = 1:length(varargin)
     
     if (strcmp(varargin{i},'ROICircleWindowRadius')) 
         varargout(i) = {T_PARAMS.ROICircleWindowRadius};
-    end    
+    end
+    
+    if (strcmp(varargin{i},'DistanceThresholdList')) 
+        varargout(i) = {T_PARAMS.DistanceThresholdList};
+    end
+    
+    if (strcmp(varargin{i},'MaxTransientMergeCorrP')) 
+        varargout(i) = {T_PARAMS.MaxTransientMergeCorrP};
+    end
+    
+    if (strcmp(varargin{i},'MinTransientMergeCorrR')) 
+        varargout(i) = {T_PARAMS.MinTransientMergeCorrR};
+    end
+    
+    
+    
+   
+    
+    
     
     
     
