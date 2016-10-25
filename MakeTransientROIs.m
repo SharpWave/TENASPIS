@@ -4,9 +4,7 @@ function [] = MakeTransientROIs()
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,FrameChunkSize,MinPixelPresence,ROICircleWindowRadius] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','MinPixelPresence','ROICircleWindowRadius');
-
-
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius');
 
 %% load data
 disp('loading data');
@@ -16,7 +14,7 @@ load('Blobs.mat','BlobPixelIdxList');
 %% setup some variables
 NumTransients = length(FrameList);
 [PixelList,BinCent,BigAvg,CircMask,PixelAvg] = cell(1,NumTransients);
-TranBool = zeros(NumTransients,NumFrames);
+TranBool = false(NumTransients,NumFrames);
 
 %% get pixel participation average and determine ROI
 disp('determining calcium transient ROIs');
@@ -33,18 +31,30 @@ for i = 1:NumTransients
     props = regionprops(InROI,'Centroid');
     BinCent{i} = props.Centroid;
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
-    BigAvg{i} = zeros(size(CircMask{i}));
-    PixelAvg{i} = zeros(size(PixelList{i}));
-    TranBool(i,FrameList{i}) = 1;
+    BigAvg{i} = zeros(size(CircMask{i}),'single');
+    PixelAvg{i} = zeros(size(PixelList{i}),'single');
+    TranBool(i,FrameList{i}) = true;
 end
 
 %% go through the movie and get the average pixel values
 disp('averaging ROIs over the movie');
-p=ProgressBar(NumChunks);
-[BigAvg,PixelAvg] = PixelSetMovieAvg(TranBool,CircMask,TranBool,PixelList);
- 
-keyboard;
-%save InitClu.mat c Xdim Ydim PixelList Xcent Ycent frames NumFrames PixelAvg BigPixelAvg cm min_trans_length -v7.3;
+[BigPixelAvg,PixelAvg] = PixelSetMovieAvg(TranBool,CircMask,TranBool,PixelList);
+
+disp('calculating weighted centroids');
+for i = 1:NumTransients
+    boolframe = blankframe;
+    boolframe(PixelList{i}) = 1;
+    valframe = blankframe;
+    valframe(PixelList{i}) = PixelAvg{i};
+    props = regionprops(boolframe,valframe,'WeightedCentroid');
+    Xcent(i) = props.WeightedCentroid(1);
+    Ycent(i) = props.WeightedCentroid(2);
+end
+
+%% save outputs
+disp('saving data');
+Trans2ROI = (1:NumTransients);
+save TransientROIs.mat Trans2ROI Xcent Ycent FrameList PixelAvg BigPixelAvg CircMask;
 
 end
 
