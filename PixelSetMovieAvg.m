@@ -13,6 +13,7 @@ if(mod(NumInputs,1) ~= 0)
 end
 
 %% Chunking variables
+FrameChunkSize = FrameChunkSize;
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
@@ -30,27 +31,28 @@ end
 
 %% load the movie chunks and average that shit!
 p = ProgressBar(NumChunks);
-for i = 1:NumChunks % this can be parallelized
+for i = 1:1 % this can be parallelized
     % load chunk
     tic
     FrameList = ChunkStarts(i):ChunkEnds(i);
     %FrameChunk = LoadFrames('BPDFF.h5',FrameList);
     FrameChunk = LoadFrames('BPDFF.h5',FrameList);
     % average each pixel set
-    for j = 1:NumInputs
-        for k = 1:NumROIs(j)
-            ROIFrameSum = sum(FrameChunk(:,:,ActBool{j}{k}(FrameList)),3);
-            PixelAvg{j}{k} = PixelAvg{j}{k} + ROIFrameSum(PixelIdx{j}{k});
-        end
-    end
+    
+    ChunkAvg{i} = AvgChunk(FrameChunk,FrameList,NumInputs,NumROIs,PixelIdx,ActBool);
+    
+
     p.progress;
     toc,
 end
 p.stop;
-
+keyboard;
 for j = 1:NumInputs
     for k = 1:NumROIs(j)
-        PixelAvg{j}{k} = PixelAvg{j}{k}./sum(ActBool{j}{k});
+        for i = 1:NumChunks
+          PixelAvg{j}{k} = PixelAvg{j}{k} + ChunkAvg{i}{j}{k};
+        end
+        PixelAvg{j}{k}./sum(ActBool{j}{k});
     end
     varargout(j) = PixelAvg(j);
 end
