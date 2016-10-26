@@ -71,7 +71,7 @@ rp = rp(GoodBlob);
 GoodBlob = true(length(rp),1);
 BlobPixelIdxList = cell(1,length(rp));
 BlobWeightedCentroids = cell(1,length(rp));
-BlobMinorAxisLength = zeros(1,length(rp));
+BlobMinorAxisLength = zeros(1,length(rp),'single');
 
 %% Test each blob for blob shape criteria; raise threshold and re-test if test fails
 for i = 1:length(rp)
