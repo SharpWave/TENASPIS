@@ -44,10 +44,10 @@ for i = 1:length(DistanceThresholdList)
         disp(['Merging neurons, iteration #',num2str(NumIterations+1)])
         
         % Iteratively merge spatially distant clusters together
-        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,PixelAvg,BigPixelAvg,CircMask);
+        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask);
         NumIterations = NumIterations+1; % Update number of iterations
-        NumClu(NumIterations) = length(unique(c)); % Update number of clusters
-        DistUsed(NumIterations) = MinPixelDist(i); % Updated distance threshold used
+        NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
+        DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
         
         if (NumClu(NumIterations) == oldNumCT) 
             % If you end up with the same number of clusters as the previous iteration, exit
@@ -63,7 +63,8 @@ end
 
 NeuronROIidx = unique(Trans2ROI); % Get unique clusters and mappings between clusters and neurons
 NumNeurons = length(NeuronROIidx); % Final number of neurons
-nClus = length(CluToPlot); % Final number of clusters
+
+keyboard;
 
 
 

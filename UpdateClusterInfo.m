@@ -1,10 +1,7 @@
-function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClus,PixelList,PixelAvg,BigPixelAvg,CircMask,...
+function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClu,PixelList,PixelAvg,BigPixelAvg,CircMask,...
     Xcent,Ycent,FrameList,ObjList,EaterClu)
-
-% [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
-%   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
-%   ClustersToUpdate,meanareas,meanX,meanY,NumEvents,frames)
-%
+% [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClus,PixelList,PixelAvg,BigPixelAvg,CircMask,...
+%    Xcent,Ycent,FrameList,ObjList,EaterClu)
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -23,59 +20,54 @@ function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = Update
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+%% Get params
+[Xdim,Ydim] = Get_T_Params('Xdim','Ydim');
 
+%% setup variables for averaging the pixels together
 tempFrameCount = zeros(size(CircMask{EaterClu}),'single');
 tempAvg = zeros(size(CircMask{EaterClu}),'single');
 
-% merge ROI pixel sets
-newpixels = [];
-
-for j = 1:length(cluidx)
-    
-    mergepixels = PixelList{cluidx(j)};
-    if (j == 1)
-        newpixels = mergepixels;
-    else
-        newpixels = union(newpixels,mergepixels);
-    end
-    
-    tempX = tempX+Xcent(cluidx(j));
-    tempY = tempY+Ycent(cluidx(j));
+%% union the Food pixel lists into the eater pixel lists
+for j = 1:length(FoodClu)
+    PixelList{EaterClu} = union(PixelList{EaterClu},PixelList{FoodClu(j)});
 end
 
-PixelList{i} = newpixels;
-Xcent(i) = tempX/length(cluidx);
-Ycent(i) = tempY/length(cluidx);
-
-% for each cluster, add pixels that overlap with cm(i)
-for j = 1:length(cluidx)
+%% for each cluster, add pixels that overlap with cm(i)
+AllClu = [EaterClu,FoodClu];
+for j = 1:length(AllClu)
     
     % NPidx is index into BigPixelAvg
-    [binans,firstidx] = ismember(CircMask{i},CircMask{cluidx(j)});
+    [binans,firstidx] = ismember(CircMask{EaterClu},CircMask{AllClu(j)});
     okpix = find(binans);
     try
-        tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{cluidx(j)});
+        tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{AllClu(j)});
     catch
         keyboard;
     end
-    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{cluidx(j)}(firstidx(okpix))*length(FrameList{cluidx(j)});
+    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});
 end
-BigPixelAvg{i} = tempAvg./tempFrameCount;
+BigPixelAvg{EaterClu} = tempAvg./tempFrameCount;
 
-% now create new PixelAvg from BigPixelAvg
+%% concatenate the framelists and objlists
+for j = 1:length(FoodClu)    
+        FrameList{EaterClu} = [FrameList{EaterClu},FrameList{FoodClu(j)}];
+        ObjList{EaterClu} = [ObjList{EaterClu},ObjList{FoodClu(j)}];
+end
 
-for j = 1:length(cluidx)
-    if (cluidx(j) ~= i)
-        FrameList{i} = [FrameList{i},FrameList{cluidx(j)}];
-    end
-end
-% update Pixel Avg
-[~,idx] = ismember(PixelList{i},CircMask{i});
-try
-    PixelAvg{i} = BigPixelAvg{i}(idx);
-catch
-    keyboard;
-end
+%% update Pixel Avg
+[~,idx] = ismember(PixelList{EaterClu},CircMask{EaterClu});
+PixelAvg{EaterClu} = BigPixelAvg{EaterClu}(idx);
+
+%% update centroid
+blankframe = zeros(Xdim,Ydim,'single');
+tempbin = blankframe;
+tempbin(PixelList{EaterClu}) = 1;
+tempval = blankframe;
+tempval(PixelList{EaterClu}) = PixelAvg{EaterClu};
+props = regionprops(tempbin,tempval,'WeightedCentroid');
+Xcent(EaterClu) = props.WeightedCentroid(1);
+Ycent(EaterClu) = props.WeightedCentroid(2);
+
 
 
 end
