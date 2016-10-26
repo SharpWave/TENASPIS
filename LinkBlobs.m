@@ -48,6 +48,7 @@ end
 %% Run through loop to connect blobs between successive frames
 p = ProgressBar(floor(NumFrames / FrameChunkSize));
 disp('Linking Blobs');
+
 for i = 2:NumFrames
     CurrNumBlobs = length(BlobPixelIdxList{i});
     PrevNumBlobs = length(BlobPixelIdxList{i-1});
@@ -66,15 +67,15 @@ for i = 2:NumFrames
             % get transient index of match
             PrevIdx = TransientIdx{i-1}(FoundMatch);
             % set this blob's transient index to match's
-            TransientIdx{i}(j) = PrevIdx;
+            TransientIdx{i}(j) = single(PrevIdx);
             % add this frame and object numbers to transient's bloblist
-            FrameList{PrevIdx} = [FrameList{PrevIdx},i];
-            ObjList{PrevIdx} = [ObjList{PrevIdx},j];
+            FrameList{PrevIdx} = [FrameList{PrevIdx},single(i)];
+            ObjList{PrevIdx} = [ObjList{PrevIdx},single(j)];
         else
             % Set up a new Transient
-            TransientIdx{i}(j) = NextNewIdx;
-            FrameList{NextNewIdx} = i;
-            ObjList{NextNewIdx} = j;
+            TransientIdx{i}(j) = single(NextNewIdx);
+            FrameList{NextNewIdx} = single(i);
+            ObjList{NextNewIdx} = single(j);
             NextNewIdx = NextNewIdx + 1;
         end
     end
@@ -86,5 +87,6 @@ p.stop;
 
 %% save outputs
 disp('saving blob link information');
+
 save BlobLinks.mat TransientIdx FrameList ObjList;
     

@@ -11,7 +11,7 @@ MakeFilteredMovies();
 
 %% Extract Blobs
 load singlesessionmask.mat;
-ExtractBlobs('SHPDFF.h5',neuronmask);
+ExtractBlobs(neuronmask);
 
 %% Connect blobs into transients
 LinkBlobs();

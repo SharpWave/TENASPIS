@@ -15,6 +15,7 @@ load('Blobs.mat','BlobPixelIdxList');
 NumTransients = length(FrameList);
 [PixelIdxList,BinCent,BigAvg,CircMask,PixelAvg] = deal(cell(1,NumTransients));
 TranBool = false(NumTransients,NumFrames);
+[Xcent,Ycent] = deal(zeros(1,NumTransients,'single'));
 
 %% get pixel participation average and determine ROI
 disp('determining calcium transient ROIs');
@@ -53,8 +54,9 @@ end
 
 %% save outputs
 disp('saving data');
-Trans2ROI = (1:NumTransients);
-save TransientROIs.mat Trans2ROI Xcent Ycent FrameList PixelAvg PixelIdxList BigPixelAvg CircMask;
+Trans2ROI = single(1:NumTransients);
+
+save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask;
 
 end
 

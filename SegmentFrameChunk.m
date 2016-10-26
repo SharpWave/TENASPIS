@@ -1,6 +1,9 @@
-function [BlobChunk] = SegmentFrameChunk(FrameChunk,PrepMask)
+function [BlobChunk] = SegmentFrameChunk(FrameList,PrepMask)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+
+FrameChunk = LoadFrames('BPDFF.h5',FrameList); 
+
 NumFrames = size(FrameChunk,3);
 BlobChunk.BlobPixelIdxList = cell(1,NumFrames);
 BlobChunk.BlobWeightedCentroids = cell(1,NumFrames);

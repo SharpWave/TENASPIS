@@ -6,6 +6,6 @@ r = radius;                      %# radius
 c = [Xcent Ycent];
 
 BW = poly2mask(r*cos(t)+c(1), r*sin(t)+c(2), Xdim, Ydim);
-cmask = find(BW);
+cmask = single(find(BW));
 end
 

@@ -39,8 +39,8 @@ p = ProgressBar(NumChunks); % Initialize progress bar
 parfor i = 1:NumChunks
     Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames('BPDFF.h5',FrameList);    
-    BlobChunk(i) = SegmentFrameChunk(FrameChunk,PrepMask);
+       
+    BlobChunk(i) = SegmentFrameChunk(FrameList,PrepMask);
     p.progress;
 end
 p.stop; % Shut-down progress bar
