@@ -22,7 +22,7 @@ function [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Get parameters
-[
+[MinTransientMergeCorrR,MaxTransientMergeCorrP] = Get_T_Params('MinTransientMergeCorrR','MaxTransientMergeCorrP');
 
 %% setup some variables
 ClusterList = unique(Trans2ROI); % this ends up being the indices into the input data array elements that contain currently remaining clusters
@@ -38,16 +38,18 @@ for i = 1:length(ClusterList)
     
     if (Trans2ROI(CurrClu) ~= CurrClu)
         % cluster already merged during this call, move to next iteration
+        % of the for loop
         continue;
     end
     
-    % Sort the Clusters from closest to farthest away from cluster i
+    % Sort the Clusters from closest to farthest away from CurrClu
     [sortdist,sortidx] = sort(CluDist(CurrClu,:));
     
-    % clusters that are within the distance threshold that aren't CurrClu
+    % keep clusters that are within the distance threshold that aren't CurrClu
     NearCluIdx = setdiff(intersect(ClusterList,sortidx(sortdist <= DistThresh)),CurrClu);
         
-    % try merging each cluster in NearCluIdx into CurrClu 
+    % try merging each cluster in NearCluIdx into CurrClu
+    MergeOK = [];
     for k = 1:length(NearCluIdx)
         CandIdx = NearCluIdx(k); % CandIdx is index of candidate cluster
         
@@ -59,29 +61,28 @@ for i = 1:length(ClusterList)
         % determine correleation values for the union of CurrClu and
         % CandIdx        
 
-        u = union(PixelList{i},PixelList{CandIdx});
-        [~,idx1] = ismember(u,CircMask{i});
+        u = union(PixelList{CurrClu},PixelList{CandIdx});
+        [~,idx1] = ismember(u,CircMask{CurrClu});
         [~,idx2] = ismember(u,CircMask{CandIdx});
         
-        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{i}(idx1),BigPixelAvg{CandIdx}(idx2),'Spearman');        
+        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'Spearman');        
         
-        if ((BigCorrP > 0.001) || (BigCorrVal < 0.05))        
+        if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))        
             % reject the merge
             continue;
         end
-        MergeClus = [MergeClus,CandIdx];
-        Trans2ROI(Trans2ROI == CandIdx) = i; % Update cluster number for merged clusters
+        MergeOK = [MergeOK,CandIdx];
+        Trans2ROI(Trans2ROI == CandIdx) = CurrClu; % Update cluster number for all transients part of CandIdx to 
     end
         
     % If a merge happened, update all the cluster info for the next
     % iteration
-    if ~isempty(MergeClus)
-        MergeClus = [i,MergeClus];
+    if ~isempty(MergeOK)
         [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList] = UpdateClusterInfo(...
-            MergeClus,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,CircMask,Xcent,Ycent,FrameList,i);
-        temp = UpdateCluDistances(Xcent,Ycent,i); % Update distances for newly merged clusters to all other clusters
-        CluDist(i,:) = temp;
-        CluDist(:,i) = temp;
+            MergeOK,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,CircMask,Xcent,Ycent,FrameList,CurrClu);
+        temp = UpdateCluDistances(Xcent,Ycent,CurrClu); % Update distances for newly merged clusters to all other clusters
+        CluDist(CurrClu,:) = temp;
+        CluDist(:,CurrClu) = temp;
     end
     
 end

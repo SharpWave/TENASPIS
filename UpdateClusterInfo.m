@@ -1,5 +1,5 @@
-function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,frames] = UpdateClusterInfo(...
-    MergeClus,Xdim,Ydim,PixelList,PixelAvg,BigPixelAvg,cmpix,Xcent,Ycent,frames,ClustersToUpdate)
+function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClus,PixelList,PixelAvg,BigPixelAvg,CircMask,...
+    Xcent,Ycent,FrameList,ObjList,EaterClu)
 
 % [PixelList,meanareas,meanX,meanY,NumEvents,frames] = ...
 %   UpdateClusterInfo(c,Xdim,Ydim,PixelList,Xcent,Ycent,...
@@ -23,17 +23,9 @@ function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,frames] = UpdateClusterInfo
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-if(~exist('ClustersToUpdate','var'))
-    ClustersToUpdate = unique(c);
-end
 
-i = ClustersToUpdate;
-
-cluidx = MergeClus;
-tempX = 0;
-tempY = 0;
-tempFrameCount = zeros(size(cmpix{i}));
-tempAvg = zeros(size(cmpix{i}));
+tempFrameCount = zeros(size(CircMask{EaterClu}),'single');
+tempAvg = zeros(size(CircMask{EaterClu}),'single');
 
 % merge ROI pixel sets
 newpixels = [];
@@ -59,14 +51,14 @@ Ycent(i) = tempY/length(cluidx);
 for j = 1:length(cluidx)
     
     % NPidx is index into BigPixelAvg
-    [binans,firstidx] = ismember(cmpix{i},cmpix{cluidx(j)});
+    [binans,firstidx] = ismember(CircMask{i},CircMask{cluidx(j)});
     okpix = find(binans);
     try
-    tempFrameCount(okpix) = tempFrameCount(okpix)+length(frames{cluidx(j)});
+        tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{cluidx(j)});
     catch
         keyboard;
     end
-    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{cluidx(j)}(firstidx(okpix))*length(frames{cluidx(j)});
+    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{cluidx(j)}(firstidx(okpix))*length(FrameList{cluidx(j)});
 end
 BigPixelAvg{i} = tempAvg./tempFrameCount;
 
@@ -74,16 +66,16 @@ BigPixelAvg{i} = tempAvg./tempFrameCount;
 
 for j = 1:length(cluidx)
     if (cluidx(j) ~= i)
-        frames{i} = [frames{i},frames{cluidx(j)}];
+        FrameList{i} = [FrameList{i},FrameList{cluidx(j)}];
     end
 end
 % update Pixel Avg
-[~,idx] = ismember(PixelList{i},cmpix{i});
+[~,idx] = ismember(PixelList{i},CircMask{i});
 try
-PixelAvg{i} = BigPixelAvg{i}(idx);
+    PixelAvg{i} = BigPixelAvg{i}(idx);
 catch
     keyboard;
 end
-  
+
 
 end

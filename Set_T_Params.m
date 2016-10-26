@@ -67,8 +67,8 @@ T_PARAMS.MinPixelPresence = 0.5; % minimum fraction of frames in the transient f
 T_PARAMS.ROICircleWindowRadius = 25;
 
 %% MergeTransientROIs params
-T_PARAMS.DistanceThresholdList = 0.25:0.25:7;
-T_PARAMS.MaxTransientMergeCorrP = 0.05;
+T_PARAMS.DistanceThresholdList = 0:0.25:7;
+T_PARAMS.MaxTransientMergeCorrP = 0.001;
 T_PARAMS.MinTransientMergeCorrR = 0.05;
 
 %% 

@@ -19,7 +19,7 @@ TranBool = false(NumTransients,NumFrames);
 
 %% get pixel participation average and determine ROI
 disp('determining calcium transient ROIs');
-blankframe = zeros(Xdim,Ydim);
+blankframe = zeros(Xdim,Ydim,'single');
 for i = 1:NumTransients
     PixFreq = blankframe;
     for j = 1:length(FrameList{i})
@@ -28,7 +28,7 @@ for i = 1:NumTransients
     end
     PixFreq = PixFreq./length(FrameList{i});
     InROI = PixFreq > MinPixelPresence;
-    PixelIdxList{i} = find(InROI);
+    PixelIdxList{i} = single(find(InROI));
     props = regionprops(InROI,'Centroid');
     BinCent{i} = props.Centroid;
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
