@@ -1,33 +1,47 @@
-function [] = PlotTransientMerge(CurrPixelAvg,CandPixelAvg,CurrBigPixelAvg,CandBigPixelAvg,)
-% helper plotter for AttemptTransientMerges
+function [] = PlotTransientMerge(CurrBigPixelAvg,CandBigPixelAvg,idx1,idx2,CircMaskCurr,CircMaskCand,CurrPixelIdx,CandPixelIdx,Trans2ROI,CurrClu,CandIdx)
+
+% Plot the BigPixelAvg for both. with colorbar, # frames on top. Plot The ROI for both as a line.
+% Plot the points in the union as a scatter
+
+[Xdim,Ydim] = Get_T_Params('Xdim','Ydim');
+
+blankframe = zeros(Xdim,Ydim,'single');
 
 figure(1);
 
-lf1 = length(frames{i});
-lf2 = length(frames{cidx});
+s(1) = subplot(1,3,1);
+tempframeCurr = blankframe;
+tempframeCurr(CircMaskCurr) = CurrBigPixelAvg;
+MaxVal = max(tempframeCurr(CurrPixelIdx));
+imagesc(tempframeCurr);axis image;caxis([0.01 MaxVal]);hold on;colorbar;
+title(['# transients',int2str(length(find(Trans2ROI == CurrClu)))])
+tempframeOL = blankframe;
+tempframeOL(CurrPixelIdx) = 1;
+b1 = bwboundaries(tempframeOL);
+plot(b1{1}(:,2),b1{1}(:,1),'-r','LineWidth',1);
 
-subh(4) = subplot(2,4,5);
-temp = zeros(Xdim,Ydim);
-temp(cm{i}) = BigPixelAvg{i};
-imagesc(temp);axis image;caxis([0.01 max(PixelAvg{i})]);
+s(2) = subplot(1,3,2);
+tempframeCand = blankframe;
+tempframeCand(CircMaskCand) = CandBigPixelAvg;
+MaxVal = max(tempframeCand(CandPixelIdx));
+imagesc(tempframeCand);axis image;caxis([0.01 MaxVal]);hold on;colorbar;
+title(['# transients',int2str(length(find(Trans2ROI == CandIdx)))])
+tempframeOL = blankframe;
+tempframeOL(CandPixelIdx) = 1;
+b2 = bwboundaries(tempframeOL);
+plot(b2{1}(:,2),b2{1}(:,1),'-r','LineWidth',1);
+plot(b1{1}(:,2),b1{1}(:,1),'-m','LineWidth',1);hold off;
 
-subh(5) = subplot(2,4,6);
-temp1 = zeros(Xdim,Ydim);
-temp1(cm{cidx}) = BigPixelAvg{cidx};
-imagesc(temp1);axis image;caxis([0.01 max(PixelAvg{cidx})]);
+subplot(1,3,1);
+plot(b2{1}(:,2),b2{1}(:,1),'-m','LineWidth',1);hold off;
 
-subh(6) = subplot(2,4,7);
-imsum = (temp1*lf2+temp*lf1)./(lf1+lf2);
-imagesc(imsum);axis image;caxis([0.01 max(imsum(:))]);
+subplot(1,3,3);
+plot(CurrBigPixelAvg(idx1),CandBigPixelAvg(idx2),'*');axis equal;
+[cr,cp] = corr(CurrBigPixelAvg(idx1),CandBigPixelAvg(idx2),'type','Spearman');
+title(['Corr R: ',num2str(cr),' Corr P: ',num2str(cp)]);
 
-subplot(2,4,8);
-plot(BigPixelAvg{i}(idx1),BigPixelAvg{cidx}(idx2),'*');axis equal;
-
-
-
-corrp,corrval,Bigcorrval,Bigcorrp,linkaxes(subh);
+linkaxes(s);
 pause
-
 
 end
 

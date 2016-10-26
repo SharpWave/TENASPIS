@@ -4,7 +4,7 @@ function [] = MakeTransientROIs()
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius');
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold');
 
 %% load data
 disp('loading data');
@@ -33,13 +33,28 @@ for i = 1:NumTransients
     BinCent{i} = props.Centroid;
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
     BigAvg{i} = zeros(size(CircMask{i}),'single');
-    PixelAvg{i} = zeros(size(PixelIdxList{i}),'single');
-    TranBool(i,FrameList{i}) = true;
+    
 end
 
 %% go through the movie and get the average pixel values
-disp('averaging ROIs over the movie');
-[BigPixelAvg,PixelAvg] = PixelSetMovieAvg(TranBool,CircMask,TranBool,PixelIdxList);
+disp('averaging preliminary ROIs over the movie');
+[BigPixelAvg] = PixelSetMovieAvg(TranBool,CircMask);
+
+%% Refine the ROIs
+for i = 1:NumTransients
+    TempFrame = blankframe;
+    TempFrame(CircMask{i}) = BigPixelAvg{i};
+    ThreshFrame = TempFrame > threshold;
+    b = bwconncomp(ThreshFrame,4);
+    for j = 1:b.NumObjects
+        if (sum(ismember(PixelIdxList{i},b.PixelIdxList{j})) > 0)
+            break;
+        end
+    end
+    PixelIdxList{i} = b.PixelIdxList{j};
+    PixelAvg{i} = TempFrame(PixelIdxList{i});
+end
+   
 
 disp('calculating weighted centroids');
 for i = 1:NumTransients

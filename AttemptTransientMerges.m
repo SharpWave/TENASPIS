@@ -73,6 +73,9 @@ for i = 1:length(ClusterList)
         
         if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))        
             % reject the merge
+            if (DistThresh >= 4)
+            PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
+            end
             continue;
         end
         

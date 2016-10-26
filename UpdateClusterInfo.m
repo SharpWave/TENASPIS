@@ -2,7 +2,7 @@ function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = Update
     Xcent,Ycent,FrameList,ObjList,EaterClu)
 % [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClus,PixelList,PixelAvg,BigPixelAvg,CircMask,...
 %    Xcent,Ycent,FrameList,ObjList,EaterClu)
-% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+% Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 %
@@ -32,29 +32,22 @@ for j = 1:length(FoodClu)
     PixelList{EaterClu} = union(PixelList{EaterClu},PixelList{FoodClu(j)});
 end
 
-%% for each cluster, add pixels that overlap with cm(i)
+%% for each cluster, add pixels that overlap with the currclu circmask
 AllClu = [EaterClu,FoodClu];
-for j = 1:length(AllClu)
-    
-    % NPidx is index into BigPixelAvg
+for j = 1:length(AllClu)    
     [binans,firstidx] = ismember(CircMask{EaterClu},CircMask{AllClu(j)});
-    okpix = find(binans);
-
-     tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{AllClu(j)});
-    try
-    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});
-    catch
-        keyboard;
-    end
-    
+    okpix = find(binans);    
+    tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{AllClu(j)});
+    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});    
 end
+% take the mean
 tempAvg = tempAvg./tempFrameCount;
 BigPixelAvg{EaterClu} = tempAvg;
 
 %% concatenate the framelists and objlists
-for j = 1:length(FoodClu)    
-        FrameList{EaterClu} = [FrameList{EaterClu},FrameList{FoodClu(j)}];
-        ObjList{EaterClu} = [ObjList{EaterClu},ObjList{FoodClu(j)}];
+for j = 1:length(FoodClu)
+    FrameList{EaterClu} = [FrameList{EaterClu},FrameList{FoodClu(j)}];
+    ObjList{EaterClu} = [ObjList{EaterClu},ObjList{FoodClu(j)}];
 end
 
 %% update Pixel Avg
@@ -68,9 +61,7 @@ tempbin(PixelList{EaterClu}) = 1;
 tempval = blankframe;
 tempval(PixelList{EaterClu}) = PixelAvg{EaterClu};
 props = regionprops(tempbin,tempval,'WeightedCentroid');
-Xcent(EaterClu) = props.WeightedCentroid(1);
-Ycent(EaterClu) = props.WeightedCentroid(2);
-
-
+Xcent(EaterClu) = single(props.WeightedCentroid(1));
+Ycent(EaterClu) = single(props.WeightedCentroid(2));
 
 end
