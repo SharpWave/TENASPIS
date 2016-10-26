@@ -39,14 +39,17 @@ for j = 1:length(AllClu)
     % NPidx is index into BigPixelAvg
     [binans,firstidx] = ismember(CircMask{EaterClu},CircMask{AllClu(j)});
     okpix = find(binans);
+
+     tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{AllClu(j)});
     try
-        tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{AllClu(j)});
+    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});
     catch
         keyboard;
     end
-    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});
+    
 end
-BigPixelAvg{EaterClu} = tempAvg./tempFrameCount;
+tempAvg = tempAvg./tempFrameCount;
+BigPixelAvg{EaterClu} = tempAvg;
 
 %% concatenate the framelists and objlists
 for j = 1:length(FoodClu)    

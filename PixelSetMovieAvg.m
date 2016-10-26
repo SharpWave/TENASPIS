@@ -46,7 +46,7 @@ for j = 1:NumInputs
         for i = 1:NumChunks
           PixelAvg{j}{k} = PixelAvg{j}{k} + ChunkSums{i}{j}{k};
         end
-        PixelAvg{j}{k}./sum(ActBool{j}{k});
+        PixelAvg{j}{k} = PixelAvg{j}{k}./sum(ActBool{j}{k});
     end
     varargout(j) = PixelAvg(j);
 end

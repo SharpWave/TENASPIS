@@ -1,7 +1,7 @@
 function [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistThresh,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask)
-%
-%  Attempt to merge all cluster pairs where centroid distance is less than
-%  DistThresh
+% [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistThresh,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask)
+%  Attempt to merge all cluster pairs where centroid distance is less than DistThresh
+%  
 %
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +73,12 @@ for i = 1:length(ClusterList)
         
         if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))        
             % reject the merge
+            continue;
+        end
+        
+        if (~isempty(intersect(FrameList{CandIdx},FrameList{CurrClu})))
+            % just in case by some messed up edge case it wants to merge
+            % temporally overlapping clusters
             continue;
         end
         MergeOK = [MergeOK,CandIdx];
