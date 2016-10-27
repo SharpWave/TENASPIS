@@ -33,7 +33,7 @@ for i = 1:NumTransients
     BinCent{i} = props.Centroid;
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
     BigAvg{i} = zeros(size(CircMask{i}),'single');
-    
+    TranBool(i,FrameList{i}) = true;
 end
 
 %% go through the movie and get the average pixel values
@@ -51,7 +51,11 @@ for i = 1:NumTransients
             break;
         end
     end
+    try
     PixelIdxList{i} = b.PixelIdxList{j};
+    catch
+        keyboard;
+    end
     PixelAvg{i} = TempFrame(PixelIdxList{i});
 end
    

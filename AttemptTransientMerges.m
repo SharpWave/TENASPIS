@@ -68,14 +68,19 @@ for i = 1:length(ClusterList)
             keyboard;
         end
         [~,idx2] = ismember(u,CircMask{CandIdx});
-        
-        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');        
-        
+        try
+        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');   
+        catch
+            keyboard;
+        end
+        if (DistThresh >= 1)
+        PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
+         end
         if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))        
             % reject the merge
-            if (DistThresh >= 4)
-            PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
-            end
+            
+            
+           
             continue;
         end
         
