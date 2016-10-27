@@ -21,11 +21,12 @@ function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = Update
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Get params
-[Xdim,Ydim] = Get_T_Params('Xdim','Ydim');
+[Xdim,Ydim,threshold] = Get_T_Params('Xdim','Ydim','threshold');
 
 %% setup variables for averaging the pixels together
 tempFrameCount = zeros(size(CircMask{EaterClu}),'single');
 tempAvg = zeros(size(CircMask{EaterClu}),'single');
+blankframe = zeros(Xdim,Ydim,'single');
 
 %% union the Food pixel lists into the eater pixel lists
 for j = 1:length(FoodClu)
@@ -50,12 +51,25 @@ for j = 1:length(FoodClu)
     ObjList{EaterClu} = [ObjList{EaterClu},ObjList{FoodClu(j)}];
 end
 
-%% update Pixel Avg
-[~,idx] = ismember(PixelList{EaterClu},CircMask{EaterClu});
-PixelAvg{EaterClu} = BigPixelAvg{EaterClu}(idx);
+%% update ROI
+tempFrame = blankframe;
+tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
+threshFrame = tempFrame > threshold;
+b = bwconncomp(threshFrame,4);
+for i = 1:b.NumObjects
+    if(~isempty(intersect(b.PixelIdxList{i},PixelList{EaterClu})))
+        break;
+    end
+end
+
+if(isempty(intersect(b.PixelIdxList{i},PixelList{EaterClu})))
+   error('I think we ate a cluster and need to deal with that');
+end
+
+PixelList{EaterClu} = single(b.PixelIdxList{i});
+PixelAvg{EaterClu} = tempFrame(PixelList{EaterClu});
 
 %% update centroid
-blankframe = zeros(Xdim,Ydim,'single');
 tempbin = blankframe;
 tempbin(PixelList{EaterClu}) = 1;
 tempval = blankframe;
