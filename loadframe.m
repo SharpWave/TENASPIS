@@ -6,7 +6,8 @@ function [frame,Xdim,Ydim,NumFrames] = loadframe(file,framenum,h5_size_info)
 % INPUTS:
 %   file: fullpath to h5 file
 %
-%   framenum: frame number of file to load
+%   framenum: frame number of file to load.  Can be an array of consecutive
+%   frames.
 %
 %   h5_size_info (optional): data structure obtained by running info =
 %   h5info(file,'/Object') on the movie beforehand.  Will save lots of time
@@ -46,6 +47,10 @@ NumFrames = info.Dataspace.Size(3);
 Xdim = info.Dataspace.Size(1);
 Ydim = info.Dataspace.Size(2);
 
-frame = h5read(file,'/Object',[1 1 framenum 1],[Xdim Ydim 1 1]);
+if range(framenum) + 1 == length(framenum)
+    frame = h5read(file,'/Object',[1 1 framenum(1) 1],[Xdim Ydim length(framenum) 1]);
+else
+    error('framenum must contain consecutive frame numbers');
+end
 
 end
