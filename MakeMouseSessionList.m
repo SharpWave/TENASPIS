@@ -3727,13 +3727,52 @@ MD(i).Animal = 'Mace';
 MD(i).Date = '10_05_2016';
 MD(i).Session = 1;
 MD(i).Env = 'DNMP';
-MD(i).Room = '2 Cu 201H';
+MD(i).Room = '201H';
 MD(i).RecordStartTime = '';
 MD(i).Pix2CM = NaN; 
 if strcmp(userstr,'mouseimage')
     MD(i).Location = 'H:\Rat mPFC\Mace\10_05_2016\Working';
 end
 MD(i).Notes = []; 
+
+i = i+1;
+MD(i).Animal = 'Mace';
+MD(i).Date = '10_05_2016';
+MD(i).Session = 2;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201H';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'H:\Rat mPFC\Mace\10_05_2016\Working\ICWorking';
+end
+MD(i).Notes = 'Hack using IC output'; 
+
+i = i+1;
+MD(i).Animal = 'Mace';
+MD(i).Date = '10_05_2016';
+MD(i).Session = 3;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201H';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'H:\Rat mPFC\Mace\10_05_2016\Working\ICWorking\speed thresh = 0';
+end
+MD(i).Notes = 'Hack using IC output - speed thresh = 0'; 
+
+i = i+1;
+MD(i).Animal = 'Mace';
+MD(i).Date = '10_06_2016';
+MD(i).Session = 1;
+MD(i).Env = 'DNMP';
+MD(i).Room = '201H';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = NaN; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'H:\Rat mPFC\Mace\10_06_2016\Working';
+end
+MD(i).Notes = ''; 
 
 %% Compile session_ref
 
