@@ -6,6 +6,8 @@ disp('Calculating ROIs for linked blobs (putative transients)');
 %% Get parameters
 [Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold');
 
+threshold = threshold * 2;
+
 %% load data
 disp('loading data');
 load('VettedTransients.mat','FrameList','ObjList');
@@ -41,25 +43,40 @@ disp('averaging preliminary ROIs over the movie');
 [BigPixelAvg] = PixelSetMovieAvg(TranBool,CircMask);
 
 %% Refine the ROIs
+GoodROI = false(1,NumTransients);
+
 for i = 1:NumTransients
+    % threshold the averaged transient
     TempFrame = blankframe;
     TempFrame(CircMask{i}) = BigPixelAvg{i};
     ThreshFrame = TempFrame > threshold;
+    
+    % find the matching region 
     b = bwconncomp(ThreshFrame,4);
+   
     for j = 1:b.NumObjects
         if (sum(ismember(PixelIdxList{i},b.PixelIdxList{j})) > 0)
+            GoodROI(i) = true;
+            PixelIdxList{i} = b.PixelIdxList{j};
+            PixelAvg{i} = TempFrame(PixelIdxList{i});
             break;
         end
     end
-    try
-    PixelIdxList{i} = b.PixelIdxList{j};
-    catch
-        keyboard;
-    end
-    PixelAvg{i} = TempFrame(PixelIdxList{i});
 end
-   
 
+%% Include only GoodROI (ROI that had some average pixels over threshold)
+FrameList = FrameList(GoodROI);
+ObjList = ObjList(GoodROI);
+PixelAvg = PixelAvg(GoodROI);
+PixelIdxList = PixelIdxList(GoodROI);
+BigPixelAvg = BigPixelAvg(GoodROI);
+CircMask = CircMask(GoodROI);
+
+NumTransients = sum(GoodROI);
+
+disp([int2str(sum(GoodROI)),' out of ',int2str(length(GoodROI)),' transients kept after thresholding the averages']);
+
+%% calculate centroids
 disp('calculating weighted centroids');
 for i = 1:NumTransients
     boolframe = blankframe;

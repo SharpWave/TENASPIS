@@ -28,6 +28,8 @@ tempFrameCount = zeros(size(CircMask{EaterClu}),'single');
 tempAvg = zeros(size(CircMask{EaterClu}),'single');
 blankframe = zeros(Xdim,Ydim,'single');
 
+OrigEaterList = PixelList{EaterClu};
+
 %% union the Food pixel lists into the eater pixel lists
 for j = 1:length(FoodClu)
     PixelList{EaterClu} = union(PixelList{EaterClu},PixelList{FoodClu(j)});
@@ -62,8 +64,9 @@ for i = 1:b.NumObjects
     end
 end
 
-if(isempty(intersect(b.PixelIdxList{i},PixelList{EaterClu})))
+if(isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
    error('I think we ate a cluster and need to deal with that');
+   keyboard;
 end
 
 PixelList{EaterClu} = single(b.PixelIdxList{i});
