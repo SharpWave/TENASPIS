@@ -73,7 +73,7 @@ for i = 1:length(ClusterList)
         catch
             keyboard;
         end
-        if (DistThresh >= 4)
+        if (DistThresh >= 2.5)
         PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
          end
         if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))        

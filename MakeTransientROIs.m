@@ -4,7 +4,7 @@ function [] = MakeTransientROIs()
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold');
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold','MinBlobRadius');
 
 threshold = threshold * 2;
 
@@ -18,6 +18,7 @@ NumTransients = length(FrameList);
 [PixelIdxList,BinCent,BigAvg,CircMask,PixelAvg] = deal(cell(1,NumTransients));
 TranBool = false(NumTransients,NumFrames);
 [Xcent,Ycent] = deal(zeros(1,NumTransients,'single'));
+MinBlobArea = ceil((MinBlobRadius^2)*pi);
 
 %% get pixel participation average and determine ROI
 disp('determining calcium transient ROIs');
@@ -55,7 +56,7 @@ for i = 1:NumTransients
     b = bwconncomp(ThreshFrame,4);
    
     for j = 1:b.NumObjects
-        if (sum(ismember(PixelIdxList{i},b.PixelIdxList{j})) > 0)
+        if ((sum(ismember(PixelIdxList{i},b.PixelIdxList{j})) > 0) && (length(b.PixelIdxList{j}) >= MinBlobArea))
             GoodROI(i) = true;
             PixelIdxList{i} = b.PixelIdxList{j};
             PixelAvg{i} = TempFrame(PixelIdxList{i});
