@@ -60,17 +60,23 @@ for i = 1:length(ClusterList)
         
         % determine correleation values for the union of CurrClu and
         % CandIdx
-        
+
         u = union(PixelList{CurrClu},PixelList{CandIdx});
-        try
-            [~,idx1] = ismember(u,CircMask{CurrClu});
-        catch
-            keyboard;
-        end
+
+        [~,idx1] = ismember(u,CircMask{CurrClu});
         [~,idx2] = ismember(u,CircMask{CandIdx});
+        
+        
+        
+
+        
         try
             [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
         catch
+                            if (DistThresh >= 1)
+                                crap1 = setdiff(u,CircMask{CurrClu}),crap2 = setdiff(u,CircMask{CandIdx}),
+            PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
+                end
             keyboard;
         end
         
@@ -80,9 +86,7 @@ for i = 1:length(ClusterList)
             
             continue;
         end
-        if (DistThresh >= 8)
-            PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
-        end
+
         if (~isempty(intersect(FrameList{CandIdx},FrameList{CurrClu})))
             % just in case by some messed up edge case it wants to merge
             % temporally overlapping clusters

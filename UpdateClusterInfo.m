@@ -37,11 +37,11 @@ end
 
 %% for each cluster, add pixels that overlap with the currclu circmask
 AllClu = [EaterClu,FoodClu];
-for j = 1:length(AllClu)    
+for j = 1:length(AllClu)
     [binans,firstidx] = ismember(CircMask{EaterClu},CircMask{AllClu(j)});
-    okpix = find(binans);    
+    okpix = find(binans);
     tempFrameCount(okpix) = tempFrameCount(okpix)+length(FrameList{AllClu(j)});
-    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});    
+    tempAvg(okpix) = tempAvg(okpix)+BigPixelAvg{AllClu(j)}(firstidx(okpix))*length(FrameList{AllClu(j)});
 end
 % take the mean
 tempAvg = tempAvg./tempFrameCount;
@@ -56,7 +56,7 @@ end
 %% update ROI
 tempFrame = blankframe;
 tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
-threshFrame = tempFrame > threshold;
+threshFrame = tempFrame > threshold*1.25;
 b = bwconncomp(threshFrame,4);
 for i = 1:b.NumObjects
     if(~isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
@@ -65,20 +65,23 @@ for i = 1:b.NumObjects
 end
 
 if(isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
-   disp('I think we ate a cluster and need to deal with that');
-   keyboard;
+    disp('I think we ate a cluster and need to deal with that');
+    keyboard;
 end
 
 PixelList{EaterClu} = single(b.PixelIdxList{i});
 PixelAvg{EaterClu} = tempFrame(PixelList{EaterClu});
 
+[~,idx] = max(PixelAvg{EaterClu});
+[Ycent(EaterClu),Xcent(EaterClu)] = ind2sub([Xdim Ydim],PixelList{EaterClu}(idx));
+
 %% update centroid
-tempbin = blankframe;
-tempbin(PixelList{EaterClu}) = 1;
-tempval = blankframe;
-tempval(PixelList{EaterClu}) = PixelAvg{EaterClu};
-props = regionprops(tempbin,tempval,'WeightedCentroid');
-Xcent(EaterClu) = single(props.WeightedCentroid(1));
-Ycent(EaterClu) = single(props.WeightedCentroid(2));
+% tempbin = blankframe;
+% tempbin(PixelList{EaterClu}) = 1;
+% tempval = blankframe;
+% tempval(PixelList{EaterClu}) = PixelAvg{EaterClu};
+% props = regionprops(tempbin,tempval,'WeightedCentroid');
+% Xcent(EaterClu) = single(props.WeightedCentroid(1));
+% Ycent(EaterClu) = single(props.WeightedCentroid(2));
 
 end

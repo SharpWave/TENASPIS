@@ -72,7 +72,7 @@ NeuronActivity = false(NumNeurons,NumFrames);
 for i = 1:NumNeurons
     currtran = NeuronROIidx(i);
     temp = blankframe;
-    temp(PixelIdxList{currtran}) = PixelAvg{cuurrtran};
+    temp(PixelIdxList{currtran}) = PixelAvg{currtran};
     temp = temp >= (max(PixelAvg{currtran})*ROIBoundaryCoeff);
     b = bwconncomp(temp,4);
     for j = 1:b.NumObjects
