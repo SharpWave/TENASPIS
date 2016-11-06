@@ -91,7 +91,24 @@ for i = 1:NumNeurons
     end
 end
 
+%% Kill off the singletons! (presumed to be noise)
+for i = 1:NumNeurons
+    temp = NP_FindSupraThresholdEpochs(NeuronActivity(i,:),eps);
+    nTrans(i) = size(temp,1);
+end
+
+NumNeurons = sum(nTrans > 1);
+
+NeuronPixelIdxList = NeuronPixelIdxList(nTrans > 1);
+NeuronImage = NeuronImage(nTrans > 1);
+NeuronAvg = NeuronAvg(nTrans > 1);
+NeuronFrameList = NeuronFrameList(nTrans > 1);
+NeuronObjList = NeuronObjList(nTrans > 1);
+NeuronROIidx = NeuronROIidx(nTrans > 1);
+NeuronActivity = NeuronActivity((nTrans > 1),:);
+nTrans = nTrans(nTrans > 1);
+
 disp('saving outputs');
-save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity
+save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity nTrans Trans2ROI
     
 end
