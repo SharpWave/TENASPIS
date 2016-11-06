@@ -4,7 +4,7 @@ function [] = MakeTransientROIs()
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold','MinBlobRadius');
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold','MinBlobRadius');
 
 threshold = threshold * 2;
 
@@ -77,16 +77,22 @@ NumTransients = sum(GoodROI);
 
 disp([int2str(sum(GoodROI)),' out of ',int2str(length(GoodROI)),' transients kept after thresholding the averages']);
 
-%% calculate centroids
-disp('calculating weighted centroids');
+% % calculate centroids
+% disp('calculating weighted centroids');
+% for i = 1:NumTransients
+%     boolframe = blankframe;
+%     boolframe(PixelIdxList{i}) = 1;
+%     valframe = blankframe;
+%     valframe(PixelIdxList{i}) = PixelAvg{i};
+%     props = regionprops(boolframe,valframe,'WeightedCentroid');
+%     oldXcent(i) = props.WeightedCentroid(1);
+%     oldYcent(i) = props.WeightedCentroid(2);
+% end
+
+%% calculate peaks
 for i = 1:NumTransients
-    boolframe = blankframe;
-    boolframe(PixelIdxList{i}) = 1;
-    valframe = blankframe;
-    valframe(PixelIdxList{i}) = PixelAvg{i};
-    props = regionprops(boolframe,valframe,'WeightedCentroid');
-    Xcent(i) = props.WeightedCentroid(1);
-    Ycent(i) = props.WeightedCentroid(2);
+    [~,idx] = max(PixelAvg{i});
+    [Ycent(i),Xcent(i)] = ind2sub([Xdim Ydim],PixelIdxList{i}(idx));
 end
 
 %% save outputs

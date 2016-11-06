@@ -1,6 +1,6 @@
 function [] = MergeTransientROIs()
 % [] = MergeTransientROIs()
-% Merges calcium transient ROIs into neuron ROIs 
+% Merges calcium transient ROIs into neuron ROIs
 
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,7 +23,7 @@ function [] = MergeTransientROIs()
 display('merging transient ROIs into neuron ROIs');
 
 %% load parameters
-DistanceThresholdList = Get_T_Params('DistanceThresholdList');
+[DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff');
 
 %% load data
 load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask');
@@ -49,7 +49,7 @@ for i = 1:length(DistanceThresholdList)
         NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
         DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
         
-        if (NumClu(NumIterations) == oldNumCT) 
+        if (NumClu(NumIterations) == oldNumCT)
             % If you end up with the same number of clusters as the previous iteration, exit
             break;
         else
@@ -60,12 +60,38 @@ for i = 1:length(DistanceThresholdList)
 end
 
 %% Unpack the variables calculated above
-
+disp('Final ROI refinement');
 NeuronROIidx = unique(Trans2ROI); % Get unique clusters and mappings between clusters and neurons
 NumNeurons = length(NeuronROIidx); % Final number of neurons
+blankframe = zeros(Xdim,Ydim,'single');
 
-keyboard;
+[NeuronPixelIdxList,NeuronImage,NeuronAvg,NeuronFrameList,NeuronObjList] = deal(cell(1,NumNeurons));
 
+NeuronActivity = false(NumNeurons,NumFrames);
 
+for i = 1:NumNeurons
+    currtran = NeuronROIidx(i);
+    temp = blankframe;
+    temp(PixelIdxList{currtran}) = PixelAvg{cuurrtran};
+    temp = temp >= (max(PixelAvg{currtran})*ROIBoundaryCoeff);
+    b = bwconncomp(temp,4);
+    for j = 1:b.NumObjects
+        if(~isempty(intersect(b.PixelIdxList{j},PixelIdxList{currtran})))
+            NeuronPixelIdxList{i} = b.PixelIdxList{j};
+            temp = blankframe;
+            temp(NeuronPixelIdxList{i}) = 1;
+            NeuronImage{i} = temp;
+            [~,idx2] = ismember(NeuronPixelIdxList{i},CircMask{currtran});
+            NeuronAvg{i} = BigPixelAvg{currtran}(idx2);
+            NeuronFrameList{i} = FrameList{currtran};
+            NeuronObjList{i} = ObjList{currtran};
+            NeuronActivity(i,NeuronFrameList{i}) = true;
+            break;
+        end
+    end
+end
 
+disp('saving outputs');
+save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity
+    
 end

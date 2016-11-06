@@ -32,6 +32,13 @@ for i = 1:NumTransients
     GoodTransient(i) = (TransientLength(i) >= MinNumFrames) && (TravelDist(i) < MaxCentroidTravelDistance) && NotFirstFrame(i);
 end
 
+%% optional plotting
+figure
+subplot(1,2,1);
+histogram(TransientLength,0:100);xlabel('transient length');
+subplot(1,2,2);
+histogram(TravelDist,0:0.1:15);xlabel('travel distance');
+
 %% save data for analysis purposes
 save TransientStats.mat TransientLength TravelDist;
 

@@ -107,18 +107,10 @@ for i = 1:length(varargin)
         varargout(i) = {T_PARAMS.MinTransientMergeCorrR};
     end
     
+    if (strcmp(varargin{i},'ROIBoundaryCoeff')) 
+        varargout(i) = {T_PARAMS.ROIBoundaryCoeff};
+    end
     
     
-   
-    
-    
-    
-    
-    
-    
-    
-        
-
-
 end
 

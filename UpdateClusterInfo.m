@@ -59,13 +59,13 @@ tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
 threshFrame = tempFrame > threshold;
 b = bwconncomp(threshFrame,4);
 for i = 1:b.NumObjects
-    if(~isempty(intersect(b.PixelIdxList{i},PixelList{EaterClu})))
+    if(~isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
         break;
     end
 end
 
 if(isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
-   error('I think we ate a cluster and need to deal with that');
+   disp('I think we ate a cluster and need to deal with that');
    keyboard;
 end
 
