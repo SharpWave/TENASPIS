@@ -65,9 +65,9 @@ function ExpandTransients(Todebug)
 
 
 %% Load relevant variables
-disp('Loading relevant variables from NormTraces and ProcOut')
-load('NormTraces.mat','trace','difftrace','rawtrace');
-load('ProcOut.mat','NumNeurons','NumFrames','FT');
+% disp('Loading relevant variables from NormTraces and ProcOut')
+% load('NormTraces.mat','trace','difftrace','rawtrace');
+% load('ProcOut.mat','NumNeurons','NumFrames','FT');
 
 %% Initialize variables
 PosTr = zeros(NumNeurons,NumFrames);    % Positive transients
