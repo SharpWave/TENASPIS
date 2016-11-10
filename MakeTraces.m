@@ -1,8 +1,11 @@
 function [varargout] = MakeTraces(varargin)
 % [varargout] = MakeTraces(varargin)
 % makes traces from pixel sets
-% inputs are NxT boolean activation matrices followed by length N cell
-% arrays containing pixel indices
+% inputs are length N cell arrays containing ROI pixel indices
+% vargout is a cell array of structs containing three elements, each a different NxT trace matrix 
+% RawTrace: the unaltered mean of the pixels in the ROI 
+% LPtrace: lowpass filter - RawTrace with a 3-pixel uniform window smoothing applied
+% DFDTtrace: LPtrace change per sample.  
 
 %% get parameters
 [Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
@@ -21,6 +24,7 @@ ChunkSums = cell(1,NumChunks);
 %% initialize outputs and unpack some variables from varargin for clarity
 for i = 1:NumInputs
   RawTrace{i} = zeros(length(varargin{i}),NumFrames,'single');
+  disp(['making traces for ',int2str(length(varargin{i})),' ROIs']);
 end
 
 %% average the chunks 

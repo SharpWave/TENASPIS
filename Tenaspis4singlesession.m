@@ -18,12 +18,8 @@ LinkBlobs();
 RejectBadTransients();
 MakeTransientROIs();
 
-%% Group together individual transients under individual neurons
+%% Group together individual transients under individual neurons and save data
 MergeTransientROIs;
-
-%% Pull traces out of each neuron using the High-pass movie
-NormalTraces('SLPDF.h5');
-MakeROIavg;
 
 load ProcOut.mat;
 load ROIavg.mat;

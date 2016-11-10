@@ -108,7 +108,9 @@ NeuronROIidx = NeuronROIidx(nTrans > 1);
 NeuronActivity = NeuronActivity((nTrans > 1),:);
 nTrans = nTrans(nTrans > 1);
 
+NeuronTraces = MakeTraces(NeuronPixelIdxList);
+
 disp('saving outputs');
-save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity nTrans Trans2ROI
+save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
     
 end
