@@ -37,17 +37,24 @@ Threshold = 0.001;
 disp('analyzing traces for potential transients');
 for i = 1:NumNeurons
     % find epochs where the trace was above zero
-    PosEpochs = NP_FindSupraThresholdEpochs(NeuronTraces.RawTrace(n,:),Threshold);
+    PosEpochs = NP_FindSupraThresholdEpochs(NeuronTraces.LPtrace(i,:),Threshold);
     
     for j = 1:size(PosEpochs,1)
         temp = false(1,NumFrames);
-        temp(PosEpochs(j,1):PosEpochs(j,1)) = true;
+        temp(PosEpochs(j,1):PosEpochs(j,2)) = true;
         if (sum(temp.*NeuronActivity(i,:)) > 0)
-            SegTrBool(i,PosEpochs(j,1):PosEpochs(j,1)) = true;
+            SegTrBool(i,PosEpochs(j,1):PosEpochs(j,2)) = true;
         else
-            PoTrBool(i,PosEpochs(j,1):PosEpochs(j,1)) = true;
+            PoTrBool(i,PosEpochs(j,1):PosEpochs(j,2)) = true;
         end
     end
+    hold off;
+    plot(NeuronTraces.LPtrace(i,:),'-b');hold on;
+    plot(NeuronTraces.LPtrace(i,:).*SegTrBool(i,:),'-k');hold on;
+    plot(NeuronTraces.LPtrace(i,:).*PoTrBool(i,:),'-r');axis tight;
+    plot(NeuronTraces.LPtrace(i,:).*NeuronActivity(i,:),'-c','LineWidth',3);
+    pause;
+
 end
 
 keyboard;            
