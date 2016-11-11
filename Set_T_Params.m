@@ -71,7 +71,12 @@ T_PARAMS.DistanceThresholdList = (0:0.5:10);
 T_PARAMS.MaxTransientMergeCorrP = 0.001;
 T_PARAMS.MinTransientMergeCorrR = 0.6065;
 T_PARAMS.ROIBoundaryCoeff = 0.5;
-%% 
+
+%% InterpretTraces params
+T_PARAMS.AmplitudeThresholdCoeff = 1/3; % fraction of lowest segmentation intensity to subtract to determine threshold.  Higer values mean lower threshold.
+T_PARAMS.CorrPthresh = 0.00001; % p value threshold for correlation coefficient to be considered significant
+T_PARAMS.MaxGapFillLen = 2; % if the gaps between transient epochs are this or smaller, we fill them in; smooths the skippyness in some borderline cases
+
 
 
 

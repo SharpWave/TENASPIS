@@ -54,6 +54,8 @@ for i = 1:NumInputs
         LPtrace{i}(j,:) = convtrim(RawTrace{i}(j,:),ones(1,3))./3;
         DFDTtrace{i}(j,:) = zscore(diff(LPtrace{i}(j,:)));
     end
+    DFDTtrace{i}(j,2:end+1) = DFDTtrace{i}(j,:);
+    DFDTtrace{i}(j,1) = 0;
     varargout{i}.RawTrace = RawTrace{i};
     varargout{i}.LPtrace = LPtrace{i};
     varargout{i}.DFDTtrace = DFDTtrace{i};
