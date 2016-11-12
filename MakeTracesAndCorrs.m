@@ -45,10 +45,9 @@ disp('filtering traces and calculating DF/DT');
 
 for j = 1:NumNeurons
     DataOut.LPtrace(j,:) = convtrim(DataOut.RawTrace(j,:),ones(1,3))./3;
-    DataOut.DFDTtrace(j,:) = zscore(diff(DataOut.LPtrace(j,:)));
+    DataOut.DFDTtrace(j,2:end) = zscore(diff(DataOut.LPtrace(j,:)));
 end
-DataOut.DFDTtrace(j,2:end+1) = DataOut.DFDTtrace{i}(j,:);
-DataOut.DFDTtrace(j,1) = 0;
+
 
 end
 
