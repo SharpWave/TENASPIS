@@ -1,4 +1,4 @@
-function [varargout] = MakeTraces(varargin)
+function [DataOut] = MakeTraces(PixelIdxList,PixelAvg)
 % [varargout] = MakeTraces(varargin)
 % makes traces from pixel sets
 % inputs are length N cell arrays containing ROI pixel indices
@@ -11,7 +11,6 @@ function [varargout] = MakeTraces(varargin)
 [NumFrames,FrameChunkSize] = Get_T_Params('NumFrames','FrameChunkSize');
 
 %% set up variables
-NumInputs = length(varargin)/2;
 
 % Chunking variables
 ChunkStarts = 1:FrameChunkSize:NumFrames;
@@ -20,20 +19,20 @@ ChunkEnds(length(ChunkStarts)) = NumFrames;
 NumChunks = length(ChunkStarts);
 
 
-%% initialize outputs and unpack some variables from varargin for clarity
-[RawTrace,CorrP,CorrR,LPtrace,DFDTtrace,varargout] = deal(cell(1,NumInputs));
-
-for i = 1:NumInputs
-  RawTrace{i} = zeros(length(varargin{i*2}),NumFrames,'single');
-  CorrP{i} = zeros(length(varargin{i*2}),NumFrames,'single');
-  CorrR{i} = zeros(length(varargin{i*2}),NumFrames,'single');
+  RawTrace = zeros(length(varargin{i*2}),NumFrames,'single');
+  CorrP = zeros(length(varargin{i*2}),NumFrames,'single');
+  CorrR = zeros(length(varargin{i*2}),NumFrames,'single');
   disp(['making traces for ',int2str(length(varargin{i*2})),' ROIs']);
-end
+
 
 %% average the chunks 
 p = ProgressBar(NumChunks);
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
+    TraceChunk{i} = MakeTraceChunk(FrameList,PixelIdxList,PixelAvg);
+    
+    
+    
     FrameChunk = LoadFrames('BPDFF.h5',FrameList);
     for j = 1:size(FrameChunk,3)
         frame = squeeze(FrameChunk(:,:,j));
