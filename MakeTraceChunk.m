@@ -1,6 +1,7 @@
 function [OutChunk] = MakeTraceChunk(FrameList,PixelIdxList,PixelAvg)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+Set_T_Params('BPDFF.h5');
 NumFrames = Get_T_Params('NumFrames');
 NumNeurons = length(PixelIdxList);
 
