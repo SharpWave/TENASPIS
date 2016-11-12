@@ -76,7 +76,7 @@ T_PARAMS.ROIBoundaryCoeff = 0.5;
 T_PARAMS.AmplitudeThresholdCoeff = 1/3; % fraction of lowest segmentation intensity to subtract to determine threshold.  Higer values mean lower threshold.
 T_PARAMS.CorrPthresh = 0.00001; % p value threshold for correlation coefficient to be considered significant
 T_PARAMS.MaxGapFillLen = 2; % if the gaps between transient epochs are this or smaller, we fill them in; smooths the skippyness in some borderline cases
-
+T_PARAMS.SlopeThresh = 2; % threshold for detection of positive slopes
 
 
 

@@ -123,5 +123,8 @@ for i = 1:length(varargin)
         varargout(i) = {T_PARAMS.MaxGapFillLen};
     end    
     
+    if (strcmp(varargin{i},'SlopeThresh'))
+        varargout(i) = {T_PARAMS.SlopeThresh};
+    end    
 end
 
