@@ -20,10 +20,9 @@ function InterpretTraces(Todebug)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%% Load relevant variables
-% disp('Loading relevant variables from NormTraces and ProcOut')
-% load('NormTraces.mat','trace','difftrace','rawtrace');
-% load('ProcOut.mat','NumNeurons','NumFrames','FT');
+if (~exist('Todebug','var'))
+    Todebug = 0;
+end
 
 load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg');
 [Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh] = Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh');
@@ -32,6 +31,18 @@ blankframe = zeros(Xdim,Ydim,'single');
 PSAbool = false(NumNeurons,NumFrames);
 old = 0.001;
 
+%% determine overlapping ROIs
+disp('calculating overlapping ROIs');
+
+ROIoverlap = false(NumNeurons,NumNeurons);
+for i = 1:NumNeurons
+    for j = i+1:NumNeurons
+        if(~isempty(intersect(NeuronPixelIdxList{i},NeuronPixelIdxList{j})));
+            ROIoverlap(i,j) = true;
+            ROIoverlap(j,i) = true;
+        end
+    end
+end
 %% For each neuron, find samples where there were either segmentation-identified transients or potential transients
 disp('analyzing traces for potential transients');
 for i = 1:NumNeurons
@@ -61,7 +72,7 @@ for i = 1:NumNeurons
     % find epochs above the correlation threshold
     
     CorrEpochs = NP_FindSupraThresholdEpochs(CorrSig,CorrThresh);
-
+    
     CorrBool = CorrSig > CorrThresh;
     
     GoodTrBool = false(1,NumFrames);
@@ -151,6 +162,77 @@ for i = 1:NumNeurons
         end
     end
 end
+
+for i = 1:NumNeurons
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+end
+
+for i = 1:NumNeurons
+    AnyNeighborActivity = sum(PSAbool(ROIoverlap(i,:),:)) > 0;
+    NeighborActivity = PSAbool(ROIoverlap(i,:),:);
+    Neighbors = find(ROIoverlap(i,:));
+    
+    if(isempty(Neighbors))
+        continue;
+    end
+    
+    for j = 1:size(actlist{i},1)
+        % check whether this PSA epoch overlapped with a neighbor
+        
+        if (sum(NeighborActivity(actlist{i}(j,1):actlist{i}(j,2))) > 0)
+            % spatiotemporally overlapping transients: need to settle 
+            
+            
+            % find average intensity of transient i,j
+            TijIntensity = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
+            
+            % find which transients are overlapping
+            NeighborSums = sum(NeighborActivity(:,actlist{i}(j,1):actlist{i}(j,2)),2);
+            
+            % obliterate all but the highest intensity transient
+            BadNeighbors = find(NeighborSums > 0);
+            
+            NeighborEpoch = [];
+            NeighborIntensity = [];
+            
+            for k = 1:length(BadNeighbors)
+                nIdx = Neighbors(BadNeighbors(k));
+                % find epoch
+                for m = 1:size(actlist{nIdx},1)
+                    if (~isempty(intersect(actlist{nIdx}(m,1):actlist{nIdx}(m,2),actlist{i}(j,1):actlist{i}(j,2))))
+                        break;
+                    end
+                end
+                NeighborIntensity(k) = mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)));
+                NeighborEpoch{k} = actlist{nIdx}(m,1):actlist{nIdx}(m,2);
+            end
+            
+            [~,maxidx] = max([TijIntensity,NeighborIntensity]);
+            
+            for k = 1:length(BadNeighbors)+1
+                if (k ~= maxidx)
+                    if (k == 1)
+                        % kill neuron i's trace
+                        PSAbool(i,actlist{i}(j,1):actlist{i}(j,2)) = false;
+                        disp('worked')
+                        
+                    else
+                        nIdx = Neighbors(BadNeighbors(k-1));
+                        PSAbool(nIdx,NeighborEpoch{k-1}) = false;
+                        disp('worked')
+                        
+                    end
+                end
+            end
+        end
+    end
+    for j = 1:NumNeurons
+        actlist{j} = NP_FindSupraThresholdEpochs(PSAbool(j,:),eps);
+    end
+end
+
+
+
 
 save PSAbool.mat PSAbool;
 

@@ -69,7 +69,7 @@ T_PARAMS.ROICircleWindowRadius = 45;
 %% MergeTransientROIs params
 T_PARAMS.DistanceThresholdList = (0:0.5:10);
 T_PARAMS.MaxTransientMergeCorrP = 0.001;
-T_PARAMS.MinTransientMergeCorrR = 0.6065;
+T_PARAMS.MinTransientMergeCorrR = 0.55; %0.6065;
 T_PARAMS.ROIBoundaryCoeff = 0.5;
 
 %% InterpretTraces params
