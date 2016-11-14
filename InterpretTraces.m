@@ -163,74 +163,67 @@ for i = 1:NumNeurons
     end
 end
 
+
+%% eliminate spatiotemporal overlaps
+disp('eliminating spatiotemporal overlaps');
+
 for i = 1:NumNeurons
     actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
 end
+p = ProgressBar(NumNeurons);
 
 for i = 1:NumNeurons
-    AnyNeighborActivity = sum(PSAbool(ROIoverlap(i,:),:)) > 0;
-    NeighborActivity = PSAbool(ROIoverlap(i,:),:);
     Neighbors = find(ROIoverlap(i,:));
-    
-    if(isempty(Neighbors))
-        continue;
-    end
-    
-    for j = 1:size(actlist{i},1)
-        % check whether this PSA epoch overlapped with a neighbor
-        
-        if (sum(NeighborActivity(actlist{i}(j,1):actlist{i}(j,2))) > 0)
-            % spatiotemporally overlapping transients: need to settle 
-            
-            
-            % find average intensity of transient i,j
-            TijIntensity = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
-            
-            % find which transients are overlapping
-            NeighborSums = sum(NeighborActivity(:,actlist{i}(j,1):actlist{i}(j,2)),2);
-            
-            % obliterate all but the highest intensity transient
-            BadNeighbors = find(NeighborSums > 0);
-            
-            NeighborEpoch = [];
-            NeighborIntensity = [];
-            
-            for k = 1:length(BadNeighbors)
-                nIdx = Neighbors(BadNeighbors(k));
-                % find epoch
-                for m = 1:size(actlist{nIdx},1)
-                    if (~isempty(intersect(actlist{nIdx}(m,1):actlist{nIdx}(m,2),actlist{i}(j,1):actlist{i}(j,2))))
-                        break;
-                    end
-                end
-                NeighborIntensity(k) = mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)));
-                NeighborEpoch{k} = actlist{nIdx}(m,1):actlist{nIdx}(m,2);
-            end
-            
-            [~,maxidx] = max([TijIntensity,NeighborIntensity]);
-            
-            for k = 1:length(BadNeighbors)+1
-                if (k ~= maxidx)
-                    if (k == 1)
-                        % kill neuron i's trace
-                        PSAbool(i,actlist{i}(j,1):actlist{i}(j,2)) = false;
-                        disp('worked')
-                        
-                    else
-                        nIdx = Neighbors(BadNeighbors(k-1));
-                        PSAbool(nIdx,NeighborEpoch{k-1}) = false;
-                        disp('worked')
-                        
-                    end
-                end
-            end
-        end
-    end
-    for j = 1:NumNeurons
-        actlist{j} = NP_FindSupraThresholdEpochs(PSAbool(j,:),eps);
-    end
-end
+   for j = 1:size(actlist{i},1)
+       % do any neighbors have an epoch that starts or ends during this
+       % one?
+       actframes = (actlist{i}(j,1):actlist{i}(j,2));
+       nList = [];
+       epList = [];
+       meanDffList = [];
+       for k = 1:length(Neighbors)
+           nIdx = Neighbors(k);
+           for m = 1:size(actlist{nIdx})
+               if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
+                   % neuron nIdx epoch m overlaps with neuron i epoch j
+                   nList = [nList,nIdx];
+                   epList = [epList,m];
+                   meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
+               end
+           end
+       end
+       
+       if (isempty(nList))
+           continue;
+       end
+       
+       TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
+       
+       nList = [i,nList];
+       epList = [j,epList];
+       meanDFFList = [TijMeanDFF,meanDffList];
+       [~,maxidx] = max(meanDFFList);       
+       
+       
+       for k = 1:length(nList)
+           if ((k == maxidx) || (nList(k) == nList(maxidx)))
+               continue;
+           end
+           
+           % kill the epoch
+           PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
+           if (nList(k) ~= i)
+              actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps); 
+           end
+       end
+   end
+   actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
 
+       
+                   
+    p.progress;
+end
+p.stop;
 
 
 
