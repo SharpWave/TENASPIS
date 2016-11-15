@@ -62,11 +62,14 @@ PSAbool = false(NumNeurons,NumFrames);
 disp('calculating overlapping ROIs');
 
 ROIoverlap = false(NumNeurons,NumNeurons);
+ROIpct = zeros(NumNeurons,NumNeurons,'single');
 for i = 1:NumNeurons
     for j = i+1:NumNeurons
         if(~isempty(intersect(NeuronPixelIdxList{i},NeuronPixelIdxList{j})));
             ROIoverlap(i,j) = true;
             ROIoverlap(j,i) = true;
+            ROIpct(i,j) = length(intersect(NeuronPixelIdxList{i},NeuronPixelIdxList{j}))/min(length(NeuronPixelIdxList{i}),length(NeuronPixelIdxList{j}));
+            ROIpct(j,i) = ROIpct(i,j);
         end
     end
 end
@@ -188,18 +191,59 @@ for i = 1:NumNeurons
     end
 end
 
-%% B2
-% jsim = zeros(NumNeurons,NumNeurons,'single');
-% p = ProgressBar(NumNeurons);
-% for i = 1:NumNeurons
-%     for j = i+1:NumNeurons
-%         jsim(i,j) = sum(PSAbool(i,:) & PSAbool(j,:))/(sum(PSAbool(i,:) & PSAbool(j,:)) + sum(xor(PSAbool(i,:),PSAbool(j,:))));
-%         jsim(j,i) = jsim(i,j);
-%     end
-%     p.progress;
-% end
-% p.stop;
-% keyboard;
+%% B2: Find ROIs that should have been merged but weren't
+% basic theory: if two ROIs created in segmentation are so close that they
+% yield outputs that are closer than statistically likely, they are
+% indistinguishable and should be merged
+
+% calculate binary similarity metric
+disp('calculating ROI activity similarity');
+BinSim = zeros(NumNeurons,NumNeurons,'single');
+p = ProgressBar(NumNeurons);
+for i = 1:NumNeurons
+    for j = 1:NumNeurons
+        exhits = round(sum(PSAbool(i,:))*sum(PSAbool(j,:))/NumFrames);
+        if (sum(PSAbool(i,:) & PSAbool(j,:)) > exhits)
+          BinSim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(min(sum(PSAbool(i,:)),sum(PSAbool(j,:)))-exhits);
+        else
+            if (exhits > 0)
+              BinSim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(exhits);
+            else
+                BinSim(i,j) = 0;
+            end
+        end
+        if (i == j)
+            BinSim(i,j) = 0;
+        end
+    end
+    p.progress;
+end
+p.stop;
+
+disp('calculating whether overlapping ROIs have more similar PSA than expected');
+% determine how likely similarity metrics are compared to non-adjacent
+% population
+
+disp('merging ROIs that are practically indistinguishable')
+
+% make a list of where each row lives now (by default, its own index)
+ROIhome = 1:NumNeurons;
+
+% for each neuron i
+for i = 1:NumNeurons
+    Neighbors = find(ROIoverlap(i,:));
+    
+    % for each nasty neighbor j: Overlap over 50% and BinSim rank over 94
+    for j = 1:length(NastyNeighbors)
+% determine who has more transients (counting ones added in clustering)
+
+% logical OR the activity and store it in PSAbool row for the one with more transients
+
+% zero out the PSAbool row for the one with fewer transients
+
+% update transient counts
+
+
 
 %% C. eliminate spatiotemporal overlaps
 disp('eliminating spatiotemporal overlaps');
@@ -290,25 +334,8 @@ NeuronTraces.CorrR = NeuronTraces.CorrR(ActOK,:);
 NeuronTraces.CorrP = NeuronTraces.CorrP(ActOK,:);
 
 %% B2
-disp('calculating hit rates');
-jsim = zeros(NumNeurons,NumNeurons,'single');
-p = ProgressBar(NumNeurons);
-for i = 1:NumNeurons
-    for j = 1:NumNeurons
-        exhits = sum(PSAbool(i,:))*sum(PSAbool(j,:))/NumFrames;
-        if (sum(PSAbool(i,:) & PSAbool(j,:)) > exhits)
-          jsim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(min(sum(PSAbool(i,:)),sum(PSAbool(j,:)))-exhits);
-        else
-          jsim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(exhits); 
-        end
-        if (i == j)
-            jsim(i,j) = 0;
-        end
-    end
-    p.progress;
-end
-p.stop;
 
-save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','jsim');
+
+save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','BinSim');
 
 
