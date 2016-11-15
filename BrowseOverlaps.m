@@ -2,37 +2,43 @@ function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx )
 close all;
 
 % load basic shit
-
-
-load FinalTraces.mat;
-load('FinalOutput.mat');
-load MeanT.mat;
-
-NumFrames = size(FT,2);
-NumNeurons = size(FT,1);
-
+load FinalOutput.mat;
+[Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
+blankframe = zeros(Xdim,Ydim,'single');
 t = (1:NumFrames)/20;
 
 display('checking buddies');
 buddies = [];
 for i = 1:NumNeurons
-  Overlap(i) = length(intersect(NeuronPixelIdxList{NeuronID},NeuronPixelIdxList{i}))./min(length(NeuronPixelIdxList{NeuronID}),length(NeuronPixelIdxList{i}));
-  CaCorr(i) = corr(FT(NeuronID,:)',FT(i,:)');
-  pix = union(NeuronPixelIdxList{i},NeuronPixelIdxList{NeuronID});
-  [MeanTCorr(i),MeanTp(i)] = corr(MeanT{i}(pix),MeanT{NeuronID}(pix));
-  
-  if ((i ~= NeuronID)&& (Overlap(i) > 0))
-      buddies = [buddies,i];
-  end
+    Overlap(i) = length(intersect(NeuronPixelIdxList{NeuronID},NeuronPixelIdxList{i}))./min(length(NeuronPixelIdxList{NeuronID}),length(NeuronPixelIdxList{i}));
+
+    if ((i ~= NeuronID)&& (Overlap(i) > 0))
+        buddies = [buddies,i];
+    end
 end
+
+figure(5);histogram(jsim(NeuronID,:),40);
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
-plot((rawtrace((NeuronID),:)));hold on;plot(FT((NeuronID),:)*0.02);axis tight;
-
+plot(NeuronTraces.LPtrace(NeuronID,:));hold on;
+act = NP_FindSupraThresholdEpochs(PSAbool(NeuronID,:),eps);
+for j = 1:size(act,1)
+    plot(act(j,1):act(j,2),NeuronTraces.LPtrace(NeuronID,act(j,1):act(j,2)),'-r','LineWidth',2);
+end
+axis tight
 for i = 1:length(buddies)
     a(i+1) = subplot(length(buddies)+1,1,i+1);
-    plot((rawtrace((buddies(i)),:)));hold on;plot(FT(buddies(i),:)*0.02,'-r');title([int2str(buddies(i)),' ',num2str(Overlap(buddies(i))),' ',num2str(CaCorr(buddies(i))),' ',num2str(MeanTCorr(buddies(i))),' ',num2str(MeanTp(buddies(i)))]);
+    plot(NeuronTraces.LPtrace(buddies(i),:));hold on;
+    act = NP_FindSupraThresholdEpochs(PSAbool(buddies(i),:),eps);
+    for j = 1:size(act,1)
+        plot(act(j,1):act(j,2),NeuronTraces.LPtrace(buddies(i),act(j,1):act(j,2)),'-r','LineWidth',2);
+    end
+    farsims = sort(jsim(NeuronID,Overlap == 0));
+    idx = findclosest(farsims,jsim(NeuronID,buddies(i)));
+    normrank = idx/length(find(Overlap == 0));
+    
+    title([int2str(buddies(i)),' Overlap % ',num2str(Overlap(buddies(i))),' dws similarity: ',num2str(jsim(NeuronID,buddies(i))),' pct ',num2str(normrank)]);
     axis tight;
 end
 linkaxes(a,'x');
@@ -40,23 +46,29 @@ set(gcf,'Position',[437    49   883   948])
 
 figure(3);
 fb(1) = subplot(length(buddies)+1,1,1);
-imagesc(MeanT{NeuronID});axis image;hold on;caxis([0 0.04]);
-    [b] = bwboundaries(NeuronImage{NeuronID});
-    b = b{1};
-    plot(b(:,2),b(:,1),'g');
+temp = blankframe;
+temp(NeuronPixelIdxList{NeuronID}) = NeuronAvg{NeuronID};
+imagesc(temp);axis image;hold on;caxis([0 max(NeuronAvg{NeuronID})]);
+[b] = bwboundaries(NeuronImage{NeuronID});
+b = b{1};
+plot(b(:,2),b(:,1),'g');
 for i = 1:length(buddies)
-  [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
-        b = b{1};
-        plot(b(:,2),b(:,1),'r');
+    [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+    b = b{1};
+    plot(b(:,2),b(:,1),'r');
 end
 for i = 1:length(buddies)
     fb(i+1) = subplot(length(buddies)+1,1,i+1);
-    imagesc(MeanT{buddies(i)});
-     axis image;hold on;caxis([0 0.04]);
-     [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
-        b = b{1};
-        plot(b(:,2),b(:,1),'r');
-            [b] = bwboundaries(NeuronImage{NeuronID});
+    temp = blankframe;
+    temp(NeuronPixelIdxList{buddies(i)}) = NeuronAvg{buddies(i)};
+    imagesc(temp);
+    max(NeuronAvg{buddies(i)}),
+    axis image;hold on;
+    try caxis([0 max(NeuronAvg{buddies(i)})]);end
+    [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+    b = b{1};
+    plot(b(:,2),b(:,1),'r');
+    [b] = bwboundaries(NeuronImage{NeuronID});
     b = b{1};
     plot(b(:,2),b(:,1),'g');
 end
@@ -69,7 +81,7 @@ while(1)
     figure(1)
     display('pick a time to see the frame')
     [mx,my] = ginput(1);
-    f = loadframe(moviefile,mx);
+    f = LoadFrames(moviefile,round(mx));
     figure(2);set(gcf,'Position',[1130         337         773         600]);
     
     imagesc(f);caxis(cx);

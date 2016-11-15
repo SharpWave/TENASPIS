@@ -188,62 +188,75 @@ for i = 1:NumNeurons
     end
 end
 
+%% B2
+% jsim = zeros(NumNeurons,NumNeurons,'single');
+% p = ProgressBar(NumNeurons);
+% for i = 1:NumNeurons
+%     for j = i+1:NumNeurons
+%         jsim(i,j) = sum(PSAbool(i,:) & PSAbool(j,:))/(sum(PSAbool(i,:) & PSAbool(j,:)) + sum(xor(PSAbool(i,:),PSAbool(j,:))));
+%         jsim(j,i) = jsim(i,j);
+%     end
+%     p.progress;
+% end
+% p.stop;
+% keyboard;
+
 %% C. eliminate spatiotemporal overlaps
 disp('eliminating spatiotemporal overlaps');
 
 for i = 1:NumNeurons
     actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
 end
-p = ProgressBar(NumNeurons);
-
-for i = 1:NumNeurons
-    Neighbors = find(ROIoverlap(i,:));
-    for j = 1:size(actlist{i},1)
-        % do any neighbors have an epoch that starts or ends during this
-        % one?
-        actframes = (actlist{i}(j,1):actlist{i}(j,2));
-        nList = [];
-        epList = [];
-        meanDffList = [];
-        for k = 1:length(Neighbors)
-            nIdx = Neighbors(k);
-            for m = 1:size(actlist{nIdx})
-                if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
-                    % neuron nIdx epoch m overlaps with neuron i epoch j
-                    nList = [nList,nIdx];
-                    epList = [epList,m];
-                    meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
-                end
-            end
-        end
-        
-        if (isempty(nList))
-            continue;
-        end
-        
-        TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
-        
-        nList = [i,nList];
-        epList = [j,epList];
-        meanDFFList = [TijMeanDFF,meanDffList];
-        [~,maxidx] = max(meanDFFList);
-        
-        for k = 1:length(nList)
-            if ((k == maxidx) || (nList(k) == nList(maxidx)))
-                continue;
-            end
-            
-            % kill the epoch
-            PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
-            if (nList(k) ~= i)
-                actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps);
-            end
-        end
-    end
-    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
-    p.progress;
-end
-p.stop;
+% p = ProgressBar(NumNeurons);
+% 
+% for i = 1:NumNeurons
+%     Neighbors = find(ROIoverlap(i,:));
+%     for j = 1:size(actlist{i},1)
+%         % do any neighbors have an epoch that starts or ends during this
+%         % one?
+%         actframes = (actlist{i}(j,1):actlist{i}(j,2));
+%         nList = [];
+%         epList = [];
+%         meanDffList = [];
+%         for k = 1:length(Neighbors)
+%             nIdx = Neighbors(k);
+%             for m = 1:size(actlist{nIdx})
+%                 if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
+%                     % neuron nIdx epoch m overlaps with neuron i epoch j
+%                     nList = [nList,nIdx];
+%                     epList = [epList,m];
+%                     meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
+%                 end
+%             end
+%         end
+%         
+%         if (isempty(nList))
+%             continue;
+%         end
+%         
+%         TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
+%         
+%         nList = [i,nList];
+%         epList = [j,epList];
+%         meanDFFList = [TijMeanDFF,meanDffList];
+%         [~,maxidx] = max(meanDFFList);
+%         
+%         for k = 1:length(nList)
+%             if ((k == maxidx) || (nList(k) == nList(maxidx)))
+%                 continue;
+%             end
+%             
+%             % kill the epoch
+%             PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
+%             if (nList(k) ~= i)
+%                 actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps);
+%             end
+%         end
+%     end
+%     actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+%     p.progress;
+% end
+% p.stop;
 
 % Part D: Kill the flimsy ROIs with 1 or less transient
 NumActs = zeros(1,NumNeurons);
@@ -253,18 +266,21 @@ for i = 1:NumNeurons
     end
 end
 
-ActOK = NumActs > 1;
+ActOK = NumActs > 0;
 
 % 'NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
 NeuronActivity = NeuronActivity(ActOK);
 NeuronPixelIdxList = NeuronPixelIdxList(ActOK);
-NeuronAvg = NeuronAvg(ActOK);
 NeuronFrameList = NeuronFrameList(ActOK);
 NeuronImage = NeuronImage(ActOK);
 NeuronObjList = NeuronObjList(ActOK);
 NeuronROIidx = NeuronROIidx(ActOK);
 
 PSAbool = PSAbool(ActOK,:);
+disp('averaging ROIs over the movie');
+NeuronAvg = PixelSetMovieAvg(PSAbool,NeuronPixelIdxList);
+
+
 NumNeurons = sum(ActOK);
 
 NeuronTraces.RawTrace = NeuronTraces.RawTrace(ActOK,:);
@@ -273,6 +289,26 @@ NeuronTraces.DFDTtrace = NeuronTraces.DFDTtrace(ActOK,:);
 NeuronTraces.CorrR = NeuronTraces.CorrR(ActOK,:);
 NeuronTraces.CorrP = NeuronTraces.CorrP(ActOK,:);
 
-save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool');
+%% B2
+disp('calculating hit rates');
+jsim = zeros(NumNeurons,NumNeurons,'single');
+p = ProgressBar(NumNeurons);
+for i = 1:NumNeurons
+    for j = 1:NumNeurons
+        exhits = sum(PSAbool(i,:))*sum(PSAbool(j,:))/NumFrames;
+        if (sum(PSAbool(i,:) & PSAbool(j,:)) > exhits)
+          jsim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(min(sum(PSAbool(i,:)),sum(PSAbool(j,:)))-exhits);
+        else
+          jsim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(exhits); 
+        end
+        if (i == j)
+            jsim(i,j) = 0;
+        end
+    end
+    p.progress;
+end
+p.stop;
+
+save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','jsim');
 
 
