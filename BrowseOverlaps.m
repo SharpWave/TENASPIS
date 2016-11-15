@@ -16,9 +16,9 @@ t = (1:NumFrames)/20;
 display('checking buddies');
 buddies = [];
 for i = 1:NumNeurons
-  Overlap(i) = length(intersect(NeuronPixels{NeuronID},NeuronPixels{i}))./min(length(NeuronPixels{NeuronID}),length(NeuronPixels{i}));
+  Overlap(i) = length(intersect(NeuronPixelIdxList{NeuronID},NeuronPixelIdxList{i}))./min(length(NeuronPixelIdxList{NeuronID}),length(NeuronPixelIdxList{i}));
   CaCorr(i) = corr(FT(NeuronID,:)',FT(i,:)');
-  pix = union(NeuronPixels{i},NeuronPixels{NeuronID});
+  pix = union(NeuronPixelIdxList{i},NeuronPixelIdxList{NeuronID});
   [MeanTCorr(i),MeanTp(i)] = corr(MeanT{i}(pix),MeanT{NeuronID}(pix));
   
   if ((i ~= NeuronID)&& (Overlap(i) > 0))

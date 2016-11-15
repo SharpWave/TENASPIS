@@ -1,5 +1,31 @@
-function InterpretTraces(Todebug)
-
+function [] = InterpretTraces(Todebug)
+% function [] = InterpretTraces(Todebug)
+%
+% This takes the output of MergeTransientROIs and creates a best-guess
+% estimate of when the neurons in the ROIs had calcium transients. An
+% outline of the procedure is below.
+%
+% A. Decide when calcium transients are present in each ROI, using:
+%   1) average value of pixels in each segmentation-identified ROI
+%   2) fluorescence traces: mean intensity in each ROI for each frame
+%       - use amplitude to identify times when there may be a transient
+%   3) correlation r between those average pixel values and each frame of the movie
+%       - establishes a baseline correlation from segmentation transients,
+%         and determines whether transients identified via amplitude are
+%         OK or not based on whether the correlation is significant and sufficiently high
+%
+% B. Determine the rising slope(s) of each transient identified in A
+%   - putative spiking activity occurs during rising phase of calcium
+%     transients
+%
+% C. Eliminate transients that overlap in space and time
+%   - spatiotemporally overlapping transients suggest under-merged ROIs
+%   - "wrong" ROI should have lower amplitude
+%   - potentially eliminate under-merged ROIs
+%   - only eliminates overlapping positive slopes; overlapping neurons can
+%   be active in quick succession despite long decay of gCamp
+%
+% D. Remove ROIs with less than 2 transients from the data
 %
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,17 +45,18 @@ function InterpretTraces(Todebug)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%% set up variables and load data
 if (~exist('Todebug','var'))
     Todebug = 0;
 end
 
-load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg');
+load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
 [Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh] = Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh');
 
 blankframe = zeros(Xdim,Ydim,'single');
 PSAbool = false(NumNeurons,NumFrames);
-old = 0.001;
+
+%% PART A %%%%%%%%%%%%%%%%%%%
 
 %% determine overlapping ROIs
 disp('calculating overlapping ROIs');
@@ -43,6 +70,7 @@ for i = 1:NumNeurons
         end
     end
 end
+
 %% For each neuron, find samples where there were either segmentation-identified transients or potential transients
 disp('analyzing traces for potential transients');
 for i = 1:NumNeurons
@@ -50,7 +78,7 @@ for i = 1:NumNeurons
     % segmentation-identified frames
     %i = ceil(rand*NumNeurons);
     Threshold = min(NeuronTraces.LPtrace(i,NeuronActivity(i,:)));
-    Threshold = Threshold - abs(Threshold)/3;
+    Threshold = Threshold - abs(Threshold)*AmplitudeThresholdCoeff;
     
     % find epochs where the trace was above amplitude threshold
     PosEpochs = NP_FindSupraThresholdEpochs(NeuronTraces.LPtrace(i,:),Threshold);
@@ -70,15 +98,12 @@ for i = 1:NumNeurons
     CorrThresh = min(CorrSig(GoodCS));
     
     % find epochs above the correlation threshold
-    
     CorrEpochs = NP_FindSupraThresholdEpochs(CorrSig,CorrThresh);
-    
     CorrBool = CorrSig > CorrThresh;
-    
-    GoodTrBool = false(1,NumFrames);
     
     % identify good correlation epochs that are also above the amplitude
     % threshold for at least 1 frame
+    GoodTrBool = false(1,NumFrames);
     for j = 1:size(CorrEpochs,1)
         % check and see if the amplitude threshold is breached during this
         % epochs, if so, keep it
@@ -98,10 +123,9 @@ for i = 1:NumNeurons
         GoodTrBool(ZeroEpochs(j,1):ZeroEpochs(j,2)) = true;
     end
     
+    % Part B: detect positive slopes
     InSlope = false;
-    
     SlopeTr = NeuronTraces.DFDTtrace(i,:);
-    
     for j = 1:NumFrames
         if (InSlope)
             % check if fluoresence slope is still postive
@@ -117,7 +141,8 @@ for i = 1:NumNeurons
                     % new slope
                     InSlope = true;
                     PSAbool(i,j) = true;
-                    % check if we can go backward
+                    % check if we can go backward to beginning of positive
+                    % slope (ok even if not ok correlation)
                     BackCheck = j-1;
                     while((SlopeTr(BackCheck) > SlopeThresh) && (BackCheck >= 2))
                         PSAbool(i,BackCheck) = true;
@@ -163,8 +188,7 @@ for i = 1:NumNeurons
     end
 end
 
-
-%% eliminate spatiotemporal overlaps
+%% C. eliminate spatiotemporal overlaps
 disp('eliminating spatiotemporal overlaps');
 
 for i = 1:NumNeurons
@@ -174,59 +198,81 @@ p = ProgressBar(NumNeurons);
 
 for i = 1:NumNeurons
     Neighbors = find(ROIoverlap(i,:));
-   for j = 1:size(actlist{i},1)
-       % do any neighbors have an epoch that starts or ends during this
-       % one?
-       actframes = (actlist{i}(j,1):actlist{i}(j,2));
-       nList = [];
-       epList = [];
-       meanDffList = [];
-       for k = 1:length(Neighbors)
-           nIdx = Neighbors(k);
-           for m = 1:size(actlist{nIdx})
-               if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
-                   % neuron nIdx epoch m overlaps with neuron i epoch j
-                   nList = [nList,nIdx];
-                   epList = [epList,m];
-                   meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
-               end
-           end
-       end
-       
-       if (isempty(nList))
-           continue;
-       end
-       
-       TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
-       
-       nList = [i,nList];
-       epList = [j,epList];
-       meanDFFList = [TijMeanDFF,meanDffList];
-       [~,maxidx] = max(meanDFFList);       
-       
-       
-       for k = 1:length(nList)
-           if ((k == maxidx) || (nList(k) == nList(maxidx)))
-               continue;
-           end
-           
-           % kill the epoch
-           PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
-           if (nList(k) ~= i)
-              actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps); 
-           end
-       end
-   end
-   actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
-
-       
-                   
+    for j = 1:size(actlist{i},1)
+        % do any neighbors have an epoch that starts or ends during this
+        % one?
+        actframes = (actlist{i}(j,1):actlist{i}(j,2));
+        nList = [];
+        epList = [];
+        meanDffList = [];
+        for k = 1:length(Neighbors)
+            nIdx = Neighbors(k);
+            for m = 1:size(actlist{nIdx})
+                if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
+                    % neuron nIdx epoch m overlaps with neuron i epoch j
+                    nList = [nList,nIdx];
+                    epList = [epList,m];
+                    meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
+                end
+            end
+        end
+        
+        if (isempty(nList))
+            continue;
+        end
+        
+        TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
+        
+        nList = [i,nList];
+        epList = [j,epList];
+        meanDFFList = [TijMeanDFF,meanDffList];
+        [~,maxidx] = max(meanDFFList);
+        
+        for k = 1:length(nList)
+            if ((k == maxidx) || (nList(k) == nList(maxidx)))
+                continue;
+            end
+            
+            % kill the epoch
+            PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
+            if (nList(k) ~= i)
+                actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps);
+            end
+        end
+    end
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
     p.progress;
 end
 p.stop;
 
+% Part D: Kill the flimsy ROIs with 1 or less transient
+NumActs = zeros(1,NumNeurons);
+for i = 1:NumNeurons
+    if (~isempty(actlist{i}))
+        NumActs(i) = size(actlist{i},1);
+    end
+end
 
+ActOK = NumActs > 1;
 
-save PSAbool.mat PSAbool;
+% 'NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
+NeuronActivity = NeuronActivity(ActOK);
+NeuronPixelIdxList = NeuronPixelIdxList(ActOK);
+NeuronAvg = NeuronAvg(ActOK);
+NeuronFrameList = NeuronFrameList(ActOK);
+NeuronImage = NeuronImage(ActOK);
+NeuronObjList = NeuronObjList(ActOK);
+NeuronROIidx = NeuronROIidx(ActOK);
+
+PSAbool = PSAbool(ActOK,:);
+NumNeurons = sum(ActOK);
+
+NeuronTraces.RawTrace = NeuronTraces.RawTrace(ActOK,:);
+NeuronTraces.LPtrace = NeuronTraces.LPtrace(ActOK,:);
+NeuronTraces.DFDTtrace = NeuronTraces.DFDTtrace(ActOK,:);
+NeuronTraces.CorrR = NeuronTraces.CorrR(ActOK,:);
+NeuronTraces.CorrP = NeuronTraces.CorrP(ActOK,:);
+
+save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool');
 
 
