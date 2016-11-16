@@ -125,6 +125,19 @@ for i = 1:length(varargin)
     
     if (strcmp(varargin{i},'SlopeThresh'))
         varargout(i) = {T_PARAMS.SlopeThresh};
-    end    
+    end
+    
+    if (strcmp(varargin{i},'MinBinSimRank'))
+        varargout(i) = {T_PARAMS.MinBinSimRank};
+    end 
+    
+    if (strcmp(varargin{i},'ROIoverlapthresh'))
+        varargout(i) = {T_PARAMS.ROIoverlapthresh};
+    end
+    
+    if (strcmp(varargin{i},'MinPSALen'))
+        varargout(i) = {T_PARAMS.MinPSALen};
+    end
+    
 end
 

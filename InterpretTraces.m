@@ -51,7 +51,8 @@ if (~exist('Todebug','var'))
 end
 
 load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
-[Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh] = Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh');
+[Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh,MinBinSimRank,ROIoverlapthresh,MinPSALen] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh','MinBinSimRank','ROIoverlapthresh','MinPSALen');
 
 blankframe = zeros(Xdim,Ydim,'single');
 PSAbool = false(NumNeurons,NumFrames);
@@ -117,7 +118,7 @@ for i = 1:NumNeurons
     
     % identify small gaps that we can fill in
     ZeroEpochs = NP_FindSupraThresholdEpochs(~GoodTrBool,eps);
-    EpLen = ZeroEpochs(:,2)-ZeroEpochs(:,1);
+    EpLen = ZeroEpochs(:,2)-ZeroEpochs(:,1)+1;
     GoodFill = EpLen <= MaxGapFillLen;
     ZeroEpochs = ZeroEpochs(GoodFill,:);
     
@@ -204,10 +205,10 @@ for i = 1:NumNeurons
     for j = 1:NumNeurons
         exhits = round(sum(PSAbool(i,:))*sum(PSAbool(j,:))/NumFrames);
         if (sum(PSAbool(i,:) & PSAbool(j,:)) > exhits)
-          BinSim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(min(sum(PSAbool(i,:)),sum(PSAbool(j,:)))-exhits);
+            BinSim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(min(sum(PSAbool(i,:)),sum(PSAbool(j,:)))-exhits);
         else
             if (exhits > 0)
-              BinSim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(exhits);
+                BinSim(i,j) = (sum(PSAbool(i,:) & PSAbool(j,:))-exhits)/(exhits);
             else
                 BinSim(i,j) = 0;
             end
@@ -223,26 +224,81 @@ p.stop;
 disp('calculating whether overlapping ROIs have more similar PSA than expected');
 % determine how likely similarity metrics are compared to non-adjacent
 % population
+BadNeighbors = cell(1,NumNeurons);
+for i = 1:NumNeurons
+    Neighbors = find(ROIpct(i,:) > ROIoverlapthresh);
+    
+    if (isempty(Neighbors))
+        continue;
+    end
+    
+    NeighborSim = BinSim(i,Neighbors);
+    
+    FarSims = sort(BinSim(i,ROIoverlap(i,:) == 0));
+    BinSimRank = zeros(1,length(Neighbors));
+    
+    for j = 1:length(NeighborSim)
+        idx = findclosest(NeighborSim(j),FarSims);
+        BinSimRank(j) = idx/length(FarSims);
+    end
+    
+    BadNeighbors{i} = Neighbors(BinSimRank >= MinBinSimRank);
+    
+end
 
 disp('merging ROIs that are practically indistinguishable')
 
 % make a list of where each row lives now (by default, its own index)
 ROIhome = 1:NumNeurons;
-
+NumMerges = 0;
 % for each neuron i
 for i = 1:NumNeurons
-    Neighbors = find(ROIoverlap(i,:));
-    
     % for each nasty neighbor j: Overlap over 50% and BinSim rank over 94
-    for j = 1:length(NastyNeighbors)
-% determine who has more transients (counting ones added in clustering)
+    for j = 1:length(BadNeighbors{i})
+        % find actual location of ROI
+        idx1 = i;
+        while(ROIhome(idx1) ~= idx1)
+            idx1 = ROIhome(idx1);
+        end
+        
+        idx2 = BadNeighbors{i}(j);
+        while(ROIhome(idx2) ~= idx2)
+            idx2 = ROIhome(idx2);
+        end
+        
+        % determine who has more transients (counting ones added in clustering)
+        Temp1 = NP_FindSupraThresholdEpochs(PSAbool(idx1,:),eps);
+        Temp2 = NP_FindSupraThresholdEpochs(PSAbool(idx2,:),eps);
+        if (size(Temp1,1) > size(Temp2,1))
+            target = idx1;
+            ball = idx2;
+        else
+            target = idx2;
+            ball = idx1;
+        end
+        
+        PSAbool(target,:) = PSAbool(target,:) | PSAbool(ball,:);
+        PSAbool(ball,:) = false;
+        ROIhome(ball) = target;
+        NumMerges = NumMerges+1;
+    end
+end
 
-% logical OR the activity and store it in PSAbool row for the one with more transients
+disp([int2str(NumMerges),' ROIs eliminated via merging']);
 
-% zero out the PSAbool row for the one with fewer transients
+%% B3: fill gaps again
 
-% update transient counts
-
+for i = 1:NumNeurons
+    ZeroEpochs = NP_FindSupraThresholdEpochs(~PSAbool(i,:),eps);
+    EpLen = ZeroEpochs(:,2)-ZeroEpochs(:,1)+1;
+    GoodFill = EpLen <= MaxGapFillLen;
+    ZeroEpochs = ZeroEpochs(GoodFill,:);
+    
+    % fill gaps
+    for j = 1:size(ZeroEpochs,1)
+        PSAbool(i,ZeroEpochs(j,1):ZeroEpochs(j,2)) = true;
+    end
+end
 
 
 %% C. eliminate spatiotemporal overlaps
@@ -251,66 +307,78 @@ disp('eliminating spatiotemporal overlaps');
 for i = 1:NumNeurons
     actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
 end
-% p = ProgressBar(NumNeurons);
-% 
-% for i = 1:NumNeurons
-%     Neighbors = find(ROIoverlap(i,:));
-%     for j = 1:size(actlist{i},1)
-%         % do any neighbors have an epoch that starts or ends during this
-%         % one?
-%         actframes = (actlist{i}(j,1):actlist{i}(j,2));
-%         nList = [];
-%         epList = [];
-%         meanDffList = [];
-%         for k = 1:length(Neighbors)
-%             nIdx = Neighbors(k);
-%             for m = 1:size(actlist{nIdx})
-%                 if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
-%                     % neuron nIdx epoch m overlaps with neuron i epoch j
-%                     nList = [nList,nIdx];
-%                     epList = [epList,m];
-%                     meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
-%                 end
-%             end
-%         end
-%         
-%         if (isempty(nList))
-%             continue;
-%         end
-%         
-%         TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
-%         
-%         nList = [i,nList];
-%         epList = [j,epList];
-%         meanDFFList = [TijMeanDFF,meanDffList];
-%         [~,maxidx] = max(meanDFFList);
-%         
-%         for k = 1:length(nList)
-%             if ((k == maxidx) || (nList(k) == nList(maxidx)))
-%                 continue;
-%             end
-%             
-%             % kill the epoch
-%             PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
-%             if (nList(k) ~= i)
-%                 actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps);
-%             end
-%         end
-%     end
-%     actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
-%     p.progress;
-% end
-% p.stop;
+p = ProgressBar(NumNeurons);
 
-% Part D: Kill the flimsy ROIs with 1 or less transient
+for i = 1:NumNeurons
+    Neighbors = find(ROIoverlap(i,:));
+    for j = 1:size(actlist{i},1)
+        % do any neighbors have an epoch that starts or ends during this
+        % one?
+        actframes = (actlist{i}(j,1):actlist{i}(j,2));
+        nList = [];
+        epList = [];
+        meanDffList = [];
+        for k = 1:length(Neighbors)
+            nIdx = Neighbors(k);
+            for m = 1:size(actlist{nIdx})
+                if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
+                    % neuron nIdx epoch m overlaps with neuron i epoch j
+                    nList = [nList,nIdx];
+                    epList = [epList,m];
+                    meanDffList = [meanDffList,mean(NeuronTraces.LPtrace(nIdx,actlist{nIdx}(m,1):actlist{nIdx}(m,2)))];
+                end
+            end
+        end
+        
+        if (isempty(nList))
+            continue;
+        end
+        
+        TijMeanDFF = mean(NeuronTraces.LPtrace(i,actlist{i}(j,1):actlist{i}(j,2)));
+        
+        nList = [i,nList];
+        epList = [j,epList];
+        meanDFFList = [TijMeanDFF,meanDffList];
+        [~,maxidx] = max(meanDFFList);
+        
+        for k = 1:length(nList)
+            if ((k == maxidx) || (nList(k) == nList(maxidx)))
+                continue;
+            end
+            
+            % kill the epoch
+            PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
+            if (nList(k) ~= i)
+                actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps);
+            end
+        end
+    end
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+    p.progress;
+end
+p.stop;
+
+% Part D: Kill the flimsy ROIs  - MinPSALen enforced
 NumActs = zeros(1,NumNeurons);
+AllPSALen = [];
+
+
 for i = 1:NumNeurons
     if (~isempty(actlist{i}))
-        NumActs(i) = size(actlist{i},1);
+        
+        PSALen = (actlist{i}(:,2)-actlist{i}(:,1))+1;
+        AllPSALen = [AllPSALen;PSALen];
+        for j = 1:size(actlist{i},1)
+            if (PSALen(j) < MinPSALen)
+                PSAbool(i,actlist{i}(j,1):actlist{i}(j,2)) = false;
+            end
+        end
     end
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+    NumActs(i) = size(actlist{i},1);
 end
 
-ActOK = NumActs > 0;
+ActOK = NumActs >= 2;
 
 % 'NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
 NeuronActivity = NeuronActivity(ActOK);
@@ -324,7 +392,6 @@ PSAbool = PSAbool(ActOK,:);
 disp('averaging ROIs over the movie');
 NeuronAvg = PixelSetMovieAvg(PSAbool,NeuronPixelIdxList);
 
-
 NumNeurons = sum(ActOK);
 
 NeuronTraces.RawTrace = NeuronTraces.RawTrace(ActOK,:);
@@ -332,9 +399,6 @@ NeuronTraces.LPtrace = NeuronTraces.LPtrace(ActOK,:);
 NeuronTraces.DFDTtrace = NeuronTraces.DFDTtrace(ActOK,:);
 NeuronTraces.CorrR = NeuronTraces.CorrR(ActOK,:);
 NeuronTraces.CorrP = NeuronTraces.CorrP(ActOK,:);
-
-%% B2
-
 
 save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','BinSim');
 
