@@ -151,5 +151,9 @@ for i = 1:length(varargin)
         varargout(i) = {T_PARAMS.MinNumPSAepochs};
     end
     
+    if (strcmp(varargin{i},'MinNumTransients'))
+        varargout(i) = {T_PARAMS.MinNumTransients};
+    end
+    
 end
 

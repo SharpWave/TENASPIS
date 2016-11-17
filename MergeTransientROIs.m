@@ -23,7 +23,7 @@ function [] = MergeTransientROIs()
 display('merging transient ROIs into neuron ROIs');
 
 %% load parameters
-[DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff');
+[DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff,MinNumTransients] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff','MinNimTransients');
 
 %% load data
 load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask');
@@ -97,16 +97,17 @@ for i = 1:NumNeurons
     nTrans(i) = size(temp,1);
 end
 
-% NumNeurons = sum(nTrans > 1);
-% 
-% NeuronPixelIdxList = NeuronPixelIdxList(nTrans > 1);
-% NeuronImage = NeuronImage(nTrans > 1);
-% NeuronAvg = NeuronAvg(nTrans > 1);
-% NeuronFrameList = NeuronFrameList(nTrans > 1);
-% NeuronObjList = NeuronObjList(nTrans > 1);
-% NeuronROIidx = NeuronROIidx(nTrans > 1);
-% NeuronActivity = NeuronActivity((nTrans > 1),:);
-% nTrans = nTrans(nTrans > 1);
+OKcount = nTrans >= MinNumTransients;
+NumNeurons = sum(OKcount);
+
+NeuronPixelIdxList = NeuronPixelIdxList(OKcount);
+NeuronImage = NeuronImage(OKcount);
+NeuronAvg = NeuronAvg(OKcount);
+NeuronFrameList = NeuronFrameList(OKcount);
+NeuronObjList = NeuronObjList(OKcount);
+NeuronROIidx = NeuronROIidx(OKcount);
+NeuronActivity = NeuronActivity((OKcount),:);
+nTrans = nTrans(OKcount);
 
 NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
