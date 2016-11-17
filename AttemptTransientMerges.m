@@ -66,19 +66,12 @@ for i = 1:length(ClusterList)
         [~,idx1] = ismember(u,CircMask{CurrClu});
         [~,idx2] = ismember(u,CircMask{CandIdx});
         
+        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
         
-        
+%         if ((BigCorrVal >= 0.2) && (BigCorrVal < 0.3))
+%         PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
+%         end
 
-        
-        try
-            [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
-        catch
-                            if (DistThresh >= 1)
-                                crap1 = setdiff(u,CircMask{CurrClu}),crap2 = setdiff(u,CircMask{CandIdx}),
-            PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
-                end
-            keyboard;
-        end
         
         if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))
             % reject the merge

@@ -67,10 +67,10 @@ T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the tr
 % Setting to 0 means the maximum blob extent will be used. 
 T_PARAMS.ROICircleWindowRadius = 45; % If this is too small the program crashes, but otherwise no effect on results
 
-%% MergeTransientROIs params
+%% MergeTransientROIs paramsload
 T_PARAMS.DistanceThresholdList = (0:0.5:10);
-T_PARAMS.MaxTransientMergeCorrP = 0.001;
-T_PARAMS.MinTransientMergeCorrR = 0.55; %0.6065;
+T_PARAMS.MaxTransientMergeCorrP = 0.01;
+T_PARAMS.MinTransientMergeCorrR = 0.2; %0.6065;
 T_PARAMS.ROIBoundaryCoeff = 0.5;
 T_PARAMS.SmoothSize = 5; % length of window for temporal smoothing of traces
 T_PARAMS.MinNumTransients = 1;
@@ -83,7 +83,7 @@ T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity betwe
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap between ROIs for a merge 
 
 T_PARAMS.MaxGapFillLen = 4; % if the gaps between transient epochs are this or smaller, we fill them in; smooths the skippyness in some borderline cases
-T_PARAMS.SlopeThresh = 2; % threshold for detection of positive slopes
+T_PARAMS.SlopeThresh = 1.5; % threshold for detection of positive slopes
 T_PARAMS.MinPSALen = 5;
 T_PARAMS.MinNumPSAepochs = 4;
 

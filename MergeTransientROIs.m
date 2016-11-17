@@ -23,7 +23,7 @@ function [] = MergeTransientROIs()
 display('merging transient ROIs into neuron ROIs');
 
 %% load parameters
-[DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff,MinNumTransients] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff','MinNimTransients');
+[DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff,MinNumTransients] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff','MinNumTransients');
 
 %% load data
 load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask');

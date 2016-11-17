@@ -298,13 +298,28 @@ for i = 1:NumNeurons
     end
 end
 
+%% Part D: Kill the flimsy ROIs  - remove PSA epochs shorter than MinPSALen
+NumActs = zeros(1,NumNeurons);
+AllPSALen = [];
+actlist = cell(1,NumNeurons);
+for i = 1:NumNeurons
+    if (~isempty(actlist{i}))
+        
+        PSALen = (actlist{i}(:,2)-actlist{i}(:,1))+1;
+        AllPSALen = [AllPSALen;PSALen];
+        for j = 1:size(actlist{i},1)
+            if (PSALen(j) < MinPSALen)
+                PSAbool(i,actlist{i}(j,1):actlist{i}(j,2)) = false;
+            end
+        end
+    end
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+    NumActs(i) = size(actlist{i},1);
+end
 
 %% C. eliminate spatiotemporal overlaps
 disp('eliminating spatiotemporal overlaps');
-actlist = cell(1,NumNeurons);
-for i = 1:NumNeurons
-    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
-end
+
 p = ProgressBar(NumNeurons);
 
 for i = 1:NumNeurons
@@ -356,22 +371,7 @@ for i = 1:NumNeurons
 end
 p.stop;
 
-%% Part D: Kill the flimsy ROIs  - remove PSA epochs shorter than MinPSALen
-NumActs = zeros(1,NumNeurons);
-AllPSALen = [];
-
 for i = 1:NumNeurons
-    if (~isempty(actlist{i}))
-        
-        PSALen = (actlist{i}(:,2)-actlist{i}(:,1))+1;
-        AllPSALen = [AllPSALen;PSALen];
-        for j = 1:size(actlist{i},1)
-            if (PSALen(j) < MinPSALen)
-                PSAbool(i,actlist{i}(j,1):actlist{i}(j,2)) = false;
-            end
-        end
-    end
-    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
     NumActs(i) = size(actlist{i},1);
 end
 
