@@ -38,13 +38,16 @@ else
     T_PARAMS.NumFrames = NumFrames;
 end
 
-%% General parameters used by multiple scripts
+%% Implementation parameters (i.e. no effect on results)
 T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various functions.  Setting this too high will crash due to RAM
+T_PARAMS.ROICircleWindowRadius = 45; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
+
+%% General parameters used by multiple scripts
 T_PARAMS.SampleRate = 20; % Sample rate of the movie to be processed.  
 
 %% MakeFilteredMovies
-T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass filtering. EDIT:SPACE
-T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass filtering. EDIT:SPACE
+T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass disk-kernel filtering. EDIT:SPACE
+T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
 
 %% ExtractBlobs / SegmentFrame params
 T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
@@ -57,7 +60,9 @@ T_PARAMS.MaxBlobRadius = 15; % Maximum radius for a circular shaped blob to be i
                              % participate and can be used to differentiate ROIs in subsequent steps
                              % EDIT:SPACE
                              
-T_PARAMS.MinBlobRadius = 5; % Minimum radius for circular shaped blob to be included. Increasing this eliminates noise at the cost of losing low-intensity blobs
+T_PARAMS.MinBlobRadius = 5; % Minimum radius for circular shaped blob to be included. 
+                            % Increasing this eliminates noise at the cost
+                            % of losing low-intensity blobs. EDIT:SPACE
 
 T_PARAMS.MaxAxisRatio = 2; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
                            % Keeps overly slivery blobs and some juxtaposition artifacts out of the data
@@ -71,17 +76,20 @@ T_PARAMS.BlobLinkThresholdCoeff = 1; % multiplier for the blob minor axis length
                                      % The linkblobs procedure has almost no pitfalls; I wouldn't bother messing with this
 
 %% RejectBadTransients params
-T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid of a transient can travel. Eliminates artifacts from overlapping transients.
-T_PARAMS.MinNumFrames = 4; % minimum number of frames for transient to be included
+T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid of a transient can travel. 
+                                        % Eliminates spurious blobs from overlapping transients.
+                                        % EDIT:SPACE
+                                        
+T_PARAMS.MinNumFrames = 4; % minimum number of frames for transient to be included. EDIT:TIME
 
 %% MakeTransientROIs params
 T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
 % Setting to 1 means the pixels in the smallest blob in the transient (often right before fadeout) will be chosen. 
 % Setting to 0 means the maximum blob extent will be used. 
-T_PARAMS.ROICircleWindowRadius = 45; % If this is too small the program crashes, but otherwise no effect on results
+
 
 %% MergeTransientROIs paramsload
-T_PARAMS.DistanceThresholdList = (0:0.5:10); % list of progressively increasing distance thresholds to try. 
+T_PARAMS.DistanceThresholdList = (0:0.5:10); % list of progressively increasing distance thresholds to try. EDIT:SPACE
 %                                              With the correlation test being pretty robust I'm not sure that small increments are necessary
 T_PARAMS.MaxTransientMergeCorrP = 0.01;      % maximum correlation p value for a transient merge
 T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a transient merge. 
@@ -90,7 +98,7 @@ T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a
 T_PARAMS.ROIBoundaryCoeff = 0.5;             % ROI boundaries are determined by setting a threshold at some fraction of the peak mean intensity
                                              % lower values mean bigger ROIs
                                              
-T_PARAMS.SmoothSize = 5;                     % length of window for temporal smoothing of traces.  Should be a multiplier of SampleRate
+T_PARAMS.SmoothSize = 5;                     % length of window for temporal smoothing of traces.  EDIT:SPACE
 T_PARAMS.MinNumTransients = 1;               % ROIs with fewer transients than this are cut after segmentation. recommend setting to 1, meaning no cut
 
 %% DetectTracePSA
@@ -101,28 +109,25 @@ T_PARAMS.AmplitudeThresholdCoeff = 1/3; % Determines amplitude threshold for fin
 T_PARAMS.CorrPthresh = 0.00001; % p value threshold for correlation between ROI average and ROI on a single frame
 
 T_PARAMS.SlopeThresh = 0.5; % minimum slope (z-score) for a new PSA epoch (i.e., positive slope) to begin
+                            % use a lower value if detected slopes aren't
+                            % starting early enough.  Use a higher value if
+                            % 
 
 T_PARAMS.MinPSALen = 5;     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
-
+                            % EDIT:TIME
+                            
 %% MergeSuspiciousNeighors
 T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap (% of area of smallest ROI) between ROIs for a merge 
 
 T_PARAMS.MaxGapFillLen = 4; % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
                             % smooths the skippyness in some borderline
-                            % cases. % EDIT FOR TIME MULTIPLIER
+                            % cases. % EDIT:TIME 
                             
 %% FinalizeData
 T_PARAMS.MinNumPSAepochs = 4; % minimum number of PSA epochs for inclusion in final ROI set. i.e., we delete the ones with less than this
                               % if there are some "straggler" under-merged ROIs this can help to remove them. 
                               % Higher values will yield a "cleaner" data set at the cost of omitting potentially valid but low firing neurons
-
-
-
-
-
-
-
-
+                              % EDIT:TIME? (questionable)
 end
 
