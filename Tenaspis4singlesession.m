@@ -3,14 +3,14 @@ function Tenaspis4singlesession()
 % Requires singlesessionmask.mat be present for automated runs
 % use MakeMaskSingleSession if needed
 
-% set global parameter variable
-Set_T_Params;
+% REQUIREMENT: first call MakeFilteredMovies on your cropped motion-corrected
+% movie
 
-% Make the movie files
-MakeFilteredMovies();
+% set global parameter variable
+Set_T_Params('BPDFF.h5');
 
 %% Extract Blobs
-load singlesessionmask.mat;
+load singlesessionmask.mat; % if this isn't already present, make it
 ExtractBlobs(neuronmask);
 
 %% Connect blobs into transients
@@ -20,29 +20,5 @@ MakeTransientROIs();
 
 %% Group together individual transients under individual neurons and save data
 MergeTransientROIs;
+InterpretTraces();
 
-load ProcOut.mat;
-load ROIavg.mat;
-MakeROIcorrtraces(NeuronPixels,Xdim,Ydim,NumFrames,ROIavg);
-%% Expand transients
-disp('Expanding transients...'); 
-ExpandTransients(0);
-
-%% Calculate peak of all transients
-AddPoTransients;
-
-%% Determine rising events/on-times for all transients
-DetectGoodSlopes;
-
-load ('T2output.mat','FT','NeuronPixels');
-for i = 1:2
-   indat{1} = FT;
-   outdat = MakeTrigAvg(indat);
-   MergeROIs(FT,NeuronPixels,outdat{1});
-   load ('FinalOutput.mat','FT','NeuronPixels');
-end
-indat{1} = FT;
-outdat = MakeTrigAvg(indat);
-MeanT = outdat{1};
-save('MeanT.mat', 'MeanT', '-v7.3');
-FinalTraces('SLPDF.h5');
