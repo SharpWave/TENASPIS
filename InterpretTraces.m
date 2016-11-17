@@ -102,7 +102,7 @@ for i = 1:NumNeurons
     
     % find epochs above the correlation threshold
     CorrEpochs = NP_FindSupraThresholdEpochs(CorrSig,CorrThresh);
-        
+    
     % identify good correlation epochs that are also above the amplitude
     % threshold for at least 1 frame
     GoodTrBool = false(1,NumFrames);
@@ -303,6 +303,7 @@ NumActs = zeros(1,NumNeurons);
 AllPSALen = [];
 actlist = cell(1,NumNeurons);
 for i = 1:NumNeurons
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
     if (~isempty(actlist{i}))
         
         PSALen = (actlist{i}(:,2)-actlist{i}(:,1))+1;
@@ -333,7 +334,7 @@ for i = 1:NumNeurons
         meanDffList = [];
         for k = 1:length(Neighbors)
             nIdx = Neighbors(k);
-            for m = 1:size(actlist{nIdx})
+            for m = 1:size(actlist{nIdx},1)
                 if (ismember(actlist{nIdx}(m,1),actframes) || ismember(actlist{nIdx}(m,2),actframes))
                     % neuron nIdx epoch m overlaps with neuron i epoch j
                     nList = [nList,nIdx];
@@ -360,7 +361,13 @@ for i = 1:NumNeurons
             end
             
             % kill the epoch
-            PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
+            try
+                PSAbool(nList(k),actlist{nList(k)}(epList(k),1):actlist{nList(k)}(epList(k),2)) = false;
+            catch
+                keyboard;
+            end
+        end
+        for k = 1:length(nList)
             if (nList(k) ~= i)
                 actlist{nList(k)} = NP_FindSupraThresholdEpochs(PSAbool(nList(k),:),eps);
             end

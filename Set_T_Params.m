@@ -83,7 +83,7 @@ T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity betwe
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap between ROIs for a merge 
 
 T_PARAMS.MaxGapFillLen = 4; % if the gaps between transient epochs are this or smaller, we fill them in; smooths the skippyness in some borderline cases
-T_PARAMS.SlopeThresh = 1.5; % threshold for detection of positive slopes
+T_PARAMS.SlopeThresh = 0.5; % threshold for detection of positive slopes
 T_PARAMS.MinPSALen = 5;
 T_PARAMS.MinNumPSAepochs = 4;
 
