@@ -40,6 +40,7 @@ end
 
 %% General parameters used by multiple scripts
 T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various functions
+T_PARAMS.SampleRate = 20;
 
 %% MakeFilteredMovies
 T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass filtering
@@ -64,25 +65,26 @@ T_PARAMS.MinNumFrames = 4; % minimum number of frames for transient to be includ
 T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
 % Setting to 1 means the pixels in the smallest blob in the transient (often right before fadeout) will be chosen. 
 % Setting to 0 means the maximum blob extent will be used. 
-T_PARAMS.ROICircleWindowRadius = 45;
+T_PARAMS.ROICircleWindowRadius = 45; % If this is too small the program crashes, but otherwise no effect on results
 
 %% MergeTransientROIs params
 T_PARAMS.DistanceThresholdList = (0:0.5:10);
 T_PARAMS.MaxTransientMergeCorrP = 0.001;
 T_PARAMS.MinTransientMergeCorrR = 0.6; %0.6065;
 T_PARAMS.ROIBoundaryCoeff = 0.5;
+T_PARAMS.SmoothSize = 5; % length of window for temporal smoothing of traces
 
 %% InterpretTraces params
 T_PARAMS.AmplitudeThresholdCoeff = 1/3; % fraction of lowest segmentation intensity to subtract to determine threshold.  Higher values mean lower threshold.
 T_PARAMS.CorrPthresh = 0.00001; % p value threshold for correlation coefficient to be considered significant
 
-T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
+T_PARAMS.MinBinSimRank = 0.90; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap between ROIs for a merge 
 
 T_PARAMS.MaxGapFillLen = 4; % if the gaps between transient epochs are this or smaller, we fill them in; smooths the skippyness in some borderline cases
 T_PARAMS.SlopeThresh = 2; % threshold for detection of positive slopes
-T_PARAMS.MinPSALen = 3;
-
+T_PARAMS.MinPSALen = 5;
+T_PARAMS.MinNumPSAepochs = 4;
 
 
 

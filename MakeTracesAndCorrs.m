@@ -8,7 +8,7 @@ function [DataOut] = MakeTracesAndCorrs(PixelIdxList,PixelAvg)
 % DFDTtrace: LPtrace change per sample.
 
 %% get parameters
-[NumFrames,FrameChunkSize] = Get_T_Params('NumFrames','FrameChunkSize');
+[NumFrames,FrameChunkSize,SmoothSize] = Get_T_Params('NumFrames','FrameChunkSize','SmoothSize');
 
 %% set up variables
 NumNeurons = length(PixelIdxList);
@@ -44,7 +44,7 @@ end
 disp('filtering traces and calculating DF/DT');
 
 for j = 1:NumNeurons
-    DataOut.LPtrace(j,:) = convtrim(DataOut.RawTrace(j,:),ones(1,3))./3;
+    DataOut.LPtrace(j,:) = convtrim(DataOut.RawTrace(j,:),ones(1,SmoothSize))./SmoothSize;
     DataOut.DFDTtrace(j,2:end) = zscore(diff(DataOut.LPtrace(j,:)));
 end
 

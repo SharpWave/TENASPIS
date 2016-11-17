@@ -139,5 +139,17 @@ for i = 1:length(varargin)
         varargout(i) = {T_PARAMS.MinPSALen};
     end
     
+    if (strcmp(varargin{i},'SampleRate'))
+        varargout(i) = {T_PARAMS.SampleRate};
+    end
+    
+    if (strcmp(varargin{i},'SmoothSize'))
+        varargout(i) = {T_PARAMS.SmoothSize};
+    end
+    
+    if (strcmp(varargin{i},'MinNumPSAepochs'))
+        varargout(i) = {T_PARAMS.MinNumPSAepochs};
+    end
+    
 end
 

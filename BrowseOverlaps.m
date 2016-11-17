@@ -1,8 +1,9 @@
-function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx )
+function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx,PlaceMaps )
 close all;
 
 % load basic shit
 load FinalOutput.mat;
+load BinSim.mat;
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 blankframe = zeros(Xdim,Ydim,'single');
 t = (1:NumFrames)/20;
@@ -17,7 +18,7 @@ for i = 1:NumNeurons
     end
 end
 
-figure(5);histogram(jsim(NeuronID,:),40);
+figure(5);histogram(BinSim(NeuronID,:),40);
 
 figure(1);
 a(1) = subplot(length(buddies)+1,1,1);
@@ -34,31 +35,38 @@ for i = 1:length(buddies)
     for j = 1:size(act,1)
         plot(act(j,1):act(j,2),NeuronTraces.LPtrace(buddies(i),act(j,1):act(j,2)),'-r','LineWidth',2);
     end
-    farsims = sort(jsim(NeuronID,Overlap == 0));
-    idx = findclosest(farsims,jsim(NeuronID,buddies(i)));
+    farsims = sort(BinSim(NeuronID,Overlap == 0));
+    idx = findclosest(farsims,BinSim(NeuronID,buddies(i)));
     normrank = idx/length(find(Overlap == 0));
     
-    title([int2str(buddies(i)),' Overlap % ',num2str(Overlap(buddies(i))),' dws similarity: ',num2str(jsim(NeuronID,buddies(i))),' pct ',num2str(normrank)]);
+    title([int2str(buddies(i)),' Overlap % ',num2str(Overlap(buddies(i))),' dws similarity: ',num2str(BinSim(NeuronID,buddies(i))),' pct ',num2str(normrank)]);
     axis tight;
 end
 linkaxes(a,'x');
 set(gcf,'Position',[437    49   883   948])
 
 figure(3);
-fb(1) = subplot(length(buddies)+1,1,1);
+fb(1) = subplot(length(buddies)+1,2,1);
 temp = blankframe;
 temp(NeuronPixelIdxList{NeuronID}) = NeuronAvg{NeuronID};
 imagesc(temp);axis image;hold on;caxis([0 max(NeuronAvg{NeuronID})]);
 [b] = bwboundaries(NeuronImage{NeuronID});
 b = b{1};
 plot(b(:,2),b(:,1),'g');
+
+
+
 for i = 1:length(buddies)
     [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
     b = b{1};
     plot(b(:,2),b(:,1),'r');
 end
+
+subplot(length(buddies)+1,2,2);
+imagesc(PlaceMaps{NeuronID});axis image;colorbar;
+
 for i = 1:length(buddies)
-    fb(i+1) = subplot(length(buddies)+1,1,i+1);
+    fb(i+1) = subplot(length(buddies)+1,2,i*2+1);
     temp = blankframe;
     temp(NeuronPixelIdxList{buddies(i)}) = NeuronAvg{buddies(i)};
     imagesc(temp);
@@ -71,6 +79,8 @@ for i = 1:length(buddies)
     [b] = bwboundaries(NeuronImage{NeuronID});
     b = b{1};
     plot(b(:,2),b(:,1),'g');
+    subplot(length(buddies)+1,2,i*2+2);
+    imagesc(PlaceMaps{buddies(i)});axis image;colorbar;
 end
 
 linkaxes(fb,'xy');

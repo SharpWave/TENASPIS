@@ -51,8 +51,8 @@ if (~exist('Todebug','var'))
 end
 
 load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
-[Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh,MinBinSimRank,ROIoverlapthresh,MinPSALen] = ...
-    Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh','MinBinSimRank','ROIoverlapthresh','MinPSALen');
+[Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh,MinBinSimRank,ROIoverlapthresh,MinPSALen,MinNumPSAepochs] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh','MinBinSimRank','ROIoverlapthresh','MinPSALen','MinNumPSAepochs');
 
 blankframe = zeros(Xdim,Ydim,'single');
 PSAbool = false(NumNeurons,NumFrames);
@@ -66,7 +66,7 @@ ROIoverlap = false(NumNeurons,NumNeurons);
 ROIpct = zeros(NumNeurons,NumNeurons,'single');
 for i = 1:NumNeurons
     for j = i+1:NumNeurons
-        if(~isempty(intersect(NeuronPixelIdxList{i},NeuronPixelIdxList{j})));
+        if(~isempty(intersect(NeuronPixelIdxList{i},NeuronPixelIdxList{j})))
             ROIoverlap(i,j) = true;
             ROIoverlap(j,i) = true;
             ROIpct(i,j) = length(intersect(NeuronPixelIdxList{i},NeuronPixelIdxList{j}))/min(length(NeuronPixelIdxList{i}),length(NeuronPixelIdxList{j}));
@@ -85,7 +85,6 @@ for i = 1:NumNeurons
     Threshold = Threshold - abs(Threshold)*AmplitudeThresholdCoeff;
     
     % find epochs where the trace was above amplitude threshold
-    PosEpochs = NP_FindSupraThresholdEpochs(NeuronTraces.LPtrace(i,:),Threshold);
     PosBool = logical(NeuronTraces.LPtrace(i,:) > Threshold);
     
     % find epochs where the correlation was significant
@@ -103,8 +102,7 @@ for i = 1:NumNeurons
     
     % find epochs above the correlation threshold
     CorrEpochs = NP_FindSupraThresholdEpochs(CorrSig,CorrThresh);
-    CorrBool = CorrSig > CorrThresh;
-    
+        
     % identify good correlation epochs that are also above the amplitude
     % threshold for at least 1 frame
     GoodTrBool = false(1,NumFrames);
@@ -178,11 +176,11 @@ for i = 1:NumNeurons
         pause;
         ToGo = 'y';
         while(strcmpi(ToGo,'y'))
-            display('pick a time to see the frame')
-            [mx,my] = ginput(1)
+            disp('pick a time to see the frame')
+            [mx,~] = ginput(1);
             f = LoadFrames('BPDFF.h5',ceil(mx));
             b(1) = subplot(2,6,6);imagesc(f);axis image;
-            try caxis([0 max(f(NeuronPixelIdxList{i}))]); end
+            caxis([0 max(f(NeuronPixelIdxList{i}))]);
             tempf = blankframe;
             tempf(NeuronPixelIdxList{i}) = NeuronAvg{i};
             b(2) = subplot(2,6,12);imagesc(tempf);axis image;
@@ -303,7 +301,7 @@ end
 
 %% C. eliminate spatiotemporal overlaps
 disp('eliminating spatiotemporal overlaps');
-
+actlist = cell(1,NumNeurons);
 for i = 1:NumNeurons
     actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
 end
@@ -358,10 +356,9 @@ for i = 1:NumNeurons
 end
 p.stop;
 
-% Part D: Kill the flimsy ROIs  - MinPSALen enforced
+%% Part D: Kill the flimsy ROIs  - remove PSA epochs shorter than MinPSALen
 NumActs = zeros(1,NumNeurons);
 AllPSALen = [];
-
 
 for i = 1:NumNeurons
     if (~isempty(actlist{i}))
@@ -378,7 +375,7 @@ for i = 1:NumNeurons
     NumActs(i) = size(actlist{i},1);
 end
 
-ActOK = NumActs >= 2;
+ActOK = NumActs >= MinNumPSAepochs;
 
 % 'NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
 NeuronActivity = NeuronActivity(ActOK);
