@@ -99,8 +99,6 @@ p = ProgressBar(NumChunks);
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     FrameChunk = LoadFrames(MotCorrh5,FrameList);
-    HPChunk = zeros(size(FrameChunk),'single');
-    LPChunk = zeros(size(FrameChunk),'single');
     
     HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
     LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
