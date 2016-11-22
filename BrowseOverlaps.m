@@ -4,6 +4,8 @@ close all;
 % load basic shit
 load FinalOutput.mat;
 load BinSim.mat;
+load BigFinalPixelAvg.mat;
+
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 blankframe = zeros(Xdim,Ydim,'single');
 t = (1:NumFrames)/20;
@@ -48,8 +50,8 @@ set(gcf,'Position',[437    49   883   948])
 figure(3);
 fb(1) = subplot(length(buddies)+1,2,1);
 temp = blankframe;
-temp(NeuronPixelIdxList{NeuronID}) = NeuronAvg{NeuronID};
-imagesc(temp);axis image;hold on;caxis([0 max(NeuronAvg{NeuronID})]);
+temp(CircMask{NeuronID}) = BigFinalPixelAvg{NeuronID};
+imagesc(temp);axis image;hold on;caxis([0 max(NeuronAvg{NeuronID})]);colorbar
 [b] = bwboundaries(NeuronImage{NeuronID});
 b = b{1};
 plot(b(:,2),b(:,1),'g');
@@ -57,7 +59,7 @@ plot(b(:,2),b(:,1),'g');
 
 
 for i = 1:length(buddies)
-    [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+    [b] = bwboundaries(NeuronImage{buddies(i)});
     b = b{1};
     plot(b(:,2),b(:,1),'r');
 end
@@ -68,12 +70,12 @@ imagesc(PlaceMaps{NeuronID});axis image;colorbar;
 for i = 1:length(buddies)
     fb(i+1) = subplot(length(buddies)+1,2,i*2+1);
     temp = blankframe;
-    temp(NeuronPixelIdxList{buddies(i)}) = NeuronAvg{buddies(i)};
-    imagesc(temp);
+    temp(CircMask{buddies(i)}) = BigFinalPixelAvg{buddies(i)};
+    imagesc(temp);colorbar;
     max(NeuronAvg{buddies(i)}),
     axis image;hold on;
     try caxis([0 max(NeuronAvg{buddies(i)})]);end
-    [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+    [b] = bwboundaries(NeuronImage{buddies(i)});
     b = b{1};
     plot(b(:,2),b(:,1),'r');
     [b] = bwboundaries(NeuronImage{NeuronID});
@@ -94,13 +96,13 @@ while(1)
     f = LoadFrames(moviefile,round(mx));
     figure(2);set(gcf,'Position',[1130         337         773         600]);
     
-    imagesc(f);caxis(cx);
+    imagesc(f);caxis(cx);colorbar;
     hold on
     [b] = bwboundaries(NeuronImage{NeuronID});
     b = b{1};
     plot(b(:,2),b(:,1),'g');
     for i = 1:length(buddies)
-        [b] = bwboundaries(NeuronImage{buddies(i)});colormap gray;
+        [b] = bwboundaries(NeuronImage{buddies(i)});
         b = b{1};
         plot(b(:,2),b(:,1),'r');
     end
