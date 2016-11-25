@@ -1585,7 +1585,7 @@ MD(i).Session = 3;
 MD(i).Env = 'triangle open field';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G45\open field\08_05_2015\1 - triangle\Working';
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\08_05_2015\1 - triangle\Working';
 end
 MD(i).Notes = 'Session 1 - Tenaspis2';
 
@@ -1596,7 +1596,7 @@ MD(i).Session = 4;
 MD(i).Env = 'triangle open field';
 MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Nat'))
-    MD(i).Location = 'E:\GCamp Mice\G45\open field\08_05_2015\2 - triangle\Working';
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\08_05_2015\2 - triangle\Working';
 end
 MD(i).Notes = 'Session 2 - Tenaspis2';
 
@@ -1642,7 +1642,7 @@ MD(i).Room = '201a - 2015';
 if (strcmp(userstr,'Dave'))
     MD(i).Location = 'E:\GCaMP6f_45\8_11_2015\1 - triangle open field';
 elseif strcmpi(userstr,'Nat')
-    MD(i).Location = 'E:\GCamp Mice\G45\open field\08_11_2015\Working';
+    MD(i).Location = 'J:\GCamp Mice\Working\G45\08_11_2015\1 - triangle open field\Working';
 end
 MD(i).Notes = '';
 
@@ -3867,7 +3867,6 @@ if strcmp(userstr,'Nat')
 end
 MD(i).Notes = [];
 
-=======
 %% Compile session_ref
 
 session_ref.G30 = G30;
