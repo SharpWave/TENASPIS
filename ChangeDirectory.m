@@ -54,6 +54,7 @@ end
 global MasterDirectory;
 if isempty(MasterDirectory)
     MasterDirectory = 'C:\MasterData'; % default location
+    disp('No ''MasterDirectory'' global variable detected.  Using ''C:\Masterdata'' as default location')
 else
     load(fullfile(MasterDirectory,'MasterDirectory.mat'));
 end
