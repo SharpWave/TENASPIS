@@ -124,7 +124,7 @@ for i = 1:NumFrames
     
     
     % 4. smear
-    temp = imfilter(temp,LowPassFilter,'replicate')*1000000;
+    temp = imfilter(temp,LowPassFilter,'replicate')*1000;
     
     %imagesc(temp);axis image;colormap gray;colorbar;pause;
     % 5. save
