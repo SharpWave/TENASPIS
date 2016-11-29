@@ -55,9 +55,7 @@ p = ProgressBar(NumChunks);
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     FrameChunk = single(LoadFrames(moviefile,FrameList));
-    rep_avgframe = repmat(avgframe,[1 1 size(FrameChunk,3)]);
-    
-    NewChunk = (FrameChunk-rep_avgframe)./rep_avgframe;
+    NewChunk = (FrameChunk-avgframe)./avgframe;
     
     h5write(outfile,'/Object',NewChunk,[1 1 ChunkStarts(i) 1],[Xdim Ydim length(FrameList) 1]);
     p.progress;  
