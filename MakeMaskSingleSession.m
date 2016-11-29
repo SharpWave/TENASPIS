@@ -31,12 +31,12 @@ function MakeMaskSingleSession(movie)
 close all;
 
 % Get movie information. 
-[~,Xdim,Ydim,NumFrames] = loadframe(movie,1);
+load('MovieDims.mat');
 
 % step 1 build up a maximum projection, using every 5th frame
 newmax = zeros(Xdim,Ydim);
 for i = 1:5:NumFrames
-    temp = loadframe(movie,i);
+    temp = LoadFrames(movie,i);
     newmax(temp > newmax) = temp(temp > newmax);
 end
 
@@ -47,7 +47,8 @@ figure;
 ToContinue = 'n';
 display('draw a circle around the area with good cells');
 while ~(strcmp(ToContinue,'y'))
-    neuronmask = roipoly(newmax);
+    imshow(newmax,[]);
+    neuronmask = roipoly;
     figure;imagesc(neuronmask);
     
     ToContinue = input('OK with the mask you just drew? [y/n] --->','s');
