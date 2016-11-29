@@ -1,13 +1,13 @@
 function [ output_args ] = MakeFakeMovie()
 % Makes a fake dataset
 
-Xdim = 500;
-Ydim = 500;
+Xdim = 250;
+Ydim = 250;
 
 NeuronRad = 5;
 MaxDist = 6;
 
-NumNeurons = 600;
+NumNeurons = 150;
 NumFrames = 20000;
 
 RiseLen = 12;
@@ -22,7 +22,7 @@ decrate = 0.965;
 TraceMat = zeros(NumNeurons,NumFrames);
 PSAbool = false(NumNeurons,NumFrames);
 
-LowPassFilter = fspecial('gaussian',[100 100],10);
+LowPassFilter = fspecial('gaussian',[100 100],7);
 LowPassFilter = LowPassFilter;
 h5create('fake.h5','/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
@@ -118,7 +118,9 @@ for i = 1:NumFrames
     
     
     % 3. add background
-
+    temp = temp+0.2;
+    
+    temp = temp+rand(Xdim,Ydim)*0.05;
     
     
     
