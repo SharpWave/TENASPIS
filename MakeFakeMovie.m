@@ -10,7 +10,7 @@ MaxDist = 6;
 NumNeurons = 600;
 NumFrames = 20000;
 
-RiseLen = 20;
+RiseLen = 12;
 RiseInc = 1/RiseLen;
 
 RiseSweep = (1/RiseLen:1/RiseLen:1);
@@ -23,7 +23,7 @@ TraceMat = zeros(NumNeurons,NumFrames);
 PSAbool = false(NumNeurons,NumFrames);
 
 LowPassFilter = fspecial('gaussian',[100 100],10);
-LowPassFilter = LowPassFilter./sum(LowPassFilter(:));
+LowPassFilter = LowPassFilter;
 h5create('fake.h5','/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
 
@@ -67,12 +67,13 @@ for i = 1:NumNeurons
         if (InRise)
             TraceMat(i,CurrFrame) = TraceMat(i,CurrFrame-1)+RiseInc;
             PSAbool(i,CurrFrame) = true;
+            CurrFrame = CurrFrame + 1;
             
             RiseBank = RiseBank - RiseInc;
             if (RiseBank <= 0)
-                InRise = false;
-                CurrFrame = CurrFrame + 1;
+                InRise = false;                
             end
+            
             continue;
         end
         
@@ -123,7 +124,7 @@ for i = 1:NumFrames
     
     
     % 4. smear
-    temp = imfilter(temp,LowPassFilter,'replicate');
+    temp = imfilter(temp,LowPassFilter,'replicate')*1000000;
     
     %imagesc(temp);axis image;colormap gray;colorbar;pause;
     % 5. save
