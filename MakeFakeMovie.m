@@ -5,9 +5,9 @@ Xdim = 250;
 Ydim = 250;
 
 NeuronRad = 5;
-MaxDist = 6;
+MaxDist = 5;
 
-NumNeurons = 150;
+NumNeurons = 200;
 NumFrames = 20000;
 
 RiseLen = 12;
@@ -92,8 +92,11 @@ for i = 1:NumNeurons
         
     
     %   b. model somatic GCaMP decays
-    
+    try
     BigAvg(CircMask{i}) = 1;
+    catch
+        keyboard;
+    end
     imagesc(BigAvg);
     
     p.progress;
