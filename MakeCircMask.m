@@ -2,7 +2,7 @@
 % Does not mInMatss or repeat pInMatxels
 % Created by : Peter Bone
 % Created : 19th March 2007
-function out = MidpointCircle(Xdim,Ydim, radius, xc, yc)
+function out = MidpointCircle(Xdim,Ydim, radius, yc, xc)
 
 InMat = zeros(Xdim,Ydim,'single');
 
