@@ -50,15 +50,14 @@ for i = 1:NumTransients
     % threshold the averaged transient
     TempFrame = blankframe;
     TempFrame(CircMask{i}) = BigPixelAvg{i};
-    ThreshFrame = TempFrame > threshold;
     
-    % find the matching region 
-    b = bwconncomp(ThreshFrame,4);
-   
-    for j = 1:b.NumObjects
-        if ((sum(ismember(PixelIdxList{i},b.PixelIdxList{j})) > 0) && (length(b.PixelIdxList{j}) >= MinBlobArea))
+    pidxlist = SegmentFrame(TempFrame);
+    
+    % find the matching segment
+    for j = 1:length(pidxlist)
+        if any(ismember(PixelIdxList{i},pidxlist{j}))
             GoodROI(i) = true;
-            PixelIdxList{i} = b.PixelIdxList{j};
+            PixelIdxList{i} = pidxlist{j};
             PixelAvg{i} = TempFrame(PixelIdxList{i});
             break;
         end

@@ -1,5 +1,5 @@
-function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask)
-% [frame,cc,ccprops] = SegmentFrame(frame,PrepMask)
+function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask,CheckPeaks)
+% [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
 %   Does so in an adaptive manner by iteratively bumping up the threshold
@@ -41,9 +41,20 @@ function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentF
 %
 %% Get Parameters
 
-
 [Xdim,Ydim,threshold,threshsteps,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
     Get_T_Params('Xdim','Ydim','threshold','threshsteps','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
+
+if (~exist('PrepMask','var'))
+    PrepMask = true(Xdim,Ydim);
+else
+    if (isempty(PrepMask))
+        PrepMask = true(Xdim,Ydim);
+    end
+end
+
+if (~exist('CheckPeaks','var'))
+    CheckPeaks = true;
+end
 
 % Derived Parameters
 MaxBlobArea = ceil((MaxBlobRadius^2)*pi);
@@ -125,30 +136,31 @@ for i = 1:length(rp)
     % Criteria satisfied, test for multiple peaks
     CritBinImage = BinImage;
     
-    while (ThreshIdx <= length(threshlist))
-        % while more thresholds to check
-        % take new binarized pixel data
-        currthresh = threshlist(ThreshIdx);
-        BinImage = SmallImage > currthresh;
-        temp_conn = bwconncomp(BinImage,8);
-        if (temp_conn.NumObjects > 1)
-            % multiple peaks, abandon ship!
-            GoodBlob(i) = 0;
-            break;
+    if (CheckPeaks)
+        while (ThreshIdx <= length(threshlist))
+            % while more thresholds to check
+            % take new binarized pixel data
+            currthresh = threshlist(ThreshIdx);
+            BinImage = SmallImage > currthresh;
+            temp_conn = bwconncomp(BinImage,8);
+            if (temp_conn.NumObjects > 1)
+                % multiple peaks, abandon ship!
+                GoodBlob(i) = 0;
+                break;
+            end
+            if (temp_conn.NumObjects == 0)
+                % this probably never happens
+                break;
+            end
+            if (length(temp_conn.PixelIdxList{1}) < MinBlobArea)
+                % Blob got small after raising threshold. At this point there
+                % wouldn't be multiple peaks that we care about so the blob
+                % will be included
+                break;
+            end
+            ThreshIdx = ThreshIdx + 1;
         end
-        if (temp_conn.NumObjects == 0)
-            % this probably never happens
-            break;
-        end
-        if (length(temp_conn.PixelIdxList{1}) < MinBlobArea)
-            % Blob got small after raising threshold. At this point there
-            % wouldn't be multiple peaks that we care about so the blob
-            % will be included
-            break;
-        end
-        ThreshIdx = ThreshIdx + 1;
     end
-    
     if (GoodBlob(i))
         % Blob passed shape, size, and "multiple peak" criteria, so determine Pixel List and centroids in full frame coordinates
         tempbinframe = blankframe;
