@@ -1,4 +1,4 @@
-function MakeFilteredMovies(MotCorrh5)
+function MakeFilteredMovies(MotCorrh5,varargin)
 % MakeFilteredMovies(varargin)
 %
 % Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences
@@ -41,6 +41,8 @@ function MakeFilteredMovies(MotCorrh5)
 
 %% Get Parameters and setup frame chunking
 [Xdim,Ydim,NumFrames,FrameChunkSize,HighPassRadius,LowPassRadius] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','HighPassRadius','LowPassRadius');
+
+
 
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
@@ -103,8 +105,8 @@ for i = 1:NumChunks
     HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
     LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
 
-    h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
-        [Xdim Ydim length(FrameList) 1]);
+%     h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
+%         [Xdim Ydim length(FrameList) 1]);
     
     h5write(BandPassName,'/Object',LPChunk./HPChunk,[1 1 ChunkStarts(i) 1],... %Write LP divide.
         [Xdim Ydim length(FrameList) 1]);
@@ -117,11 +119,11 @@ p.stop;
 disp('Making BPDFF.h5...');    %DF/F of BP
 Make_DFF(BandPassName,BPDFF);
 
-disp('Making LPDFF.h5...');    %DF/F of Low Pass
-Make_DFF(LowPassName,LPDFF);
+% disp('Making LPDFF.h5...');    %DF/F of Low Pass
+% Make_DFF(LowPassName,LPDFF);
 
 %% Delete temporary files
 delete(BandPassName);
-delete(LowPassName);
+%delete(LowPassName);
 
 end

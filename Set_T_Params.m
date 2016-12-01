@@ -40,7 +40,7 @@ end
 
 %% Implementation parameters (i.e. no effect on results)
 T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various functions.  Setting this too high will crash due to RAM
-T_PARAMS.ROICircleWindowRadius = 45; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
+T_PARAMS.ROICircleWindowRadius = 60; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
 
 %% General parameters used by multiple scripts
 T_PARAMS.SampleRate = 20; % Sample rate of the movie to be processed.  
@@ -50,12 +50,12 @@ T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass disk-kernel filte
 T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
 
 %% ExtractBlobs / SegmentFrame params
-T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
+T_PARAMS.threshold = 0.05; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
 
 T_PARAMS.threshsteps = 10; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
                            % higher values mean slightly bigger ROIs at the cost of multiplying run time - edit this with care.
                       
-T_PARAMS.MaxBlobRadius = 15; % Maximum radius for a circular shaped blob to be included. 
+T_PARAMS.MaxBlobRadius = 10; % Maximum radius for a circular shaped blob to be included. 
                              % trade off between not including multiple neurons and missing pixels that reliably
                              % participate and can be used to differentiate ROIs in subsequent steps
                              % EDIT:SPACE

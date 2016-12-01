@@ -66,7 +66,11 @@ for i = 1:length(ClusterList)
         [~,idx1] = ismember(u,CircMask{CurrClu});
         [~,idx2] = ismember(u,CircMask{CandIdx});
         
+        try
         [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
+        catch
+            keyboard;
+        end
         
 %         if ((BigCorrVal >= 0.2) && (BigCorrVal < 0.3))
 %         PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
