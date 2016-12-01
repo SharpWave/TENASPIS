@@ -1,31 +1,45 @@
-function [ output_args ] = MakeFakeMovie()
+function [ output_args ] = MakeFakeMovie(seed)
 % Makes a fake dataset
 
-Xdim = 250;
-Ydim = 250;
+
+rng(seed);
+%% Set Parameters
+
+Xdim = 200;
+Ydim = 200;
 
 NeuronRad = 5;
-MaxDist = 5;
+MaxDist = 6;
+BorderBuff = 40;
 
-NumNeurons = 200;
+NeuronDensity = 0.005;
+NumNeurons = round(NeuronDensity*(Xdim-2*BorderBuff)*(Ydim-2*BorderBuff));
+%NumNeurons = 150;
 NumFrames = 20000;
-
 RiseLen = 12;
+decrate = 0.965;
+pAct = 0.001;
+FilterDev = 7;
+save FakeParams.mat Xdim Ydim NeuronRad MaxDist BorderBuff NumNeurons NumFrames RiseLen decrate pAct FilterDev seed;
+
+%% Set up ROIs
 RiseInc = 1/RiseLen;
 
 RiseSweep = (1/RiseLen:1/RiseLen:1);
 
 BackgroundF = 1.5;
 
-decrate = 0.965;
+
 
 TraceMat = zeros(NumNeurons,NumFrames);
 PSAbool = false(NumNeurons,NumFrames);
 
-LowPassFilter = fspecial('gaussian',[100 100],7);
+LowPassFilter = fspecial('gaussian',[100 100],FilterDev);
 LowPassFilter = LowPassFilter;
 h5create('fake.h5','/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
+
+
 
 % part 1: the neurons
 
@@ -33,7 +47,7 @@ Cents = [];
 p = ProgressBar(NumNeurons);
 
 BigAvg = zeros(Xdim,Ydim);
-pAct = 0.001;
+
 for i = 1:NumNeurons
     % 1. set x and y centroid randomly
     
@@ -43,6 +57,11 @@ for i = 1:NumNeurons
         %   a. choose centroid randomly
         tempCent(1,1) = ceil(rand*Xdim);
         tempCent(1,2) = ceil(rand*Ydim);
+        
+        %   b.0 check range
+        if tempCent(1,1) <= BorderBuff | tempCent(1,1) > Xdim-BorderBuff | tempCent(1,2) <= BorderBuff | tempCent(1,2) > Ydim-BorderBuff
+            continue;
+        end
         
         %   b. check whether too close
         tempdist = pdist([Cents;tempCent]);

@@ -14,11 +14,6 @@ Set_T_Params('BPDFF.h5');
 
 [Xdim,Ydim] = Get_T_Params('Xdim','Ydim');
 neuronmask = ones(Xdim,Ydim);
-SideBuf = 20;
-neuronmask(1:SideBuf,:) = 0;
-neuronmask(end-SideBuf+1:end,:) = 0;
-neuronmask(:,1:SideBuf) = 0;
-neuronmask(:,end-SideBuf+1:end) = 0;
 ExtractBlobs(neuronmask);
 
 %% Connect blobs into transients
