@@ -56,20 +56,22 @@ end
 %% update ROI
 tempFrame = blankframe;
 tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
-threshFrame = tempFrame > threshold*1.25;
-b = bwconncomp(threshFrame,4);
-for i = 1:b.NumObjects
-    if(~isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
+
+pidxlist = SegmentFrame(tempFrame,[],false);
+
+if isempty(pidxlist)
+    error('oh crap we ate a cluster and the algo needs adjusted');
+end
+
+% find the matching segment
+for i = 1:length(pidxlist)
+    if any(ismember(OrigEaterList,pidxlist{i}))
+        
         break;
     end
 end
 
-if(isempty(intersect(b.PixelIdxList{i},OrigEaterList)))
-    disp('I think we ate a cluster and need to deal with that');
-    keyboard;
-end
-
-PixelList{EaterClu} = single(b.PixelIdxList{i});
+PixelList{EaterClu} = single(pidxlist{i});
 PixelAvg{EaterClu} = tempFrame(PixelList{EaterClu});
 
 [~,idx] = max(PixelAvg{EaterClu});
