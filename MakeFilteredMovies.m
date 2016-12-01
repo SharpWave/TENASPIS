@@ -105,8 +105,8 @@ for i = 1:NumChunks
     HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
     LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
 
-    h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
-        [Xdim Ydim length(FrameList) 1]);
+%     h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
+%         [Xdim Ydim length(FrameList) 1]);
     
     h5write(BandPassName,'/Object',LPChunk./HPChunk,[1 1 ChunkStarts(i) 1],... %Write LP divide.
         [Xdim Ydim length(FrameList) 1]);
@@ -124,6 +124,6 @@ Make_DFF(BandPassName,BPDFF);
 
 %% Delete temporary files
 delete(BandPassName);
-delete(LowPassName);
+%delete(LowPassName);
 
 end
