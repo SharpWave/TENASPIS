@@ -1,4 +1,4 @@
-function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask,CheckPeaks)
+function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask,CheckPeaks,ThreshOverride)
 % [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask)
 %
 %   Identifies local maxima and separates them out into neuron sized blobs.
@@ -43,6 +43,10 @@ function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentF
 
 [Xdim,Ydim,threshold,threshsteps,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
     Get_T_Params('Xdim','Ydim','threshold','threshsteps','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
+
+if(exist('ThreshOverride','var'))
+    threshold = ThreshOverride;
+end
 
 if (~exist('PrepMask','var'))
     PrepMask = true(Xdim,Ydim);

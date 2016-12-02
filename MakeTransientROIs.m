@@ -51,16 +51,29 @@ for i = 1:NumTransients
     TempFrame = blankframe;
     TempFrame(CircMask{i}) = BigPixelAvg{i};
     
-    pidxlist = SegmentFrame(TempFrame);
-    
-    % find the matching segment
-    for j = 1:length(pidxlist)
-        if any(ismember(PixelIdxList{i},pidxlist{j}))
-            GoodROI(i) = true;
-            PixelIdxList{i} = pidxlist{j};
-            PixelAvg{i} = TempFrame(PixelIdxList{i});
-            break;
+    tryagain = true;
+    tempthresh = threshold;
+    while((tryagain) & (tempthresh <= max(TempFrame(:))))
+        tempthresh = tempthresh*1.1;
+        pidxlist = SegmentFrame(TempFrame,[],false,tempthresh);
+        
+        % find the matching segment
+        for j = 1:length(pidxlist)
+            if (ismember(sub2ind([Xdim Ydim],round(BinCent{i}(2)),round(BinCent{i}(1))),pidxlist{j}))
+                [~,idx] = max(TempFrame(pidxlist{j}));
+                %keyboard;
+                if(ismember(pidxlist{j}(idx),PixelIdxList{i}))
+                    % if new peak is in old ROI things are good
+                    tryagain = false;
+                    GoodROI(i) = true;
+                    PixelIdxList{i} = pidxlist{j};
+                    PixelAvg{i} = TempFrame(PixelIdxList{i});
+                    
+                end
+                break;
+            end
         end
+        
     end
 end
 
@@ -100,5 +113,8 @@ Trans2ROI = single(1:NumTransients);
 
 save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask;
 
+
+
 end
+
 

@@ -57,21 +57,36 @@ end
 tempFrame = blankframe;
 tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
 
-pidxlist = SegmentFrame(tempFrame,[],false);
 
-if isempty(pidxlist)
-    error('oh crap we ate a cluster and the algo needs adjusted');
-end
+tempthresh = threshold;
 
-% find the matching segment
-for i = 1:length(pidxlist)
-    if any(ismember(OrigEaterList,pidxlist{i}))
-        
-        break;
+okmerge = false;
+while ((~okmerge) && (tempthresh < max(tempFrame(:))))
+    tempthresh = tempthresh+threshold/20;
+    pidxlist = SegmentFrame(tempFrame,[],false,tempthresh);
+    while (isempty(pidxlist)&& (tempthresh < max(tempFrame(:))))
+        tempthresh = tempthresh+threshold/20;
+        pidxlist = SegmentFrame(tempFrame,[],false,tempthresh);
     end
+    
+    % find the matching segment
+    for i = 1:length(pidxlist)
+        if any(ismember(OrigEaterList,pidxlist{i}))
+            [~,idx] = max(tempFrame(pidxlist{i}));
+            if (ismember(pidxlist{i}(idx),OrigEaterList))
+                okmerge = true;
+                break;
+            end
+        end
+        
+    end
+    
 end
 
-PixelList{EaterClu} = single(pidxlist{i});
+if (tempthresh < max(tempFrame(:)))
+   PixelList{EaterClu} = single(pidxlist{i});
+end
+
 PixelAvg{EaterClu} = tempFrame(PixelList{EaterClu});
 
 [~,idx] = max(PixelAvg{EaterClu});
