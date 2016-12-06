@@ -1,36 +1,6 @@
-function ExtractBlobs(moviefile,mask)
-% ExtractBlobs(moviefile,mask)
-%
-%   Extracts active neurons from "blob" images in movie frames. 
-%
-%   INPUTS
-%       moviefile: movie file (currently supports h5). 
-%
-%       mask: Logical matrix with same dimensions as movie frame specifying
-%       which areas to use and which not to use. 
-%
-%   OUTPUT variables in Blobs.mat
-%       cc: 1xF (F = # of frames) structure containing relevant data on the
-%       discovered blobs.
-%           fields...
-%               NumObjects, number of blobs.
-%               ImageSize, frame dimensions.
-%               Connectivity, 4.
-%
-%       mask: same as input.
-%
-%       PeakPix: 1xF cell array with nested 1xN (N = # of blobs detected
-%       that frame) cell array containing a 2-element vector, the XY
-%       coordinates of the peak pixel of that blob on that frame.
-%
-%       NumItsTaken: 1xF cell array with nested N-element vector containing
-%       the number of iterations of threshold increasing required to detect
-%       that blob in SegmentFrame.
-%       
-%       threshlist: 1xF cell array with nested (N+1)-element vector
-%       containing the thresholds used for each blob. 
-%
-% Copyright 2015 by David Sullivan and Nathaniel Kinsky
+function [] = ExtractBlobs(PrepMask)
+% [] = ExtractBlobs(file,mask)
+% Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
 %
@@ -47,52 +17,46 @@ function ExtractBlobs(moviefile,mask)
 %     You should have received a copy of the GNU General Public License
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+disp('Extracting Blobs from movie');
 
-% Get Basic Movie Information
-info = h5info(moviefile,'/Object');
-NumFrames = info.Dataspace.Size(3);
-Xdim = info.Dataspace.Size(1);
-Ydim = info.Dataspace.Size(2);
+%% Get parameters and set up Chunking variables
+[Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
 
-% Pull neuron mask if specified, otherwise set mask to include the whole
-% image
-if ~exist('mask','var')
-    mask = ones(Xdim,Ydim);
-end
-maskpix = find(mask(:) > 0); % Get pixels to use when looking for blobs
+ChunkStarts = 1:FrameChunkSize:NumFrames;
+ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
+ChunkEnds(length(ChunkStarts)) = NumFrames;
+NumChunks = length(ChunkStarts);
 
-% Pre-allocate variables
-cc = cell(1,NumFrames); 
-PeakPix = cell(1,NumFrames); 
-NumItsTaken = cell(1,NumFrames);
-ThreshList = cell(1,NumFrames);
-
-% Run through each frame and get the standard deviation of each individual
-% frame. 
-disp('Getting movie stats...');
-[~,stdframe] = moviestats(moviefile);
-
-%Make threshold above the 4th standard deviation. 
-thresh = 4*mean(stdframe);
-
-p = ProgressBar(NumFrames); % Initialize progress bar
-parfor i = 1:NumFrames 
-    
-    % Read in each imaging frame
-    tempFrame = loadframe(moviefile,i,info);
-%     tempFrame = h5read(file,'/Object',[1 1 i 1],[Xdim Ydim 1 1]);
-    
-    %thresh = 0.04; %median(tempFrame(maskpix)); % Set threshold
-
-    % Detect all blobs that are within the mask by adaptively thresholding
-    % each frame
-    [cc{i},PeakPix{i},NumItsTaken{i},ThreshList{i}] = SegmentFrame(tempFrame,mask,thresh);
-    
-    p.progress; % update progress bar    
+%% set up the PrepMask; i.e., which areas to exclude
+if ~exist('PrepMask','var')
+    PrepMask = ones(Xdim,Ydim);
 end
 
+%% Find the blobs in each frame
+p = ProgressBar(NumChunks); % Initialize progress bar
+
+parfor i = 1:NumChunks
+    Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+    FrameList = ChunkStarts(i):ChunkEnds(i);
+       
+    BlobChunk(i) = SegmentFrameChunk(FrameList,PrepMask);
+    p.progress;
+end
 p.stop; % Shut-down progress bar
 
-save Blobs.mat cc mask PeakPix NumItsTaken ThreshList;
+%% Distribute chunked outputs to cell arrays
+[BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = deal(cell(1,NumFrames));
+
+for i = 1:NumChunks
+    FrameList = ChunkStarts(i):ChunkEnds(i);
+    BlobPixelIdxList(FrameList) = BlobChunk(i).BlobPixelIdxList;
+    BlobWeightedCentroids(FrameList) = BlobChunk(i).BlobWeightedCentroids;
+    BlobMinorAxisLength(FrameList) = BlobChunk(i).BlobMinorAxisLength;
+end
+
+%% outputs get saved to disk
+disp('saving Blobs to disk');
+save Blobs.mat BlobPixelIdxList BlobWeightedCentroids BlobMinorAxisLength;
 
 end

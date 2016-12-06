@@ -31,12 +31,12 @@ function MakeMaskSingleSession(movie)
 close all;
 
 % Get movie information. 
-[~,Xdim,Ydim,NumFrames] = loadframe(movie,1);
+[Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
 % step 1 build up a maximum projection, using every 5th frame
 newmax = zeros(Xdim,Ydim);
 for i = 1:5:NumFrames
-    temp = loadframe(movie,i);
+    temp = LoadFrames(movie,i);
     newmax(temp > newmax) = temp(temp > newmax);
 end
 

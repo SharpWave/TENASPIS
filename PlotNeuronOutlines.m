@@ -1,4 +1,4 @@
-function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
+function [x, y, color_use] = PlotNeuronOutlines(varargin)
 % [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,varargin)
 %
 % Plots outlines of each neuron's transients in the same color.
@@ -42,6 +42,12 @@ function [x, y, color_use] = PlotNeuronOutlines(PixelList,Xdim,Ydim,clusterlist,
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+load ('TransientROIs.mat','PixelIdxList');
+load ('SegmentationROIs.mat','NeuronPixelIdxList','NeuronROIidx','NeuronImage','Trans2ROI');
+load MovieDims.mat;
+clusterlist = Trans2ROI;
+PixelList = PixelIdxList;
+
 %% Process varargins
 new_fig = 1; % default - plots to new figure
 for j = 1:length(varargin)
@@ -80,15 +86,6 @@ if exist('max_proj','var')
     hold on
 end
 
-%% Initialize clusters to plot
-if (~exist('clusterlist','var'))
-    clusterlist = 1:length(PixelList);
-end
-
-if(~isrow(clusterlist))
-    clusterlist = clusterlist';
-end
-
 %% Start plotting transients by neuron
 
 colors = rand(length(clusterlist),3);
@@ -101,6 +98,10 @@ resol = 10; % Percent resolution for progress bar
 p = ProgressBar(resol);
 update_inc = round(length(clusterlist)/resol); % Get increments for updating ProgressBar
 for i = 1:length(clusterlist)
+    
+    if(~ismember(clusterlist(i),NeuronROIidx))
+        continue;
+    end
     
     % Update progress bar at set increment
     if round(i/update_inc) == (i/update_inc)
@@ -119,12 +120,19 @@ for i = 1:length(clusterlist)
     x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
     y{i} = b{1}(:,2);
     y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
-    plot(y{i},x{i},'Color',colors(clusterlist(i),:));hold on;
-    color_use(i,:) = colors(clusterlist(i),:); % Make each neuron's clusters a different color
+    plot(y{i},x{i},'Color',colors((clusterlist(i)),:));hold on;
+
 end
 p.stop;
+
+for i = 1:length(NeuronImage)
+    b = bwboundaries(NeuronImage{i},'noholes');
+    xn = b{1}(:,1);
+    yn = b{1}(:,2);
+    plot(yn,xn,'Color',colors(NeuronROIidx(i),:),'LineWidth',4);hold on;
+end
 hold off;
-axis equal;
+axis image;
 
 %% Plot scale bar if a new handle is not specified
 if new_fig == 1
