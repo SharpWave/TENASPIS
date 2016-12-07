@@ -76,7 +76,7 @@ path = pwd;
 
 %% Output File names.
 BPDFF = fullfile(path,'BPDFF.h5');              % DF/F normalized spatial band pass filtered movie
-LPDFF = fullfile(path,'LPDFF.h5');                % DF/F normalized Low pass filtered movie
+% LPDFF = fullfile(path,'LPDFF.h5');                % DF/F normalized Low pass filtered movie
 LowPassName = fullfile(path,'LowPass.h5');        % Low pass filtered movie
 BandPassName = fullfile(path,'BandPass.h5');      % High pass filtered movie
 
