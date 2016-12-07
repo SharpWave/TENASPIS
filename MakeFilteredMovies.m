@@ -40,6 +40,7 @@ function MakeFilteredMovies(MotCorrh5,varargin)
 %   LPDFF.h5: DF/F of the 3-pixel smoothed movie.
 
 %% Get Parameters and setup frame chunking
+Set_T_Params(MotCorrh5)
 [Xdim,Ydim,NumFrames,FrameChunkSize,HighPassRadius,LowPassRadius] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','HighPassRadius','LowPassRadius');
 
 

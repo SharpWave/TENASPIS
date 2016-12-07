@@ -1,18 +1,18 @@
-function [ output_args ] = MakeFakeMovie(seed)
+function [ output_args ] = MakeFakeMovie(seed,bothdim)
 % Makes a fake dataset
 
 
 rng(seed);
 %% Set Parameters
 
-Xdim = 200;
-Ydim = 200;
+Xdim = bothdim;
+Ydim = bothdim;
 
 NeuronRad = 5;
 MaxDist = 6;
 BorderBuff = 40;
 
-NeuronDensity = 0.005;
+NeuronDensity = 0.01;
 NumNeurons = round(NeuronDensity*(Xdim-2*BorderBuff)*(Ydim-2*BorderBuff));
 %NumNeurons = 150;
 NumFrames = 20000;
