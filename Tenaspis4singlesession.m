@@ -4,7 +4,7 @@ function Tenaspis4singlesession()
 % use MakeMaskSingleSession if needed
 
 % REQUIREMENT: first call MakeFilteredMovies on your cropped motion-corrected
-% movie
+% movie.  Next call MakeMaskSingleSession
 
 % set global parameter variable
 Set_T_Params('BPDFF.h5');
