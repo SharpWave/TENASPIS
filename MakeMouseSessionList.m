@@ -3631,6 +3631,22 @@ if strcmp(userstr,'Will')
     MD(i).Location = 'E:\Imaging Data\Endoscope\Polaris\07_09_2016\1 - Treadmill (left)';
 end
 MD(i).Notes = [];
+
+%% Mace
+
+i = i+1;
+MD(i).Animal = 'Mace';
+MD(i).Date = '10_05_2016';
+MD(i).Session = 1;
+MD(i).Env = 'DNMP';
+MD(i).Room = '2 Cu 201H';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'mouseimage')
+    MD(i).Location = 'H:\Rat mPFC\Mace\10_05_2016\Working T4';
+end
+MD(i).Notes = [];
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
