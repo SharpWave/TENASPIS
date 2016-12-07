@@ -47,7 +47,7 @@ figure;
 ToContinue = 'n';
 display('draw a circle around the area with good cells');
 while ~(strcmp(ToContinue,'y'))
-    neuronmask = roipoly(newmax);
+    neuronmask = roipoly(mat2gray(newmax));
     figure;imagesc(neuronmask);
     
     ToContinue = input('OK with the mask you just drew? [y/n] --->','s');
