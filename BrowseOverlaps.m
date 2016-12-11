@@ -1,6 +1,13 @@
 function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx,PlaceMaps )
 close all;
 
+% Don't plot PlaceMaps if not entered
+if nargin < 4
+    plot_PM = false;
+else
+    plot_PM = true;
+end
+
 % load basic shit
 load FinalOutput.mat;
 load BinSim.mat;
@@ -64,25 +71,28 @@ for i = 1:length(buddies)
     plot(b(:,2),b(:,1),'r');
 end
 
-subplot(length(buddies)+1,2,2);
-imagesc(PlaceMaps{NeuronID});axis image;colorbar;
-
-for i = 1:length(buddies)
-    fb(i+1) = subplot(length(buddies)+1,2,i*2+1);
-    temp = blankframe;
-    temp(CircMask{buddies(i)}) = BigFinalPixelAvg{buddies(i)};
-    imagesc(temp);colorbar;
-    max(NeuronAvg{buddies(i)}),
-    axis image;hold on;
-    try caxis([0 max(NeuronAvg{buddies(i)})]);end
-    [b] = bwboundaries(NeuronImage{buddies(i)});
-    b = b{1};
-    plot(b(:,2),b(:,1),'r');
-    [b] = bwboundaries(NeuronImage{NeuronID});
-    b = b{1};
-    plot(b(:,2),b(:,1),'g');
-    subplot(length(buddies)+1,2,i*2+2);
-    imagesc(PlaceMaps{buddies(i)});axis image;colorbar;
+% Plot PlaceMaps here 
+if plot_PM
+    subplot(length(buddies)+1,2,2);
+    imagesc(PlaceMaps{NeuronID});axis image;colorbar;
+    
+    for i = 1:length(buddies)
+        fb(i+1) = subplot(length(buddies)+1,2,i*2+1);
+        temp = blankframe;
+        temp(CircMask{buddies(i)}) = BigFinalPixelAvg{buddies(i)};
+        imagesc(temp);colorbar;
+        max(NeuronAvg{buddies(i)}),
+        axis image;hold on;
+        try caxis([0 max(NeuronAvg{buddies(i)})]);end
+        [b] = bwboundaries(NeuronImage{buddies(i)});
+        b = b{1};
+        plot(b(:,2),b(:,1),'r');
+        [b] = bwboundaries(NeuronImage{NeuronID});
+        b = b{1};
+        plot(b(:,2),b(:,1),'g');
+        subplot(length(buddies)+1,2,i*2+2);
+        imagesc(PlaceMaps{buddies(i)});axis image;colorbar;
+    end
 end
 
 linkaxes(fb,'xy');
