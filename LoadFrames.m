@@ -1,5 +1,5 @@
 function [frames] = LoadFrames(file,framenums)
-% [frames] = loadframe(file,framenums)
+% [frames] = LoadFrames(file,framenums)
 %
 % Loads frames from an h5 file
 %
