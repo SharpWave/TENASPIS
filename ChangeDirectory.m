@@ -52,11 +52,11 @@ end
 
 %Fetch Master Directory from upper level function(s). 
 global MasterDirectory;
-if isempty(MasterDirectory)
-    MasterDirectory = 'C:\MasterData';
-    disp('No ''MasterDirectory'' global variable detected.  Using default of ''C:\MasterData'' ')
-else
+if ~isempty(MasterDirectory)
     load(fullfile(MasterDirectory,'MasterDirectory.mat'));
+elseif isempty(MasterDirectory)
+    load('C:\MasterData\MasterDirectory.mat');
+    disp('''MasterDirectory'' global variable not found.  Using C:\MasterData')
 end
 
 %Concatenate fields for searching. 
