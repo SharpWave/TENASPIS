@@ -1,5 +1,5 @@
-function [BlobChunk] = SegmentFrameChunk(FrameList,PrepMask)
-%UNTITLED Summary of this function goes here
+function BlobChunk = SegmentFrameChunk(FrameList,PrepMask)
+%BlobChunk = SegmentFrameChunk(FrameList,PrepMask)
 %   Detailed explanation goes here
 
 FrameChunk = LoadFrames('BPDFF.h5',FrameList); 
@@ -10,6 +10,10 @@ BlobChunk.BlobWeightedCentroids = cell(1,NumFrames);
 BlobChunk.BlobMinorAxisLength = cell(1,NumFrames);
 
 for i = 1:NumFrames
-    [BlobChunk.BlobPixelIdxList{i},BlobChunk.BlobWeightedCentroids{i},BlobChunk.BlobMinorAxisLength{i}] = SegmentFrame(squeeze(FrameChunk(:,:,i)),PrepMask);
+    [BlobChunk.BlobPixelIdxList{i},...
+        BlobChunk.BlobWeightedCentroids{i},...
+        BlobChunk.BlobMinorAxisLength{i}] = ...
+        SegmentFrame(squeeze(FrameChunk(:,:,i)),PrepMask);
 end
 
+end
