@@ -1,5 +1,5 @@
 function ExtractBlobs(PrepMask)
-% ExtractBlobs(file,mask)
+% ExtractBlobs(PrepMask)
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
