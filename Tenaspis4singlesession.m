@@ -1,5 +1,5 @@
 function Tenaspis4singlesession()
-% Quick & dirty Tenaspis2
+% Quick & dirty Tenaspis4
 % Requires singlesessionmask.mat be present for automated runs
 % use MakeMaskSingleSession if needed
 

@@ -1,5 +1,6 @@
-function [] = Set_T_Params(moviefile)
-% function [] = Set_T_Params(moviefile)
+
+function Set_T_Params(moviefile)
+% function Set_T_Params(moviefile)
 %
 % Sets Tenaspis parameters.  Must be called at beginning of run
 %

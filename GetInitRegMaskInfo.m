@@ -76,7 +76,7 @@ AI(i).init_sess = 1;
 i = i+1;
 AI(i).animal = 'GCamp6f_45_treadmill';
 AI(i).init_date = '11_30_2015';
-AI(i).init_sess = 4;
+AI(i).init_sess = 10;
 
 i = i+1;
 AI(i).animal = 'GCamp6f_48_treadmill';

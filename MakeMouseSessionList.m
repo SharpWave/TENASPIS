@@ -3632,6 +3632,34 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+
+%% Will's full dataset on the SSD
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '11_30_2015';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '11:07:40.34 AM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_45\11_30_2015\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_01_2015';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '2:22:59.00 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_45\12_01_2015\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
 %% Mace
 
 i = i+1;
@@ -3659,8 +3687,6 @@ if strcmp(userstr,'mouseimage')
     MD(i).Location = 'H:\Rat mPFC\Mace\10_05_2016\Working';
 end
 MD(i).Notes = [];
-
-
 
 %% Compile session_ref
 
