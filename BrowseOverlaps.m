@@ -1,17 +1,36 @@
-function [ output_args ] = BrowseOverlaps(moviefile,NeuronID,cx,PlaceMaps )
-close all;
+function [ ] = BrowseOverlaps(moviefile,NeuronID,cx,PlaceMaps )
+% BrowseOverlaps(moviefile,NeuronID,cx,PlaceMaps )
+% Quality Control function for Tenaspis4.  Allows you to see why things 
+% that might look like transients from the raw traces are excluded.
+%
+% INPUTS:
+%   
+%   moviefile: full path to BPDFF.h5 movie file
+%
+%   NeuronID: neuron number to QC
+%
+%   cx (optional): limits for plotting frames - suggest [0 0.025], or 
+%   omit/leave empty to go with default)
+%
+%   PlaceMaps (optional): Output file from CalculatePlacefields.
+% 
 
-% Don't plot PlaceMaps if not entered
-if nargin < 4
-    plot_PM = false;
-else
-    plot_PM = true;
-end
+close all;
 
 % load basic shit
 load FinalOutput.mat;
 load BinSim.mat;
 load BigFinalPixelAvg.mat;
+
+% Parse out optional inputs
+if nargin < 4
+    plot_PM = false;
+    if nargin < 3 || isempty(cx)
+       cx = [0 max(NeuronAvg{NeuronID})];
+    end
+else
+    plot_PM = true;
+end
 
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 blankframe = zeros(Xdim,Ydim,'single');
