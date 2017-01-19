@@ -1,7 +1,7 @@
 function [varargout] = Get_T_Params(varargin)
 % [varargout] = Get_T_Params(varargin)
 %
-% loads Tenaspis parameters from global variable. Set_T_Params must be
+% Loads Tenaspis parameters from global variable. Set_T_Params must be
 % called before this in order to set this global variable
 %
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
