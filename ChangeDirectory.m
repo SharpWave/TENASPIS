@@ -12,11 +12,8 @@ function dirstr = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
 %   (optional)
 %       sess_num: Scalar, session number. 
 %
-%       change_dir_flag: Logical, whether you want to move to that
-%       directory. If change_dir_flag is not specified or is set to 1, this
-%       will change to the working directory. If change_dir_flag is set to
-%       0, dirstr will still be output but you will remain in the original
-%       directory.
+%       change_dir_flag: 1(default) = change to specified directory, 0 =
+%       stay in current directory
 %
 %   OUTPUT
 %       dirstr: String, directory corresponding to inputs.
@@ -49,14 +46,19 @@ end
 if ~exist('change_dir_flag','var')
     change_dir_flag = 1; 
 end
+persistent nomaster
 
 %Fetch Master Directory from upper level function(s). 
 global MasterDirectory;
 if ~isempty(MasterDirectory)
     load(fullfile(MasterDirectory,'MasterDirectory.mat'));
-elseif isempty(MasterDirectory)
+elseif isempty(MasterDirectory) % Fetch from default on C: drive with warning output
     load('C:\MasterData\MasterDirectory.mat');
-    disp('''MasterDirectory'' global variable not found.  Using C:\MasterData')
+    if nomaster
+        disp('''MasterDirectory'' global variable not found.  Using C:\MasterData')
+        disp('This warning will be suppressed for future calls to ChangeDirectory')
+    nomaster = true;
+    end
 end
 
 %Concatenate fields for searching. 
