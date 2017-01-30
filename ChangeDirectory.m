@@ -55,9 +55,8 @@ global MasterDirectory;
 if isempty(MasterDirectory)
     MasterDirectory = 'C:\MasterData';
     disp('No ''MasterDirectory'' global variable detected.  Using default of ''C:\MasterData'' ')
-else
-    load(fullfile(MasterDirectory,'MasterDirectory.mat'));
 end
+load(fullfile(MasterDirectory,'MasterDirectory.mat'));
 
 %Concatenate fields for searching. 
 animals = {MD.Animal};
