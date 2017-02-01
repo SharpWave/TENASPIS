@@ -1,5 +1,5 @@
-function dirstr = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
-% dirstr = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+function [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+% [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
 %
 % Changes to the appropriate working directory for the mouse in question,
 % and/or outputs that directory in dirstr.
@@ -20,6 +20,9 @@ function dirstr = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
 %
 %   OUTPUT
 %       dirstr: String, directory corresponding to inputs.
+%
+%       MD_out: copy of mouse database structure matching the input
+%       parameters.
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,6 +75,7 @@ elseif isempty(i)       %If no entries match, throw an error.
     disp('Directory not found! Check MakeMouseSessionList.'); 
 else                    %If one entry matches, get directory name and...
     dirstr = MD(i).Location; 
+    MD_out = MD(i);
     
     if change_dir_flag  %...if flagged, change directory. 
         cd(dirstr); 
