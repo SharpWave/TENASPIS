@@ -177,11 +177,11 @@ elseif use_neuron_masks == 1 % Create binary all neuron masks for registration
     ChangeDirectory(animal_name, base_date, base_session);
     load('FinalOutput.mat','PSAbool','NeuronImage')
     NumTransients = get_ntrans(PSAbool);
-    base_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
+    base_image = create_AllICmask(NeuronImage(NumTransients > min_trans_thresh)) > 0;
     ChangeDirectory(animal_name, reg_date, reg_session);
     load('FinalOutput.mat','PSAbool','NeuronImage')
     NumTransients = get_ntrans(PSAbool);
-    reg_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
+    reg_image = create_AllICmask(NeuronImage(NumTransients > min_trans_thresh)) > 0;
     
 end
 
