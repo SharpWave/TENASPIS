@@ -9,7 +9,7 @@ function Tenaspis4(md,varargin)
 %   session you designated in step 2.  You will be prompted early on to draw
 %   a mask around all the good cells (i.e. excluding any dead space and/or
 %   artifacts). You can then run all subsequent sessions without drawing a
-%   mask.
+%   mask, e.g. Tenaspis4(md)
 %
 %   INPUTS
 %       md: session entry.
