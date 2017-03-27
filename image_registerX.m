@@ -81,8 +81,6 @@ multi_growth = 1.05; % optimizer.GrowthFactor = 1.05 default
 multi_epsilon = 1.05e-6; % optimizer.Epsilon = 1.05e-6 default
 multi_init_rad = 6.25e-4; % optimizer.InitialRadius = 6.25e-3 default
 
-FigNum = 1; % Start off figures at this number
-
 % Minimum number of transients a neuron must have in order to be included
 % when using neuron masks to do registration
 min_trans_thresh = 3; 
@@ -206,8 +204,13 @@ elseif strcmp(configname,'multimodal')
 end
 
 % Run registration
-disp('Running Registration...');
-tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
+if ~manual_reg_enable
+    disp('Running Registration...');
+    tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
+elseif manual_reg_enable
+    tform = affine2d(eye(3));
+end
+
 %% Step 4: Apply registrations and plot out for qc purposes
 % Create no registration variable
 tform_noreg = tform;
@@ -229,10 +232,10 @@ moving_gray_noreg = imwarp(reg_image_gray,tform_noreg,'OutputView',...
 % Plot it out for comparison
 if ~suppress_output
     figure
-    h_base_landmark = subplot(2,2,1);
+    subplot(2,2,1);
     imagesc(base_image); colormap(gray); colorbar
     title('Base Image');
-    h_reg_landmark = subplot(2,2,2);
+    subplot(2,2,2);
     imagesc(reg_image); colormap(gray); colorbar
     title('Image to Register');
     subplot(2,2,3)
@@ -269,6 +272,7 @@ end
 %     use_manual_adjust = 0;
 % end
 while strcmpi(manual_flag,'y')
+    manh = figure;
     manual_type = input('Do you wish to adjust by landmarks or none? (l/n): ','s');
     while ~(strcmpi(manual_type,'l') || strcmpi(manual_type,'n'))
         manual_type = input('Do you wish to adjust by landmarks or my cell masks or none? (l/n): ','s');
@@ -278,6 +282,12 @@ while strcmpi(manual_flag,'y')
         if strcmpi(manual_type,'l')
             reg_type = 'landmark';
             figure(1)
+            h_base_landmark = subplot(1,2,1);
+            load(fullfile(base_path,'FinalOutput.mat'),'NeuronImage')
+            imagesc(create_AllICmask(NeuronImage)); title('Base Session neurons')
+            h_reg_landmark = subplot(1,2,2);
+            load(fullfile(reg_path,'FinalOutput.mat'),'NeuronImage')
+            imagesc(create_AllICmask(NeuronImage)); title('Reg Session neurons')
             T_manual = manual_reg(h_base_landmark, h_reg_landmark, reg_type);
         elseif strcmpi(manual_type,'n')
             T_manual = eye(3);
@@ -288,15 +298,14 @@ while strcmpi(manual_flag,'y')
     tform_manual.T = T_manual;
     moving_reg_manual = imwarp(reg_image,tform_manual,'OutputView',imref2d(size(base_image)),'InterpolationMethod','nearest');
    
-    FigNum = FigNum + 1;
-    figure(FigNum)
+    figure(manh)
     imagesc(abs(moving_reg_manual - base_image)); colormap(gray); colorbar
     title('Registered Image - Base Image after manual adjust')
     
     
     manual_flag = input('Do you wish to manually adjust again? (y/n)', 's');
 %     use_manual_adjust = 1;
-    
+    tform = tform_manual;
 end
 
 %% Step 6: Get index to pixels that are zeroed out as a result of registration
