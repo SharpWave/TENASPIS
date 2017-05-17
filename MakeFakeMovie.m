@@ -18,9 +18,9 @@ NumNeurons = round(NeuronDensity*(Xdim-2*BorderBuff)*(Ydim-2*BorderBuff));
 NumFrames = 20000;
 RiseLen = 12;
 decrate = 0.965;
-pAct = 0.001;
+pAct = 0.0015;
 FilterDev = 7;
-save FakeParams.mat Xdim Ydim NeuronRad MaxDist BorderBuff NumNeurons NumFrames RiseLen decrate pAct FilterDev seed;
+save FakeParams.mat Xdim Ydim NeuronRad NeuronDensity MaxDist BorderBuff NumNeurons NumFrames RiseLen decrate pAct FilterDev seed;
 
 %% Set up ROIs
 RiseInc = 1/RiseLen;
@@ -104,7 +104,7 @@ for i = 1:NumNeurons
             continue;
         else
             TraceMat(i,CurrFrame) = TraceMat(i,CurrFrame-1)*decrate;
-            PSAbool(i,CurrFrame) = true;
+            %PSAbool(i,CurrFrame) = true;
             CurrFrame = CurrFrame + 1;
         end
     end
@@ -121,8 +121,10 @@ for i = 1:NumNeurons
     p.progress;
 end
 p.stop;
-figure(1);imagesc(BigAvg);
 
+
+% figure(1);imagesc(BigAvg);
+% 
 blankframe = zeros(Xdim,Ydim,'single');
 figure;
 % part 2: rendering
