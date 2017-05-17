@@ -40,6 +40,8 @@ else
 end
 NextNewIdx = InitNumBlobs+1;
 
+FrameList = cell(1,InitNumBlobs);
+ObjList = cell(1,InitNumBlobs);
 for i = 1:InitNumBlobs
     FrameList{i} = 1;
     ObjList{i} = i;

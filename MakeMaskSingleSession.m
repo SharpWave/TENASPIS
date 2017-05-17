@@ -40,20 +40,20 @@ for i = 1:5:NumFrames
     newmax(temp > newmax) = temp(temp > newmax);
 end
 
+%% Draw mask. 
 figure;
-%imagesc(newmax);colormap gray;axis equal;
-
-% Draw mask. 
 ToContinue = 'n';
-display('draw a circle around the area with good cells');
+disp('draw a circle around the area with good cells');
 while ~(strcmp(ToContinue,'y'))
-    neuronmask = roipoly(newmax);
-    figure;imagesc(neuronmask);
+    [neuronmask, xi, yi] = roipoly(imadjust(newmax));
+    figure;imagesc_gray(imadjust(newmax));
+    hold on
+    plot(xi, yi,'r')
     
     ToContinue = input('OK with the mask you just drew? [y/n] --->','s');
 end
 
-%Save.
+%% Save.
 save singlesessionmask.mat neuronmask;
 
 end

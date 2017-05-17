@@ -9,10 +9,12 @@ function [] = InterpretTraces(Todebug)
 %   1) average value of pixels in each segmentation-identified ROI
 %   2) fluorescence traces: mean intensity in each ROI for each frame
 %       - use amplitude to identify times when there may be a transient
-%   3) correlation r between those average pixel values and each frame of the movie
+%   3) correlation r between those average pixel values and each frame of
+%   the movie
 %       - establishes a baseline correlation from segmentation transients,
-%         and determines whether transients identified via amplitude are
-%         OK or not based on whether the correlation is significant and sufficiently high
+%         and determines whether transients identified via amplitude are OK
+%         or not based on whether the correlation is significant and
+%         sufficiently high
 %
 % B. Determine the rising slope(s) of each transient identified in A
 %   - putative spiking activity occurs during rising phase of calcium
@@ -404,6 +406,7 @@ NeuronTraces.DFDTtrace = NeuronTraces.DFDTtrace(ActOK,:);
 NeuronTraces.CorrR = NeuronTraces.CorrR(ActOK,:);
 NeuronTraces.CorrP = NeuronTraces.CorrP(ActOK,:);
 
-save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','BinSim');
+save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList',...
+    'NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','BinSim');
 
 

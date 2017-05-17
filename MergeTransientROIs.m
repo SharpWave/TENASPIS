@@ -20,7 +20,7 @@ function [] = MergeTransientROIs()
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-display('merging transient ROIs into neuron ROIs');
+disp('merging transient ROIs into neuron ROIs');
 
 %% load parameters
 [DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff,MinNumTransients] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff','MinNumTransients');
@@ -112,6 +112,7 @@ nTrans = nTrans(OKcount);
 NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
 disp('saving outputs');
-save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
+save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList ...
+    NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
     
 end

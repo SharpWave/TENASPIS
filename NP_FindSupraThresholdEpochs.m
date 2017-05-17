@@ -67,7 +67,7 @@ NumEpochs = size(onsets,2);                 %Number of epochs.
 if NumEpochs > 0    %If there is ever a suprathreshold event...
     ThreshEpochs(:,1) = onsets;          
     
-    if size(offsets,2) == NumEpochs; 
+    if size(offsets,2) == NumEpochs
         ThreshEpochs(:,2) = offsets;        
     else    %Handles the case for when the trace is still active when the recording cuts off. 
         ThreshEpochs(1:size(offsets,2),2) = offsets;

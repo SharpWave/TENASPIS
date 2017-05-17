@@ -76,7 +76,7 @@ AI(i).init_sess = 1;
 i = i+1;
 AI(i).animal = 'GCamp6f_45_treadmill';
 AI(i).init_date = '11_30_2015';
-AI(i).init_sess = 4;
+AI(i).init_sess = 10;
 
 i = i+1;
 AI(i).animal = 'GCamp6f_48_treadmill';
@@ -116,7 +116,22 @@ AI(i).init_sess = 1;
 i = i+1;
 AI(i).animal = 'Polaris';
 AI(i).init_date = '06_21_2016';
+AI(i).init_sess = 1;
+
+i = i+1;
+AI(i).animal = 'Bellatrix_AK';
+AI(i).init_date = '11_07_2016';
 AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Polaris_AK';
+AI(i).init_date = '11_09_2016';
+AI(i).init_sess = 2; 
+
+i = i+1;
+AI(i).animal = 'G50_AK';
+AI(i).init_date = '03_13_2017';
+AI(i).init_sess = 2; 
 
 % For each animal you have, add onto the structure array: 
 % i = i+1;
