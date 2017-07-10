@@ -1,4 +1,4 @@
-function ExtractBlobs(PrepMask)
+function ExtractBlobs(PrepMask,alt_param_file)
 % ExtractBlobs(file,mask)
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -33,11 +33,17 @@ if ~exist('PrepMask','var')
     PrepMask = ones(Xdim,Ydim);
 end
 
+if nargin < 2
+    alt_param_file = '';
+end
+
 %% Find the blobs in each frame
 p = ProgressBar(NumChunks); % Initialize progress bar
 
 parfor i = 1:NumChunks
     Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+    if ~isempty(alt_param_file); feval(alt_param_file); end
+        
     FrameList = ChunkStarts(i):ChunkEnds(i);
        
     BlobChunk(i) = SegmentFrameChunk(FrameList,PrepMask);

@@ -3730,6 +3730,224 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+%% Bellatrix for NO project
+Bellatrix(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '11_07_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\11_07_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '11_09_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\11_09_2016\Arena';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '11_10_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\11_10_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '11_11_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\11_11_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '11_28_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\11_28_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '11_30_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\11_30_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '12_01_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\12_01_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix_AK';
+MD(i).Date = '12_02_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Bellatrix_AK\12_02_2016';
+end
+MD(i).Notes = [];
+
+Bellatrix(2) = i;
+
+%% Polaris
+Polaris(1) = i+1;
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '11_07_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\11_07_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '11_09_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\11_09_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '11_10_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\11_10_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '11_11_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\11_11_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '11_28_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\11_28_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '11_30_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\11_30_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '12_01_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\12_01_2016';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris_AK';
+MD(i).Date = '12_02_2016';
+MD(i).Session = 2;
+MD(i).Env = 'NO';
+MD(i).Room = '2 Cu 201A';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'natlaptop')
+    MD(i).Location = 'C:\Users\Nat\Documents\BU\Imaging\Working\GCamp Mice\NO Data\Polaris_AK\12_02_2016';
+end
+MD(i).Notes = [];
+
+Polaris(2) = i;
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
@@ -3739,6 +3957,8 @@ session_ref.G44 = G44;
 session_ref.G45 = G45;
 session_ref.G46 = G46;
 session_ref.G48 = G48;
+session_ref.Bellatrix = Bellatrix;
+session_ref.Polaris = Polaris;
 
 %%
 save MasterDirectory.mat MD;

@@ -175,7 +175,6 @@ for i = 1:length(rp)
         BlobMinorAxisLength(i) = single(temp_props.MinorAxisLength);
     end
 end
-
 %% Keep only blobs passing the shape, size, and peak criteria
 
 BlobPixelIdxList = BlobPixelIdxList(GoodBlob);

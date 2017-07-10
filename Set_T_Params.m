@@ -25,7 +25,7 @@ clear T_PARAMS;
 global T_PARAMS;
 
 %% The dimensions of the movie - load from .mat file if possible, to save time when this function is called by parfor workers
-if (~exist('MovieDims.mat','file'))
+if (~exist(fullfile(pwd,'MovieDims.mat'),'file'))
     info = h5info(moviefile,'/Object');
     [T_PARAMS.Xdim,Xdim] = deal(info.Dataspace.Size(1));
     [T_PARAMS.Ydim,Ydim] = deal(info.Dataspace.Size(2));
