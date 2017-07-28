@@ -1,4 +1,4 @@
-function [ output_args ] = MakeFakeMovie(seed,bothdim)
+function [ output_args ] = MakeFakeMovie(seed,bothdim,NeuronDensity,pAct,FilterDev)
 % Makes a fake dataset
 
 
@@ -12,14 +12,14 @@ NeuronRad = 5;
 MaxDist = 6;
 BorderBuff = 40;
 
-NeuronDensity = 0.01;
+%NeuronDensity = 0.01;
 NumNeurons = round(NeuronDensity*(Xdim-2*BorderBuff)*(Ydim-2*BorderBuff));
 %NumNeurons = 150;
 NumFrames = 20000;
-RiseLen = 12;
-decrate = 0.965;
-pAct = 0.0015;
-FilterDev = 7;
+RiseLen = 22;
+decrate = 0.982;
+%pAct = 0.001;
+%FilterDev = 7; % FilterDev default param is 7
 save FakeParams.mat Xdim Ydim NeuronRad NeuronDensity MaxDist BorderBuff NumNeurons NumFrames RiseLen decrate pAct FilterDev seed;
 
 %% Set up ROIs
@@ -135,7 +135,7 @@ for i = 1:NumFrames
     temp = blankframe;
     % 2. add neurons
     for j = 1:NumNeurons
-        temp(CircMask{j}) = TraceMat(j,i);
+        temp(CircMask{j}) = temp(CircMask{j})+TraceMat(j,i);
 
     end
     
@@ -144,7 +144,7 @@ for i = 1:NumFrames
     % 3. add background
     temp = temp+0.2;
     
-    temp = temp+rand(Xdim,Ydim)*0.05;
+    %temp = temp+rand(Xdim,Ydim)*0.05;
     
     
     
