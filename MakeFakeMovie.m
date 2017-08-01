@@ -1,26 +1,26 @@
-function [ output_args ] = MakeFakeMovie(seed)
+function [ output_args ] = MakeFakeMovie(seed,bothdim,NeuronDensity,pAct,FilterDev)
 % Makes a fake dataset
 
 
 rng(seed);
 %% Set Parameters
 
-Xdim = 200;
-Ydim = 200;
+Xdim = bothdim;
+Ydim = bothdim;
 
 NeuronRad = 5;
 MaxDist = 6;
 BorderBuff = 40;
 
-NeuronDensity = 0.005;
+%NeuronDensity = 0.01;
 NumNeurons = round(NeuronDensity*(Xdim-2*BorderBuff)*(Ydim-2*BorderBuff));
 %NumNeurons = 150;
 NumFrames = 20000;
-RiseLen = 12;
-decrate = 0.965;
-pAct = 0.001;
-FilterDev = 7;
-save FakeParams.mat Xdim Ydim NeuronRad MaxDist BorderBuff NumNeurons NumFrames RiseLen decrate pAct FilterDev seed;
+RiseLen = 22;
+decrate = 0.982;
+%pAct = 0.001;
+%FilterDev = 7; % FilterDev default param is 7
+save FakeParams.mat Xdim Ydim NeuronRad NeuronDensity MaxDist BorderBuff NumNeurons NumFrames RiseLen decrate pAct FilterDev seed;
 
 %% Set up ROIs
 RiseInc = 1/RiseLen;
@@ -104,7 +104,7 @@ for i = 1:NumNeurons
             continue;
         else
             TraceMat(i,CurrFrame) = TraceMat(i,CurrFrame-1)*decrate;
-            PSAbool(i,CurrFrame) = true;
+            %PSAbool(i,CurrFrame) = true;
             CurrFrame = CurrFrame + 1;
         end
     end
@@ -121,8 +121,10 @@ for i = 1:NumNeurons
     p.progress;
 end
 p.stop;
-figure(1);imagesc(BigAvg);
 
+
+% figure(1);imagesc(BigAvg);
+% 
 blankframe = zeros(Xdim,Ydim,'single');
 figure;
 % part 2: rendering
@@ -133,7 +135,7 @@ for i = 1:NumFrames
     temp = blankframe;
     % 2. add neurons
     for j = 1:NumNeurons
-        temp(CircMask{j}) = TraceMat(j,i);
+        temp(CircMask{j}) = temp(CircMask{j})+TraceMat(j,i);
 
     end
     
@@ -142,7 +144,7 @@ for i = 1:NumFrames
     % 3. add background
     temp = temp+0.2;
     
-    temp = temp+rand(Xdim,Ydim)*0.05;
+    %temp = temp+rand(Xdim,Ydim)*0.05;
     
     
     
