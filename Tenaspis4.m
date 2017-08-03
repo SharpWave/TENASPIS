@@ -101,8 +101,12 @@ function Tenaspis4(md,varargin)
     
 %% Make mask and register it.
     %Get directory for initial mask. 
-    [initDate,initSession] = GetInitRegMaskInfo(md.Animal);
-    initDir = ChangeDirectory(md.Animal,initDate,initSession); 
+    [initDate,initSession,initExist] = GetInitRegMaskInfo(md.Animal);
+    if initExist
+        initDir = ChangeDirectory(md.Animal,initDate,initSession);
+    elseif ~initExist
+        initDir = md.Location;
+    end
     
     if maskExist==0 || manualmask
         disp('Mask does not exist or manual mask triggered. Draw mask now.');

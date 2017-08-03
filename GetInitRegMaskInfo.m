@@ -1,12 +1,12 @@
-function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
-% [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
+function [init_date,init_sess, init_exist_bool] =  GetInitRegMaskInfo(animal_id)
+% [init_date,init_sess,init_exist_bool] =  GetInitRegMaskInfo(animal_id)
 %
 %   Gets the date and session number of the initial session for the animal
 %   specified as animal_id. This session will contain the minimum
 %   projection of the initial recording to which future recording sessions
 %   will be aligned. Animal entries and their respective initial dates and
 %   session numbers must be manually edited in this function prior to
-%   running it. 
+%   running it.
 %
 %   INPUT
 %       animal_id: String, ID of the animal. Must be unique and must match one
@@ -17,6 +17,9 @@ function [init_date,init_sess] =  GetInitRegMaskInfo(animal_id)
 %       MM_DD_YYYY. 
 %
 %       init_sess: Scalar, initial session number. 
+%
+%       init_exist_bool: boolean - true = init_date and init_sess for the
+%       animal_id entered exists, false = init_date and init_sess not fo
 %  
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +147,16 @@ all_ids = {AI.animal};                      %Cell array of all names.
 ind = find(strcmpi(animal_id,all_ids));     %Find name that matches input.
 
 %Set outputs. 
-init_date = AI(ind).init_date;               
-init_sess = AI(ind).init_sess;
-        
+if length(ind) == 1
+    init_date = AI(ind).init_date;
+    init_sess = AI(ind).init_sess;
+    init_exist_bool = true;
+elseif isempty(ind)
+    init_date = nan;
+    init_sess = nan;
+    init_exist_bool = false;
+elseif length(ind) == 2
+    error('Duplicate entries for specified animal in GetInitMaskInfo')
+end
+
 end
