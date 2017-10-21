@@ -3730,7 +3730,7 @@ MD(i).Date = '04_21_2016';
 MD(i).Session = 10;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '12:48:06.95 PM';
+MD(i).RecordStartTime = '12:48:07.45 PM';
 MD(i).Pix2CM = 0.1256;
 if strcmp(userstr,'Will')
     MD(i).Location = 'U:\Treadmill project\GCaMP6f_48\04_21_2016\1 - Treadmill (right)';
@@ -3834,7 +3834,7 @@ MD(i).Date = '07_07_2016';
 MD(i).Session = 10;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '6:28:13.34 PM';
+MD(i).RecordStartTime = '6:28:13.84 PM';
 MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
     MD(i).Location = 'U:\Treadmill project\Polaris\07_07_2016\1 - Treadmill (left)';
@@ -3847,7 +3847,7 @@ MD(i).Date = '07_08_2016';
 MD(i).Session = 10;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '4:38:16.86 PM';
+MD(i).RecordStartTime = '4:38:16.61  PM';
 MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
     MD(i).Location = 'U:\Treadmill project\Polaris\07_08_2016\1 - Treadmill (left)';
@@ -3860,10 +3860,23 @@ MD(i).Date = '07_09_2016';
 MD(i).Session = 10;
 MD(i).Env = 'Treadmill Loop';
 MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '6:50:27.53 PM';
+MD(i).RecordStartTime = '6:50:26.53 PM';
 MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
     MD(i).Location = 'U:\Treadmill project\Polaris\07_09_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Test';
+MD(i).Date = '07_09_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:50:26.53 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Test';
 end
 MD(i).Notes = [];
 
