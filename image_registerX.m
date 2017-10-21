@@ -1,8 +1,7 @@
-
-function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
-    base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
+function [RegistrationInfoX, unique_filename] = image_registerX(animal_name, ...
+    base_date, base_session, reg_date, reg_session, varargin)
 % RegistrationInfoX = image_registerX(mouse_name, base_date, base_session, ...
-%   reg_date, reg_session, manual_reg_enable, varargin)
+%   reg_date, reg_session, ...)
 %
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,8 +26,8 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 % this fuction allows you to register a given
 % recording session (the registered session) to a previous sesison ( the
 % base session) to track neuronal activity from session to session.  It
-% also outputs a combined set of ICs so that you can register a given
-% session to multiple previous sessions.  
+% also outputs a combined set of ROIs so that you can register a given
+% session to multiple subsequent sessions.  
 %
 % INPUT VARIABLES (if none are entered, you will be prompted to enter in
 % the files to register manually)
@@ -45,7 +44,9 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 % using in conjuction with mask_multi_image_reg.
 %
 % manual_reg_enable: 0 if you want to disallow manually adjusting the
-%               registration, 1 if you want to allow it (default)
+%               registration, 1 if you want to allow it (default) - Note
+%               that this has not been extensively tested - use at your own
+%               risk!
 %
 % varargins
 %
@@ -53,27 +54,12 @@ function [RegistrationInfoX, unique_filename] = image_registerX(mouse_name, ...
 %   minimum projection.  0 = default
 %
 % OUTPUTS
-% cell_map:     cell array with each row corresponding to a given neuron,
-%               and each column corresponding to a recording session.  The value
-%               corresponds to the GoodICf number from that session for that neuron.
 %
-% cell_map_header: contains info for each column in cell_map
-%
-% GoocICf_comb: combines ICs from the base file and the registered file.
-%               Use this file as the base file for future registrations of
-%               a file to multiple previous sessions.
-%
-% RegistrationInfoX : saves the location of the base file, the registered
+% RegistrationInfoX: saves the location of the base file, the registered
 %                file, the transform applied, and statistics about the
 %                transform
-
-% To do:
-
-% - Try this out for images that are significantly different, e.g. rotated
-% 180 degrees...
-% - Automatically fill in expected neuron for base mapping
-
-close all;
+%
+% unique_filename: the filename under which RegistrationInfoX is saved
 
 %% User inputs - if set the same the function should run without any user input during the mapping portion
 
@@ -95,23 +81,33 @@ multi_growth = 1.05; % optimizer.GrowthFactor = 1.05 default
 multi_epsilon = 1.05e-6; % optimizer.Epsilon = 1.05e-6 default
 multi_init_rad = 6.25e-4; % optimizer.InitialRadius = 6.25e-3 default
 
-FigNum = 1; % Start off figures at this number
-
 % Minimum number of transients a neuron must have in order to be included
 % when using neuron masks to do registration
 min_trans_thresh = 3; 
 %% Step 0: Get varargins
 
-use_neuron_masks = 0; % default
-name_append = ''; % default
-for j = 1:length(varargin)
-    if strcmpi('use_neuron_masks',varargin{j})
-       use_neuron_masks = varargin{j+1}; 
-       if use_neuron_masks == 1
-           name_append = '_regbyneurons';
-       end
-    end
-end
+% animal_name, base_date, base_session, reg_date, reg_session, manual_reg_enable, varargin)
+
+p = inputParser;
+p.addRequired('animal_name', @ischar);
+p.addRequired('base_date', @(a) ischar(a) && length(a) == 10);
+p.addRequired('base_session', @isnumeric);
+p.addRequired('reg_date', @(a) ischar(a) && length(a) == 10);
+p.addRequired('reg_session', @isnumeric);
+p.addOptional('manual_reg_enable', false, @(a) islogical(a) || (isnumeric(a) ...
+    && a == 0 || a == 1));
+p.addParameter('use_neuron_masks', false, @(a) islogical(a) || (isnumeric(a) ...
+    && a == 0 || a == 1));
+p.addParameter('name_append', '', @ischar);
+p.addParameter('suppress_output', false, @(a) islogical(a) || (isnumeric(a) ...
+    && a == 0 || a == 1));
+p.parse(animal_name, base_date, base_session, reg_date, reg_session,...
+    varargin{:});
+
+manual_reg_enable = p.Results.manual_reg_enable;
+use_neuron_masks = p.Results.use_neuron_masks;
+name_append = p.Results.name_append;
+suppress_output = p.Results.suppress_output;
 
 %% Step 1: Select images to compare and import the images
 
@@ -123,29 +119,31 @@ if nargin == 0 % Prompt user to manually enter in files to register if no inputs
     [reg_filename, reg_path, ~] = uigetfile('*.tif',...
         'Pick the image file to register with the base file: ',[base_path base_filename]);
     register_file = [reg_path reg_filename];
-    [ mouse_name, reg_date, reg_session ] = get_name_date_session(reg_path);
+    [ animal_name, reg_date, reg_session ] = get_name_date_session(reg_path);
 else
     % Create strings to point to minimum projection files in each working
     % directory for registration
-    base_path = ChangeDirectory(mouse_name, base_date, base_session, 0);
+    base_path = ChangeDirectory(animal_name, base_date, base_session, 0);
     base_file = fullfile(base_path,'ICmovie_min_proj.tif');
-    reg_path = ChangeDirectory(mouse_name, reg_date, reg_session, 0);
+    reg_path = ChangeDirectory(animal_name, reg_date, reg_session, 0);
     register_file = fullfile(reg_path,'ICmovie_min_proj.tif');
 
 end
 
-%% Define unique filename for file you are registering to that you will
+%% Step 1b: Define unique filename for file you are registering to that you will
 % eventually save in the base path
-unique_filename = fullfile(base_path,['RegistrationInfo-' mouse_name '-' reg_date '-session' ...
+unique_filename = fullfile(base_path,['RegistrationInfo-' animal_name '-' reg_date '-session' ...
         num2str(reg_session) name_append '.mat']);
 
-%% Step 1a: Skip out on everything if registration is already done!
+%% Step 2a: Skip out on everything if registration is already done!
 try
     load(unique_filename);
-    disp('REGISTRATION ALREADY RAN!! Skipping this step');
+    if ~suppress_output % Don't spit out if flagged
+        disp('IMAGE REGISTRATION ALREADY RAN!! Skipping this step');
+    end
 catch
 
-%% Step 2a: Get Images and pre-process - Note that this step is vital as it helps
+%% Step 2b: Get Images and pre-process - Note that this step is vital as it helps
 % correct for differences in overall illumination or contrast between
 % sessions.
 
@@ -159,36 +157,35 @@ reg_image_gray = uint16(imread(register_file));
 reg_image_untouch = reg_image_gray;
 
 if use_neuron_masks == 0 % Use minimum projection
-    bg_base = imopen(base_image_gray,strel('disk',disk_size));
-    base_image_gray = base_image_gray - bg_base;
-    base_image_gray = imadjust(base_image_gray);
-    level = graythresh(base_image_gray);
-    base_image_bw = im2bw(base_image_gray,level);
-    base_image_bw = bwareaopen(base_image_bw,pixel_thresh,8);
+    bg_base = imopen(base_image_gray,strel('disk',disk_size)); % remove noise/smooth via morphological opening 
+    base_image_gray = base_image_gray - bg_base; % create image emphasizing contrast between blood vessels and areas of high expression
+    base_image_gray = imadjust(base_image_gray); % re-adjust pixel intensity values
+    base_image_bw = imbinarize(base_image_gray); % threshold it
+    base_image_bw = bwareaopen(base_image_bw,pixel_thresh,8); % eliminate noise / isolated pixels above threshold
     base_image = double(base_image_bw);
     
     bg_reg = imopen(reg_image_gray,strel('disk',disk_size));
     reg_image_gray = reg_image_gray - bg_reg;
     reg_image_gray = imadjust(reg_image_gray);
-    level = graythresh(reg_image_gray);
-    reg_image_bw = im2bw(reg_image_gray,level);
+    reg_image_bw = imbinarize(reg_image_gray);
     reg_image_bw = bwareaopen(reg_image_bw,pixel_thresh,8);
     reg_image = double(reg_image_bw);
+    
 elseif use_neuron_masks == 1 % Create binary all neuron masks for registration
-    ChangeDirectory(mouse_name, base_date, base_session);
-    load('MeanBlobs','BinBlobs')
-    load('ProcOut.mat','NumTransients')
-    base_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
-    ChangeDirectory(mouse_name, reg_date, reg_session);
-    load('MeanBlobs','BinBlobs')
-    load('ProcOut.mat','NumTransients')
-    reg_image = create_AllICmask(BinBlobs(NumTransients > min_trans_thresh)) > 0;
+    ChangeDirectory(animal_name, base_date, base_session);
+    load('FinalOutput.mat','PSAbool','NeuronImage')
+    NumTransients = get_ntrans(PSAbool);
+    base_image = create_AllICmask(NeuronImage(NumTransients > min_trans_thresh)) > 0;
+    ChangeDirectory(animal_name, reg_date, reg_session);
+    load('FinalOutput.mat','PSAbool','NeuronImage')
+    NumTransients = get_ntrans(PSAbool);
+    reg_image = create_AllICmask(NeuronImage(NumTransients > min_trans_thresh)) > 0;
     
 end
 
 
 
-%% Step 2b: Run Registration Functions, get transform
+%% Step 3: Run Registration Functions, get transform
 
 [optimizer, metric] = imregconfig(configname);
 if strcmp(configname,'monomodal') % Adjust defaults if desired.
@@ -207,9 +204,14 @@ elseif strcmp(configname,'multimodal')
 end
 
 % Run registration
-disp('Running Registration...');
-tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
-%%
+if ~manual_reg_enable
+    disp('Running Registration...');
+    tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
+elseif manual_reg_enable
+    tform = affine2d(eye(3));
+end
+
+%% Step 4: Apply registrations and plot out for qc purposes
 % Create no registration variable
 tform_noreg = tform;
 tform_noreg.T = eye(3);
@@ -221,43 +223,38 @@ moving_reg = imwarp(reg_image,tform,'OutputView',imref2d(size(base_image)),...
 moving_reg_gray = imwarp(reg_image_gray,tform,'OutputView',...
    base_ref,'InterpolationMethod','nearest');
 
-% Apply NO registrtion to 2nd session for comparison
+% Apply NO registration to 2nd session for comparison
 moving_noreg = imwarp(reg_image,tform_noreg,'OutputView',imref2d(size(base_image)),...
     'InterpolationMethod','nearest');
 moving_gray_noreg = imwarp(reg_image_gray,tform_noreg,'OutputView',...
     base_ref,'InterpolationMethod','nearest');
 
 % Plot it out for comparison
-figure
-h_base_landmark = subplot(2,2,1);
-imagesc(base_image); colormap(gray); colorbar
-title('Base Image');
-h_reg_landmark = subplot(2,2,2);
-imagesc(reg_image); colormap(gray); colorbar
-title('Image to Register');
-subplot(2,2,3)
-imagesc(moving_reg); colormap(gray); colorbar
-title('Registered Image')
-subplot(2,2,4)
-imagesc((moving_reg - base_image)); colormap(gray); colorbar
-title('Registered Image - Base Image')
+if ~suppress_output
+    figure
+    subplot(2,2,1);
+    imagesc(base_image); colormap(gray); colorbar
+    title('Base Image');
+    subplot(2,2,2);
+    imagesc(reg_image); colormap(gray); colorbar
+    title('Image to Register');
+    subplot(2,2,3)
+    imagesc(moving_reg); colormap(gray); colorbar
+    title('Registered Image')
+    subplot(2,2,4)
+    imagesc((moving_reg - base_image)); colormap(gray); colorbar
+    title('Registered Image - Base Image')
+    
+    figure
+    subplot(1,2,1)
+    imagesc_gray(base_image_gray - moving_gray_noreg);
+    title('Base Image - Unregistered 2nd image');
+    subplot(1,2,2)
+    imagesc_gray(base_image_gray - moving_reg_gray);
+    title('Base Image - Registered Image');
+end
 
-figure
-subplot(1,2,1)
-imagesc_gray(base_image_gray - moving_gray_noreg);
-title('Base Image - Unregistered 2nd image');
-subplot(1,2,2)
-imagesc_gray(base_image_gray - moving_reg_gray);
-title('Base Image - Registered Image');
-
-%%
-
-% FigNum = FigNum + 1;
-
-%% Step 3: Take Good ICs from registered image and overlay them onto base image
-
-
-%% Step 3A: Give option to adjust manually if this doesn't work...
+%% Step 5: Give option to adjust manually if this doesn't work... NOTE that this is not very well supported...
 disp('Registration Stats:')
 disp(['X translation = ' num2str(tform.T(3,1)) ' pixels.'])
 disp(['Y translation = ' num2str(tform.T(3,2)) ' pixels.'])
@@ -265,6 +262,9 @@ disp(['Rotation = ' num2str(mean([asind(tform.T(2,1)) acosd(tform.T(1,1))])) ' d
 
 if ~exist('manual_reg_enable','var') || manual_reg_enable == 1
     manual_flag = input('Do you wish to manually adjust this registration? (y/n): ','s');
+    if strcmpi(manual_flag,'y')
+        disp('Manual correction is not updated/debugged.  Use at your own risk!')
+    end
 elseif manual_reg_enable == 0
     manual_flag = 'n';
 end
@@ -272,6 +272,7 @@ end
 %     use_manual_adjust = 0;
 % end
 while strcmpi(manual_flag,'y')
+    manh = figure;
     manual_type = input('Do you wish to adjust by landmarks or none? (l/n): ','s');
     while ~(strcmpi(manual_type,'l') || strcmpi(manual_type,'n'))
         manual_type = input('Do you wish to adjust by landmarks or my cell masks or none? (l/n): ','s');
@@ -281,6 +282,12 @@ while strcmpi(manual_flag,'y')
         if strcmpi(manual_type,'l')
             reg_type = 'landmark';
             figure(1)
+            h_base_landmark = subplot(1,2,1);
+            load(fullfile(base_path,'FinalOutput.mat'),'NeuronImage')
+            imagesc(create_AllICmask(NeuronImage)); title('Base Session neurons')
+            h_reg_landmark = subplot(1,2,2);
+            load(fullfile(reg_path,'FinalOutput.mat'),'NeuronImage')
+            imagesc(create_AllICmask(NeuronImage)); title('Reg Session neurons')
             T_manual = manual_reg(h_base_landmark, h_reg_landmark, reg_type);
         elseif strcmpi(manual_type,'n')
             T_manual = eye(3);
@@ -291,61 +298,61 @@ while strcmpi(manual_flag,'y')
     tform_manual.T = T_manual;
     moving_reg_manual = imwarp(reg_image,tform_manual,'OutputView',imref2d(size(base_image)),'InterpolationMethod','nearest');
    
-    FigNum = FigNum + 1;
-    figure(FigNum)
+    figure(manh)
     imagesc(abs(moving_reg_manual - base_image)); colormap(gray); colorbar
     title('Registered Image - Base Image after manual adjust')
     
     
     manual_flag = input('Do you wish to manually adjust again? (y/n)', 's');
 %     use_manual_adjust = 1;
-    
+    tform = tform_manual;
 end
 
-% Get index to pixels that are zeroed out as a result of registration
+%% Step 6: Get index to pixels that are zeroed out as a result of registration
 moving_reg_untouch = imwarp(reg_image_untouch,tform,'OutputView',...
     imref2d(size(base_image_untouch)),'InterpolationMethod','nearest');
 exclude_pixels = moving_reg_untouch(:) == 0;
+
+%% Step 7: Compile everything into a data-structure for saving.
 
 regstats.base_2nd_diff_noreg = sum(abs(base_image_gray(:) - moving_gray_noreg(:)));
 regstats.base_2nd_diff_reg = sum(abs(base_image_gray(:) - moving_reg_gray(:)));
 regstats.base_2nd_bw_diff_noreg = sum(abs(base_image(:) - moving_noreg(:)));
 regstats.base_2nd_bw_diff_reg = sum(abs(base_image(:) - moving_reg(:)));
 
-
-% Determine if there are previously run versions of this registration
-% I think that this is no longer necessary since each registration is saved
-% with a unique filename, but keeping it for now
-if exist(unique_filename,'file') == 2
-    load(unique_filename);
-        size_info = size(RegistrationInfoX,2)+1;
-else
-    size_info = 1;
-end
-FigNum = FigNum + 1;
-
 % Save info into RegistrationInfo data structure.
-RegistrationInfoX(size_info).mouse = mouse_name;
-RegistrationInfoX(size_info).base_date = base_date;
-RegistrationInfoX(size_info).base_session = base_session;
-RegistrationInfoX(size_info).base_file = base_file;
-RegistrationInfoX(size_info).register_date = reg_date;
-RegistrationInfoX(size_info).register_session = reg_session;
-RegistrationInfoX(size_info).register_file = register_file;
-RegistrationInfoX(size_info).tform = tform;
-RegistrationInfoX(size_info).exclude_pixels = exclude_pixels;
-RegistrationInfoX(size_info).regstats = regstats;
-RegistrationInfoX(size_info).base_ref = base_ref;
-RegistrationInfoX(size_info).use_neuron_masks = use_neuron_masks;
+RegistrationInfoX.mouse = animal_name;
+RegistrationInfoX.base_date = base_date;
+RegistrationInfoX.base_session = base_session;
+RegistrationInfoX.base_file = base_file;
+RegistrationInfoX.register_date = reg_date;
+RegistrationInfoX.register_session = reg_session;
+RegistrationInfoX.register_file = register_file;
+RegistrationInfoX.tform = tform;
+RegistrationInfoX.exclude_pixels = exclude_pixels;
+RegistrationInfoX.regstats = regstats;
+RegistrationInfoX.base_ref = base_ref;
+RegistrationInfoX.use_neuron_masks = use_neuron_masks;
 
 if exist('T_manual','var')
-    RegistrationInfoX(size_info).tform_manual = tform_manual;
+    RegistrationInfoX.tform_manual = tform_manual;
     regstats.base_2nd_bw_diff_reg_manual = sum(abs(base_image(:) - moving_reg_manual(:)));
 end
  
 save (unique_filename,'RegistrationInfoX');
 
-% keyboard;
 end % End try/catch statement
+
+end
+
+%% Sub-function to get number of transients from PSAbool
+function [NumTransients] = get_ntrans(PSAmat)
+num_neurons = size(PSAmat,1);
+
+NumTransients = nan(num_neurons,1);
+for j = 1:num_neurons
+    temp = NP_FindSupraThresholdEpochs(PSAmat(j,:),eps);
+    NumTransients(j,1) = size(temp,1);
+end
 
 end

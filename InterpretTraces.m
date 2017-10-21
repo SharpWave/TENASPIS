@@ -406,6 +406,7 @@ NeuronTraces.DFDTtrace = NeuronTraces.DFDTtrace(ActOK,:);
 NeuronTraces.CorrR = NeuronTraces.CorrR(ActOK,:);
 NeuronTraces.CorrP = NeuronTraces.CorrP(ActOK,:);
 
-save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','BinSim');
+save('FinalOutput.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList',...
+    'NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI','PSAbool','BinSim');
 
 

@@ -112,6 +112,7 @@ nTrans = nTrans(OKcount);
 NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
 disp('saving outputs');
-save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
+save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList ...
+    NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
     
 end

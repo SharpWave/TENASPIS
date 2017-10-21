@@ -1,12 +1,24 @@
 function Tenaspis4(md,varargin)
 %Tenaspis4(md,varargin)
+% IMPORTANT NOTE: To automate Tenaspis you MUST do three things:
+%   1) Add the session(s) in question to your mouse directory (e.g.
+%   MakeMouseSessionList),
+%   2) Designate an initial session you wish to use as a reference for all
+%   subsequent sessions.
+%   3) Run Tenaspis4 with the 'manualmask' flag set to true for the initial
+%   session you designated in step 2.  You will be prompted early on to draw
+%   a mask around all the good cells (i.e. excluding any dead space and/or
+%   artifacts). You can then run all subsequent sessions without drawing a
+%   mask, e.g. Tenaspis4(md)
 %
 %   INPUTS
 %       md: session entry.
 %
 %       (optional, Name-Pair arguments)
 %           preprocess: Logical, whether you want to run
-%           MakeFilteredMovies. Will automatically run if BPDFF.h5 is not
+%           MakeFilteredMovies. The h5 file you wish to run this on must
+%           be located in the folder 'MotCorrMovie-Objects' in the MD 
+%           directory. Will automatically run if BPDFF.h5 is not
 %           detected in the MD directory. 
 %
 %           d1: Logical, whether you want to make D1Movie. Default = false.
