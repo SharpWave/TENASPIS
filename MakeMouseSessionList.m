@@ -3938,16 +3938,56 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
-i = i+1;
-MD(i).Animal = 'Test';
-MD(i).Date = '07_09_2016';
-MD(i).Session = 10;
-MD(i).Env = 'Treadmill Loop';
-MD(i).Room = '2 Cu 201B';
-MD(i).RecordStartTime = '6:50:26.53 PM';
+%% Steve Ramirez fear reinstatement experiment
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_19_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
 MD(i).Pix2CM = 0.1256; 
 if strcmp(userstr,'Will')
-    MD(i).Location = 'U:\Treadmill project\Test';
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_19_2017_Shock';
+end
+MD(i).Notes = [];
+
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_20_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_20_2017_Extinction';
+end
+MD(i).Notes = [];
+
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_21_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_21_2017_Extinction';
+end
+MD(i).Notes = [];
+
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_22_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 4';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_22_2017_Reinstatement';
 end
 MD(i).Notes = [];
 
