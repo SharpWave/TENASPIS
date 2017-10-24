@@ -57,7 +57,9 @@ function Tenaspis4(md,varargin)
     p.addParameter('d1',false);                     %Make first derivative movie. 
     p.addParameter('manualmask',false);             %Draw mask manually.
     p.addParameter('masterdirectory',...    
-        'C:/MasterData',@(x) ischar(x));            %Master directory.               
+        'C:/MasterData',@(x) ischar(x));            %Master directory.     
+    p.addParameter('phoneNumber',[]);
+    
     p.parse(md,varargin{:});           
     
     %Compile.
@@ -66,6 +68,7 @@ function Tenaspis4(md,varargin)
     manualmask = p.Results.manualmask; 
     global MasterDirectory;                         %MasterDirectory is now a global variable. 
     MasterDirectory = p.Results.masterdirectory;    %Insert line 'global MasterDirectory' to fetch. 
+    phoneNumber = p.Results.phoneNumber; 
     
     %Check whether initial mask exists. 
     maskExist = exist(fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']),'file');
@@ -111,7 +114,7 @@ function Tenaspis4(md,varargin)
         cd(initDir); 
         
         %Draw mask on the initial session's minimum projection. 
-        MakeMaskSingleSession('BPDFF.h5');
+        MakeMaskSingleSession('BPDFF.h5','phoneNumber',phoneNumber);
         
         %Save to MasterDirectory. 
         copyfile('singlesessionmask.mat',fullfile(MasterDirectory,[md.Animal,'_initialmask.mat']));

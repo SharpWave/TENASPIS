@@ -1,4 +1,4 @@
-function MakeMaskSingleSession(movie)
+function MakeMaskSingleSession(movie,varargin)
 % MakeMaskSingleSession(movie)
 % 
 %   Makes a mask of the field of view after displaying a maximum
@@ -10,6 +10,15 @@ function MakeMaskSingleSession(movie)
 %       movie: file name of movie you want to draw mask on. Must be same
 %       dimensions as other movies in directory. 
 %
+%       optional: 'phoneNumber', Phone number in the form xxxxxxxxxx,
+%       xxx-xxx-xxxx, or (xxx)-xxx-xxxx if you want to get a text when this
+%       function requires user input. If you want to use this feature,
+%       REQUIRES ADDITIONAL SETUP. 
+%
+%       Set up for texting: Download function from http://bit.ly/2i1XqZn
+%       and extract to a directory in your Matlab path. Follow the
+%       directions in send_msg.m (help send_msg.m). 
+%      
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -30,6 +39,13 @@ function MakeMaskSingleSession(movie)
 
 close all;
 
+p = inputParser;
+p.addRequired('movie'); 
+p.addParameter('phoneNumber',[]); 
+
+p.parse(movie,varargin{:});
+phoneNumber = p.Results.textme; 
+
 % Get movie information. 
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
@@ -49,6 +65,12 @@ while ~(strcmp(ToContinue,'y'))
     figure;imagesc_gray(imadjust(newmax));
     hold on
     plot(xi, yi,'r')
+    
+    %Want spend even MORE time analyzing data than you should be?? Neglect
+    %your other duties and get roped into the processing 
+    if ~isempty(phoneNumber)
+        send_msg({phoneNumber},' ','Draw mask please','AT&T');
+    end
     
     ToContinue = input('OK with the mask you just drew? [y/n] --->','s');
 end
