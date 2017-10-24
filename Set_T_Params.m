@@ -43,7 +43,7 @@ T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various f
 T_PARAMS.ROICircleWindowRadius = 35; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
 
 %% General parameters used by multiple scripts
-T_PARAMS.SampleRate = 10; % Sample rate of the movie to be processed.  
+T_PARAMS.SampleRate = 20; % Sample rate of the movie to be processed.  
 
 %% MakeFilteredMovies
 T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass disk-kernel filtering. EDIT:SPACE
@@ -80,7 +80,7 @@ T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid
                                         % Eliminates spurious blobs from overlapping transients.
                                         % EDIT:SPACE
                                         
-T_PARAMS.MinNumFrames = ceil(4/(20/T_PARAMS.SampleRate)); % minimum number of frames for transient to be included. EDIT:TIME
+T_PARAMS.MinNumFrames = 4; % minimum number of frames for transient to be included. 
 
 %% MakeTransientROIs params
 T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
@@ -98,7 +98,7 @@ T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a
 T_PARAMS.ROIBoundaryCoeff = 0.5;             % ROI boundaries are determined by setting a threshold at some fraction of the peak mean intensity
                                              % lower values mean bigger ROIs
                                              
-T_PARAMS.SmoothSize = ceil(5/(20/T_PARAMS.SampleRate));                     % length of window for temporal smoothing of traces.  EDIT:SPACE
+T_PARAMS.SmoothSize = 5;                     % length of window for temporal smoothing of traces.  
 T_PARAMS.MinNumTransients = 1;               % ROIs with fewer transients than this are cut after segmentation. recommend setting to 1, meaning no cut
 
 %% DetectTracePSA
@@ -113,14 +113,14 @@ T_PARAMS.SlopeThresh = 0.5; % minimum slope (z-score) for a new PSA epoch (i.e.,
                             % starting early enough.  Use a higher value if
                             % 
 
-T_PARAMS.MinPSALen = ceil(5/(20/T_PARAMS.SampleRate));     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
-                            % EDIT:TIME
+T_PARAMS.MinPSALen = 5;     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
+                            
                             
 %% MergeSuspiciousNeighors
 T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap (% of area of smallest ROI) between ROIs for a merge 
 
-T_PARAMS.MaxGapFillLen = ceil(4/(20/T_PARAMS.SampleRate)); % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
+T_PARAMS.MaxGapFillLen = 4; % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
                             % smooths the skippyness in some borderline
                             % cases. % EDIT:TIME 
                             
