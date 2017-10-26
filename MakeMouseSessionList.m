@@ -3991,6 +3991,19 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_23_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_23_2017_Recall';
+end
+MD(i).Notes = [];
+
 %% Compile session_ref
 
 session_ref.G30 = G30;
