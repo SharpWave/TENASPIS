@@ -89,7 +89,7 @@ T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the tr
 
 
 %% MergeTransientROIs paramsload
-T_PARAMS.DistanceThresholdList = (0:0.5:10); % list of progressively increasing distance thresholds to try. EDIT:SPACE
+T_PARAMS.DistanceThresholdList = [0,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10]; % list of progressively increasing distance thresholds to try. EDIT:SPACE
 %                                              With the correlation test being pretty robust I'm not sure that small increments are necessary
 T_PARAMS.MaxTransientMergeCorrP = 0.01;      % maximum correlation p value for a transient merge
 T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a transient merge. 
@@ -102,7 +102,7 @@ T_PARAMS.SmoothSize = ceil(5/(20/T_PARAMS.SampleRate));                     % le
 T_PARAMS.MinNumTransients = 1;               % ROIs with fewer transients than this are cut after segmentation. recommend setting to 1, meaning no cut
 
 %% DetectTracePSA
-T_PARAMS.AmplitudeThresholdCoeff = 1/3; % Determines amplitude threshold for finding new transients. 
+T_PARAMS.AmplitudeThresholdCoeff = 2/3; % Determines amplitude threshold for finding new transients. 
                                         % setting to 0 means new transient threshold is minimum intensity of segmentation-detected transients
                                         % setting to 1 means threshold is zero -  Higher values mean lower threshold.
                                         
@@ -113,7 +113,7 @@ T_PARAMS.SlopeThresh = 0.5; % minimum slope (z-score) for a new PSA epoch (i.e.,
                             % starting early enough.  Use a higher value if
                             % 
 
-T_PARAMS.MinPSALen = ceil(5/(20/T_PARAMS.SampleRate));     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
+T_PARAMS.MinPSALen = ceil(4/(20/T_PARAMS.SampleRate));     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
                             % EDIT:TIME
                             
 %% MergeSuspiciousNeighors
