@@ -27,6 +27,8 @@ function Tenaspis4(md,varargin)
 %           for this session. If not, will automatically take mask from
 %           initial session. Default = false.
 %
+%           MasterDirectory: String, directory containing MD.
+%
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -129,7 +131,12 @@ function Tenaspis4(md,varargin)
 
     %Set new parameters based on BPDFF movie. 
     Set_T_Params('BPDFF.h5');
-
+    
+    %Check mask dimensions match movie dimensions.
+    load('MovieDims.mat','Xdim','Ydim'); 
+    assert(size(mask_reg,1)==Xdim && size(mask_reg,2)==Ydim,['Warning!',...
+        'Dimensions of mask and MovieDims do not match.']);
+    
     %Get blobs. 
     disp('Extracting blobs...');
     ExtractBlobs(mask_reg);  

@@ -53,7 +53,7 @@ for i = 1:NumTransients
     
     tryagain = true;
     tempthresh = threshold;
-    while((tryagain) & (tempthresh <= max(TempFrame(:))))
+    while((tryagain) && (tempthresh <= max(TempFrame(:))))
         tempthresh = tempthresh*1.1;
         pidxlist = SegmentFrame(TempFrame,[],false,tempthresh);
         

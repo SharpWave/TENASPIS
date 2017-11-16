@@ -3730,6 +3730,267 @@ if strcmp(userstr,'Will')
 end
 MD(i).Notes = [];
 
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_02_2015';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '5:22:31.31 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_45\12_02_2015\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_45_treadmill';
+MD(i).Date = '12_03_2015';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256;
+MD(i).RecordStartTime = '5:38:20.92 PM';
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_45\12_03_2015\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_18_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '11:31:16 AM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_48\04_18_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_19_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '3:25:21.01 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_48\04_19_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_20_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:24:29.31 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_48\04_20_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'GCamp6f_48_treadmill';
+MD(i).Date = '04_21_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '12:48:07.45 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\GCaMP6f_48\04_21_2016\1 - Treadmill (right)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_05_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:34:18.66 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Bellatrix\07_05_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_06_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:47:38.56 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Bellatrix\07_06_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_07_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:41:52.92 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Bellatrix\07_07_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_08_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '5:25:56.42 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Bellatrix\07_08_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Bellatrix';
+MD(i).Date = '07_09_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).RecordStartTime = '6:09:02.94 PM';
+MD(i).Room = '2 Cu 201B';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Bellatrix\07_09_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_05_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:13:59.78 PM';
+MD(i).Pix2CM = 0.1256;
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Polaris\07_05_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_06_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '5:13:19.14 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Polaris\07_06_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_07_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:28:13.84 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Polaris\07_07_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_08_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '4:38:16.61  PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Polaris\07_08_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+i = i+1;
+MD(i).Animal = 'Polaris';
+MD(i).Date = '07_09_2016';
+MD(i).Session = 10;
+MD(i).Env = 'Treadmill Loop';
+MD(i).Room = '2 Cu 201B';
+MD(i).RecordStartTime = '6:50:26.53 PM';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Treadmill project\Polaris\07_09_2016\1 - Treadmill (left)';
+end
+MD(i).Notes = [];
+
+%% Steve Ramirez fear reinstatement experiment
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_19_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_19_2017_Shock';
+end
+MD(i).Notes = [];
+
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_20_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_20_2017_Extinction';
+end
+MD(i).Notes = [];
+
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_21_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 1';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_21_2017_Extinction';
+end
+MD(i).Notes = [];
+
+i=i+1;
+MD(i).Animal = 'Styx';
+MD(i).Date = '10_22_2017';
+MD(i).Session = 1;
+MD(i).Env = 'Fear Conditioning Box 4';
+MD(i).Room = 'CILSE 721F';
+MD(i).RecordStartTime = '';
+MD(i).Pix2CM = 0.1256; 
+if strcmp(userstr,'Will')
+    MD(i).Location = 'U:\Fear conditioning project\Styx\10_22_2017_Reinstatement';
+end
+MD(i).Notes = [];
+
 %% Compile session_ref
 
 session_ref.G30 = G30;

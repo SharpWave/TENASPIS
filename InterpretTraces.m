@@ -1,5 +1,5 @@
-function [] = InterpretTraces(Todebug)
-% function [] = InterpretTraces(Todebug)
+function InterpretTraces(Todebug)
+% function InterpretTraces(Todebug)
 %
 % This takes the output of MergeTransientROIs and creates a best-guess
 % estimate of when the neurons in the ROIs had calcium transients. An
