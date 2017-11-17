@@ -9,6 +9,10 @@ function Tenaspis4singlesession()
 % set global parameter variable
 Set_T_Params('BPDFF.h5');
 
+% load the movie into RAM
+
+
+
 %% Extract Blobs
 load singlesessionmask.mat; % if this isn't already present, make it
 ExtractBlobs(neuronmask);

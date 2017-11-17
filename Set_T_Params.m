@@ -46,13 +46,13 @@ T_PARAMS.ROICircleWindowRadius = 35; % If this is too small the program crashes;
 T_PARAMS.SampleRate = 10; % Sample rate of the movie to be processed.  
 
 %% MakeFilteredMovies
-T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass disk-kernel filtering. EDIT:SPACE
-T_PARAMS.LowPassRadius = 3; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
+T_PARAMS.HighPassRadius = 10; % Smoothing radius for high pass disk-kernel filtering. EDIT:SPACE
+T_PARAMS.LowPassRadius = 1; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
 
 %% ExtractBlobs / SegmentFrame params
 T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
 
-T_PARAMS.threshsteps = 10; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
+T_PARAMS.threshsteps = 15; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
                            % higher values mean slightly bigger ROIs at the cost of multiplying run time - edit this with care.
                       
 T_PARAMS.MaxBlobRadius = 10; % Maximum radius for a circular shaped blob to be included. 
@@ -60,14 +60,14 @@ T_PARAMS.MaxBlobRadius = 10; % Maximum radius for a circular shaped blob to be i
                              % participate and can be used to differentiate ROIs in subsequent steps
                              % EDIT:SPACE
                              
-T_PARAMS.MinBlobRadius = 5; % Minimum radius for circular shaped blob to be included. 
+T_PARAMS.MinBlobRadius = 4; % Minimum radius for circular shaped blob to be included. 
                             % Increasing this eliminates noise at the cost
                             % of losing low-intensity blobs. EDIT:SPACE
 
-T_PARAMS.MaxAxisRatio = 2; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
+T_PARAMS.MaxAxisRatio = 2.5; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
                            % Keeps overly slivery blobs and some juxtaposition artifacts out of the data
                            
-T_PARAMS.MinSolidity = 0.95; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. 
+T_PARAMS.MinSolidity = 0.9; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. 
                              % Prevents jagged and strange shaped blobs; noise blobs picked up at low thresholds
 
 %% LinkBlobs params

@@ -1,6 +1,8 @@
 function [] = RejectBadTransients()
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
+close all;
+DebugPlots = 1;
 
 disp('Rejecting transients based on centroid travel distance and duration criteria');
 
@@ -11,6 +13,9 @@ disp('Rejecting transients based on centroid travel distance and duration criter
 disp('Loading blob and link data');
 load('BlobLinks.mat','FrameList','ObjList');
 load('Blobs.mat','BlobWeightedCentroids');
+if (DebugPlots)
+    load('Blobs.mat','BlobPixelIdxList');
+end
 
 %% setup vars
 NumTransients = length(FrameList);
@@ -19,6 +24,7 @@ NumTransients = length(FrameList);
 %% Analyze transient and apply criteria
 disp('analyzing transients for rejection');
 for i = 1:NumTransients
+
     FirstFrame = FrameList{i}(1);
     LastFrame = FrameList{i}(end);
     TransientLength(i) = LastFrame-FirstFrame+1;
@@ -29,7 +35,14 @@ for i = 1:NumTransients
     
     NotFirstFrame(i) = ~ismember(1,FrameList{i});
     
+
+    
     GoodTransient(i) = (TransientLength(i) >= MinNumFrames) && (TravelDist(i) < MaxCentroidTravelDistance) && NotFirstFrame(i);
+    
+    if (DebugPlots)
+      figure(1);
+      
+    end
 end
 
 %% optional plotting
