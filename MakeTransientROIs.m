@@ -45,25 +45,18 @@ for i = 1:NumTransients
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
     BigAvg{i} = zeros(size(CircMask{i}),'single');
     TranBool(i,FrameList{i}) = true;
-
+    PixFreqs{i} = PixFreq(PixelIdxList{i});
 end
 
 %% go through the movie and get the average pixel values
 disp('averaging preliminary ROIs over the movie');
 [BigPixelAvg] = PixelSetMovieAvg(TranBool,CircMask);
 
-%% Refine the ROIs
-GoodROI = false(1,NumTransients);
-
+%% calculate stuff
 for i = 1:NumTransients
     TempFrame = blankframe;
     TempFrame(CircMask{i}) = BigPixelAvg{i};
     PixelAvg{i} = TempFrame(PixelIdxList{i});
-    
-end
- 
-%% calculate peaks
-for i = 1:NumTransients
     [~,idx] = max(PixelAvg{i});
     [Ycent(i),Xcent(i)] = ind2sub([Xdim Ydim],PixelIdxList{i}(idx));
 end
@@ -72,7 +65,7 @@ end
 disp('saving data');
 Trans2ROI = single(1:NumTransients);
 
-save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask;
+save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask PixFreqs;
 
 
 

@@ -1,5 +1,5 @@
-function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClu,PixelList,PixelAvg,BigPixelAvg,CircMask,...
-    Xcent,Ycent,FrameList,ObjList,EaterClu)
+function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList,PixFreqs] = UpdateClusterInfo(FoodClu,PixelList,PixelAvg,BigPixelAvg,CircMask,...
+    Xcent,Ycent,FrameList,ObjList,EaterClu,PixFreqs)
 % [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClus,PixelList,PixelAvg,BigPixelAvg,CircMask,...
 %    Xcent,Ycent,FrameList,ObjList,EaterClu)
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
@@ -27,14 +27,22 @@ function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = Update
 tempFrameCount = zeros(size(CircMask{EaterClu}),'single');
 tempAvg = zeros(size(CircMask{EaterClu}),'single');
 blankframe = zeros(Xdim,Ydim,'single');
+tempPixFreqs = zeros(Xdim,Ydim,'single');
 
 OrigEaterList = PixelList{EaterClu};
 
 %% union the Food pixel lists into the eater pixel lists
-for j = 1:length(FoodClu)
-    PixelList{EaterClu} = union(PixelList{EaterClu},PixelList{FoodClu(j)});
-end
+tempPixFreqs(PixelList{EaterClu}) = PixFreqs{EaterClu}*length(FrameList{EaterClu});
+totalframes = length(FrameList{EaterClu});
 
+for j = 1:length(FoodClu)
+    tempPixFreqs(PixelList{FoodClu(j)}) = tempPixFreqs(PixelList{FoodClu(j)})+PixFreqs{FoodClu(j)}*length(FrameList{FoodClu(j)});
+    totalframes = totalframes + length(FrameList{FoodClu(j)});
+    %PixelList{EaterClu} = union(PixelList{EaterClu},PixelList{FoodClu(j)});
+end
+tempPixFreqs = tempPixFreqs/totalframes;
+PixelList{EaterClu} = find(tempPixFreqs > 0.5);
+%imagesc(tempPixFreqs);axis image;colorbar;pause;
 %% for each cluster, add pixels that overlap with the currclu circmask
 AllClu = [EaterClu,FoodClu];
 for j = 1:length(AllClu)
@@ -57,48 +65,14 @@ end
 tempFrame = blankframe;
 tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
 
-
-tempthresh = threshold;
-
-okmerge = false;
-while ((~okmerge) && (tempthresh < max(tempFrame(:))))
-    tempthresh = tempthresh+threshold/20;
-    pidxlist = SegmentFrame(tempFrame,[],false,tempthresh);
-    while (isempty(pidxlist)&& (tempthresh < max(tempFrame(:))))
-        tempthresh = tempthresh+threshold/20;
-        pidxlist = SegmentFrame(tempFrame,[],false,tempthresh);
-    end
-    
-    % find the matching segment
-    for i = 1:length(pidxlist)
-        if any(ismember(OrigEaterList,pidxlist{i}))
-            [~,idx] = max(tempFrame(pidxlist{i}));
-            if (ismember(pidxlist{i}(idx),OrigEaterList))
-                okmerge = true;
-                break;
-            end
-        end
-        
-    end
-    
-end
-
-if (tempthresh < max(tempFrame(:)))
-   PixelList{EaterClu} = single(pidxlist{i});
-end
-
 PixelAvg{EaterClu} = tempFrame(PixelList{EaterClu});
+PixFreqs{EaterClu} = tempPixFreqs(PixelList{EaterClu});
+
+if (length(PixelAvg{EaterClu}) ~= length(PixFreqs{EaterClu}))
+    keyboard;
+end
 
 [~,idx] = max(PixelAvg{EaterClu});
 [Ycent(EaterClu),Xcent(EaterClu)] = ind2sub([Xdim Ydim],PixelList{EaterClu}(idx));
-
-%% update centroid
-% tempbin = blankframe;
-% tempbin(PixelList{EaterClu}) = 1;
-% tempval = blankframe;
-% tempval(PixelList{EaterClu}) = PixelAvg{EaterClu};
-% props = regionprops(tempbin,tempval,'WeightedCentroid');
-% Xcent(EaterClu) = single(props.WeightedCentroid(1));
-% Ycent(EaterClu) = single(props.WeightedCentroid(2));
 
 end

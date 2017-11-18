@@ -40,7 +40,7 @@ end
 
 %% Implementation parameters (i.e. no effect on results)
 T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various functions.  Setting this too high will crash due to RAM
-T_PARAMS.ROICircleWindowRadius = 35; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
+T_PARAMS.ROICircleWindowRadius = 40; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
 
 %% General parameters used by multiple scripts
 T_PARAMS.SampleRate = 10; % Sample rate of the movie to be processed.  
