@@ -36,7 +36,7 @@ subplot(1,3,1);
 plot(b2{1}(:,2),b2{1}(:,1),'-m','LineWidth',1);hold off;
 
 subplot(1,3,3);
-plot(CurrBigPixelAvg(idx1),CandBigPixelAvg(idx2),'*');axis equal;
+plot(CurrBigPixelAvg(idx1),CandBigPixelAvg(idx2),'*');axis square;
 [cr,cp] = corr(CurrBigPixelAvg(idx1),CandBigPixelAvg(idx2),'type','Spearman');
 title(['Corr R: ',num2str(cr),' Corr P: ',num2str(cp)]);
 

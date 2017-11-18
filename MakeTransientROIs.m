@@ -4,9 +4,8 @@ function [] = MakeTransientROIs()
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold','MinBlobRadius');
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','MinBlobRadius');
 
-threshold = threshold * 2;
 DebugPlot = 0;
 
 %% load data
@@ -25,16 +24,10 @@ TranBool = false(NumTransients,NumFrames);
 disp('determining calcium transient ROIs');
 blankframe = zeros(Xdim,Ydim,'single');
 for i = 1:NumTransients
-    PixFreq = blankframe;
-    for j = 1:length(FrameList{i})
-        BlobPix = BlobPixelIdxList{FrameList{i}(j)}{ObjList{i}(j)};
-        PixFreq(BlobPix) = PixFreq(BlobPix)+1;
-    end
-    
-    PixFreq = PixFreq./length(FrameList{i});
+    PixFreq = CalcPixFreq(FrameList{i},ObjList{i},BlobPixelIdxList);
     if(DebugPlot)
         figure(1);
-        imagesc(PixFreq);colorbar;caxis([0.5 1]);axis image;
+        imagesc(PixFreq);colorbar;caxis([0 1]);axis image;
         
         pause;
     end
@@ -45,7 +38,6 @@ for i = 1:NumTransients
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
     BigAvg{i} = zeros(size(CircMask{i}),'single');
     TranBool(i,FrameList{i}) = true;
-    PixFreqs{i} = PixFreq(PixelIdxList{i});
 end
 
 %% go through the movie and get the average pixel values
@@ -65,7 +57,7 @@ end
 disp('saving data');
 Trans2ROI = single(1:NumTransients);
 
-save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask PixFreqs;
+save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask;
 
 
 

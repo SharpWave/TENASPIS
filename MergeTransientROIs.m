@@ -27,6 +27,7 @@ disp('merging transient ROIs into neuron ROIs');
 
 %% load data
 load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask','PixFreqs');
+load('Blobs.mat','BlobPixelIdxList');
 NumIterations = 0;
 NumCT = length(Trans2ROI);
 oldNumCT = NumCT;
@@ -37,15 +38,18 @@ oldNumCT = NumCT;
 % close to one another into the same new cluster, then bumping up the
 % distance threshold incrementally until no new clusters are created or the
 % max distance threshold is reached.
+MinCorr = 0.9:-0.1:0.2;
+
 for i = 1:length(DistanceThresholdList)
+    for j = 1:length(MinCorr)
     Cchanged = 1;
     oldNumCT = NumCT; % Update number
-    while Cchanged == 1
+    
         
         disp(['Merging neurons, iteration #',num2str(NumIterations+1),' distance ',num2str(DistanceThresholdList(i))])
         
         % Iteratively merge spatially distant clusters together
-        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,PixFreqs] = AttemptTransientMerges(DistanceThresholdList(i),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,PixFreqs);
+        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),MinCorr(j),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList);
         NumIterations = NumIterations+1; % Update number of iterations
         NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
         DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
@@ -58,6 +62,7 @@ for i = 1:length(DistanceThresholdList)
             oldNumCT = NumClu(NumIterations);
         end
     end
+    
 end
 
 %% Unpack the variables calculated above
@@ -72,24 +77,15 @@ NeuronActivity = false(NumNeurons,NumFrames);
 
 for i = 1:NumNeurons
     currtran = NeuronROIidx(i);
+    NeuronPixelIdxList{i} = PixelIdxList{currtran};
     temp = blankframe;
-    temp(PixelIdxList{currtran}) = PixelAvg{currtran};
-    temp = temp >= (max(PixelAvg{currtran})*ROIBoundaryCoeff);
-    b = bwconncomp(temp,4);
-    for j = 1:b.NumObjects
-        if(~isempty(intersect(b.PixelIdxList{j},PixelIdxList{currtran})))
-            NeuronPixelIdxList{i} = b.PixelIdxList{j};
-            temp = blankframe;
-            temp(NeuronPixelIdxList{i}) = 1;
-            NeuronImage{i} = temp;
-            [~,idx2] = ismember(NeuronPixelIdxList{i},CircMask{currtran});
-            NeuronAvg{i} = BigPixelAvg{currtran}(idx2);
-            NeuronFrameList{i} = FrameList{currtran};
-            NeuronObjList{i} = ObjList{currtran};
-            NeuronActivity(i,NeuronFrameList{i}) = true;
-            break;
-        end
-    end
+    temp(NeuronPixelIdxList{i}) = 1;
+    NeuronImage{i} = temp;
+    [~,idx2] = ismember(NeuronPixelIdxList{i},CircMask{currtran});
+    NeuronAvg{i} = BigPixelAvg{currtran}(idx2);
+    NeuronFrameList{i} = FrameList{currtran};
+    NeuronObjList{i} = ObjList{currtran};
+    NeuronActivity(i,NeuronFrameList{i}) = true;
 end
 
 %% Kill off the singletons! (presumed to be noise)

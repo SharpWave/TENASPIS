@@ -1,4 +1,4 @@
-function [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,PixFreqs] = AttemptTransientMerges(DistThresh,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,PixFreqs)
+function [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistThresh,MinCorr,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList)
 % [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistThresh,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask)
 %  Attempt to merge all cluster pairs where centroid distance is less than DistThresh
 %
@@ -50,6 +50,8 @@ for i = 1:length(ClusterList)
     
     % try merging each cluster in NearCluIdx into CurrClu
     MergeOK = [];
+    CurrFreq = CalcPixFreq(FrameList{CurrClu},ObjList{CurrClu},BlobPixelIdxList);
+    
     for k = 1:length(NearCluIdx)
         CandIdx = NearCluIdx(k); % CandIdx is index of candidate cluster
         
@@ -57,40 +59,30 @@ for i = 1:length(ClusterList)
             % cluster already merged during this call, move to next iteration
             continue;
         end
+                
         
-        % determine the union of CurrClu and CandIdx
+        CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
+        
+        CombFreq = zeros(Xdim,Ydim);
+        CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
+        CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
 
+        CombPixIdx = find(CombFreq > 0.5);
         
-
-        clear UnionPixelFreq;
-        
-        temp = zeros(Xdim,Ydim);
+        [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
+        [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});        
         try
-        temp(PixelList{CurrClu}) = PixFreqs{CurrClu}*length(FrameList{CurrClu});
+        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');  
         catch
             keyboard;
         end
         
-        try
-        temp(PixelList{CandIdx}) = temp(PixelList{CandIdx}) + PixFreqs{CandIdx}*length(FrameList{CandIdx});
-        catch
-            keyboard;
-        end
-        temp = temp./(length(FrameList{CurrClu})+length(FrameList{CandIdx}));
-        
-        u = find(temp > 0.5);
-        
-        [~,idx1] = ismember(u,CircMask{CurrClu});
-        [~,idx2] = ismember(u,CircMask{CandIdx});        
-        
-        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');        
-        
-%         if(DistThresh > 5)
-%             PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
+%         if(DistThresh > 2)
+%          PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
 %         end
         
         
-        if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinTransientMergeCorrR))
+        if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinCorr))
             % reject the merge  
             %PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
             continue;
@@ -108,8 +100,8 @@ for i = 1:length(ClusterList)
     % If a merge happened, update all the cluster info for the next
     % iteration
     if ~isempty(MergeOK)
-        [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList,PixFreqs] = UpdateClusterInfo(...
-            MergeOK,PixelList,PixelAvg,BigPixelAvg,CircMask,Xcent,Ycent,FrameList,ObjList,CurrClu,PixFreqs);
+        [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(...
+            MergeOK,PixelList,PixelAvg,BigPixelAvg,CircMask,Xcent,Ycent,FrameList,ObjList,CurrClu,BlobPixelIdxList);
         temp = UpdateCluDistances(Xcent,Ycent,CurrClu); % Update distances for newly merged clusters to all other clusters
         CluDist(CurrClu,:) = temp;
         CluDist(:,CurrClu) = temp;

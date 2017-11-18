@@ -1,5 +1,5 @@
-function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList,PixFreqs] = UpdateClusterInfo(FoodClu,PixelList,PixelAvg,BigPixelAvg,CircMask,...
-    Xcent,Ycent,FrameList,ObjList,EaterClu,PixFreqs)
+function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClu,PixelList,PixelAvg,BigPixelAvg,CircMask,...
+    Xcent,Ycent,FrameList,ObjList,EaterClu,BlobPixelIdxList)
 % [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(FoodClus,PixelList,PixelAvg,BigPixelAvg,CircMask,...
 %    Xcent,Ycent,FrameList,ObjList,EaterClu)
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
@@ -27,22 +27,21 @@ function [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList,PixFreqs]
 tempFrameCount = zeros(size(CircMask{EaterClu}),'single');
 tempAvg = zeros(size(CircMask{EaterClu}),'single');
 blankframe = zeros(Xdim,Ydim,'single');
-tempPixFreqs = zeros(Xdim,Ydim,'single');
+
 
 OrigEaterList = PixelList{EaterClu};
 
 %% union the Food pixel lists into the eater pixel lists
-tempPixFreqs(PixelList{EaterClu}) = PixFreqs{EaterClu}*length(FrameList{EaterClu});
+tempPixFreqs = CalcPixFreq(FrameList{EaterClu},ObjList{EaterClu},BlobPixelIdxList)*length(FrameList{EaterClu});
 totalframes = length(FrameList{EaterClu});
 
 for j = 1:length(FoodClu)
-    tempPixFreqs(PixelList{FoodClu(j)}) = tempPixFreqs(PixelList{FoodClu(j)})+PixFreqs{FoodClu(j)}*length(FrameList{FoodClu(j)});
-    totalframes = totalframes + length(FrameList{FoodClu(j)});
-    %PixelList{EaterClu} = union(PixelList{EaterClu},PixelList{FoodClu(j)});
+    tempPixFreqs = tempPixFreqs+CalcPixFreq(FrameList{FoodClu(j)},ObjList{FoodClu(j)},BlobPixelIdxList)*length(FrameList{FoodClu(j)});
+    totalframes = totalframes + length(FrameList{FoodClu(j)});    
 end
 tempPixFreqs = tempPixFreqs/totalframes;
 PixelList{EaterClu} = find(tempPixFreqs > 0.5);
-%imagesc(tempPixFreqs);axis image;colorbar;pause;
+%imagesc(tempPixFreqs);axis image;colorbar;title(int2str(totalframes));pause;
 %% for each cluster, add pixels that overlap with the currclu circmask
 AllClu = [EaterClu,FoodClu];
 for j = 1:length(AllClu)
@@ -66,11 +65,6 @@ tempFrame = blankframe;
 tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
 
 PixelAvg{EaterClu} = tempFrame(PixelList{EaterClu});
-PixFreqs{EaterClu} = tempPixFreqs(PixelList{EaterClu});
-
-if (length(PixelAvg{EaterClu}) ~= length(PixFreqs{EaterClu}))
-    keyboard;
-end
 
 [~,idx] = max(PixelAvg{EaterClu});
 [Ycent(EaterClu),Xcent(EaterClu)] = ind2sub([Xdim Ydim],PixelList{EaterClu}(idx));

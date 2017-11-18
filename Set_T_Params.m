@@ -40,7 +40,7 @@ end
 
 %% Implementation parameters (i.e. no effect on results)
 T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various functions.  Setting this too high will crash due to RAM
-T_PARAMS.ROICircleWindowRadius = 40; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
+T_PARAMS.ROICircleWindowRadius = 35; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
 
 %% General parameters used by multiple scripts
 T_PARAMS.SampleRate = 10; % Sample rate of the movie to be processed.  
@@ -90,7 +90,7 @@ T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the tr
 
 
 %% MergeTransientROIs paramsload
-T_PARAMS.DistanceThresholdList = [0,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10]; % list of progressively increasing distance thresholds to try. EDIT:SPACE
+T_PARAMS.DistanceThresholdList = [2,4,6,8]; % list of progressively increasing distance thresholds to try. EDIT:SPACE
 %                                              With the correlation test being pretty robust I'm not sure that small increments are necessary
 T_PARAMS.MaxTransientMergeCorrP = 0.01;      % maximum correlation p value for a transient merge
 T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a transient merge. 
