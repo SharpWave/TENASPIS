@@ -18,6 +18,7 @@ function ExtractBlobs(PrepMask)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+
 disp('Extracting Blobs from movie');
 
 %% Get parameters and set up Chunking variables
@@ -36,7 +37,7 @@ end
 %% Find the blobs in each frame
 p = ProgressBar(NumChunks); % Initialize progress bar
 
-parfor i = 1:NumChunks
+for i = 1:NumChunks
     Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
     FrameList = ChunkStarts(i):ChunkEnds(i);
        

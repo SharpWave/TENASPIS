@@ -74,7 +74,7 @@ threshframe = frame > threshold; % apply threshold, make it into a logical array
 threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than minpixels
 
 % Determine initial blobs and measurements
-rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image','PixelIdxList');
+rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','PixelIdxList','Image');
 GoodBlob = true(length(rp),1);
 
 % Determine whether any of the blobs go off of the mask and eliminate them
@@ -101,10 +101,9 @@ for i = 1:length(rp)
     BinImage = SmallImage > currthresh;
     
     % Sort the pixel matrix to determine the set of thresholds that will be used
-    smsort = sort(SmallImage(:));
-    smsort = smsort(smsort > 0);
-    PixPerThresh = ceil(length(smsort)./threshsteps);
-    threshlist = smsort(PixPerThresh:PixPerThresh:length(smsort));
+    minthresh = min(SmallImage(SmallImage(:) > 0));
+    maxthresh = max(SmallImage(:));
+    threshlist = minthresh:(maxthresh-minthresh)/threshsteps:maxthresh;
     ThreshIdx = 1;
     
     % Determine whether initial blob passes size and shape criteria
@@ -120,7 +119,7 @@ for i = 1:length(rp)
         BinImage = bwareaopen(BinImage,MinBlobArea,4);
         
         % then check for the blob criteria again
-        temp_props = regionprops(bwconncomp(BinImage,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx','Image');
+        temp_props = regionprops(bwconncomp(BinImage,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','SubarrayIdx');
         
         if (length(temp_props) ~= 1)
             % zero or multiple areas in the blob, abandon blob
@@ -155,6 +154,7 @@ for i = 1:length(rp)
             end
             if (temp_conn.NumObjects == 0)
                 % this probably never happens
+                display('if you see this you cant delete that line');
                 break;
             end
             if (length(temp_conn.PixelIdxList{1}) < MinBlobArea)
@@ -183,17 +183,17 @@ BlobPixelIdxList = BlobPixelIdxList(GoodBlob);
 BlobWeightedCentroids = BlobWeightedCentroids(GoodBlob);
 BlobMinorAxisLength = BlobMinorAxisLength(GoodBlob);
 
-% parameter debugging
+%parameter debugging
 % temp = blankframe;
 % for i = 1:length(BlobPixelIdxList)
 %     temp(BlobPixelIdxList{i}) = temp(BlobPixelIdxList{i}) + frame(BlobPixelIdxList{i});
 % end
-% cutoff = PercentileCutoff(frame(:),99.5);
+% cutoff = PercentileCutoff(frame(:),97);
 % composite = zeros(Xdim,Ydim,3);
-% frame(frame <= 0) = 0;
-% composite(:,:,1) = frame/cutoff;
-% composite(:,:,2) = temp/cutoff;
-% composite(:,:,3) = temp/cutoff;
+% frame(frame <= 0.005) = 0;
+% composite(:,:,1) = temp/cutoff;
+% composite(:,:,2) = frame/cutoff*0.2;
+% composite(:,:,3) = frame/cutoff*0.6;
 % %figure(53);subplot(1,2,1);imagesc(frame);axis image;colormap gray;subplot(1,2,2);imagesc(temp);axis image;colormap gray;colorbar;pause;
 % figure(53);image(composite);axis image;pause;
 end

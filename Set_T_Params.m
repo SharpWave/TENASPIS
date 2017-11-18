@@ -50,9 +50,9 @@ T_PARAMS.HighPassRadius = 10; % Smoothing radius for high pass disk-kernel filte
 T_PARAMS.LowPassRadius = 1; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
 
 %% ExtractBlobs / SegmentFrame params
-T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
+T_PARAMS.threshold = 0.005; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
 
-T_PARAMS.threshsteps = 15; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
+T_PARAMS.threshsteps = 10; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
                            % higher values mean slightly bigger ROIs at the cost of multiplying run time - edit this with care.
                       
 T_PARAMS.MaxBlobRadius = 10; % Maximum radius for a circular shaped blob to be included. 
@@ -60,27 +60,28 @@ T_PARAMS.MaxBlobRadius = 10; % Maximum radius for a circular shaped blob to be i
                              % participate and can be used to differentiate ROIs in subsequent steps
                              % EDIT:SPACE
                              
-T_PARAMS.MinBlobRadius = 4; % Minimum radius for circular shaped blob to be included. 
+T_PARAMS.MinBlobRadius = 4.5; % Minimum radius for circular shaped blob to be included. 
                             % Increasing this eliminates noise at the cost
                             % of losing low-intensity blobs. EDIT:SPACE
 
-T_PARAMS.MaxAxisRatio = 2.5; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
+T_PARAMS.MaxAxisRatio = 3; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
                            % Keeps overly slivery blobs and some juxtaposition artifacts out of the data
                            
 T_PARAMS.MinSolidity = 0.9; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. 
                              % Prevents jagged and strange shaped blobs; noise blobs picked up at low thresholds
 
 %% LinkBlobs params
+
 T_PARAMS.BlobLinkThresholdCoeff = 1; % multiplier for the blob minor axis length to determine whether to link blobs across frames
                                      % the higher this is, the more the blob is permitted to move on successive frames
                                      % The linkblobs procedure has almost no pitfalls; I wouldn't bother messing with this
 
 %% RejectBadTransients params
-T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid of a transient can travel. 
+T_PARAMS.MaxCentroidTravelDistance = 4; % maximum net distance that the centroid of a transient can travel. 
                                         % Eliminates spurious blobs from overlapping transients.
                                         % EDIT:SPACE
                                         
-T_PARAMS.MinNumFrames = ceil(4/(20/T_PARAMS.SampleRate)); % minimum number of frames for transient to be included. EDIT:TIME
+T_PARAMS.MinNumFrames = ceil(12/(20/T_PARAMS.SampleRate)); % minimum number of frames for transient to be included. EDIT:TIME
 
 %% MakeTransientROIs params
 T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
