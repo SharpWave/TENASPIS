@@ -38,29 +38,25 @@ oldNumCT = NumCT;
 % close to one another into the same new cluster, then bumping up the
 % distance threshold incrementally until no new clusters are created or the
 % max distance threshold is reached.
-MinCorr = 0.9:-0.1:0.2;
+%MinCorr = 0.95:-0.05:0.2;
+MinCorr = [15,15,15,25,25,35,35,45,45,60,60,66,66];
+MinCorr = [10:5:65];
 
-for i = 1:length(DistanceThresholdList)
-    for j = 1:length(MinCorr)
-    Cchanged = 1;
-    oldNumCT = NumCT; % Update number
-    
+for j = 1:length(MinCorr)
+    for i = 1:length(DistanceThresholdList)
         
-        disp(['Merging neurons, iteration #',num2str(NumIterations+1),' distance ',num2str(DistanceThresholdList(i))])
+
+            
+            disp(['Merging neurons, iteration #',num2str(NumIterations+1),' distance ',num2str(DistanceThresholdList(i)),' min correlation ',num2str(MinCorr(j))])
+            
+            % Iteratively merge spatially distant clusters together
+            [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),MinCorr(j),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList);
+            NumIterations = NumIterations+1; % Update number of iterations
+            NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
+            DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
+            
+
         
-        % Iteratively merge spatially distant clusters together
-        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),MinCorr(j),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList);
-        NumIterations = NumIterations+1; % Update number of iterations
-        NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
-        DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
-        
-        if (NumClu(NumIterations) == oldNumCT)
-            % If you end up with the same number of clusters as the previous iteration, exit
-            break;
-        else
-            % Save number of clusters
-            oldNumCT = NumClu(NumIterations);
-        end
     end
     
 end
@@ -106,10 +102,14 @@ NeuronROIidx = NeuronROIidx(OKcount);
 NeuronActivity = NeuronActivity((OKcount),:);
 nTrans = nTrans(OKcount);
 
+keyboard;
+
 NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
 disp('saving outputs');
 save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList ...
-    NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
-    
+    NeuronObjList NeuronROIidx NumNeurons NeuronActivity  nTrans Trans2ROI
+
+NeuronTraces
+
 end

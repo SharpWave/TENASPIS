@@ -32,6 +32,8 @@ display([int2str(length(ClusterList)),' clusters left']);
 CluDist = pdist([Xcent',Ycent'],'euclidean');
 CluDist = squareform(CluDist);
 
+blankframe = zeros(Xdim,Ydim);
+
 %% Run actual merging functionality
 for i = 1:length(ClusterList)
     CurrClu = ClusterList(i);
@@ -41,7 +43,9 @@ for i = 1:length(ClusterList)
         % of the for loop
         continue;
     end
-    
+%     if(mod(i,400) == 0)
+%         i/length(ClusterList),length(unique(Trans2ROI)),
+%     end
     % Sort the Clusters from closest to farthest away from CurrClu
     [sortdist,sortidx] = sort(CluDist(CurrClu,:));
     
@@ -50,7 +54,14 @@ for i = 1:length(ClusterList)
     
     % try merging each cluster in NearCluIdx into CurrClu
     MergeOK = [];
-    CurrFreq = CalcPixFreq(FrameList{CurrClu},ObjList{CurrClu},BlobPixelIdxList);
+    
+    
+    %LowPassFilter = fspecial('disk',3);
+    %CurrAvg = imfilter(CurrAvg,LowPassFilter,'replicate');
+    
+    
+    clear a1;
+    clear CurrFreq;
     
     for k = 1:length(NearCluIdx)
         CandIdx = NearCluIdx(k); % CandIdx is index of candidate cluster
@@ -59,42 +70,98 @@ for i = 1:length(ClusterList)
             % cluster already merged during this call, move to next iteration
             continue;
         end
-                
         
-        CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
-        
-        CombFreq = zeros(Xdim,Ydim);
-        CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
-        CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
-
-        CombPixIdx = find(CombFreq > 0.5);
-        
-        [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
-        [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});        
-        try
-        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');  
-        catch
-            keyboard;
-        end
-        
-%         if(DistThresh > 2)
-%          PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
-%         end
-        
-        
-        if ((BigCorrP >= MaxTransientMergeCorrP) || (BigCorrVal < MinCorr))
-            % reject the merge  
-            %PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx);
-            continue;
-        end
-
         if (~isempty(intersect(FrameList{CandIdx},FrameList{CurrClu})))
             % just in case by some messed up edge case it wants to merge
             % temporally overlapping clusters
+            %disp('wow this actually happens');
             continue;
         end
+        
+        % need overlapping pixels in the ROIs
+        commpix = intersect(PixelList{CurrClu},PixelList{CandIdx});
+        if(isempty(commpix))
+            continue;
+        end
+        
+        % intersection must contain peak of CurrClu
+        idx = sub2ind([Xdim,Ydim],Ycent(CurrClu),Xcent(CurrClu));
+        if (~ismember(idx,commpix))
+            %disp('threw out a sneaky overmerge');
+            continue;
+        end
+        
+        idx = sub2ind([Xdim,Ydim],Ycent(CandIdx),Xcent(CandIdx));
+        if (~ismember(idx,commpix))
+            %disp('threw out a sneaky overmerge');
+            continue;
+        end
+        
+        
+        
+        if(~exist('CurrFreq','var'))
+            CurrFreq = CalcPixFreq(FrameList{CurrClu},ObjList{CurrClu},BlobPixelIdxList);
+        end
+        
+        CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
+        CombFreq = zeros(Xdim,Ydim);
+        CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
+        CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
+        CombPixIdx = find(CombFreq > 0.5);
+        
+        CombPixIdx = intersect(CombPixIdx,CircMask{CurrClu});
+        CombPixIdx = intersect(CombPixIdx,CircMask{CandIdx});
+        
+        %CombPixIdx = intersect(PixelList{CurrClu},PixelList{CandIdx});
+        
+        if(isempty(CombPixIdx))
+            disp('empty combo');
+            continue;
+        end
+        
+        if(~exist('a1','var'))
+            [a1,xOff1,yOff1] = BoxGradient(CircMask{CurrClu},BigPixelAvg{CurrClu},Xdim,Ydim);
+        end
+        [a2,xOff2,yOff2] = BoxGradient(CircMask{CandIdx},BigPixelAvg{CandIdx},Xdim,Ydim);
+        
+        % Comb Pix Indices (full coords)
+        [cx,cy] = ind2sub([Xdim Ydim],CombPixIdx);
+        
+        % Left shift indices for a1's coordinates
+        cx1 = cx-xOff1+1;
+        cy1 = cy-yOff1+1;
+        BoxCombPixIdx1 = sub2ind(size(a1),cx1,cy1);
+        cx2 = cx-xOff2+1;
+        cy2 = cy-yOff2+1;
+        
+        BoxCombPixIdx2 = sub2ind(size(a2),cx2,cy2);
+        
+        [circ_rVal,circ_pVal] = circ_corrcc(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
+        phasediffs = angdiff(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
+        meanphasediff = rad2deg(circ_mean(phasediffs));
+        [~, s0] = circ_std(phasediffs);
+        stdphasediff = rad2deg(s0);
+        [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
+        [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
+        
+        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
+        
+        if (stdphasediff > MinCorr)
+            
+            continue;
+        end
+        
+%         if (CluDist(CurrClu,CandIdx) >= 8)
+%                 stdphasediff,
+%                 PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx,a1,a2,CombPixIdx,BoxCombPixIdx1,BoxCombPixIdx2);
+%                 CluDist(CurrClu,CandIdx),figure(5);polarhistogram(phasediffs);
+%                 pause;
+%             
+%         end
+        
         MergeOK = [MergeOK,CandIdx];
         Trans2ROI(Trans2ROI == CandIdx) = CurrClu; % Update cluster number for all transients part of CandIdx to CurrClu
+        break; % no more multi-merges in case of non-mutual agreement
     end
     
     % If a merge happened, update all the cluster info for the next
@@ -105,6 +172,7 @@ for i = 1:length(ClusterList)
         temp = UpdateCluDistances(Xcent,Ycent,CurrClu); % Update distances for newly merged clusters to all other clusters
         CluDist(CurrClu,:) = temp;
         CluDist(:,CurrClu) = temp;
+        %disp(['merge, ',int2str(length(unique(Trans2ROI))),' left']);
     end
     
 end
