@@ -1,4 +1,4 @@
-function [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistThresh,MinCorr,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList)
+function [Overlaps,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(Overlaps,MinCorr,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList)
 % [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistThresh,Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask)
 %  Attempt to merge all cluster pairs where centroid distance is less than DistThresh
 %
@@ -29,13 +29,17 @@ ClusterList = unique(Trans2ROI); % this ends up being the indices into the input
 display([int2str(length(ClusterList)),' clusters left']);
 
 % Get distance from each cluster to all the others
-CluDist = pdist([Xcent',Ycent'],'euclidean');
-CluDist = squareform(CluDist);
+% CluDist = pdist([Xcent',Ycent'],'euclidean');
+% CluDist = squareform(CluDist);
 
 blankframe = zeros(Xdim,Ydim);
+MaxDist = 20;
+
+p = ProgressBar(length(ClusterList));
 
 %% Run actual merging functionality
 for i = 1:length(ClusterList)
+    
     CurrClu = ClusterList(i);
     
     if (Trans2ROI(CurrClu) ~= CurrClu)
@@ -43,22 +47,17 @@ for i = 1:length(ClusterList)
         % of the for loop
         continue;
     end
-%     if(mod(i,400) == 0)
-%         i/length(ClusterList),length(unique(Trans2ROI)),
-%     end
-    % Sort the Clusters from closest to farthest away from CurrClu
-    [sortdist,sortidx] = sort(CluDist(CurrClu,:));
+    
+    if(sum(Overlaps(CurrClu,:)) == 0)
+        % nothing left to merge
+        continue;
+    end
     
     % keep clusters that are within the distance threshold that aren't CurrClu
-    NearCluIdx = setdiff(intersect(ClusterList,sortidx(sortdist <= DistThresh)),CurrClu);
+    NearCluIdx = find(Overlaps(CurrClu,:) > 0);
     
     % try merging each cluster in NearCluIdx into CurrClu
     MergeOK = [];
-    
-    
-    %LowPassFilter = fspecial('disk',3);
-    %CurrAvg = imfilter(CurrAvg,LowPassFilter,'replicate');
-    
     
     clear a1;
     clear CurrFreq;
@@ -68,6 +67,7 @@ for i = 1:length(ClusterList)
         
         if (Trans2ROI(CandIdx) ~= CandIdx)
             % cluster already merged during this call, move to next iteration
+            display('I thought emptying the pixel idx cell would fix this');
             continue;
         end
         
@@ -81,6 +81,7 @@ for i = 1:length(ClusterList)
         % need overlapping pixels in the ROIs
         commpix = intersect(PixelList{CurrClu},PixelList{CandIdx});
         if(isempty(commpix))
+            disp('this definitely should not ever happen');
             continue;
         end
         
@@ -96,8 +97,6 @@ for i = 1:length(ClusterList)
             %disp('threw out a sneaky overmerge');
             continue;
         end
-        
-        
         
         if(~exist('CurrFreq','var'))
             CurrFreq = CalcPixFreq(FrameList{CurrClu},ObjList{CurrClu},BlobPixelIdxList);
@@ -131,33 +130,35 @@ for i = 1:length(ClusterList)
         cx1 = cx-xOff1+1;
         cy1 = cy-yOff1+1;
         BoxCombPixIdx1 = sub2ind(size(a1),cx1,cy1);
+        
         cx2 = cx-xOff2+1;
         cy2 = cy-yOff2+1;
-        
         BoxCombPixIdx2 = sub2ind(size(a2),cx2,cy2);
         
-        [circ_rVal,circ_pVal] = circ_corrcc(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
         phasediffs = angdiff(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
         meanphasediff = rad2deg(circ_mean(phasediffs));
         [~, s0] = circ_std(phasediffs);
         stdphasediff = rad2deg(s0);
-        [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
-        [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
+        PhaseError = rad2deg(mean(abs(phasediffs)));
         
-        [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
+%         if((PhaseError > 30) && (PhaseError < 40) && (length(find(Trans2ROI == CurrClu)) > 5))
+%             stdphasediff,meanphasediff,PhaseError,
+%             [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
+%             [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
+%             
+%             [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
+%             [circ_rVal,circ_pVal] = circ_corrcc(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
+%             PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx,a1,a2,CombPixIdx,BoxCombPixIdx1,BoxCombPixIdx2);
+%             %CluDist(CurrClu,CandIdx),
+%             figure(5);polarhistogram(phasediffs);
+%             pause;
+%         end
         
-        if (stdphasediff > MinCorr)
-            
+        if (PhaseError > MinCorr)
             continue;
         end
         
-%         if (CluDist(CurrClu,CandIdx) >= 8)
-%                 stdphasediff,
-%                 PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx,a1,a2,CombPixIdx,BoxCombPixIdx1,BoxCombPixIdx2);
-%                 CluDist(CurrClu,CandIdx),figure(5);polarhistogram(phasediffs);
-%                 pause;
-%             
-%         end
+        
         
         MergeOK = [MergeOK,CandIdx];
         Trans2ROI(Trans2ROI == CandIdx) = CurrClu; % Update cluster number for all transients part of CandIdx to CurrClu
@@ -169,12 +170,30 @@ for i = 1:length(ClusterList)
     if ~isempty(MergeOK)
         [PixelList,PixelAvg,BigPixelAvg,Xcent,Ycent,FrameList,ObjList] = UpdateClusterInfo(...
             MergeOK,PixelList,PixelAvg,BigPixelAvg,CircMask,Xcent,Ycent,FrameList,ObjList,CurrClu,BlobPixelIdxList);
-        temp = UpdateCluDistances(Xcent,Ycent,CurrClu); % Update distances for newly merged clusters to all other clusters
-        CluDist(CurrClu,:) = temp;
-        CluDist(:,CurrClu) = temp;
-        %disp(['merge, ',int2str(length(unique(Trans2ROI))),' left']);
+        
+        Overlaps(MergeOK,:) = 0;
+        Overlaps(:,MergeOK) = 0;
+        
+        for k = 1:length(Trans2ROI)
+            if (isempty(PixelList{k}))
+                Overlaps(CurrClu,k) = 0;
+            else
+                CentDist = sqrt((Xcent(CurrClu)-Xcent(k)).^2+(Ycent(CurrClu)-Ycent(k)).^2);
+                if(CentDist > MaxDist)
+                    Overlaps(CurrClu,k) = 0;
+                else
+                    Overlaps(CurrClu,k) = length(intersect(PixelList{CurrClu},PixelList{k}));
+                end
+            end
+            
+            
+            %disp(['merge, ',int2str(length(unique(Trans2ROI))),' left']);
+        end
+        Overlaps(:,CurrClu) = Overlaps(CurrClu,:)';
+        
     end
     
+    p.progress;
+    
 end
-
-end
+p.stop;

@@ -90,7 +90,7 @@ T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the tr
 
 
 %% MergeTransientROIs paramsload
-T_PARAMS.DistanceThresholdList = [15]; % list of progressively increasing distance thresholds to try. EDIT:SPACE
+T_PARAMS.DistanceThresholdList = [20]; % list of progressively increasing distance thresholds to try. EDIT:SPACE
 %                                              With the correlation test being pretty robust I'm not sure that small increments are necessary
 T_PARAMS.MaxTransientMergeCorrP = 0.01;      % maximum correlation p value for a transient merge
 T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a transient merge. 

@@ -31,7 +31,7 @@ blankframe = zeros(Xdim,Ydim,'single');
 
 OrigEaterList = PixelList{EaterClu};
 
-%% union the Food pixel lists into the eater pixel lists
+%% figure out the frequency of the pixels in the blobs in all of the transients to determine the new ROI
 tempPixFreqs = CalcPixFreq(FrameList{EaterClu},ObjList{EaterClu},BlobPixelIdxList)*length(FrameList{EaterClu});
 totalframes = length(FrameList{EaterClu});
 
@@ -40,9 +40,10 @@ for j = 1:length(FoodClu)
     totalframes = totalframes + length(FrameList{FoodClu(j)});    
 end
 tempPixFreqs = tempPixFreqs/totalframes;
+% set new ROI
 PixelList{EaterClu} = find(tempPixFreqs > 0.5);
-%imagesc(tempPixFreqs);axis image;colorbar;title(int2str(totalframes));pause;
-%% for each cluster, add pixels that overlap with the currclu circmask
+
+%% sum up the pixels in the neighborhood of the new cluster
 AllClu = [EaterClu,FoodClu];
 for j = 1:length(AllClu)
     [binans,firstidx] = ismember(CircMask{EaterClu},CircMask{AllClu(j)});
@@ -58,6 +59,13 @@ BigPixelAvg{EaterClu} = tempAvg;
 for j = 1:length(FoodClu)
     FrameList{EaterClu} = [FrameList{EaterClu},FrameList{FoodClu(j)}];
     ObjList{EaterClu} = [ObjList{EaterClu},ObjList{FoodClu(j)}];
+    FrameList{FoodClu(j)} = [];
+    ObjList{FoodClu(j)} = [];
+    PixelList{FoodClu(j)} = [];
+    PixelAvg{FoodClu(j)} = [];
+    BigPixelAvg{FoodClu(j)} = [];
+    Xcent(FoodClu(j)) = NaN;
+    Ycent(FoodClu(j)) = NaN;
 end
 
 %% update ROI

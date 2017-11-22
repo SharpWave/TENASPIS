@@ -4,7 +4,7 @@ function LoadMovie(moviefile)
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
 global T_MOVIE;
-T_MOVIE.bpmov = LoadFrames(moviefile,1:NumFrames);
+T_MOVIE = LoadFrames(moviefile,1:NumFrames);
 
 end
 

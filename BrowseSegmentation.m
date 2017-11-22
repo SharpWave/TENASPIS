@@ -15,7 +15,7 @@ for i = 1:NumNeurons
     plot(NeuronTraces.LPtrace(i,:));hold on;
     plot(a,NeuronTraces.LPtrace(i,a),'ro','MarkerFaceColor','r');axis tight;hold off;
     yyaxis right;
-    plot(convtrim(NeuronTraces.CorrR(i,:),ones(1,10)/10));
+    %plot(convtrim(NeuronTraces.CorrR(i,:),ones(1,10)/10));
     hold off;
     a1 = subplot(2,2,1);
     % plot the blobs

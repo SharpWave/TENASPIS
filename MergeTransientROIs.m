@@ -26,39 +26,29 @@ disp('merging transient ROIs into neuron ROIs');
 [DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff,MinNumTransients] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff','MinNumTransients');
 
 %% load data
-load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask','PixFreqs');
+load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask','Overlaps');
 load('Blobs.mat','BlobPixelIdxList');
 NumIterations = 0;
 NumCT = length(Trans2ROI);
-oldNumCT = NumCT;
 
-% run AutoMergeClu, each time incrementing the distance threshold
-% Since clusters start out temporally and spatially independent from one
-% another, this loop starts out by merging all the clusters that are very
-% close to one another into the same new cluster, then bumping up the
-% distance threshold incrementally until no new clusters are created or the
-% max distance threshold is reached.
-%MinCorr = 0.95:-0.05:0.2;
-MinCorr = [15,15,15,25,25,35,35,45,45,60,60,66,66];
-MinCorr = [10:5:65];
+MinCorr = [15:5:35];
 
+% try to merge transient clusters, starting with a high threshold for
+% gradient similarity and then lowering the threshold
+go = 1;
 for j = 1:length(MinCorr)
-    for i = 1:length(DistanceThresholdList)
+    while(go == 1)
+        disp(['Merging neurons, iteration #',num2str(NumIterations+1),' min angular standard deviation: ',num2str(MinCorr(j))])
         
-
-            
-            disp(['Merging neurons, iteration #',num2str(NumIterations+1),' distance ',num2str(DistanceThresholdList(i)),' min correlation ',num2str(MinCorr(j))])
-            
-            % Iteratively merge spatially distant clusters together
-            [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),MinCorr(j),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList);
-            NumIterations = NumIterations+1; % Update number of iterations
-            NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
-            DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
-            
-
-        
+        % Iteratively merge spatially distant clusters together
+        [Overlaps,Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(Overlaps,MinCorr(j),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask,BlobPixelIdxList);
+        NumIterations = NumIterations+1; % Update number of iterations
+        oldNumCT = NumCT;
+        NumCT = length(unique(Trans2ROI));
+        if (oldNumCT == NumCT)
+            break;
+        end
     end
-    
 end
 
 %% Unpack the variables calculated above
@@ -72,6 +62,7 @@ blankframe = zeros(Xdim,Ydim,'single');
 NeuronActivity = false(NumNeurons,NumFrames);
 
 for i = 1:NumNeurons
+    
     currtran = NeuronROIidx(i);
     NeuronPixelIdxList{i} = PixelIdxList{currtran};
     temp = blankframe;
@@ -82,6 +73,8 @@ for i = 1:NumNeurons
     NeuronFrameList{i} = FrameList{currtran};
     NeuronObjList{i} = ObjList{currtran};
     NeuronActivity(i,NeuronFrameList{i}) = true;
+    
+    
 end
 
 %% Kill off the singletons! (presumed to be noise)
@@ -102,14 +95,12 @@ NeuronROIidx = NeuronROIidx(OKcount);
 NeuronActivity = NeuronActivity((OKcount),:);
 nTrans = nTrans(OKcount);
 
-keyboard;
+
 
 NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
 disp('saving outputs');
-save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList ...
-    NeuronObjList NeuronROIidx NumNeurons NeuronActivity  nTrans Trans2ROI
-
-NeuronTraces
+save('SegmentationROIs.mat','NeuronPixelIdxList','NeuronImage','NeuronAvg','NeuronFrameList','NeuronObjList','NeuronROIidx','NumNeurons','NeuronActivity','nTrans','Trans2ROI','NeuronTraces','-v7.3');
+keyboard;
 
 end
