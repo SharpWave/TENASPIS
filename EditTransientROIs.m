@@ -17,10 +17,11 @@ end
 
 p = ProgressBar(NumNeurons);
 
-TraceWinSec = 1500;
+TraceWinSec = 600;
 
-for i = 1:NumNeurons
-    i / NumNeurons;
+GoodTransient = zeros(1,NumNeurons);
+
+for i = 1:NumNeurons    
     a = FrameList{i};
     NumBlobs = length(a);
     
@@ -53,12 +54,17 @@ for i = 1:NumNeurons
     LPtrace = squeeze(mean(LPtrace));
     LPtrace = convtrim(LPtrace,ones(10,1)/10);
     
-    [~,b] = findpeaks(LPtrace,'MinPeakDistance',10,'MinPeakProminence',max(LPtrace)/4,'MinPeakHeight',0.005);
+    [~,b] = findpeaks(LPtrace,'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
     
     newa = a-MinWin+1;
     
     [~,segpeakidx] = max(LPtrace(newa));
     segpeakidx = segpeakidx+newa(1)-1; % convert index back to dimensions of LPtrace
+    
+    if(isempty(b))
+        GoodTransient(i) = 0;
+        continue;
+    end
     
     closesttrpeak = findclosest(segpeakidx,b);
     closesttrpeak = b(closesttrpeak); % convert index back to dimensions of LPtrace
@@ -73,6 +79,7 @@ for i = 1:NumNeurons
         %disp('Bad');
         GoodTransient(i) = 0;
     end
+
     %     figure(1);plot(LPtrace);hold on;
     %     plot(newa,LPtrace(newa),'-r','LineWidth',2);
     %     plot(b,LPtrace(b),'ko');hold off;GoodTransient(i),
@@ -81,15 +88,17 @@ for i = 1:NumNeurons
 end
 p.stop;
 
+
+
 % edit down all of the variables
-FrameList = FrameList(GoodTransient);
-ObjList = ObjList(GoodTransient);
-PixelIdxList = PixelIdxList(GoodTransient);
-CircMask = CircMask(GoodTransient);
-PixelAvg = PixelAvg(GoodTransient);
-Xcent = Xcent(GoodTransient);
-Ycent = Ycent(GoodTransient);
-BigPixelAvg = BigPixelAvg(GoodTransient);
+FrameList = FrameList(find(GoodTransient));
+ObjList = ObjList(find(GoodTransient));
+PixelIdxList = PixelIdxList(find(GoodTransient));
+CircMask = CircMask(find(GoodTransient));
+PixelAvg = PixelAvg(find(GoodTransient));
+Xcent = Xcent(find(GoodTransient));
+Ycent = Ycent(find(GoodTransient));
+BigPixelAvg = BigPixelAvg(find(GoodTransient));
 NumTransients = sum(GoodTransient);
 Trans2ROI = 1:NumTransients;
 

@@ -26,12 +26,12 @@ disp('merging transient ROIs into neuron ROIs');
 [DistanceThresholdList,Xdim,Ydim,NumFrames,ROIBoundaryCoeff,MinNumTransients] = Get_T_Params('DistanceThresholdList','Xdim','Ydim','NumFrames','ROIBoundaryCoeff','MinNumTransients');
 
 %% load data
-load('TransientROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask','Overlaps');
+load('UngarbagedROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask','Overlaps');
 load('Blobs.mat','BlobPixelIdxList');
 NumIterations = 0;
 NumCT = length(Trans2ROI);
 
-MinCorr = [15:5:35];
+MinCorr = [5:5:30];
 
 % try to merge transient clusters, starting with a high threshold for
 % gradient similarity and then lowering the threshold
@@ -94,13 +94,13 @@ NeuronObjList = NeuronObjList(OKcount);
 NeuronROIidx = NeuronROIidx(OKcount);
 NeuronActivity = NeuronActivity((OKcount),:);
 nTrans = nTrans(OKcount);
+Overlaps = Overlaps(find(OKcount),:);
+Overlaps = Overlaps(:,find(OKcount));
 
-
-
-NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
+%NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
 disp('saving outputs');
-save('SegmentationROIs.mat','NeuronPixelIdxList','NeuronImage','NeuronAvg','NeuronFrameList','NeuronObjList','NeuronROIidx','NumNeurons','NeuronActivity','nTrans','Trans2ROI','NeuronTraces','-v7.3');
-keyboard;
+save('SegmentationROIs.mat','NeuronPixelIdxList','NeuronImage','NeuronAvg','NeuronFrameList','NeuronObjList','NeuronROIidx','NumNeurons','NeuronActivity','nTrans','Trans2ROI','Overlaps','-v7.3');
+
 
 end

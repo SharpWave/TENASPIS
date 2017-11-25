@@ -41,7 +41,7 @@ for j = 1:length(FoodClu)
 end
 tempPixFreqs = tempPixFreqs/totalframes;
 % set new ROI
-PixelList{EaterClu} = find(tempPixFreqs > 0.5);
+PixelList{EaterClu} = find(tempPixFreqs >= 0.5);
 
 %% sum up the pixels in the neighborhood of the new cluster
 AllClu = [EaterClu,FoodClu];

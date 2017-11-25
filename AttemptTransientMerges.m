@@ -106,7 +106,7 @@ for i = 1:length(ClusterList)
         CombFreq = zeros(Xdim,Ydim);
         CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
         CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
-        CombPixIdx = find(CombFreq > 0.5);
+        CombPixIdx = find(CombFreq >= 0.5);
         
         CombPixIdx = intersect(CombPixIdx,CircMask{CurrClu});
         CombPixIdx = intersect(CombPixIdx,CircMask{CandIdx});
@@ -141,7 +141,7 @@ for i = 1:length(ClusterList)
         stdphasediff = rad2deg(s0);
         PhaseError = rad2deg(mean(abs(phasediffs)));
         
-%         if((PhaseError > 30) && (PhaseError < 40) && (length(find(Trans2ROI == CurrClu)) > 5))
+%         if(MinCorr >= 30)
 %             stdphasediff,meanphasediff,PhaseError,
 %             [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
 %             [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
@@ -154,9 +154,13 @@ for i = 1:length(ClusterList)
 %             pause;
 %         end
         
+        
+        
         if (PhaseError > MinCorr)
             continue;
         end
+        
+        
         
         
         

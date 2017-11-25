@@ -42,7 +42,7 @@ function [x, y, color_use] = PlotNeuronOutlines(varargin)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-load ('TransientROIs.mat','PixelIdxList');
+load ('UngarbagedROIs.mat','PixelIdxList');
 load ('SegmentationROIs.mat','NeuronPixelIdxList','NeuronROIidx','NeuronImage','Trans2ROI');
 load MovieDims.mat;
 clusterlist = Trans2ROI;
@@ -117,9 +117,9 @@ for i = 1:length(clusterlist)
     temp(PixelList{i}) = 1;
     b = bwboundaries(temp,'noholes'); % Get cluster boundary
     x{i} = b{1}(:,1);
-    x{i} = x{i}+(rand(size(x{i}))-0.5)/2;
+    x{i} = x{i};%+(rand(size(x{i}))-0.5)/2;
     y{i} = b{1}(:,2);
-    y{i} = y{i}+(rand(size(y{i}))-0.5)/2;
+    y{i} = y{i};%+(rand(size(y{i}))-0.5)/2;
     plot(y{i},x{i},'Color',colors((clusterlist(i)),:));hold on;
 
 end
