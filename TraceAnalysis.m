@@ -43,7 +43,7 @@ for i = 1:NumNeurons
         BoxCombPixIdx1 = sub2ind(size(a1),cx1,cy1);
         
         phasediffs = angdiff(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
-        PhaseError = rad2deg(mean(abs(phasediffs)));        
+        PhaseError = rad2deg(mean(abs(phasediffs)));
         
         if (PhaseError <= MaxError)
             GoodPeak(j) = 1;
@@ -52,7 +52,12 @@ for i = 1:NumNeurons
     end
     GoodPeakAvg{i} = GoodPeakAvg{i}./sum(GoodPeak);
     GoodPeaks{i} = b(find(GoodPeak));
-    %imagesc(GoodPeakAvg{i});pause;
+    imagesc(GoodPeakAvg{i});
+    hold on
+    PlotRegionOutline(NeuronImage{i},'r');axis image;hold off;
+    caxis([0.01 max(GoodPeakAvg{i}(NeuronPixelIdxList{i}))]);
+    rp = regionprops(NeuronImage{i},'Centroid');
+    axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);pause;
     p.progress;
 end
 p.stop;

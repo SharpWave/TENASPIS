@@ -11,7 +11,7 @@ DebugPlot = 0;
 %% load data
 disp('loading data');
 load('VettedTransients.mat','FrameList','ObjList');
-load('Blobs.mat','BlobPixelIdxList');
+load('BlobLinks.mat','BlobPixelIdxList');
 
 %% setup some variables
 NumTransients = length(FrameList);

@@ -11,11 +11,8 @@
 
     %% load data
     disp('Loading blob and link data');
-    load('BlobLinks.mat','FrameList','ObjList');
-    load('Blobs.mat','BlobWeightedCentroids');
-    if (DebugPlots)
-        load('Blobs.mat','BlobPixelIdxList');
-    end
+    load('BlobLinks.mat');
+
 
     %% setup vars
     NumTransients = length(FrameList);

@@ -29,7 +29,7 @@ end
 
 
 
-figure(1);set(gcf,'Position',[1 1 1920 1000]);
+figure(1);set(gcf,'Position',[1 1 1920 700]);
 
 for i = 1:NumNeurons
     if(~GoodROI(i))
@@ -42,6 +42,16 @@ for i = 1:NumNeurons
         if(~GoodROI(Neighbors(j)))
             continue;
         end
+        
+        [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
+        [~,m2] = imgradient(GoodPeakAvg{i});
+        CombList = union(NeuronPixelIdxList{i},NeuronPixelIdxList{Neighbors(j)});
+        phasediffs = angdiff(deg2rad(m1(CombList)),deg2rad(m2(CombList)));
+        PhaseError = rad2deg(mean(abs(phasediffs)));
+        if ((PhaseError >= 35) || (Neighbors(j) <= i))
+            continue;
+        end
+        PhaseError,
         a1 = subplot(3,2,1);
         imagesc(GoodPeakAvg{i});title(int2str(i));
         axis image;hold on;caxis([0.005 max(GoodPeakAvg{i}(NeuronPixelIdxList{i}))]);colorbar
@@ -58,9 +68,12 @@ for i = 1:NumNeurons
         linkaxes([a1 a2],'xy');
         axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);
         
+
+        
+        
         a3 = subplot(3,2,3:4);plot(LPtrace{i});axis tight;hold on;plot(GoodPeaks{i},LPtrace{i}(GoodPeaks{i}),'ro');hold off;
         a4 = subplot(3,2,5:6);plot(LPtrace{Neighbors(j)});axis tight;hold on;plot(GoodPeaks{Neighbors(j)},LPtrace{Neighbors(j)}(GoodPeaks{Neighbors(j)}),'ro');hold off;
-        linkaxes([a3 a4],'xy');
+        linkaxes([a3 a4],'x');
         pause;
     end
 end

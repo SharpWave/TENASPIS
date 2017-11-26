@@ -4,7 +4,7 @@ function [] = EditTransientROIs()
 
 close all;
 load TransientROIs.mat;
-load('Blobs.mat','BlobPixelIdxList');
+load('BlobLinks.mat','BlobPixelIdxList');
 load MovieDims.mat;
 
 NumNeurons = length(FrameList);

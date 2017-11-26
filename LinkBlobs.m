@@ -26,53 +26,88 @@ disp('Processing blobs into calcium transient ROIs: first step is to link blobs 
 %% load parameters
 [NumFrames,FrameChunkSize,BlobLinkThresholdCoeff] = Get_T_Params('NumFrames','FrameChunkSize','BlobLinkThresholdCoeff');
 
+% max number of samples to interpolate places where a transient skips frames
+
+GapFillLen = 1;
+
 % Load Blob pixel lists and centroids
 disp('Loading blobs');
 load('Blobs.mat','BlobPixelIdxList','BlobWeightedCentroids','BlobMinorAxisLength');
 
 %% set up some variables
 TransientIdx = cell(1,NumFrames);
-InitNumBlobs = length(BlobPixelIdxList{1});
-if (InitNumBlobs > 0)
-    TransientIdx{1} = (1:InitNumBlobs);
-else
-    TransientIdx{1} = [];
-end
-NextNewIdx = InitNumBlobs+1;
 
-FrameList = cell(1,InitNumBlobs);
-ObjList = cell(1,InitNumBlobs);
-for i = 1:InitNumBlobs
-    FrameList{i} = 1;
-    ObjList{i} = i;
+% Count the number of blobs in each frame
+for i = 1:NumFrames
+    NumBlobs(i) = length(BlobPixelIdxList{i});
 end
+
+CurrIdx = 1;
+
+for i = 1:1+GapFillLen;       
+    if (NumBlobs(i) == 0)  
+        TransientIdx{i} = [];
+        continue;
+    end
+   
+    for j = 1:NumBlobs(i)
+       TransientIdx{i}(j) = CurrIdx;
+       FrameList{CurrIdx} = i;
+       ObjList{CurrIdx} = j;
+       CurrIdx = CurrIdx+1;
+    end
+     
+end
+NextNewIdx = CurrIdx;
 
 %% Run through loop to connect blobs between successive frames
 p = ProgressBar(floor(NumFrames / FrameChunkSize));
 disp('Linking Blobs');
 
-for i = 2:NumFrames
-    CurrNumBlobs = length(BlobPixelIdxList{i});
-    PrevNumBlobs = length(BlobPixelIdxList{i-1});
-    for j = 1:CurrNumBlobs
+
+
+
+for i = 2+GapFillLen:NumFrames
+    
+    for j = 1:NumBlobs(i)
         CurrCent = BlobWeightedCentroids{i}{j};
         FoundMatch = 0;
-        for k = 1:PrevNumBlobs
-            PrevCent = BlobWeightedCentroids{i-1}{k};
-            cdist = sqrt((PrevCent(1)-CurrCent(1))^2+(PrevCent(2)-CurrCent(2))^2);
-            if (cdist < BlobMinorAxisLength{i-1}(k)*BlobLinkThresholdCoeff)
-                FoundMatch = k;
-                break;
+        SamplesToCheck = (i-1:-1:i-1-GapFillLen)
+        CurrSamp = i-1;
+        while (~FoundMatch && CurrSamp >= SamplesToCheck(end))
+            for k = 1:NumBlobs(CurrSamp)
+                PrevCent = BlobWeightedCentroids{CurrSamp}{k};
+                cdist = sqrt((PrevCent(1)-CurrCent(1))^2+(PrevCent(2)-CurrCent(2))^2);
+                if (cdist < BlobMinorAxisLength{CurrSamp}(k)*BlobLinkThresholdCoeff)
+                    FoundMatch = k;
+                    MatchSamp = CurrSamp;
+                    break;
+                end
             end
+            CurrSamp = CurrSamp-1;
         end
         if (FoundMatch > 0)
             % get transient index of match
-            PrevIdx = TransientIdx{i-1}(FoundMatch);
+            PrevIdx = TransientIdx{MatchSamp}(FoundMatch);
             % set this blob's transient index to match's
             TransientIdx{i}(j) = single(PrevIdx);
             % add this frame and object numbers to transient's bloblist
+            
+            
+            % add blob to skipped samples
+
+            for k = MatchSamp+1:i-1
+                NumBlobs(k) = NumBlobs(k)+1;
+                BlobPixelIdxList{k}{NumBlobs(k)} = BlobPixelIdxList{i}{j};
+                BlobWeightedCentroids{k}{NumBlobs(k)} = BlobWeightedCentroids{i}{j};
+                BlobMinorAxisLength{k}(NumBlobs(k)) = BlobMinorAxisLength{i}(j);
+                TransientIdx{k}(NumBlobs(k)) = PrevIdx;
+                FrameList{PrevIdx} = [FrameList{PrevIdx},single(k)];
+                ObjList{PrevIdx} = [ObjList{PrevIdx},single(NumBlobs(k))];
+            end
             FrameList{PrevIdx} = [FrameList{PrevIdx},single(i)];
             ObjList{PrevIdx} = [ObjList{PrevIdx},single(j)];
+            
         else
             % Set up a new Transient
             TransientIdx{i}(j) = single(NextNewIdx);
@@ -90,5 +125,5 @@ p.stop;
 %% save outputs
 disp('saving blob link information');
 
-save BlobLinks.mat TransientIdx FrameList ObjList;
-    
+save BlobLinks.mat TransientIdx FrameList ObjList BlobPixelIdxList BlobWeightedCentroids BlobMinorAxisLength;
+
