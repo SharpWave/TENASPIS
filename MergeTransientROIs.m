@@ -31,7 +31,7 @@ load('Blobs.mat','BlobPixelIdxList');
 NumIterations = 0;
 NumCT = length(Trans2ROI);
 
-MinCorr = [5:5:30];
+MinCorr = [10:5:25];
 
 % try to merge transient clusters, starting with a high threshold for
 % gradient similarity and then lowering the threshold

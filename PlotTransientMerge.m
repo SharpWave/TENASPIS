@@ -31,6 +31,9 @@ tempframeOL(CandPixelIdx) = 1;
 b2 = bwboundaries(tempframeOL);
 plot(b2{1}(:,2),b2{1}(:,1),'-r','LineWidth',1);
 plot(b1{1}(:,2),b1{1}(:,1),'-m','LineWidth',1);hold off;
+[xs,ys] = ind2sub([Xdim Ydim],CurrPixelIdx);
+
+axis([median(ys)-20 median(ys)+20 median(xs)-20 median(xs)+20]);
 
 s(1) = subplot(2,3,1);
 plot(b2{1}(:,2),b2{1}(:,1),'-m','LineWidth',1);

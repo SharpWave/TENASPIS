@@ -62,6 +62,8 @@ for i = 1:NumNeurons
     segpeakidx = segpeakidx+newa(1)-1; % convert index back to dimensions of LPtrace
     
     if(isempty(b))
+        % if there were actually any peaks, they were really weak and this
+        % transient was mis-detected
         GoodTransient(i) = 0;
         continue;
     end
@@ -72,9 +74,26 @@ for i = 1:NumNeurons
     
     
     
-    if((abs(segpeakidx-closesttrpeak) <= 3) || (ismember(closesttrpeak,a)))
+    if((abs(segpeakidx-closesttrpeak) <= 2) || (ismember(closesttrpeak,newa)))
         %disp('Good');
         GoodTransient(i) = 1;
+        
+        % limit the transient to the frames within 2 of cloesettrpeak
+        gooda = (newa <= closesttrpeak+2) & (newa >= closesttrpeak-2);
+        if(sum(gooda) == 0)
+            keyboard;
+        end
+        newa = newa(gooda);
+        
+        % now average the frames around the peak together.
+        mv = mean(T_MOVIE(:,:,newa+MinWin-1),3);
+        BigPixelAvg{i} = mv(CircMask{i});
+        PixelAvg{i} = mv(PixelIdxList{i});
+        [~,idx] = max(PixelAvg{i});
+        [Ycent(i),Xcent(i)] = ind2sub([Xdim Ydim],PixelIdxList{i}(idx));
+        FrameList{i} = FrameList{i}(gooda);
+        ObjList{i} = ObjList{i}(gooda);
+
     else
         %disp('Bad');
         GoodTransient(i) = 0;

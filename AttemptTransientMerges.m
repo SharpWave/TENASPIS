@@ -113,8 +113,14 @@ for i = 1:length(ClusterList)
         
         %CombPixIdx = intersect(PixelList{CurrClu},PixelList{CandIdx});
         
+        
+        
+        
         if(isempty(CombPixIdx))
-            disp('empty combo');
+            %disp('empty combo');
+            
+            
+            keyboard;
             continue;
         end
         
@@ -124,6 +130,7 @@ for i = 1:length(ClusterList)
         [a2,xOff2,yOff2] = BoxGradient(CircMask{CandIdx},BigPixelAvg{CandIdx},Xdim,Ydim);
         
         % Comb Pix Indices (full coords)
+        
         [cx,cy] = ind2sub([Xdim Ydim],CombPixIdx);
         
         % Left shift indices for a1's coordinates
@@ -141,7 +148,11 @@ for i = 1:length(ClusterList)
         stdphasediff = rad2deg(s0);
         PhaseError = rad2deg(mean(abs(phasediffs)));
         
-%         if(MinCorr >= 30)
+        if (PhaseError > MinCorr)
+            continue;
+        end
+        
+%         if(PhaseError >= 10)
 %             stdphasediff,meanphasediff,PhaseError,
 %             [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
 %             [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
@@ -153,16 +164,6 @@ for i = 1:length(ClusterList)
 %             figure(5);polarhistogram(phasediffs);
 %             pause;
 %         end
-        
-        
-        
-        if (PhaseError > MinCorr)
-            continue;
-        end
-        
-        
-        
-        
         
         MergeOK = [MergeOK,CandIdx];
         Trans2ROI(Trans2ROI == CandIdx) = CurrClu; % Update cluster number for all transients part of CandIdx to CurrClu
