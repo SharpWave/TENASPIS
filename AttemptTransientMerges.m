@@ -152,7 +152,7 @@ for i = 1:length(ClusterList)
             continue;
         end
         
-%         if(PhaseError >= 10)
+%         if(1 == 1)
 %             stdphasediff,meanphasediff,PhaseError,
 %             [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
 %             [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
@@ -195,6 +195,7 @@ for i = 1:length(ClusterList)
             %disp(['merge, ',int2str(length(unique(Trans2ROI))),' left']);
         end
         Overlaps(:,CurrClu) = Overlaps(CurrClu,:)';
+        keyboard;
         
     end
     

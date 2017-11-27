@@ -6,7 +6,9 @@ load SegmentationROIs.mat;
 load MovieDims.mat;
 global T_MOVIE;
 
-p = ProgressBar(NumNeurons);
+
+MinBlobRadius = Get_T_Params('MinBlobRadius');
+MinBlobArea = MinBlobRadius^2*2;
 
 for i = 1:NumNeurons
     [xidx,yidx] = ind2sub([Xdim Ydim],NeuronPixelIdxList{i});
@@ -52,15 +54,64 @@ for i = 1:NumNeurons
     end
     GoodPeakAvg{i} = GoodPeakAvg{i}./sum(GoodPeak);
     GoodPeaks{i} = b(find(GoodPeak));
-    imagesc(GoodPeakAvg{i});
-    hold on
-    PlotRegionOutline(NeuronImage{i},'r');axis image;hold off;
-    caxis([0.01 max(GoodPeakAvg{i}(NeuronPixelIdxList{i}))]);
-    rp = regionprops(NeuronImage{i},'Centroid');
-    axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);pause;
-    p.progress;
+    
+    thresh = 0.005;
+    foundit = 0;
+    oldsize = length(NeuronPixelIdxList{i});
+    while(~foundit)
+        
+        tr = regionprops(GoodPeakAvg{i} > thresh,'PixelIdxList','Solidity');
+        [~,midx] = max(NeuronAvg{i});
+        foundit = 0;
+        PixelIdxList{i} = [];
+        for j = 1:length(tr)
+            if(ismember(NeuronPixelIdxList{i}(midx),tr(j).PixelIdxList))
+                PixelIdxList{i} = tr(j).PixelIdxList;
+                break;
+            end
+        end
+        
+        if(isempty(PixelIdxList{i}) || (length(tr) == 0))
+            PixelIdxList{i} = [];
+            disp('killed a cluster');
+            break;
+        end
+        if((length(PixelIdxList{i}) < 1.25*oldsize) && (tr(j).Solidity >= 0.9) )
+            foundit = 1;
+        end
+        thresh = thresh + 0.001;
+        
+    end
+    
+    if (length(PixelIdxList{i}) < MinBlobArea)
+        PixelIdxList{i} = [];
+        disp(' a cluster got too small');
+    end
+    
+%     if(~isempty(PixelIdxList{i}))
+%         figure(1);
+%         imagesc(GoodPeakAvg{i});hold on;axis image;
+%         caxis([0.005 max(GoodPeakAvg{i}(NeuronPixelIdxList{i}))]);
+%         temp = zeros(Xdim,Ydim);
+%         temp(PixelIdxList{i}) = 1;
+%         PlotRegionOutline(temp,'g');
+%         PlotRegionOutline(NeuronImage{i},'r');
+%         rp = regionprops(NeuronImage{i},'Centroid');
+%         axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);hold off;
+%         pause;
+%     end
+    
+    
+    %for j = 1:length(
+    %     imagesc(GoodPeakAvg{i});
+    %     hold on
+    %     PlotRegionOutline(NeuronImage{i},'r');axis image;hold off;
+    %     caxis([0.01 max(GoodPeakAvg{i}(NeuronPixelIdxList{i}))]);
+    %     rp = regionprops(NeuronImage{i},'Centroid');
+    %     axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);pause;
+    
 end
-p.stop;
-save TraceA.mat GoodPeakAvg GoodPeaks LPtrace -v7.3
+
+save TraceA.mat GoodPeakAvg GoodPeaks LPtrace PixelIdxList -v7.3
 keyboard;
 

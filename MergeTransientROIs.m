@@ -27,7 +27,7 @@ disp('merging transient ROIs into neuron ROIs');
 
 %% load data
 load('UngarbagedROIs.mat','Trans2ROI','Xcent','Ycent','FrameList','ObjList','PixelAvg','PixelIdxList','BigPixelAvg','CircMask','Overlaps');
-load('Blobs.mat','BlobPixelIdxList');
+load('BlobLinks.mat','BlobPixelIdxList');
 NumIterations = 0;
 NumCT = length(Trans2ROI);
 

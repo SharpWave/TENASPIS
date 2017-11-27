@@ -122,40 +122,9 @@ NumTransients = sum(GoodTransient);
 Trans2ROI = 1:NumTransients;
 
 disp('Computing pixel overlaps');
-Overlaps = zeros(NumTransients,NumTransients,'single');
 MaxDist = 20;
 
-for i = 1:NumTransients
-    [xi,yi] = ind2sub([Xdim Ydim],PixelIdxList{i});
-    minxi = min(xi);
-    minyi = min(yi);
-    maxxi = max(xi);
-    maxyi = max(yi);
-    
-    for j = 1:NumTransients
-        if (i == j)
-            continue;
-        end
-        if (i > j)
-            Overlaps(i,j) = Overlaps(j,i);
-            continue;
-        end
-        CentDist = sqrt((Xcent(i)-Xcent(j)).^2+(Ycent(i)-Ycent(j)).^2);
-        if(CentDist > MaxDist)
-            continue;
-        end
-        [xj,yj] = ind2sub([Xdim Ydim],PixelIdxList{j});
-        minxj = min(xj);
-        minyj = min(yj);
-        maxxj = max(xj);
-        maxyj = max(yj);
-        
-        % Make sure everything is in range
-        if((minxi <= maxxj) && (minxj <= maxxi) && (minyi <= maxyj) && (minyj <= maxyi))
-            Overlaps(i,j) = length(intersect(PixelIdxList{i},PixelIdxList{j}));
-        end
-    end
-end
+Overlaps = CalcOverlaps(PixelIdxList);
 
 disp('saving data');
 save UngarbagedROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask Overlaps;
