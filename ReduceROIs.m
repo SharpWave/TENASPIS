@@ -5,7 +5,7 @@ load MovieDims.mat;
 load ('TraceA.mat','GoodPeakAvg','GoodPeaks','LPtrace','PixelIdxList');
 
 global T_MOVIE;
-ToPlot = 1;
+ToPlot = 0;
 NumNeurons = length(PixelIdxList);
 
 GoodROI = zeros(1,NumNeurons);
@@ -30,14 +30,22 @@ figure(1);set(gcf,'Position',[1 1 1920 700]);
 
 NumMerges = 0;
 maxerror = 30;
+disp('assessing cluster merges');
+NumNeurons = length(PixelIdxList);
+p = ProgressBar(NumNeurons);
 
 for i = 1:NumNeurons
+    p.progress;
     temp = zeros(Xdim,Ydim);
     temp(PixelIdxList{i}) = 1;
     rp = regionprops(temp,'Centroid');
     Neighbors = find(Overlaps(i,:));
+    [~,maxi] = max(GoodPeakAvg{i}(PixelIdxList{i}));
+    maxi = PixelIdxList{i}(maxi);
     
     for j = 1:length(Neighbors)
+        [~,maxj] = max(GoodPeakAvg{Neighbors(j)}(PixelIdxList{Neighbors(j)}));
+        maxj = PixelIdxList{Neighbors(j)}(maxj);
         
         [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
         [~,m2] = imgradient(GoodPeakAvg{i});
@@ -45,7 +53,7 @@ for i = 1:NumNeurons
         phasediffs = angdiff(deg2rad(m1(CombList)),deg2rad(m2(CombList)));
         PhaseError = rad2deg(mean(abs(phasediffs)));
         
-        if(PhaseError <= maxerror)
+        if((PhaseError <= maxerror) && (ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))))
             % Merge Clusters
             NumMerges = NumMerges+1;
             MergePairs{NumMerges} = [i,j];
@@ -84,8 +92,10 @@ for i = 1:NumNeurons
         
         
     end
+    
 end
-
+p.stop;
+disp('merging cluster peaks');
 % Now perform the merges
 DestinationClu = (1:NumNeurons);
 
@@ -132,14 +142,14 @@ for i = 1:NumNeurons
 end
 
 GoodROIidx = find(GoodROI);
-NeuronImage = NeuronImage(GoodROIidx);
 GoodPeakAvg = GoodPeakAvg(GoodROIidx);
 GoodPeaks = GoodPeaks(GoodROIidx);
 PixelIdxList = PixelIdxList(GoodROIidx);
 
 keyboard;
 
-NumNeurons = length(NeuronImage);
+disp('recalculating cluster ROIs')
+NumNeurons = length(PixelIdxList);
 for i = 1:NumNeurons
     [PixelIdxList{i},GoodPeakAvg{i}] = RecalcROI(PixelIdxList{i},GoodPeaks{i});
     if(isempty(PixelIdxList{i}))

@@ -8,7 +8,7 @@ global T_MOVIE;
 
 
 MinBlobRadius = Get_T_Params('MinBlobRadius');
-MinBlobArea = MinBlobRadius^2*2;
+MinBlobArea = MinBlobRadius^2*pi;
 
 for i = 1:NumNeurons
     [xidx,yidx] = ind2sub([Xdim Ydim],NeuronPixelIdxList{i});
