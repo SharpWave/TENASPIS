@@ -21,6 +21,7 @@ ExtractBlobs(neuronmask);
 LinkBlobs();
 RejectBadTransients();
 MakeTransientROIs();
+EditTransientROIs();
 
 %% Group together individual transients under individual neurons and save data
 MergeTransientROIs;

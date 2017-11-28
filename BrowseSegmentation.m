@@ -4,7 +4,7 @@ function [] = BrowseSegmentation(i)
 
 close all;
 load SegmentationROIs.mat;
-load('Blobs.mat','BlobPixelIdxList');
+load('BlobLinks.mat','BlobPixelIdxList');
 load MovieDims.mat;
 global T_MOVIE;
 
@@ -95,7 +95,7 @@ rp = regionprops(NeuronImage{i},'Centroid');
 
 
 % Calculate which peaks are ok
-MaxError = 25;
+MaxError = 40;
 
 GoodPeakAvg = zeros(Xdim,Ydim);
 GoodPeak = zeros(1,length(b));

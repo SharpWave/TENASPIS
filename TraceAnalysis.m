@@ -10,7 +10,10 @@ global T_MOVIE;
 MinBlobRadius = Get_T_Params('MinBlobRadius');
 MinBlobArea = MinBlobRadius^2*pi;
 
+p = ProgressBar(NumNeurons);
+
 for i = 1:NumNeurons
+    p.progress;
     [xidx,yidx] = ind2sub([Xdim Ydim],NeuronPixelIdxList{i});
     LPtrace{i} = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
     
@@ -23,7 +26,7 @@ for i = 1:NumNeurons
     segframe = zeros(Xdim,Ydim);
     segframe(NeuronPixelIdxList{i}) = NeuronAvg{i};
     
-    MaxError = 25;
+    MaxError = 40;
     
     GoodPeakAvg{i} = zeros(Xdim,Ydim,'single');
     GoodPeak = zeros(1,length(b));
@@ -73,7 +76,7 @@ for i = 1:NumNeurons
         
         if(isempty(PixelIdxList{i}) || (length(tr) == 0))
             PixelIdxList{i} = [];
-            disp('killed a cluster');
+            %disp('killed a cluster');
             break;
         end
         if((length(PixelIdxList{i}) < 1.25*oldsize) && (tr(j).Solidity >= 0.9) )
@@ -85,7 +88,7 @@ for i = 1:NumNeurons
     
     if (length(PixelIdxList{i}) < MinBlobArea)
         PixelIdxList{i} = [];
-        disp(' a cluster got too small');
+        %disp(' a cluster got too small');
     end
     
 %     if(~isempty(PixelIdxList{i}))
@@ -101,17 +104,8 @@ for i = 1:NumNeurons
 %         pause;
 %     end
     
-    
-    %for j = 1:length(
-    %     imagesc(GoodPeakAvg{i});
-    %     hold on
-    %     PlotRegionOutline(NeuronImage{i},'r');axis image;hold off;
-    %     caxis([0.01 max(GoodPeakAvg{i}(NeuronPixelIdxList{i}))]);
-    %     rp = regionprops(NeuronImage{i},'Centroid');
-    %     axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);pause;
-    
 end
-
+p.stop;
 save TraceA.mat GoodPeakAvg GoodPeaks LPtrace PixelIdxList -v7.3
-keyboard;
+
 
