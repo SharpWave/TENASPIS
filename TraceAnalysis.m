@@ -1,4 +1,4 @@
-function [outputArg1,outputArg2] = TraceAnalysis()
+function [] = TraceAnalysis()
 
 close all;
 load SegmentationROIs.mat;
@@ -11,6 +11,10 @@ MinBlobRadius = Get_T_Params('MinBlobRadius');
 MinBlobArea = MinBlobRadius^2*pi;
 
 p = ProgressBar(NumNeurons);
+LPtrace = cell(1,NumNeurons);
+GoodPeakAvg = cell(1,NumNeurons);
+GoodPeaks = cell(1,NumNeurons);
+PixelIdxList = cell(1,NumNeurons);
 
 for i = 1:NumNeurons
     p.progress;
@@ -20,13 +24,9 @@ for i = 1:NumNeurons
     LPtrace{i} = squeeze(mean(LPtrace{i}));
     LPtrace{i} = convtrim(LPtrace{i},ones(10,1)/10);
     
-    a = find(NeuronActivity(i,:));
     [~,b] = findpeaks(LPtrace{i},'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
     
-    segframe = zeros(Xdim,Ydim);
-    segframe(NeuronPixelIdxList{i}) = NeuronAvg{i};
-    
-    MaxError = 40;
+    MaxError = 35;
     
     GoodPeakAvg{i} = zeros(Xdim,Ydim,'single');
     GoodPeak = zeros(1,length(b));
@@ -58,7 +58,7 @@ for i = 1:NumNeurons
     GoodPeakAvg{i} = GoodPeakAvg{i}./sum(GoodPeak);
     GoodPeaks{i} = b(find(GoodPeak));
     
-    thresh = 0.005;
+    thresh = 0.003;
     foundit = 0;
     oldsize = length(NeuronPixelIdxList{i});
     while(~foundit)
@@ -74,12 +74,12 @@ for i = 1:NumNeurons
             end
         end
         
-        if(isempty(PixelIdxList{i}) || (length(tr) == 0))
+        if(isempty(PixelIdxList{i}) || isempty(tr))
             PixelIdxList{i} = [];
             %disp('killed a cluster');
             break;
         end
-        if((length(PixelIdxList{i}) < 1.25*oldsize) && (tr(j).Solidity >= 0.9) )
+        if((length(PixelIdxList{i}) < 1.1*oldsize) && (tr(j).Solidity >= 0.9) )
             foundit = 1;
         end
         thresh = thresh + 0.001;

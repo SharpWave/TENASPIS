@@ -24,14 +24,16 @@ PixelIdxList = PixelIdxList(GoodROIidx);
 LPtrace = LPtrace(GoodROIidx);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-for MergeIt = 1:3
+MaxErrorList = [20,25,30,35,35];
+for q = 1:length(MaxErrorList)
+    maxerror = MaxErrorList(q)
     % Calculate which pixels overlap
+    disp('calculating overlaps');
     Overlaps = CalcOverlaps(PixelIdxList);
     
     
     
     NumMerges = 0;
-    maxerror = 40;
     disp('assessing cluster merges');
     NumNeurons = length(PixelIdxList),
     p = ProgressBar(NumNeurons);
@@ -39,10 +41,8 @@ for MergeIt = 1:3
     MergeError = [];
     for i = 1:NumNeurons
         p.progress;
-        temp = zeros(Xdim,Ydim);
-        temp(PixelIdxList{i}) = 1;
-        rp = regionprops(temp,'Centroid');
-        Neighbors = find(Overlaps(i,:));
+        
+        Neighbors = find(Overlaps(i,:) > ceil(length(PixelIdxList{i})/8));
         [~,maxi] = max(GoodPeakAvg{i}(PixelIdxList{i}));
         maxi = PixelIdxList{i}(maxi);
         
@@ -55,9 +55,24 @@ for MergeIt = 1:3
             
             [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
             [~,m2] = imgradient(GoodPeakAvg{i});
-            CombList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
+            %CombList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
+            tempPeaks = union(GoodPeaks{i},GoodPeaks{Neighbors(j)});
+            IsDup = zeros(1,length(tempPeaks));
+            % sometimes peak locations get offset by a few samples, need to
+            % eliminate duplicates created this way
+            for k = 2:length(IsDup)
+                if(tempPeaks(k)-tempPeaks(k-1) <= 10)
+                    %disp('found duplicate!!');
+                    IsDup(k) = 1;
+                    tempPeaks(k) = -5;
+                end
+            end
+            tempPeaks = tempPeaks(~IsDup);
+            [CombList,~] = RecalcROI(PixelIdxList{i},tempPeaks);
+            
             phasediffs = angdiff(deg2rad(m1(CombList)),deg2rad(m2(CombList)));
             PhaseError = rad2deg(mean(abs(phasediffs)));
+            
             
             if((PhaseError <= maxerror) && (ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))))
                 % Merge Clusters
@@ -65,6 +80,7 @@ for MergeIt = 1:3
                 MergePairs{NumMerges} = [i,Neighbors(j)];
                 MergeError(NumMerges) = PhaseError;
             end
+
             
             
             
@@ -77,16 +93,13 @@ for MergeIt = 1:3
     DestinationClu = (1:NumNeurons);
     
     for i = 1:NumMerges
-        
         Eater = MergePairs{i}(1);
-        FirstEater = Eater;
         Food = MergePairs{i}(2);
-        FirstFood = Food;
+        
         if((DestinationClu(Eater) ~= Eater) && (DestinationClu(Food) ~= Food))
             % both of these already got merged into something else
             continue;
         end
-        
         
         while(DestinationClu(Eater) ~= Eater)
             Eater = DestinationClu(Eater);
@@ -94,9 +107,9 @@ for MergeIt = 1:3
         
         while(DestinationClu(Food) ~= Food)
             Food = DestinationClu(Food);
-            
         end
-        if((MergeIt >=5) && (MergeError(i) >= 30))
+        
+        if(0)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');
@@ -151,7 +164,7 @@ for MergeIt = 1:3
             GoodROI(i) = 1;
         end
     end
-    sum(GoodROI),
+    
     GoodROIidx = find(GoodROI);
     GoodPeakAvg = GoodPeakAvg(GoodROIidx);
     GoodPeaks = GoodPeaks(GoodROIidx);
@@ -176,9 +189,17 @@ for MergeIt = 1:3
     PixelIdxList = PixelIdxList(GoodROIidx);
     LPtrace = LPtrace(GoodROIidx);
     sum(GoodROI),
+    
 end
 
-save Reduced.mat GoodPeaks GoodROIidx PixelIdxList GoodPeakAvg;
+for i = 1:length(PixelIdxList)
+    [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
+    LPtrace{i} = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
+    LPtrace{i} = squeeze(mean(LPtrace{i}));
+    LPtrace{i} = convtrim(LPtrace{i},ones(10,1)/10);
+end
+
+save Reduced.mat GoodPeaks GoodROIidx PixelIdxList GoodPeakAvg LPtrace;
 
 
 

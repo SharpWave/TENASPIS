@@ -59,8 +59,10 @@ end
 if (~exist('CheckPeaks','var'))
     CheckPeaks = true;
 end
-LowPassFilter = fspecial('disk',1);
-frame = imfilter(frame,LowPassFilter,'replicate');
+CheckPeaks = false;
+LowPassFilter = fspecial('disk',3);
+%frame = imfilter(frame,LowPassFilter,'replicate');
+frame = medfilt2(frame,[5 5]);
 % Derived Parameters
 MaxBlobArea = ceil((MaxBlobRadius^2)*pi);
 MinBlobArea = ceil((MinBlobRadius^2)*pi);
@@ -188,12 +190,13 @@ BlobMinorAxisLength = BlobMinorAxisLength(GoodBlob);
 % for i = 1:length(BlobPixelIdxList)
 %     temp(BlobPixelIdxList{i}) = temp(BlobPixelIdxList{i}) + frame(BlobPixelIdxList{i});
 % end
-% cutoff = PercentileCutoff(frame(:),97);
+% cutoff = PercentileCutoff(frame(:),98);
 % composite = zeros(Xdim,Ydim,3);
-% frame(frame <= 0.005) = 0;
+% cutframe = frame;
+% cutframe(frame <= 0.005) = 0;
 % composite(:,:,1) = temp/cutoff;
 % composite(:,:,2) = frame/cutoff*0.2;
-% composite(:,:,3) = frame/cutoff*0.6;
+% composite(:,:,3) = cutframe/cutoff*0.6;
 % %figure(53);subplot(1,2,1);imagesc(frame);axis image;colormap gray;subplot(1,2,2);imagesc(temp);axis image;colormap gray;colorbar;pause;
 % figure(53);image(composite);axis image;pause;
 end

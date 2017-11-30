@@ -18,16 +18,11 @@ function ExtractBlobs(PrepMask)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-
+global T_MOVIE;
 disp('Extracting Blobs from movie');
 
 %% Get parameters and set up Chunking variables
 [Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
-
-ChunkStarts = 1:FrameChunkSize:NumFrames;
-ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
-ChunkEnds(length(ChunkStarts)) = NumFrames;
-NumChunks = length(ChunkStarts);
 
 %% set up the PrepMask; i.e., which areas to exclude
 if ~exist('PrepMask','var')
@@ -35,27 +30,17 @@ if ~exist('PrepMask','var')
 end
 
 %% Find the blobs in each frame
-p = ProgressBar(NumChunks); % Initialize progress bar
-
-for i = 1:NumChunks
-    Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
-    FrameList = ChunkStarts(i):ChunkEnds(i);
-       
-    BlobChunk(i) = SegmentFrameChunk(FrameList,PrepMask);
-    p.progress;
-end
-p.stop; % Shut-down progress bar
+p = ProgressBar(NumFrames); % Initialize progress bar
 
 %% Distribute chunked outputs to cell arrays
 [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = deal(cell(1,NumFrames));
 
-for i = 1:NumChunks
-    FrameList = ChunkStarts(i):ChunkEnds(i);
-    BlobPixelIdxList(FrameList) = BlobChunk(i).BlobPixelIdxList;
-    BlobWeightedCentroids(FrameList) = BlobChunk(i).BlobWeightedCentroids;
-    BlobMinorAxisLength(FrameList) = BlobChunk(i).BlobMinorAxisLength;
+for i = 1:NumFrames
+    Set_T_Params;
+    [BlobPixelIdxList{i},BlobWeightedCentroids{i},BlobMinorAxisLength{i}] = NewSegmentFrame(squeeze(T_MOVIE(:,:,i)),PrepMask);
+    p.progress;
 end
-
+p.stop; % Shut-down progress bar
 %% outputs get saved to disk
 disp('saving Blobs to disk');
 save Blobs.mat BlobPixelIdxList BlobWeightedCentroids BlobMinorAxisLength;
