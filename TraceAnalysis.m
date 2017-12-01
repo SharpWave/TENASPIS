@@ -39,7 +39,7 @@ for i = 1:NumNeurons
     
     for j = 1:length(b)
         
-        mv = mean(T_MOVIE(:,:,b(j)-2:b(j)+2),3);
+        mv = mean(T_MOVIE(:,:,b(j)-4:b(j)+4),3);
         [a1,xOff1,yOff1] = BoxGradient(NeuronPixelIdxList{i},mv(NeuronPixelIdxList{i}),Xdim,Ydim);
         
         % Left shift indices for a1's coordinates

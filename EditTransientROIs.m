@@ -7,7 +7,9 @@ load TransientROIs.mat;
 load('BlobLinks.mat','BlobPixelIdxList');
 load MovieDims.mat;
 
-NumNeurons = length(FrameList);
+NumROIs = length(FrameList);
+MinBlobRadius = Get_T_Params('MinBlobRadius');
+MinBlobArea = ceil((MinBlobRadius^2)*pi);
 
 global T_MOVIE;
 if(isempty(T_MOVIE))
@@ -15,13 +17,16 @@ if(isempty(T_MOVIE))
     return;
 end
 
-p = ProgressBar(NumNeurons);
+ToPlot = false;
+p = ProgressBar(NumROIs);
 
 TraceWinSec = 600;
 
-GoodTransient = zeros(1,NumNeurons);
+GoodTransient = zeros(1,NumROIs);
 
-for i = 1:NumNeurons    
+NumTransients = 0;
+
+for i = 1:NumROIs
     a = FrameList{i};
     NumBlobs = length(a);
     
@@ -46,83 +51,97 @@ for i = 1:NumNeurons
     end
     
     tidx = MinWin:MaxWin;
+    olda = a-MinWin+1;
     
     % create trace
     [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
     LPtrace = mean(T_MOVIE(xidx,yidx,tidx),1);
-    
     LPtrace = squeeze(mean(LPtrace));
     LPtrace = convtrim(LPtrace,ones(10,1)/10);
     
+    % find peaks
     [~,b] = findpeaks(LPtrace,'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
-    
-    newa = a-MinWin+1;
-    
-    [~,segpeakidx] = max(LPtrace(newa));
-    segpeakidx = segpeakidx+newa(1)-1; % convert index back to dimensions of LPtrace
     
     if(isempty(b))
         % if there were actually any peaks, they were really weak and this
         % transient was mis-detected
-        GoodTransient(i) = 0;
         continue;
     end
-    
-    closesttrpeak = findclosest(segpeakidx,b);
-    closesttrpeak = b(closesttrpeak); % convert index back to dimensions of LPtrace
-    
-    
-    
-    
-    if((abs(segpeakidx-closesttrpeak) <= 2) || (ismember(closesttrpeak,newa)))
-        %disp('Good');
-        GoodTransient(i) = 1;
-        
-        % limit the transient to the frames within 2 of cloesettrpeak
-        gooda = (newa <= closesttrpeak+2) & (newa >= closesttrpeak-2);
-        if(sum(gooda) == 0)
-            keyboard;
+    FoundOne = false;
+    % Check each peak
+    for j = 1:length(b)
+        if(~ismember(b(j),olda))
+            
+            continue;
         end
-        newa = newa(gooda);
+        FoundOne = true;
+        gooda = (abs(olda-b(j)) <= 4);
         
-        % now average the frames around the peak together.
+        newa = olda(gooda);
         mv = mean(T_MOVIE(:,:,newa+MinWin-1),3);
-        BigPixelAvg{i} = mv(CircMask{i});
-        PixelAvg{i} = mv(PixelIdxList{i});
-        [~,idx] = max(PixelAvg{i});
-        [Ycent(i),Xcent(i)] = ind2sub([Xdim Ydim],PixelIdxList{i}(idx));
-        FrameList{i} = FrameList{i}(gooda);
-        ObjList{i} = ObjList{i}(gooda);
-
-    else
-        %disp('Bad');
-        GoodTransient(i) = 0;
+        
+        % Recalculate the ROI based on the new pixel set
+        PixFreq = CalcPixFreq(FrameList{i}(gooda),ObjList{i}(gooda),BlobPixelIdxList);
+        InROI = PixFreq >= 0.5;
+        templist = single(find(InROI));
+        
+        if((max(PixFreq(:)) < 1) || (length(templist) < MinBlobArea))
+            %disp('re-calculating the ROI caused this one to be discarded');
+            continue;
+        end
+        
+        NumTransients = NumTransients + 1;
+        
+        temp_BigPixelAvg{NumTransients} = mv(CircMask{i});
+        temp_PixelAvg{NumTransients} = mv(templist);
+        [~,idx] = max(temp_PixelAvg{NumTransients});
+        [temp_Ycent(NumTransients),temp_Xcent(NumTransients)] = ind2sub([Xdim Ydim],templist(idx));
+        temp_FrameList{NumTransients} = FrameList{i}(gooda);
+        temp_ObjList{NumTransients} = ObjList{i}(gooda);
+        temp_CircMask{NumTransients} = CircMask{i};
+        temp_PixelIdxList{NumTransients} = templist;
+        
+        if(ToPlot)
+            figure(1);
+            subplot(1,6,1:5);
+            plot(LPtrace,'-b');hold on;
+            plot(olda,LPtrace(olda),'-g','LineWidth',5);
+            plot(newa,LPtrace(newa),'-r*','LineWidth',2);
+            
+            plot(b,LPtrace(b),'ko','MarkerSize',10);hold off;axis tight;
+            
+            subplot(1,6,6);
+            imagesc(mv);axis image;hold on;
+            caxis([0 max(temp_PixelAvg{NumTransients})]);
+            axis([temp_Xcent(NumTransients)-20 temp_Xcent(NumTransients)+20 temp_Ycent(NumTransients)-20 temp_Ycent(NumTransients)+20]);
+            PlotRegionOutline(temp_PixelIdxList{NumTransients},'r');
+            hold off;
+            pause;
+        end
     end
-
-    %     figure(1);plot(LPtrace);hold on;
-    %     plot(newa,LPtrace(newa),'-r','LineWidth',2);
-    %     plot(b,LPtrace(b),'ko');hold off;GoodTransient(i),
-    %     pause;
     p.progress;
+    if(~FoundOne)
+        %disp('junked a weak ROI');
+    end
 end
 p.stop;
 
 
 
 % edit down all of the variables
-FrameList = FrameList(find(GoodTransient));
-ObjList = ObjList(find(GoodTransient));
-PixelIdxList = PixelIdxList(find(GoodTransient));
-CircMask = CircMask(find(GoodTransient));
-PixelAvg = PixelAvg(find(GoodTransient));
-Xcent = Xcent(find(GoodTransient));
-Ycent = Ycent(find(GoodTransient));
-BigPixelAvg = BigPixelAvg(find(GoodTransient));
-NumTransients = sum(GoodTransient);
-Trans2ROI = 1:NumTransients;
+
+Xcent = temp_Xcent;
+Ycent = temp_Ycent;
+FrameList = temp_FrameList;
+ObjList = temp_ObjList;
+PixelAvg = temp_PixelAvg;
+PixelIdxList = temp_PixelIdxList;
+BigPixelAvg = temp_BigPixelAvg;
+CircMask = temp_CircMask;
+
+Trans2ROI = 1:length(Xcent);
 
 disp('Computing pixel overlaps');
-MaxDist = 20;
 
 Overlaps = CalcOverlaps(PixelIdxList);
 

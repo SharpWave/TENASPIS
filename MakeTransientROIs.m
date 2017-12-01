@@ -7,6 +7,9 @@ disp('Calculating ROIs for linked blobs (putative transients)');
 [Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','MinBlobRadius');
 
 DebugPlot = 0;
+SummaryPlot = 1;
+
+MinBlobArea = ceil((MinBlobRadius^2)*pi);
 
 %% load data
 disp('loading data');
@@ -15,7 +18,7 @@ load('BlobLinks.mat','BlobPixelIdxList');
 
 %% setup some variables
 NumTransients = length(FrameList);
-[PixelIdxList,BinCent,BigAvg,CircMask,PixelAvg] = deal(cell(1,NumTransients));
+[PixelIdxList,CircMask] = deal(cell(1,NumTransients));
 TranBool = false(NumTransients,NumFrames);
 [Xcent,Ycent] = deal(zeros(1,NumTransients,'single'));
 
@@ -32,32 +35,42 @@ for i = 1:NumTransients
     InROI = PixFreq >= MinPixelPresence;
     PixelIdxList{i} = single(find(InROI));
     props = regionprops(InROI,'Centroid');
-    BinCent{i} = props.Centroid;
-    CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent{i}(1),BinCent{i}(2));
-    BigAvg{i} = zeros(size(CircMask{i}),'single');
+    if((length(props) == 0) || (max(PixFreq(:)) < 1) || (length(PixelIdxList{i}) < MinBlobArea))
+        continue;
+    end
+    BinCent = props.Centroid;
+    Ycent(i) = BinCent(1);
+    Xcent(i) = BinCent(2);
+    CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent(1),BinCent(2));
     TranBool(i,FrameList{i}) = true;
+    
 end
 
-%% go through the movie and get the average pixel values
-disp('averaging preliminary ROIs over the movie');
-[BigPixelAvg] = PixelSetMovieAvg(TranBool,CircMask);
+GoodTr = find(sum(TranBool,2) > 0);
+disp(['kept ',int2str(length(GoodTr)),' out of ',int2str(length(PixelIdxList)),' after eliminating transients without a minimum of ',int2str(MinBlobArea),' pixels present on at least 50% of frames']);
 
-%% calculate stuff
-for i = 1:NumTransients
-    TempFrame = blankframe;
-    TempFrame(CircMask{i}) = BigPixelAvg{i};
-    PixelAvg{i} = TempFrame(PixelIdxList{i});
-    [~,idx] = max(PixelAvg{i});
-    [Ycent(i),Xcent(i)] = ind2sub([Xdim Ydim],PixelIdxList{i}(idx));
-end
+PixelIdxList = PixelIdxList(GoodTr);
+CircMask = CircMask(GoodTr);
+TranBool = TranBool(GoodTr,:);
+Xcent = Xcent(GoodTr);
+Ycent = Ycent(GoodTr);
+FrameList = FrameList(GoodTr);
+ObjList = ObjList(GoodTr);
+NumTransients = length(PixelIdxList);
 
 Trans2ROI = single(1:NumTransients);
 
 %% save outputs
 disp('saving data');
-save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask;
+save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelIdxList CircMask;
 
-
+if(SummaryPlot)
+    figure;
+    for i = 1:NumTransients
+        PlotRegionOutline(PixelIdxList{i});hold on;
+    end
+    axis image;
+end
 
 end
 

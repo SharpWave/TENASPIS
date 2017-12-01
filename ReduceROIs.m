@@ -42,7 +42,8 @@ for q = 1:length(MaxErrorList)
     for i = 1:NumNeurons
         p.progress;
         
-        Neighbors = find(Overlaps(i,:) > ceil(length(PixelIdxList{i})/8));
+        Neighbors = find(Overlaps(i,:) > ceil(length(PixelIdxList{i})/3));
+        
         [~,maxi] = max(GoodPeakAvg{i}(PixelIdxList{i}));
         maxi = PixelIdxList{i}(maxi);
         
@@ -56,25 +57,25 @@ for q = 1:length(MaxErrorList)
             [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
             [~,m2] = imgradient(GoodPeakAvg{i});
             %CombList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
-            tempPeaks = union(GoodPeaks{i},GoodPeaks{Neighbors(j)});
-            IsDup = zeros(1,length(tempPeaks));
-            % sometimes peak locations get offset by a few samples, need to
-            % eliminate duplicates created this way
-            for k = 2:length(IsDup)
-                if(tempPeaks(k)-tempPeaks(k-1) <= 10)
-                    %disp('found duplicate!!');
-                    IsDup(k) = 1;
-                    tempPeaks(k) = -5;
-                end
-            end
-            tempPeaks = tempPeaks(~IsDup);
-            [CombList,~] = RecalcROI(PixelIdxList{i},tempPeaks);
-            
+%             tempPeaks = union(GoodPeaks{i},GoodPeaks{Neighbors(j)});
+%             IsDup = zeros(1,length(tempPeaks));
+%             % sometimes peak locations get offset by a few samples, need to
+%             % eliminate duplicates created this way
+%             for k = 2:length(IsDup)
+%                 if(tempPeaks(k)-tempPeaks(k-1) <= 10)
+%                     %disp('found duplicate!!');
+%                     IsDup(k) = 1;
+%                     tempPeaks(k) = -5;
+%                 end
+%             end
+%             tempPeaks = tempPeaks(~IsDup);
+            %[CombList,~] = RecalcROI(PixelIdxList{i},tempPeaks);
+            CombList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
             phasediffs = angdiff(deg2rad(m1(CombList)),deg2rad(m2(CombList)));
             PhaseError = rad2deg(mean(abs(phasediffs)));
             
             
-            if((PhaseError <= maxerror) && (ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))))
+            if((PhaseError <= maxerror))% && (ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))))
                 % Merge Clusters
                 NumMerges = NumMerges+1;
                 MergePairs{NumMerges} = [i,Neighbors(j)];
@@ -109,7 +110,7 @@ for q = 1:length(MaxErrorList)
             Food = DestinationClu(Food);
         end
         
-        if(0)
+        if(1)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');

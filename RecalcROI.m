@@ -9,7 +9,7 @@ blankframe = zeros(Xdim,Ydim,'single');
 GoodPeakAvg = blankframe;
 
 for i = 1:length(GoodPeaks)
-    GoodPeakAvg = GoodPeakAvg + mean(T_MOVIE(:,:,GoodPeaks(i)-2:GoodPeaks(i)+2),3);
+    GoodPeakAvg = GoodPeakAvg + mean(T_MOVIE(:,:,GoodPeaks(i)-4:GoodPeaks(i)+4),3);
 end
 GoodPeakAvg = GoodPeakAvg/length(GoodPeaks);
 temp = blankframe;

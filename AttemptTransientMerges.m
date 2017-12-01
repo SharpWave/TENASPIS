@@ -102,13 +102,13 @@ for i = 1:length(ClusterList)
             CurrFreq = CalcPixFreq(FrameList{CurrClu},ObjList{CurrClu},BlobPixelIdxList);
         end
         
-%         CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
-%         CombFreq = zeros(Xdim,Ydim);
-%         CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
-%         CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
-%         CombPixIdx = find(CombFreq >= 0.5);
-%         
-
+        %         CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
+        %         CombFreq = zeros(Xdim,Ydim);
+        %         CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
+        %         CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
+        %         CombPixIdx = find(CombFreq >= 0.5);
+        %
+        
         
         CombPixIdx = union(PixelList{CurrClu},PixelList{CandIdx});
         
@@ -149,11 +149,7 @@ for i = 1:length(ClusterList)
         stdphasediff = rad2deg(s0);
         PhaseError = rad2deg(mean(abs(phasediffs)));
         
-        if (PhaseError > MinCorr)
-            continue;
-        end
-        
-        if(MinCorr >= 250)
+        if(MinCorr >= 85)
             stdphasediff,meanphasediff,PhaseError,
             [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
             [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
@@ -165,6 +161,14 @@ for i = 1:length(ClusterList)
             figure(5);polarhistogram(phasediffs);
             pause;
         end
+        
+        
+        
+        if (PhaseError > MinCorr)
+            continue;
+        end
+        
+        
         
         MergeOK = [MergeOK,CandIdx];
         Trans2ROI(Trans2ROI == CandIdx) = CurrClu; % Update cluster number for all transients part of CandIdx to CurrClu
@@ -196,7 +200,7 @@ for i = 1:length(ClusterList)
             %disp(['merge, ',int2str(length(unique(Trans2ROI))),' left']);
         end
         Overlaps(:,CurrClu) = Overlaps(CurrClu,:)';
-       
+        
         
     end
     

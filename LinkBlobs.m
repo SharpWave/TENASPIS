@@ -24,11 +24,11 @@ function [] = LinkBlobs()
 disp('Processing blobs into calcium transient ROIs: first step is to link blobs that appear in the same spot on consecutive frames');
 
 %% load parameters
-[NumFrames,FrameChunkSize,BlobLinkThresholdCoeff] = Get_T_Params('NumFrames','FrameChunkSize','BlobLinkThresholdCoeff');
+[NumFrames,FrameChunkSize,BlobLinkThresholdCoeff,Xdim,Ydim] = Get_T_Params('NumFrames','FrameChunkSize','BlobLinkThresholdCoeff','Xdim','Ydim');
 
 % max number of samples to interpolate places where a transient skips frames
 
-GapFillLen = 1;
+GapFillLen = 2;
 
 % Load Blob pixel lists and centroids
 disp('Loading blobs');
@@ -64,21 +64,20 @@ NextNewIdx = CurrIdx;
 p = ProgressBar(floor(NumFrames / FrameChunkSize));
 disp('Linking Blobs');
 
-
-
-
 for i = 2+GapFillLen:NumFrames
     
     for j = 1:NumBlobs(i)
         CurrCent = BlobWeightedCentroids{i}{j};
+        CurrCentIdx = sub2ind([Xdim Ydim],ceil(CurrCent(2)),ceil(CurrCent(1)));
         FoundMatch = 0;
         SamplesToCheck = (i-1:-1:i-1-GapFillLen)
         CurrSamp = i-1;
         while (~FoundMatch && CurrSamp >= SamplesToCheck(end))
             for k = 1:NumBlobs(CurrSamp)
                 PrevCent = BlobWeightedCentroids{CurrSamp}{k};
-                cdist = sqrt((PrevCent(1)-CurrCent(1))^2+(PrevCent(2)-CurrCent(2))^2);
-                if (cdist < BlobMinorAxisLength{CurrSamp}(k)*BlobLinkThresholdCoeff)
+                PrevIdxList = BlobPixelIdxList{CurrSamp}{k};
+                
+                if (ismember(CurrCentIdx,PrevIdxList))
                     FoundMatch = k;
                     MatchSamp = CurrSamp;
                     break;

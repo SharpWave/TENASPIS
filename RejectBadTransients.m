@@ -8,7 +8,7 @@
 
     %% load parameters
     [Xdim,Ydim,MinNumFrames,MaxCentroidTravelDistance] = Get_T_Params('Xdim','Ydim','MinNumFrames','MaxCentroidTravelDistance');
-
+MaxCentroidTravelDistance = inf;
     %% load data
     disp('Loading blob and link data');
     load('BlobLinks.mat');

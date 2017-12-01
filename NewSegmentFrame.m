@@ -108,11 +108,12 @@ BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
 % end
 % cutoff = PercentileCutoff(frame(:),98);
 % composite = zeros(Xdim,Ydim,3);
-% cutframe = frame;
-% cutframe(frame <= 0) = 0;
-% composite(:,:,1) = temp/cutoff;
-% composite(:,:,2) = temp/cutoff*0.6;
-% composite(:,:,3) = cutframe/cutoff;
+% tempc = frame/cutoff;
+% tempc(find(temp ~= 0)) = 0;
+% composite(:,:,1) = frame/cutoff;
+% 
+% composite(:,:,2) = tempc;
+% composite(:,:,3) = tempc;
 % 
 % figure(53);image(composite);axis image;pause;
 
