@@ -102,17 +102,18 @@ for i = 1:length(ClusterList)
             CurrFreq = CalcPixFreq(FrameList{CurrClu},ObjList{CurrClu},BlobPixelIdxList);
         end
         
-        CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
-        CombFreq = zeros(Xdim,Ydim);
-        CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
-        CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
-        CombPixIdx = find(CombFreq >= 0.5);
+%         CandFreq = CalcPixFreq(FrameList{CandIdx},ObjList{CandIdx},BlobPixelIdxList);
+%         CombFreq = zeros(Xdim,Ydim);
+%         CombFreq = CandFreq*length(FrameList{CandIdx})+CurrFreq*length(FrameList{CurrClu});
+%         CombFreq = CombFreq/(length(FrameList{CandIdx})+length(FrameList{CurrClu}));
+%         CombPixIdx = find(CombFreq >= 0.5);
+%         
+
+        
+        CombPixIdx = union(PixelList{CurrClu},PixelList{CandIdx});
         
         CombPixIdx = intersect(CombPixIdx,CircMask{CurrClu});
         CombPixIdx = intersect(CombPixIdx,CircMask{CandIdx});
-        
-        %CombPixIdx = intersect(PixelList{CurrClu},PixelList{CandIdx});
-        
         
         
         
@@ -152,18 +153,18 @@ for i = 1:length(ClusterList)
             continue;
         end
         
-%         if(1 == 1)
-%             stdphasediff,meanphasediff,PhaseError,
-%             [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
-%             [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
-%             
-%             [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
-%             [circ_rVal,circ_pVal] = circ_corrcc(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
-%             PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx,a1,a2,CombPixIdx,BoxCombPixIdx1,BoxCombPixIdx2);
-%             %CluDist(CurrClu,CandIdx),
-%             figure(5);polarhistogram(phasediffs);
-%             pause;
-%         end
+        if(MinCorr >= 250)
+            stdphasediff,meanphasediff,PhaseError,
+            [~,idx1] = ismember(CombPixIdx,CircMask{CurrClu});
+            [~,idx2] = ismember(CombPixIdx,CircMask{CandIdx});
+            
+            [BigCorrVal,BigCorrP] = corr(BigPixelAvg{CurrClu}(idx1),BigPixelAvg{CandIdx}(idx2),'type','Spearman');
+            [circ_rVal,circ_pVal] = circ_corrcc(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
+            PlotTransientMerge(BigPixelAvg{CurrClu},BigPixelAvg{CandIdx},idx1,idx2,CircMask{CurrClu},CircMask{CandIdx},PixelList{CurrClu},PixelList{CandIdx},Trans2ROI,CurrClu,CandIdx,a1,a2,CombPixIdx,BoxCombPixIdx1,BoxCombPixIdx2);
+            %CluDist(CurrClu,CandIdx),
+            figure(5);polarhistogram(phasediffs);
+            pause;
+        end
         
         MergeOK = [MergeOK,CandIdx];
         Trans2ROI(Trans2ROI == CandIdx) = CurrClu; % Update cluster number for all transients part of CandIdx to CurrClu
@@ -195,7 +196,7 @@ for i = 1:length(ClusterList)
             %disp(['merge, ',int2str(length(unique(Trans2ROI))),' left']);
         end
         Overlaps(:,CurrClu) = Overlaps(CurrClu,:)';
-        keyboard;
+       
         
     end
     

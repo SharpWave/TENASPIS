@@ -85,8 +85,11 @@ for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     FrameChunk = LoadFrames(MotCorrh5,FrameList);
     
-    HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
-    LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
+    %HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
+    %LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
+    
+    HPChunk = imgaussfilt(FrameChunk,HighPassRadius);
+    LPChunk = imgaussfilt(FrameChunk,LowPassRadius);
 
     if d1
         h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass

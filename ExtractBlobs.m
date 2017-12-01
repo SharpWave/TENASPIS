@@ -35,7 +35,7 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 %% Distribute chunked outputs to cell arrays
 [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = deal(cell(1,NumFrames));
 
-for i = 1:NumFrames
+parfor i = 1:NumFrames
     Set_T_Params;
     [BlobPixelIdxList{i},BlobWeightedCentroids{i},BlobMinorAxisLength{i}] = NewSegmentFrame(squeeze(T_MOVIE(:,:,i)),PrepMask);
     p.progress;

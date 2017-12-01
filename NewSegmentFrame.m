@@ -14,7 +14,7 @@ end
 
 LowPassFilter = fspecial('disk',3);
 %frame = imfilter(frame,LowPassFilter,'replicate');
-frame = medfilt2(frame,[5 5]);
+%frame = medfilt2(frame,[5 5]);
 
 % Derived Parameters
 MaxBlobArea = ceil((MaxBlobRadius^2)*pi);
@@ -26,9 +26,10 @@ blankframe = zeros(Xdim,Ydim,'single');
 
 maxframe = max(frame(PrepMask));
 
-threshinc = (maxframe-threshold)/threshsteps;
+%threshinc = (maxframe-threshold)/threshsteps,
+threshinc = 0.002;
 
-threshlist = threshold:threshinc:maxframe;
+threshlist = threshold:threshinc:maxframe*.95;
 
 CurrGoodBlob = 0;
 BlobPixelIdxList = [];
@@ -52,17 +53,24 @@ for i = 1:length(threshlist)
         
         % ok so it looks good but do we already have it?
         AlreadyFound = false;
+        BetterThanBefore = false;
         CentroidIdx = sub2ind([Xdim Ydim],ceil(rp(j).Centroid(2)),ceil(rp(j).Centroid(1)));
         
         for k = 1:OldNumBlobs
             if(ismember(CentroidIdx,BlobPixelIdxList{k}))
                 AlreadyFound = true;
                 NumHits(k) = NumHits(k) + 1;
+                BetterThanBefore = ((rp(j).Solidity > BlobSolidity(k)) && (AxisRatio < BlobAxisRatio(k)));
+                if(BetterThanBefore)
+                    % this guarantees that the matching blob gets deleted
+                    NumHits(k) = NumHits(k)+1;
+                    %disp('kept blob at a higher threshold');
+                end
                 break;
             end
         end
         
-        if(AlreadyFound)
+        if(AlreadyFound && ~BetterThanBefore)
             continue;
         end
         
@@ -71,6 +79,8 @@ for i = 1:length(threshlist)
         BlobPixelIdxList{CurrGoodBlob} = rp(j).PixelIdxList;        
         BlobWeightedCentroids{CurrGoodBlob} = single(rp(j).Centroid);
         BlobMinorAxisLength(CurrGoodBlob) = single(rp(j).MinorAxisLength);
+        BlobAxisRatio(CurrGoodBlob) = AxisRatio;
+        BlobSolidity(CurrGoodBlob) = single(rp(j).Solidity);
     end
     
     BadGuys = find(NumHits > 1);
@@ -89,7 +99,9 @@ BlobPixelIdxList = BlobPixelIdxList(find(GoodBlob));
 BlobWeightedCentroids = BlobWeightedCentroids(find(GoodBlob));
 BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
 
-% %parameter debugging
+%parameter debugging
+
+
 % temp = blankframe;
 % for i = 1:length(BlobPixelIdxList)
 %     temp(BlobPixelIdxList{i}) = temp(BlobPixelIdxList{i}) + frame(BlobPixelIdxList{i});
@@ -97,11 +109,11 @@ BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
 % cutoff = PercentileCutoff(frame(:),98);
 % composite = zeros(Xdim,Ydim,3);
 % cutframe = frame;
-% cutframe(frame <= 0.005) = 0;
+% cutframe(frame <= 0) = 0;
 % composite(:,:,1) = temp/cutoff;
-% composite(:,:,2) = frame/cutoff*0.2;
-% composite(:,:,3) = cutframe/cutoff*0.6;
-% %figure(53);subplot(1,2,1);imagesc(frame);axis image;colormap gray;subplot(1,2,2);imagesc(temp);axis image;colormap gray;colorbar;pause;
+% composite(:,:,2) = temp/cutoff*0.6;
+% composite(:,:,3) = cutframe/cutoff;
+% 
 % figure(53);image(composite);axis image;pause;
 
 
@@ -109,17 +121,3 @@ BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
 
 
 
-% filter the frame if needed
-
-% do regionprops on the frame at X different thresholds
-
-% start with bottom thresh
-
-% keep blobs within criterion
-
-% raise thresh
-
-% if matching blob already kept, ignore blob unless more than one matches
-% the same
-
-% repeat for each thresh
