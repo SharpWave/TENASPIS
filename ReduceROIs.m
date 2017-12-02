@@ -24,7 +24,7 @@ PixelIdxList = PixelIdxList(GoodROIidx);
 LPtrace = LPtrace(GoodROIidx);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-MaxErrorList = [20,25,30,35,35];
+MaxErrorList = [20,25,30,30,30];
 for q = 1:length(MaxErrorList)
     maxerror = MaxErrorList(q)
     % Calculate which pixels overlap

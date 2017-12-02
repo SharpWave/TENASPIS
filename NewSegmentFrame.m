@@ -11,11 +11,7 @@ else
         PrepMask = true(Xdim,Ydim);
     end
 end
-
-LowPassFilter = fspecial('disk',3);
-%frame = imfilter(frame,LowPassFilter,'replicate');
-%frame = medfilt2(frame,[5 5]);
-
+ToPlot = false;
 % Derived Parameters
 MaxBlobArea = ceil((MaxBlobRadius^2)*pi);
 MinBlobArea = ceil((MinBlobRadius^2)*pi);
@@ -27,7 +23,7 @@ blankframe = zeros(Xdim,Ydim,'single');
 maxframe = max(frame(PrepMask));
 
 %threshinc = (maxframe-threshold)/threshsteps,
-threshinc = 0.002;
+threshinc = 0.001;
 
 threshlist = threshold:threshinc:maxframe*.95;
 
@@ -76,7 +72,7 @@ for i = 1:length(threshlist)
         
         % ok at this point it's a new blob
         CurrGoodBlob = CurrGoodBlob + 1;
-        BlobPixelIdxList{CurrGoodBlob} = rp(j).PixelIdxList;        
+        BlobPixelIdxList{CurrGoodBlob} = rp(j).PixelIdxList;
         BlobWeightedCentroids{CurrGoodBlob} = single(rp(j).Centroid);
         BlobMinorAxisLength(CurrGoodBlob) = single(rp(j).MinorAxisLength);
         BlobAxisRatio(CurrGoodBlob) = AxisRatio;
@@ -101,22 +97,22 @@ BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
 
 %parameter debugging
 
-
-% temp = blankframe;
-% for i = 1:length(BlobPixelIdxList)
-%     temp(BlobPixelIdxList{i}) = temp(BlobPixelIdxList{i}) + frame(BlobPixelIdxList{i});
-% end
-% cutoff = PercentileCutoff(frame(:),98);
-% composite = zeros(Xdim,Ydim,3);
-% tempc = frame/cutoff;
-% tempc(find(temp ~= 0)) = 0;
-% composite(:,:,1) = frame/cutoff;
-% 
-% composite(:,:,2) = tempc;
-% composite(:,:,3) = tempc;
-% 
-% figure(53);image(composite);axis image;pause;
-
+if(ToPlot)
+    temp = blankframe;
+    for i = 1:length(BlobPixelIdxList)
+        temp(BlobPixelIdxList{i}) = temp(BlobPixelIdxList{i}) + frame(BlobPixelIdxList{i});
+    end
+    cutoff = PercentileCutoff(frame(:),98);
+    composite = zeros(Xdim,Ydim,3);
+    tempc = frame/cutoff;
+    tempc(find(temp ~= 0)) = 0;
+    composite(:,:,1) = frame/cutoff;
+    
+    composite(:,:,2) = tempc;
+    composite(:,:,3) = tempc;
+    
+    figure(53);image(composite);axis image;pause;
+end
 
 
 

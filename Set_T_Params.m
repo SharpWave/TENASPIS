@@ -64,10 +64,10 @@ T_PARAMS.MinBlobRadius = 4; % Minimum radius for circular shaped blob to be incl
                             % Increasing this eliminates noise at the cost
                             % of losing low-intensity blobs. EDIT:SPACE
 
-T_PARAMS.MaxAxisRatio = 2.5; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
+T_PARAMS.MaxAxisRatio = 50; % Maximum ratio of major to minor axis length for blobs. Lower means more circular. 
                            % Keeps overly slivery blobs and some juxtaposition artifacts out of the data
                            
-T_PARAMS.MinSolidity = 0.9; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. 
+T_PARAMS.MinSolidity = 0.975; % Minimum blob 'solidity', which is the ratio of the perimeter of the convex hull to the actual perimeter. 
                              % Prevents jagged and strange shaped blobs; noise blobs picked up at low thresholds
 
 %% LinkBlobs params
