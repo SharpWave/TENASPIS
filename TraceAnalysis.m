@@ -6,7 +6,7 @@ load SegmentationROIs.mat;
 load MovieDims.mat;
 global T_MOVIE;
 
-
+PeakWinLen = 6;
 MinBlobRadius = Get_T_Params('MinBlobRadius');
 MinBlobArea = MinBlobRadius^2*pi;
 
@@ -39,7 +39,7 @@ for i = 1:NumNeurons
     
     for j = 1:length(b)
         
-        mv = mean(T_MOVIE(:,:,b(j)-4:b(j)+4),3);
+        mv = mean(T_MOVIE(:,:,max(b(j)-PeakWinLen,1):min(b(j)+PeakWinLen,NumFrames)),3);
         [a1,xOff1,yOff1] = BoxGradient(NeuronPixelIdxList{i},mv(NeuronPixelIdxList{i}),Xdim,Ydim);
         
         % Left shift indices for a1's coordinates
@@ -79,7 +79,7 @@ for i = 1:NumNeurons
             %disp('killed a cluster');
             break;
         end
-        if((length(PixelIdxList{i}) < 1.1*oldsize) && (tr(j).Solidity >= 0.9) )
+        if((length(PixelIdxList{i}) < 1.25*oldsize) && (tr(j).Solidity >= 0.95) )
             foundit = 1;
         end
         thresh = thresh + 0.001;

@@ -11,6 +11,8 @@ NumROIs = length(FrameList);
 MinBlobRadius = Get_T_Params('MinBlobRadius');
 MinBlobArea = ceil((MinBlobRadius^2)*pi);
 
+PeakWinLen = 6;
+
 global T_MOVIE;
 if(isempty(T_MOVIE))
     disp('load the movie');
@@ -75,7 +77,7 @@ for i = 1:NumROIs
             continue;
         end
         FoundOne = true;
-        gooda = (abs(olda-b(j)) <= 4);
+        gooda = (abs(olda-b(j)) <= PeakWinLen);
         
         newa = olda(gooda);
         mv = mean(T_MOVIE(:,:,newa+MinWin-1),3);

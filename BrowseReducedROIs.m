@@ -114,7 +114,7 @@ for j = 1:length(AllPeaks)
     hold on;PlotRegionOutline(PixelIdxList{i},'g');hold off;
     linkaxes([a1 a2 a3],'xy');
     
-    axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);
+    axis([rp.Centroid(1)-40 rp.Centroid(1)+40 rp.Centroid(2)-40 rp.Centroid(2)+40]);
     
     subplot(2,3,4:6);hold on;
     plot(AllPeaks(j),LPtrace{i}(AllPeaks(j)),'ko','MarkerSize',2,'MarkerFaceColor','k');hold off;

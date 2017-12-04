@@ -1,15 +1,15 @@
 function[NewPixelIdxList,GoodPeakAvg] = RecalcROI(PixelIdxList,GoodPeaks);
 
 global T_MOVIE;
-[Xdim,Ydim] = Get_T_Params('Xdim','Ydim');
+[Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 MinBlobRadius = Get_T_Params('MinBlobRadius');
 MinBlobArea = MinBlobRadius^2*pi;
 blankframe = zeros(Xdim,Ydim,'single');
-
+PeakWinLen = 6;
 GoodPeakAvg = blankframe;
 
 for i = 1:length(GoodPeaks)
-    GoodPeakAvg = GoodPeakAvg + mean(T_MOVIE(:,:,GoodPeaks(i)-4:GoodPeaks(i)+4),3);
+    GoodPeakAvg = GoodPeakAvg + mean(T_MOVIE(:,:,max(1,GoodPeaks(i)-PeakWinLen):min(GoodPeaks(i)+PeakWinLen,NumFrames)),3);
 end
 GoodPeakAvg = GoodPeakAvg/length(GoodPeaks);
 temp = blankframe;
@@ -42,7 +42,7 @@ while(~foundit)
         disp('killed a cluster');
         break;
     end
-    if((length(NewPixelIdxList) < 1.1*oldsize) && (tr(j).Solidity >= 0.9) )
+    if((length(NewPixelIdxList) < 1.25*oldsize) && (tr(j).Solidity >= 0.95) )
         foundit = 1;
     end
     thresh = thresh + 0.001;

@@ -29,6 +29,8 @@ threshlist = threshold:threshinc:maxframe*.95;
 
 CurrGoodBlob = 0;
 BlobPixelIdxList = [];
+BlobWeightedCentroids = [];
+BlobMinorAxisLength = [];
 
 for i = 1:length(threshlist)
     threshframe = frame > threshlist(i);
