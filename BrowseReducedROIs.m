@@ -12,9 +12,6 @@ NumNeurons = length(PixelIdxList);
 global T_MOVIE;
 Overlaps = CalcOverlaps(PixelIdxList);
 
-%for i = 1:length(PixelIdxList);
-
-
 figure(1);
 set(gcf,'Position',[2 348 1911 648]);
 subplot(2,3,4:6);
@@ -39,7 +36,7 @@ hold on;PlotRegionOutline(PixelIdxList{i},'g');
 nbrs = find(Overlaps(i,:));
 goodnbrs = [];
 for j = 1:length(nbrs)
-    if(Overlaps(i,nbrs(j)) > length(PixelIdxList{i})/8)
+    if(Overlaps(i,nbrs(j)) > length(PixelIdxList{i})/20)
         PlotRegionOutline(PixelIdxList{nbrs(j)});
         goodnbrs = [goodnbrs,nbrs(j)];
     end
@@ -101,7 +98,9 @@ for j = 1:length(goodnbrs)
     %title(['ROI peak average: ',int2str(length(b))]);
     caxis([0 max(GoodPeakAvg{jidx}(PixelIdxList{jidx}))]);colorbar;
     linkaxes(s,'xy');
-    axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);
+    axis([rp.Centroid(1)-50 rp.Centroid(1)+50 rp.Centroid(2)-50 rp.Centroid(2)+50]);
+    overlapindex = Overlaps(i,goodnbrs(j))/min(length(PixelIdxList{i}),length(PixelIdxList{goodnbrs(j)}));
+    title(['overlap index: ',num2str(overlapindex)]);
 end
 
 set(gcf,'Position',[1921          41        1920         963]);
@@ -114,7 +113,7 @@ for j = 1:length(AllPeaks)
     hold on;PlotRegionOutline(PixelIdxList{i},'g');hold off;
     linkaxes([a1 a2 a3],'xy');
     
-    axis([rp.Centroid(1)-40 rp.Centroid(1)+40 rp.Centroid(2)-40 rp.Centroid(2)+40]);
+    axis([rp.Centroid(1)-50 rp.Centroid(1)+50 rp.Centroid(2)-50 rp.Centroid(2)+50]);
     
     subplot(2,3,4:6);hold on;
     plot(AllPeaks(j),LPtrace{i}(AllPeaks(j)),'ko','MarkerSize',2,'MarkerFaceColor','k');hold off;

@@ -57,6 +57,11 @@ for q = 1:length(MaxErrorList)
             [~,maxj] = max(GoodPeakAvg{Neighbors(j)}(PixelIdxList{Neighbors(j)}));
             maxj = PixelIdxList{Neighbors(j)}(maxj);
             
+            if(~((ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))))
+                continue;
+            end
+            
+            
             [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
             [~,m2] = imgradient(GoodPeakAvg{i});
             %CombList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
@@ -83,7 +88,7 @@ for q = 1:length(MaxErrorList)
             
             ErrorOK = (UnionPhaseError <= maxerror) || (IntersectPhaseError <= maxerror);
             
-            if(ErrorOK && (ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))))
+            if(ErrorOK)
                 % Merge Clusters
                 NumMerges = NumMerges+1;
                 MergePairs{NumMerges} = [i,Neighbors(j)];
