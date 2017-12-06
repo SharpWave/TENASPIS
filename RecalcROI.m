@@ -42,7 +42,7 @@ while(~foundit)
         disp('killed a cluster');
         break;
     end
-    if((length(NewPixelIdxList) < 1.25*oldsize) && (tr(j).Solidity >= 0.95) )
+    if((length(NewPixelIdxList) < 64*pi) && (tr(j).Solidity >= 0.975) )
         foundit = 1;
     end
     thresh = thresh + 0.001;

@@ -24,7 +24,7 @@ PixelIdxList = PixelIdxList(GoodROIidx);
 LPtrace = LPtrace(GoodROIidx);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-MaxErrorList = [10,15,20,25,25,30,30,35,35,35,35];
+MaxErrorList = [15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,40,45,45,45,45,50,50,50,60,60,60];
 for q = 1:length(MaxErrorList)
     maxerror = MaxErrorList(q)
     % Calculate which pixels overlap
@@ -39,10 +39,14 @@ for q = 1:length(MaxErrorList)
     p = ProgressBar(NumNeurons);
     MergePairs = [];
     MergeError = [];
-    
+    ROIchanged = zeros(1,NumNeurons);
     
     for i = 1:NumNeurons
+        if(ROIchanged(i))
+            continue;
+        end
         p.progress;
+        
         
         Neighbors = find(Overlaps(i,:) > 0);
         %ceil(length(PixelIdxList{i})/10));
@@ -51,16 +55,32 @@ for q = 1:length(MaxErrorList)
         maxi = PixelIdxList{i}(maxi);
         
         for j = 1:length(Neighbors)
-            if(Neighbors(j) <= i)
+            if (i == Neighbors(j))
                 continue;
             end
+            if(ROIchanged(Neighbors(j)))
+                continue;
+            end
+            
+            if(ROIchanged(i))
+                continue;
+            end
+            
+            if(length(GoodPeaks{Neighbors(j)}) > length(GoodPeaks{i}))
+                continue;
+            end
+            
             [~,maxj] = max(GoodPeakAvg{Neighbors(j)}(PixelIdxList{Neighbors(j)}));
             maxj = PixelIdxList{Neighbors(j)}(maxj);
             
-            if(~((ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)}))) && (ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))))
+            if(~ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})) && ~ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))
                 continue;
             end
             
+            overlapindex = Overlaps(i,Neighbors(j))/min(length(PixelIdxList{i}),length(PixelIdxList{Neighbors(j)}));
+            if(overlapindex <= 0.5)
+                continue;
+            end
             
             [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
             [~,m2] = imgradient(GoodPeakAvg{i});
@@ -94,6 +114,9 @@ for q = 1:length(MaxErrorList)
                 MergePairs{NumMerges} = [i,Neighbors(j)];
                 MergeUnionPhaseError(NumMerges) = UnionPhaseError;
                 MergeIntersectPhaseError(NumMerges) = IntersectPhaseError;
+                MergeOverlapIdx(NumMerges) = overlapindex;
+                ROIchanged(i) = 1;
+                ROIchanged(Neighbors(j)) = 1;
             end
             
             
@@ -106,7 +129,7 @@ for q = 1:length(MaxErrorList)
     disp('merging cluster peaks');
     % Now perform the merges
     DestinationClu = (1:NumNeurons);
-    ROIchanged = zeros(1,NumNeurons);
+    
     
     for i = 1:NumMerges
         Eater = MergePairs{i}(1);
@@ -125,7 +148,7 @@ for q = 1:length(MaxErrorList)
             Food = DestinationClu(Food);
         end
         
-        if(1)
+        if(maxerror >= 60)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');
@@ -154,7 +177,7 @@ for q = 1:length(MaxErrorList)
             
             
             a3 = subplot(3,2,3:4);plot(LPtrace{Eater});axis tight;hold on;plot(GoodPeaks{Eater},LPtrace{Eater}(GoodPeaks{Eater}),'ro');hold off;
-            title(['Union phase error: ',num2str(MergeUnionPhaseError(i)),' Intersect phase error: ',num2str(MergeIntersectPhaseError(i))]);
+            title(['Union phase error: ',num2str(MergeUnionPhaseError(i)),' Intersect phase error: ',num2str(MergeIntersectPhaseError(i)),' overlap % = ',num2str(MergeOverlapIdx(i))]);
             
             
             a4 = subplot(3,2,5:6);plot(LPtrace{Food});axis tight;hold on;plot(GoodPeaks{Food},LPtrace{Food}(GoodPeaks{Food}),'ro');hold off;
@@ -163,8 +186,10 @@ for q = 1:length(MaxErrorList)
         end
         DestinationClu(Food) = Eater;
         GoodPeaks{Eater} = sort(union(GoodPeaks{Food},GoodPeaks{Eater}));
-        ROIchanged(Eater) = 1;
+        
         GoodPeaks{Food} = [];
+        PixelIdxList{Food} = [];
+        
         IsDup = zeros(1,length(GoodPeaks{Eater}));
         % sometimes peak locations get offset by a few samples, need to
         % eliminate duplicates created this way
@@ -197,7 +222,7 @@ for q = 1:length(MaxErrorList)
     GoodROI = ones(1,NumNeurons);
     
     for i = 1:NumNeurons
-        if(ROIchanged(i))
+        if(ROIchanged(i) && ~isempty(GoodPeaks(i)))
             [PixelIdxList{i},GoodPeakAvg{i}] = RecalcROI(PixelIdxList{i},GoodPeaks{i});
         end
         if(isempty(PixelIdxList{i}))

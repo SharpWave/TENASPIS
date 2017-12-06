@@ -79,7 +79,7 @@ for i = 1:NumNeurons
             %disp('killed a cluster');
             break;
         end
-        if((length(PixelIdxList{i}) < 1.25*oldsize) && (tr(j).Solidity >= 0.95) )
+        if((length(PixelIdxList{i}) < 64*pi) && (tr(j).Solidity >= 0.975) )
             foundit = 1;
         end
         thresh = thresh + 0.001;
