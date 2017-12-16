@@ -10,7 +10,7 @@ load Reduced.mat;
 NumROIs = length(PixelIdxList);
 
 InSlope = false;
-thresh = 0.0005;
+thresh = 0.0001;
 PSAbool = zeros(NumROIs,NumFrames);
 
 for i = 1:NumROIs
@@ -21,7 +21,20 @@ for i = 1:NumROIs
         CurrFrame = GoodPeaks{i}(j);
         PSAbool(i,max(CurrFrame-5,1):CurrFrame) = 1;
         CurrFrame = max(CurrFrame - 6,1);
-        while(DFDT{i}(CurrFrame) > thresh) 
+        StillInSlope = true;
+        NumBadSlopes = 0;
+        while(StillInSlope) 
+            SlopeOK = DFDT{i}(CurrFrame) > thresh;
+            if(SlopeOK)
+                NumBadSlopes = 0;
+            else
+                NumBadSlopes = NumBadSlopes + 1;
+            end
+            if(NumBadSlopes >= 5)
+                StillInSlope = false;
+                PSAbool(i,CurrFrame:CurrFrame+4) = 0;
+                break;
+            end
             PSAbool(i,CurrFrame) = 1;
             CurrFrame = CurrFrame - 1;
             if(CurrFrame <= 0)
@@ -31,7 +44,7 @@ for i = 1:NumROIs
     end
 end
 
-keyboard;
+
 
 NeuronPixelIdxList = PixelIdxList;
 NumNeurons = NumROIs;
