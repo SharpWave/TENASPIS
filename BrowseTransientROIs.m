@@ -11,7 +11,7 @@ NumNeurons = length(FrameList);
 
 global T_MOVIE;
 
-for i = 7800:NumNeurons
+for i = 1:NumNeurons
     figure(1);
     subplot(3,4,5:8);
     a = FrameList{i};
@@ -25,7 +25,7 @@ for i = 7800:NumNeurons
     
     plot(LPtrace);hold on;
     plot(a,LPtrace(a),'ro','MarkerFaceColor','r');axis tight;
-    [~,b] = findpeaks(LPtrace,'MinPeakDistance',5,'MinPeakProminence',max(LPtrace)/4,'MinPeakHeight',0.005)
+    [~,b] = findpeaks(LPtrace,'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005)
     plot(b,LPtrace(b),'ks');
     hold off;
     yyaxis right;

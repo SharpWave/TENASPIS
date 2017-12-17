@@ -148,7 +148,7 @@ for q = 1:length(MaxErrorList)
             Food = DestinationClu(Food);
         end
         
-        if(maxerror >= 60)
+        if(maxerror >= 15)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');

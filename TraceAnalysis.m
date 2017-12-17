@@ -26,7 +26,7 @@ for i = 1:NumNeurons
     
     [~,b] = findpeaks(LPtrace{i},'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
     
-    MaxError = 30;
+    MaxError = 50;
     
     GoodPeakAvg{i} = zeros(Xdim,Ydim,'single');
     GoodPeak = zeros(1,length(b));
