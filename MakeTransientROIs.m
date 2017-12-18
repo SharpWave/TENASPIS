@@ -19,12 +19,12 @@ load('BlobLinks.mat','BlobPixelIdxList');
 %% setup some variables
 NumTransients = length(FrameList);
 [PixelIdxList,CircMask] = deal(cell(1,NumTransients));
-TranBool = false(NumTransients,NumFrames);
+TranBool = false(1,NumTransients);
 [Xcent,Ycent] = deal(zeros(1,NumTransients,'single'));
 
 %% get pixel participation average and determine ROI
 disp('determining calcium transient ROIs');
-blankframe = zeros(Xdim,Ydim,'single');
+
 for i = 1:NumTransients
     PixFreq = CalcPixFreq(FrameList{i},ObjList{i},BlobPixelIdxList);
     if(DebugPlot)
@@ -35,23 +35,22 @@ for i = 1:NumTransients
     InROI = PixFreq >= MinPixelPresence;
     PixelIdxList{i} = single(find(InROI));
     props = regionprops(InROI,'Centroid');
-    if((length(props) == 0) || (max(PixFreq(:)) < 1) || (length(PixelIdxList{i}) < MinBlobArea))
+    if((isempty(props)) || (max(PixFreq(:)) < 1) || (length(PixelIdxList{i}) < MinBlobArea))
         continue;
     end
     BinCent = props.Centroid;
     Ycent(i) = BinCent(1);
     Xcent(i) = BinCent(2);
     CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent(1),BinCent(2));
-    TranBool(i,FrameList{i}) = true;
+    TranBool(i) = true;
     
 end
 
-GoodTr = find(sum(TranBool,2) > 0);
+GoodTr = find(TranBool);
 disp(['kept ',int2str(length(GoodTr)),' out of ',int2str(length(PixelIdxList)),' after eliminating transients without a minimum of ',int2str(MinBlobArea),' pixels present on at least 50% of frames']);
 
 PixelIdxList = PixelIdxList(GoodTr);
 CircMask = CircMask(GoodTr);
-TranBool = TranBool(GoodTr,:);
 Xcent = Xcent(GoodTr);
 Ycent = Ycent(GoodTr);
 FrameList = FrameList(GoodTr);

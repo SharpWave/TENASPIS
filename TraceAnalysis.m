@@ -58,38 +58,9 @@ for i = 1:NumNeurons
     GoodPeakAvg{i} = GoodPeakAvg{i}./sum(GoodPeak);
     GoodPeaks{i} = b(find(GoodPeak));
     
-    thresh = 0.003;
-    foundit = 0;
-    oldsize = length(NeuronPixelIdxList{i});
-    while(~foundit)
-        
-        tr = regionprops(GoodPeakAvg{i} > thresh,'PixelIdxList','Solidity');
-        [~,midx] = max(NeuronAvg{i});
-        foundit = 0;
-        PixelIdxList{i} = [];
-        for j = 1:length(tr)
-            if(ismember(NeuronPixelIdxList{i}(midx),tr(j).PixelIdxList))
-                PixelIdxList{i} = tr(j).PixelIdxList;
-                break;
-            end
-        end
-        
-        if(isempty(PixelIdxList{i}) || isempty(tr))
-            PixelIdxList{i} = [];
-            %disp('killed a cluster');
-            break;
-        end
-        if((length(PixelIdxList{i}) < 64*pi) && (tr(j).Solidity >= 0.975) )
-            foundit = 1;
-        end
-        thresh = thresh + 0.001;
-        
-    end
+    PixelIdxList{i} = RecalcROI(NeuronPixelIdxList{i},GoodPeaks{i});
     
-    if (length(PixelIdxList{i}) < MinBlobArea)
-        PixelIdxList{i} = [];
-        %disp(' a cluster got too small');
-    end
+    
     
 %     if(~isempty(PixelIdxList{i}))
 %         figure(1);

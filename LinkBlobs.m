@@ -24,7 +24,7 @@ function [] = LinkBlobs()
 disp('Processing blobs into calcium transient ROIs: first step is to link blobs that appear in the same spot on consecutive frames');
 
 %% load parameters
-[NumFrames,FrameChunkSize,BlobLinkThresholdCoeff,Xdim,Ydim] = Get_T_Params('NumFrames','FrameChunkSize','BlobLinkThresholdCoeff','Xdim','Ydim');
+[NumFrames,FrameChunkSize,Xdim,Ydim] = Get_T_Params('NumFrames','FrameChunkSize','Xdim','Ydim');
 
 % max number of samples to interpolate places where a transient skips frames
 
@@ -38,13 +38,14 @@ load('Blobs.mat','BlobPixelIdxList','BlobWeightedCentroids','BlobMinorAxisLength
 TransientIdx = cell(1,NumFrames);
 
 % Count the number of blobs in each frame
+NumBlobs = zeros(1,NumFrames);
 for i = 1:NumFrames
     NumBlobs(i) = length(BlobPixelIdxList{i});
 end
 
 CurrIdx = 1;
 
-for i = 1:1+GapFillLen;       
+for i = 1:1+GapFillLen       
     if (NumBlobs(i) == 0)  
         TransientIdx{i} = [];
         continue;

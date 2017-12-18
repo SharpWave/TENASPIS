@@ -18,11 +18,10 @@ function ExtractBlobs(PrepMask)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-global T_MOVIE;
 disp('Extracting Blobs from movie');
 
-%% Get parameters and set up Chunking variables
-[Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
+%% Get parameters 
+[Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
 %% set up the PrepMask; i.e., which areas to exclude
 if ~exist('PrepMask','var')
@@ -35,9 +34,12 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 %% Distribute chunked outputs to cell arrays
 [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = deal(cell(1,NumFrames));
 
+%%  parallel for loop optional
+% if you have a boatload of RAM you can work from the global LoadMovie 
 parfor i = 1:NumFrames
     Set_T_Params;
-    [BlobPixelIdxList{i},BlobWeightedCentroids{i},BlobMinorAxisLength{i}] = NewSegmentFrame(squeeze(T_MOVIE(:,:,i)),PrepMask);
+    frame = LoadFrames('BPDFF.h5',i);
+    [BlobPixelIdxList{i},BlobWeightedCentroids{i},BlobMinorAxisLength{i}] = SegmentFrame(frame,PrepMask);
     p.progress;
 end
 p.stop; % Shut-down progress bar
