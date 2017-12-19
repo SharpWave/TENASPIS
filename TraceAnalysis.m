@@ -1,7 +1,4 @@
-function [] = TraceAnalysis()
-
-close all;
-load SegmentationROIs.mat;
+function [] = TraceAnalysis(NeuronPixelIdxList,BigNeuronAvg,LPtrace,MaxError,OldGoodPeaks)
 
 load MovieDims.mat;
 global T_MOVIE;
@@ -10,6 +7,8 @@ PeakWinLen = 6;
 MinBlobRadius = Get_T_Params('MinBlobRadius');
 MinBlobArea = MinBlobRadius^2*pi;
 
+NumNeurons = length(NeuronPixelIdxList);
+
 p = ProgressBar(NumNeurons);
 LPtrace = cell(1,NumNeurons);
 GoodPeakAvg = cell(1,NumNeurons);
@@ -17,16 +16,27 @@ GoodPeaks = cell(1,NumNeurons);
 PixelIdxList = cell(1,NumNeurons);
 
 for i = 1:NumNeurons
+    NeuronAvg{i} = BigNeuronAvg{i}(NeuronPixelIdxList{i});
     p.progress;
-    [xidx,yidx] = ind2sub([Xdim Ydim],NeuronPixelIdxList{i});
-    LPtrace{i} = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
+
     
-    LPtrace{i} = squeeze(mean(LPtrace{i}));
-    LPtrace{i} = convtrim(LPtrace{i},ones(10,1)/10);
+    [~,b] = findpeaks(LPtrace(i,:),'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
+    PeakIsOld = zeros(1,length(b));
     
-    [~,b] = findpeaks(LPtrace{i},'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
+    if(exist('OldGoodPeaks','var'))
+        IsDup = zeros(length(b),1);
+        for j = 1:length(OldGoodPeaks{i})
+          PeakDist = abs(OldGoodPeaks{i}(j)-b);
+          IsDup = IsDup | (PeakDist <= 10);
+        end
+        b = b(~IsDup);
+        PeakIsOld = zeros(1,length(b));
+        PeakIsOld = [PeakIsOld,ones(1,length(OldGoodPeaks{i}))];
+        b = [b;OldGoodPeaks{i}];
+        [b,bidx] = sort(b);
+        PeakIsOld = PeakIsOld(bidx);        
+    end
     
-    MaxError = 50;
     
     GoodPeakAvg{i} = zeros(Xdim,Ydim,'single');
     GoodPeak = zeros(1,length(b));
@@ -50,7 +60,7 @@ for i = 1:NumNeurons
         phasediffs = angdiff(deg2rad(a1(BoxCombPixIdx1)),deg2rad(a2(BoxCombPixIdx2)));
         PhaseError = rad2deg(mean(abs(phasediffs)));
         
-        if (PhaseError <= MaxError)
+        if ((PhaseError <= MaxError) || PeakIsOld(j)) 
             GoodPeak(j) = 1;
             GoodPeakAvg{i} = GoodPeakAvg{i} + mv;
         end
@@ -69,6 +79,8 @@ for i = 1:NumNeurons
 %         temp = zeros(Xdim,Ydim);
 %         temp(PixelIdxList{i}) = 1;
 %         PlotRegionOutline(temp,'g');
+%         NeuronImage{i} = zeros(Xdim,Ydim,'single');
+%         NeuronImage{i}(NeuronPixelIdxList{i}) = 1;
 %         PlotRegionOutline(NeuronImage{i},'r');
 %         rp = regionprops(NeuronImage{i},'Centroid');
 %         axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);hold off;
@@ -77,6 +89,17 @@ for i = 1:NumNeurons
     
 end
 p.stop;
+
+disp('Recalculating traces');
+clear LPtrace;
+LPtrace = zeros(length(PixelIdxList),NumFrames,'single');
+
+for i = 1:length(PixelIdxList)
+    [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
+    LPtrace(i,:) = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
+    LPtrace(i,:) = squeeze(mean(LPtrace(i,:)));
+    LPtrace(i,:) = convtrim(LPtrace(i,:),ones(2,1)/2);
+end
 save TraceA.mat GoodPeakAvg GoodPeaks LPtrace PixelIdxList -v7.3
 
 

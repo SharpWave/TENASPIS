@@ -4,7 +4,7 @@ function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentF
 [Xdim,Ydim,threshold,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
     Get_T_Params('Xdim','Ydim','threshold','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
 
-threshinc = 0.001; % amount to increase the threshold by 
+threshinc = 0.001; % amount to increase the threshold by
 NormMaxThresh = 0.95; % maximum threshold to try (fraction of max intensity)
 ToPlot = false; % whether to plot the results (also need to disable the parfor in ExtractBlobs
 
@@ -31,45 +31,49 @@ CurrGoodBlob = 0;
 BlobPixelIdxList = [];
 BlobWeightedCentroids = [];
 BlobMinorAxisLength = [];
+BlobAxisRatio = [];
+BlobSolidity = [];
 
 for i = 1:length(threshlist)
     threshframe = frame > threshlist(i);
     threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than minpixels
     
     rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','PixelIdxList','Centroid'); % get the properties of the blobs
-    NumHits = zeros(1,length(BlobPixelIdxList));
+    WasImproved = zeros(1,length(BlobPixelIdxList));
     OldNumBlobs = length(BlobPixelIdxList);
     
     for j = 1:length(rp)
         % compute the axis ratio and check against size and solidity
         % requirements
-        AxisRatio = rp(j).MajorAxisLength/rp(j).MinorAxisLength;
         
-        CriteriaOK = (rp(j).Solidity > MinSolidity) && (AxisRatio < MaxAxisRatio) && (rp(j).Area < MaxBlobArea) && (rp(j).MajorAxisLength < 2*MaxBlobRadius);
+        CriteriaOK = (rp(j).Solidity > MinSolidity) && (rp(j).Area < MaxBlobArea) && (rp(j).MajorAxisLength < 2*MaxBlobRadius);
+        
+        
         if(~CriteriaOK)
             continue;
-        end
+        end        
         
+        AxisRatio = rp(j).MajorAxisLength/rp(j).MinorAxisLength;
         
         % ok so it looks good but do we already have it? Check all of the
         % old blobs for matches
         AlreadyFound = false;
         BetterThanBefore = false;
-        CentroidIdx = sub2ind([Xdim Ydim],ceil(rp(j).Centroid(2)),ceil(rp(j).Centroid(1)));
+        CentroidIdx = sub2ind([Xdim Ydim],ceil(rp(j).Centroid(2)),ceil(rp(j).Centroid(1)));        
         
         for k = 1:OldNumBlobs
             if(ismember(CentroidIdx,BlobPixelIdxList{k}))
                 AlreadyFound = true;
-                NumHits(k) = NumHits(k) + 1;
+                
                 BetterThanBefore = ((rp(j).Solidity > BlobSolidity(k)) && (AxisRatio < BlobAxisRatio(k)));
-                if(BetterThanBefore)
+                if(BetterThanBefore && CriteriaOK)
                     % this guarantees that the matching blob gets deleted
-                    NumHits(k) = NumHits(k)+1;
+                    WasImproved(k) = 1;
                     %disp('kept blob at a higher threshold');
                 end
                 break;
             end
-        end
+        end        
         
         if(AlreadyFound && ~BetterThanBefore)
             % not better so keep the blob at the old threshold
@@ -86,10 +90,24 @@ for i = 1:length(threshlist)
     end
     
     % clean up blobs that were replaced by new blobs at a higher threshold
-    BadGuys = find(NumHits > 1);
+    BadGuys = find(WasImproved);
     for j = 1:length(BadGuys)
         BlobPixelIdxList{BadGuys(j)} = [];
     end
+    NotDead = ones(1,length(BlobPixelIdxList));
+    
+    for j = 1:length(BlobPixelIdxList)
+        if(isempty(BlobPixelIdxList{j}))
+            NotDead(j) = 0;
+        end
+    end
+    NotDead = find(NotDead);
+    BlobPixelIdxList = BlobPixelIdxList(NotDead);
+    BlobWeightedCentroids = BlobWeightedCentroids(NotDead);
+    BlobMinorAxisLength = BlobMinorAxisLength(NotDead);
+    BlobAxisRatio = BlobAxisRatio(NotDead);
+    BlobSolidity = BlobSolidity(NotDead);
+    CurrGoodBlob = length(BlobPixelIdxList);    
 end
 
 GoodBlob = ones(1,CurrGoodBlob);
@@ -109,7 +127,7 @@ if(ToPlot)
     for i = 1:length(BlobPixelIdxList)
         temp(BlobPixelIdxList{i}) = temp(BlobPixelIdxList{i}) + frame(BlobPixelIdxList{i});
     end
-    cutoff = PercentileCutoff(frame(:),98);
+    cutoff = PercentileCutoff(frame(:),99.5);
     composite = zeros(Xdim,Ydim,3);
     tempc = frame/cutoff;
     tempc(find(temp ~= 0)) = 0;

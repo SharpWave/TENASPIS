@@ -53,54 +53,50 @@ end
 
 %% Unpack the variables calculated above
 disp('Final ROI refinement');
-NeuronROIidx = unique(Trans2ROI); % Get unique clusters and mappings between clusters and neurons
-NumNeurons = length(NeuronROIidx); % Final number of neurons
+ROIidx = unique(Trans2ROI); % Get unique clusters and mappings between clusters and neurons
+NumROIs = length(ROIidx); % Final number of neurons
 blankframe = zeros(Xdim,Ydim,'single');
 
-[NeuronPixelIdxList,NeuronImage,NeuronAvg,NeuronFrameList,NeuronObjList] = deal(cell(1,NumNeurons));
+[tempPixelIdxList,tempFrameList,tempObjList,GoodPeakAvg,GoodPeaks] = deal(cell(1,NumROIs));
 
-NeuronActivity = false(NumNeurons,NumFrames);
+IsTransientPeak = false(NumROIs,NumFrames);
+LPtrace = zeros(NumROIs,NumFrames);
+convwin = ones(1,2)/2;
 
-for i = 1:NumNeurons
+p = ProgressBar(NumROIs);
+
+global T_MOVIE;
+
+for i = 1:NumROIs    
+    currtran = ROIidx(i);
+    tempPixelIdxList{i} = PixelIdxList{currtran};    
+    tempFrameList{i} = FrameList{currtran};
+    tempObjList{i} = ObjList{currtran};   
     
-    currtran = NeuronROIidx(i);
-    NeuronPixelIdxList{i} = PixelIdxList{currtran};
-    temp = blankframe;
-    temp(NeuronPixelIdxList{i}) = 1;
-    NeuronImage{i} = temp;
-    [~,idx2] = ismember(NeuronPixelIdxList{i},CircMask{currtran});
-    NeuronAvg{i} = BigPixelAvg{currtran}(idx2);
-    NeuronFrameList{i} = FrameList{currtran};
-    NeuronObjList{i} = ObjList{currtran};
-    NeuronActivity(i,NeuronFrameList{i}) = true;
+    IsTransientPeak(i,tempFrameList{i}) = true;
+    %GoodPeakAvg{i} = mean(T_MOVIE(:,:,tempFrameList{i}),3);
     
+    [xidx,yidx] = ind2sub([Xdim Ydim],tempPixelIdxList{i});
+    temptrace = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);    
+    temptrace = squeeze(mean(temptrace));
+    LPtrace(i,:) = convtrim(temptrace,convwin);
     
+    PeakEpoch = NP_FindSupraThresholdEpochs(IsTransientPeak(i,:),eps);
+    for j = 1:size(PeakEpoch,1)
+        [~,tempidx] = max(LPtrace(i,PeakEpoch(j,1):PeakEpoch(j,2)));
+        GoodPeaks{i}(j) = tempidx+PeakEpoch(j,1)-1;
+    end
+    tempPixelIdxList{i} = RecalcROI(tempPixelIdxList{i},GoodPeaks{i});
+    
+    p.progress;
 end
-
-%% Kill off the singletons! (presumed to be noise)
-for i = 1:NumNeurons
-    temp = NP_FindSupraThresholdEpochs(NeuronActivity(i,:),eps);
-    nTrans(i) = size(temp,1);
-end
-
-OKcount = nTrans >= MinNumTransients;
-NumNeurons = sum(OKcount);
-
-NeuronPixelIdxList = NeuronPixelIdxList(OKcount);
-NeuronImage = NeuronImage(OKcount);
-NeuronAvg = NeuronAvg(OKcount);
-NeuronFrameList = NeuronFrameList(OKcount);
-NeuronObjList = NeuronObjList(OKcount);
-NeuronROIidx = NeuronROIidx(OKcount);
-NeuronActivity = NeuronActivity((OKcount),:);
-nTrans = nTrans(OKcount);
-Overlaps = Overlaps(find(OKcount),:);
-Overlaps = Overlaps(:,find(OKcount));
-
-%NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
+p.stop;
+PixelIdxList = tempPixelIdxList;
+FrameList = tempFrameList;
+ObjList = tempObjList;
 
 disp('saving outputs');
-save('SegmentationROIs.mat','NeuronPixelIdxList','NeuronImage','NeuronAvg','NeuronFrameList','NeuronObjList','NeuronROIidx','NumNeurons','NeuronActivity','nTrans','Trans2ROI','Overlaps','-v7.3');
+save('SegmentationROIs.mat','PixelIdxList','GoodPeakAvg','FrameList','ObjList','ROIidx','NumROIs','IsTransientPeak','Trans2ROI','LPtrace','GoodPeaks','-v7.3');
 
 
 end

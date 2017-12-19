@@ -59,7 +59,7 @@ for i = 1:NumROIs
     [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
     LPtrace = mean(T_MOVIE(xidx,yidx,tidx),1);
     LPtrace = squeeze(mean(LPtrace));
-    LPtrace = convtrim(LPtrace,ones(10,1)/10);
+    LPtrace = convtrim(LPtrace,ones(2,1)/2);
     
     % find peaks
     [~,b] = findpeaks(LPtrace,'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);

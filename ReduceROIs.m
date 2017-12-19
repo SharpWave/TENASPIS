@@ -3,6 +3,8 @@ close all;
 
 load MovieDims.mat;
 load ('TraceA.mat','GoodPeakAvg','GoodPeaks','LPtrace','PixelIdxList');
+load('PlaceMaps2.mat','y','FToffset');
+y = [ones(1,FToffset-2)*min(y),y];
 
 global T_MOVIE;
 ToPlot = 0;
@@ -24,7 +26,7 @@ PixelIdxList = PixelIdxList(GoodROIidx);
 LPtrace = LPtrace(GoodROIidx);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-MaxErrorList = [15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,40,45,45,45,45,50,50,50,60,60,60];
+MaxErrorList = [15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,45,45,45];
 for q = 1:length(MaxErrorList)
     maxerror = MaxErrorList(q)
     % Calculate which pixels overlap
@@ -73,7 +75,7 @@ for q = 1:length(MaxErrorList)
             [~,maxj] = max(GoodPeakAvg{Neighbors(j)}(PixelIdxList{Neighbors(j)}));
             maxj = PixelIdxList{Neighbors(j)}(maxj);
             
-            if(~ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})) && ~ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))
+            if(~ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})) || ~ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))
                 continue;
             end
             
@@ -152,7 +154,7 @@ for q = 1:length(MaxErrorList)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');
-            a1 = subplot(3,2,1);
+            a1 = subplot(4,2,1);
             imagesc(GoodPeakAvg{Eater});title(int2str(Eater));
             axis image;hold on;caxis([0.005 max(GoodPeakAvg{Eater}(PixelIdxList{Eater}))]);colorbar;
             temp = zeros(Xdim,Ydim);
@@ -164,7 +166,7 @@ for q = 1:length(MaxErrorList)
             hold off;
             
             
-            a2 = subplot(3,2,2);
+            a2 = subplot(4,2,2);
             imagesc(GoodPeakAvg{Food});title(int2str(Food));
             axis image;hold on;caxis([0.005 max(GoodPeakAvg{Food}(PixelIdxList{Food}))]);colorbar
             PlotRegionOutline(temp,'r');
@@ -176,12 +178,14 @@ for q = 1:length(MaxErrorList)
             
             
             
-            a3 = subplot(3,2,3:4);plot(LPtrace{Eater});axis tight;hold on;plot(GoodPeaks{Eater},LPtrace{Eater}(GoodPeaks{Eater}),'ro');hold off;
+            a3 = subplot(4,2,3:4);plot(LPtrace{Eater});axis tight;hold on;plot(GoodPeaks{Eater},LPtrace{Eater}(GoodPeaks{Eater}),'ro');hold off;
             title(['Union phase error: ',num2str(MergeUnionPhaseError(i)),' Intersect phase error: ',num2str(MergeIntersectPhaseError(i)),' overlap % = ',num2str(MergeOverlapIdx(i))]);
             
             
-            a4 = subplot(3,2,5:6);plot(LPtrace{Food});axis tight;hold on;plot(GoodPeaks{Food},LPtrace{Food}(GoodPeaks{Food}),'ro');hold off;
-            linkaxes([a3 a4],'x');
+            a4 = subplot(4,2,5:6);plot(LPtrace{Food});axis tight;hold on;plot(GoodPeaks{Food},LPtrace{Food}(GoodPeaks{Food}),'ro');hold off;
+            
+            a5 = subplot(4,2,7:8);plot(y);axis tight;hold on;plot(GoodPeaks{Eater},y(GoodPeaks{Eater}),'ro','MarkerSize',12,'MarkerFaceColor','r');plot(GoodPeaks{Food},y(GoodPeaks{Food}),'go','MarkerFaceColor','g');hold off;
+            linkaxes([a3 a4 a5],'x');
             pause;
         end
         DestinationClu(Food) = Eater;
@@ -238,17 +242,6 @@ for q = 1:length(MaxErrorList)
     LPtrace = LPtrace(GoodROIidx);
     sum(GoodROI),
     
-end
-
-disp('Recalculating traces');
-clear LPtrace;
-LPtrace = cell(1,length(PixelIdxList));
-
-for i = 1:length(PixelIdxList)
-    [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
-    LPtrace{i} = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
-    LPtrace{i} = squeeze(mean(LPtrace{i}));
-    LPtrace{i} = convtrim(LPtrace{i},ones(10,1)/10);
 end
 
 save Reduced.mat GoodPeaks GoodROIidx PixelIdxList GoodPeakAvg LPtrace -v7.3;

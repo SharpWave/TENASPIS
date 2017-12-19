@@ -30,7 +30,7 @@ for i = 1:NumROIs
             else
                 NumBadSlopes = NumBadSlopes + 1;
             end
-            if(NumBadSlopes >= 5)
+            if(NumBadSlopes >= 3)
                 StillInSlope = false;
                 PSAbool(i,CurrFrame:CurrFrame+4) = 0;
                 break;
