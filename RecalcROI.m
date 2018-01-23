@@ -66,7 +66,7 @@ while(~foundit)
     end
     
     % if we made it to here then the ROI is okish
-    if((tr(j).Solidity > .9) && (mean(gmag(NewPixelIdxList)) > BestGradient))
+    if((tr(j).Solidity > .95) && (mean(gmag(NewPixelIdxList)) > BestGradient))
         BestSolid = tr(j).Solidity;
         BestGradient = mean(gmag(NewPixelIdxList));
         CurrPixelIdxList = NewPixelIdxList;

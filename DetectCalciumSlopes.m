@@ -15,7 +15,7 @@ PSAbool = zeros(NumROIs,NumFrames);
 
 for i = 1:NumROIs
     i/NumROIs
-    DFDT{i} = diff(LPtrace{i});
+    DFDT{i} = diff(LPtrace(i,:));
     
     for j = 1:length(GoodPeaks{i})
         CurrFrame = GoodPeaks{i}(j);

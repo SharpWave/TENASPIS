@@ -86,7 +86,7 @@ for i = 1:NumROIs
         [~,tempidx] = max(LPtrace(i,PeakEpoch(j,1):PeakEpoch(j,2)));
         GoodPeaks{i}(j) = tempidx+PeakEpoch(j,1)-1;
     end
-    tempPixelIdxList{i} = RecalcROI(tempPixelIdxList{i},GoodPeaks{i});
+    [tempPixelIdxList{i},GoodPeakAvg{i}] = RecalcROI(tempPixelIdxList{i},GoodPeaks{i});
     
     p.progress;
 end

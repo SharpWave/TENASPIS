@@ -7,7 +7,7 @@ global T_MOVIE;
 NumROIs = size(FT,1);
 
 NewStart = FToffset-1;
-NewEnd = length(LPtrace{1})%-(FToffset-(length(LPtrace{1})-length(smspeed)));
+NewEnd = length(LPtrace(1,:))%-(FToffset-(length(LPtrace{1})-length(smspeed)));
 Overlaps = CalcOverlaps(PixelIdxList,20);
 
 for i = 1:size(FT,1)
@@ -18,7 +18,7 @@ for i = 1:size(FT,1)
     
     
     ax2 = subplot(2,5,6:9);
-    trace = LPtrace{i}(NewStart:NewEnd);
+    trace = LPtrace(i,NewStart:NewEnd);
     plot(trace);
     axis tight;hold on;
     plot(a,trace(a),'*');

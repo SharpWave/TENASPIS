@@ -23,10 +23,10 @@ GoodROIidx = find(GoodROI);
 GoodPeakAvg = GoodPeakAvg(GoodROIidx);
 GoodPeaks = GoodPeaks(GoodROIidx);
 PixelIdxList = PixelIdxList(GoodROIidx);
-LPtrace = LPtrace(GoodROIidx);
+LPtrace = LPtrace(GoodROIidx,:);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-MaxErrorList = [15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,45,45,45];
+MaxErrorList = [10,10,10,15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,45,45,45,50,50,50];
 for q = 1:length(MaxErrorList)
     maxerror = MaxErrorList(q)
     % Calculate which pixels overlap
@@ -75,31 +75,24 @@ for q = 1:length(MaxErrorList)
             [~,maxj] = max(GoodPeakAvg{Neighbors(j)}(PixelIdxList{Neighbors(j)}));
             maxj = PixelIdxList{Neighbors(j)}(maxj);
             
-            if(~ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})) || ~ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))
-                continue;
-            end
+            %             if(~ismember(maxi,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})) || ~ismember(maxj,intersect(PixelIdxList{i},PixelIdxList{Neighbors(j)})))
+            %                 continue;
+            %             end
             
             overlapindex = Overlaps(i,Neighbors(j))/min(length(PixelIdxList{i}),length(PixelIdxList{Neighbors(j)}));
-            if(overlapindex <= 0.5)
+            if(overlapindex <= 0.4)
                 continue;
             end
+            [maxix,maxiy] = ind2sub([Xdim,Ydim],maxi);
+            [maxjx,maxjy] = ind2sub([Xdim,Ydim],maxj);
+            mergedist = ((maxix-maxjx)^2+(maxiy-maxjy)^2)^0.5;
             
+            if mergedist >= 10
+                continue
+            end
             [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
             [~,m2] = imgradient(GoodPeakAvg{i});
-            %CombList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
-            %             tempPeaks = union(GoodPeaks{i},GoodPeaks{Neighbors(j)});
-            %             IsDup = zeros(1,length(tempPeaks));
-            %             % sometimes peak locations get offset by a few samples, need to
-            %             % eliminate duplicates created this way
-            %             for k = 2:length(IsDup)
-            %                 if(tempPeaks(k)-tempPeaks(k-1) <= 10)
-            %                     %disp('found duplicate!!');
-            %                     IsDup(k) = 1;
-            %                     tempPeaks(k) = -5;
-            %                 end
-            %             end
-            %             tempPeaks = tempPeaks(~IsDup);
-            %[CombList,~] = RecalcROI(PixelIdxList{i},tempPeaks);
+            
             UnionList = union(PixelIdxList{i},PixelIdxList{Neighbors(j)});
             Unionphasediffs = angdiff(deg2rad(m1(UnionList)),deg2rad(m2(UnionList)));
             UnionPhaseError = rad2deg(mean(abs(Unionphasediffs)));
@@ -108,7 +101,9 @@ for q = 1:length(MaxErrorList)
             Intersectphasediffs = angdiff(deg2rad(m1(IntersectList)),deg2rad(m2(IntersectList)));
             IntersectPhaseError = rad2deg(mean(abs(Intersectphasediffs)));
             
-            ErrorOK = (UnionPhaseError <= maxerror) || (IntersectPhaseError <= maxerror);
+            ErrorOK = (UnionPhaseError <= maxerror);
+            
+            
             
             if(ErrorOK)
                 % Merge Clusters
@@ -119,13 +114,9 @@ for q = 1:length(MaxErrorList)
                 MergeOverlapIdx(NumMerges) = overlapindex;
                 ROIchanged(i) = 1;
                 ROIchanged(Neighbors(j)) = 1;
+                MergeDistance(NumMerges) = mergedist;
             end
-            
-            
-            
-            
         end
-        
     end
     p.stop;
     disp('merging cluster peaks');
@@ -150,13 +141,13 @@ for q = 1:length(MaxErrorList)
             Food = DestinationClu(Food);
         end
         
-        if(maxerror >= 15)
+        if(false)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');
             a1 = subplot(4,2,1);
             imagesc(GoodPeakAvg{Eater});title(int2str(Eater));
-            axis image;hold on;caxis([0.005 max(GoodPeakAvg{Eater}(PixelIdxList{Eater}))]);colorbar;
+            axis image;hold on;caxis([0.000 max(GoodPeakAvg{Eater}(PixelIdxList{Eater}))]);colorbar;
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             PlotRegionOutline(temp,'r');
@@ -165,24 +156,20 @@ for q = 1:length(MaxErrorList)
             PlotRegionOutline(temp2,'g');
             hold off;
             
-            
             a2 = subplot(4,2,2);
             imagesc(GoodPeakAvg{Food});title(int2str(Food));
-            axis image;hold on;caxis([0.005 max(GoodPeakAvg{Food}(PixelIdxList{Food}))]);colorbar
+            axis image;hold on;caxis([0.000 max(GoodPeakAvg{Food}(PixelIdxList{Food}))]);colorbar
             PlotRegionOutline(temp,'r');
             PlotRegionOutline(temp2,'g');
             hold off;
             linkaxes([a1 a2],'xy');
             axis([rp.Centroid(1)-20 rp.Centroid(1)+20 rp.Centroid(2)-20 rp.Centroid(2)+20]);
             
+            a3 = subplot(4,2,3:4);plot(LPtrace(Eater,:));axis tight;hold on;plot(GoodPeaks{Eater},LPtrace(Eater,GoodPeaks{Eater}),'ro');hold off;
             
+            title(['Union phase error: ',num2str(MergeUnionPhaseError(i)),' Intersect phase error: ',num2str(MergeIntersectPhaseError(i)),' overlap % = ',num2str(MergeOverlapIdx(i)),' distance = ',num2str(MergeDistance(i))]);
             
-            
-            a3 = subplot(4,2,3:4);plot(LPtrace{Eater});axis tight;hold on;plot(GoodPeaks{Eater},LPtrace{Eater}(GoodPeaks{Eater}),'ro');hold off;
-            title(['Union phase error: ',num2str(MergeUnionPhaseError(i)),' Intersect phase error: ',num2str(MergeIntersectPhaseError(i)),' overlap % = ',num2str(MergeOverlapIdx(i))]);
-            
-            
-            a4 = subplot(4,2,5:6);plot(LPtrace{Food});axis tight;hold on;plot(GoodPeaks{Food},LPtrace{Food}(GoodPeaks{Food}),'ro');hold off;
+            a4 = subplot(4,2,5:6);plot(LPtrace(Food,:));axis tight;hold on;plot(GoodPeaks{Food},LPtrace(Food,GoodPeaks{Food}),'ro');hold off;
             
             a5 = subplot(4,2,7:8);plot(y);axis tight;hold on;plot(GoodPeaks{Eater},y(GoodPeaks{Eater}),'ro','MarkerSize',12,'MarkerFaceColor','r');plot(GoodPeaks{Food},y(GoodPeaks{Food}),'go','MarkerFaceColor','g');hold off;
             linkaxes([a3 a4 a5],'x');
@@ -218,7 +205,7 @@ for q = 1:length(MaxErrorList)
     GoodPeakAvg = GoodPeakAvg(GoodROIidx);
     GoodPeaks = GoodPeaks(GoodROIidx);
     PixelIdxList = PixelIdxList(GoodROIidx);
-    LPtrace = LPtrace(GoodROIidx);
+    LPtrace = LPtrace(GoodROIidx,:);
     ROIchanged = ROIchanged(GoodROIidx);
     
     disp('recalculating cluster ROIs')
@@ -239,9 +226,20 @@ for q = 1:length(MaxErrorList)
     GoodPeakAvg = GoodPeakAvg(GoodROIidx);
     GoodPeaks = GoodPeaks(GoodROIidx);
     PixelIdxList = PixelIdxList(GoodROIidx);
-    LPtrace = LPtrace(GoodROIidx);
+    LPtrace = LPtrace(GoodROIidx,:);
     sum(GoodROI),
     
+end
+
+disp('Recalculating traces');
+clear LPtrace;
+LPtrace = zeros(length(PixelIdxList),NumFrames,'single');
+
+for i = 1:length(PixelIdxList)
+    [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
+    temptrace = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
+    temptrace = squeeze(mean(temptrace));
+    LPtrace(i,:) = convtrim(temptrace,ones(2,1)/2)';
 end
 
 save Reduced.mat GoodPeaks GoodROIidx PixelIdxList GoodPeakAvg LPtrace -v7.3;
