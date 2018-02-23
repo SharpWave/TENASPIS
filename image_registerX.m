@@ -98,7 +98,7 @@ p.addOptional('manual_reg_enable', false, @(a) islogical(a) || (isnumeric(a) ...
     && a == 0 || a == 1));
 p.addParameter('use_neuron_masks', false, @(a) islogical(a) || (isnumeric(a) ...
     && a == 0 || a == 1));
-p.addParameter('name_append', '', @ischar);
+p.addParameter('name_append', '', @(a) isempty(a) || ischar(a));
 p.addParameter('suppress_output', false, @(a) islogical(a) || (isnumeric(a) ...
     && a == 0 || a == 1));
 p.parse(animal_name, base_date, base_session, reg_date, reg_session,...
@@ -205,7 +205,7 @@ end
 
 % Run registration
 if ~manual_reg_enable
-    disp('Running Registration...');
+    disp('Running Image Registration...');
     tform = imregtform(double(reg_image), double(base_image), regtype, optimizer, metric);
 elseif manual_reg_enable
     tform = affine2d(eye(3));
@@ -255,10 +255,12 @@ if ~suppress_output
 end
 
 %% Step 5: Give option to adjust manually if this doesn't work... NOTE that this is not very well supported...
-disp('Registration Stats:')
-disp(['X translation = ' num2str(tform.T(3,1)) ' pixels.'])
-disp(['Y translation = ' num2str(tform.T(3,2)) ' pixels.'])
-disp(['Rotation = ' num2str(mean([asind(tform.T(2,1)) acosd(tform.T(1,1))])) ' degrees.'])
+if ~suppress_output
+    disp('Registration Stats:')
+    disp(['X translation = ' num2str(tform.T(3,1)) ' pixels.'])
+    disp(['Y translation = ' num2str(tform.T(3,2)) ' pixels.'])
+    disp(['Rotation = ' num2str(mean([asind(tform.T(2,1)) acosd(tform.T(1,1))])) ' degrees.'])
+end
 
 if ~exist('manual_reg_enable','var') || manual_reg_enable == 1
     manual_flag = input('Do you wish to manually adjust this registration? (y/n): ','s');
