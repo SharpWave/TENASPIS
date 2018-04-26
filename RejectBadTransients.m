@@ -15,6 +15,7 @@ load('Blobs.mat','BlobWeightedCentroids');
 %% setup vars
 NumTransients = length(FrameList);
 [GoodTransient,NotFirstFrame] = deal(true(1,NumTransients));
+reject_reason = cell(1,NumTransients);
 
 %% Analyze transient and apply criteria
 disp('analyzing transients for rejection');
@@ -30,6 +31,17 @@ for i = 1:NumTransients
     NotFirstFrame(i) = ~ismember(1,FrameList{i});
     
     GoodTransient(i) = (TransientLength(i) >= MinNumFrames) && (TravelDist(i) < MaxCentroidTravelDistance) && NotFirstFrame(i);
+    if ~GoodTransient(i)
+        if TransientLength(i) < MinNumFrames
+            reject_reason{i} = 'too short';
+        end
+        if TravelDist(i) >= MaxCentroidTravelDistance
+            reject_reason{i} = [reject_reason{i} ' + moves too much'];
+        end
+        if ~NotFirstFrame(i)
+           reject_reason{i} = [reject_reason{i} ' + 1st frame'];
+        end
+    end
 end
 
 %% optional plotting
@@ -40,7 +52,7 @@ subplot(1,2,2);
 histogram(TravelDist,0:0.1:15);xlabel('travel distance');
 
 %% save data for analysis purposes
-save TransientStats.mat TransientLength TravelDist;
+save TransientStats.mat TransientLength TravelDist reject_reason;
 
 %% keep the good ones
 TravelDist = TravelDist(GoodTransient);
