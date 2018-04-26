@@ -155,5 +155,9 @@ for i = 1:length(varargin)
         varargout(i) = {T_PARAMS.MinNumTransients};
     end
     
+    if (strcmp(varargin{i},'tstack'))
+        varargout(i) = {T_PARAMS.tstack};
+    end
+    
 end
 

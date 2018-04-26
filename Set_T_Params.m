@@ -1,7 +1,9 @@
-function Set_T_Params(moviefile)
-% function Set_T_Params(moviefile)
+function Set_T_Params3(moviefile)
+% function Set_T_Params3(moviefile)
 %
-% Sets Tenaspis parameters.  Must be called at beginning of run
+% Sets Tenaspis parameters.  Must be called at beginning of run.
+%
+% Baseline parameters adjusted for 10 HZ sample rate.
 %
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,21 +23,49 @@ function Set_T_Params(moviefile)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-clear T_PARAMS;
+clearvars -global T_PARAMS;
 global T_PARAMS;
 
+% NK bugfix hack
+try
+    [~,~,ext] = fileparts(moviefile); % Get filetype
+    filetype = ext(2:end);
+catch
+    ext = 'h5';
+end
 %% The dimensions of the movie - load from .mat file if possible, to save time when this function is called by parfor workers
 if (~exist('MovieDims.mat','file'))
-    info = h5info(moviefile,'/Object');
-    [T_PARAMS.Xdim,Xdim] = deal(info.Dataspace.Size(1));
-    [T_PARAMS.Ydim,Ydim] = deal(info.Dataspace.Size(2));
-    [T_PARAMS.NumFrames,NumFrames] = deal(info.Dataspace.Size(3));
-    save MovieDims.mat Xdim Ydim NumFrames
+    switch filetype
+        case 'h5'
+            info = h5info(moviefile,'/Object');
+            [T_PARAMS.Xdim,Xdim] = deal(info.Dataspace.Size(1));
+            [T_PARAMS.Ydim,Ydim] = deal(info.Dataspace.Size(2));
+            [T_PARAMS.NumFrames,NumFrames] = deal(info.Dataspace.Size(3));
+            tstack = [];
+        case {'tiff','tif'}
+            tstack = TIFFStack(moviefile);
+            T_PARAMS.tstack = tstack;
+            [T_PARAMS.Xdim,Xdim] = deal(size(tstack,1));
+            [T_PARAMS.Ydim,Ydim] = deal(size(tstack,2));
+            [T_PARAMS.NumFrames,NumFrames] = deal(size(tstack,3));
+        otherwise
+           error('file must be either h5 or tiff format') 
+    end
+    save MovieDims.mat Xdim Ydim NumFrames tstack
 else
-    load('MovieDims.mat','Xdim','Ydim','NumFrames');
+    try
+        load('MovieDims.mat','Xdim','Ydim','NumFrames','tstack');
+    catch
+        load('MovieDims.mat','Xdim','Ydim','NumFrames');
+    end
     T_PARAMS.Xdim = Xdim;
     T_PARAMS.Ydim = Ydim;
     T_PARAMS.NumFrames = NumFrames;
+    if isfield(T_PARAMS,'tstack')
+        T_PARAMS.tstack = tstack;
+    else
+        T_PARAMS.tstack = nan;
+    end
 end
 
 %% Implementation parameters (i.e. no effect on results)

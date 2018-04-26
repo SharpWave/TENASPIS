@@ -1,4 +1,4 @@
-function [] = InterpretTraces(Todebug)
+function [] = InterpretTraces(Todebug, param_file_use)
 % function [] = InterpretTraces(Todebug)
 %
 % This takes the output of MergeTransientROIs and creates a best-guess
@@ -52,9 +52,18 @@ if (~exist('Todebug','var'))
     Todebug = 0;
 end
 
-load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces','NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage','NeuronObjList','NeuronROIidx','Trans2ROI');
-[Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,SlopeThresh,MinBinSimRank,ROIoverlapthresh,MinPSALen,MinNumPSAepochs] = ...
-    Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff','CorrPthresh','MaxGapFillLen','SlopeThresh','MinBinSimRank','ROIoverlapthresh','MinPSALen','MinNumPSAepochs');
+if nargin < 2
+    param_file_use = '';
+end
+
+load('SegmentationROIs.mat','NeuronActivity','NumNeurons','NeuronTraces',...
+    'NeuronPixelIdxList','NeuronAvg','NeuronFrameList','NeuronImage',...
+    'NeuronObjList','NeuronROIidx','Trans2ROI');
+[Xdim,Ydim,NumFrames,AmplitudeThresholdCoeff,CorrPthresh,MaxGapFillLen,...
+    SlopeThresh,MinBinSimRank,ROIoverlapthresh,MinPSALen,MinNumPSAepochs] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','AmplitudeThresholdCoeff',...
+    'CorrPthresh','MaxGapFillLen','SlopeThresh','MinBinSimRank',...
+    'ROIoverlapthresh','MinPSALen','MinNumPSAepochs');
 
 blankframe = zeros(Xdim,Ydim,'single');
 PSAbool = false(NumNeurons,NumFrames);
@@ -396,7 +405,7 @@ NeuronROIidx = NeuronROIidx(ActOK);
 
 PSAbool = PSAbool(ActOK,:);
 disp('averaging ROIs over the movie');
-NeuronAvg = PixelSetMovieAvg(PSAbool,NeuronPixelIdxList);
+NeuronAvg = PixelSetMovieAvg(PSAbool,NeuronPixelIdxList,param_file_use);
 
 NumNeurons = sum(ActOK);
 

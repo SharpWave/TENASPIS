@@ -1,5 +1,5 @@
-function ExtractBlobs(PrepMask)
-% ExtractBlobs(file,mask)
+function ExtractBlobs(PrepMask, param_file_use)
+% ExtractBlobs(file, param_file_use)
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This file is part of Tenaspis.
@@ -18,6 +18,10 @@ function ExtractBlobs(PrepMask)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+
+if nargin < 2
+    param_file_use = ''; % Use Set_T_Params as a default.
+end
 disp('Extracting Blobs from movie');
 
 %% Get parameters and set up Chunking variables
@@ -37,7 +41,8 @@ end
 p = ProgressBar(NumChunks); % Initialize progress bar
 
 parfor i = 1:NumChunks
-    Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+%     Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+    Set_Custom_T_Params('BPDFF.h5', param_file_use);
     FrameList = ChunkStarts(i):ChunkEnds(i);
        
     BlobChunk(i) = SegmentFrameChunk(FrameList,PrepMask);
