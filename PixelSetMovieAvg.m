@@ -4,13 +4,15 @@ function [varargout] = PixelSetMovieAvg(varargin)
 % inputs are NxT boolean activation matrices followed by length N cell
 % arrays containing pixel indices
 
-[Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
+[Xdim,Ydim,NumFrames,FrameChunkSize] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
 
 % check that input is formatted right
-NumInputs = length(varargin)/2;
+NumInputs = (length(varargin)-1)/2;
 if(mod(NumInputs,1) ~= 0)
-    error('PixelSetMovieAvg requires an even number of inputs, see help');
+    error('PixelSetMovieAvg requires an odd number of inputs, see help');
 end
+param_file_use = varargin{end};
 
 %% Chunking variables
 FrameChunkSize = FrameChunkSize;
@@ -33,7 +35,8 @@ end
 %% average the chunks in parallel
 p = ProgressBar(NumChunks);
 parfor i = 1:NumChunks
-    Set_T_Params;
+%     Set_T_Params;
+    Set_Custom_T_Params('BPDFF.h5',param_file_use);
     FrameList = ChunkStarts(i):ChunkEnds(i);
     ChunkSums{i} = CalcChunkSums(FrameList,NumInputs,NumROIs,PixelIdx,ActBool);
     p.progress;    
