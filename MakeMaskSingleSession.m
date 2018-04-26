@@ -1,5 +1,5 @@
-function MakeMaskSingleSession(movie)
-% MakeMaskSingleSession(movie)
+function [newmax] = MakeMaskSingleSession(movie)
+% newmax = MakeMaskSingleSession(movie)
 % 
 %   Makes a mask of the field of view after displaying a maximum
 %   projection. Circle over a large area where you see cells. Saves as

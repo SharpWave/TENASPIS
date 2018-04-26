@@ -22,7 +22,8 @@ function [Trans2ROI,PixelList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %% Get parameters
-[MinTransientMergeCorrR,MaxTransientMergeCorrP] = Get_T_Params('MinTransientMergeCorrR','MaxTransientMergeCorrP');
+[MinTransientMergeCorrR,MaxTransientMergeCorrP] = ...
+    Get_T_Params('MinTransientMergeCorrR','MaxTransientMergeCorrP');
 
 %% setup some variables
 ClusterList = unique(Trans2ROI); % this ends up being the indices into the input data array elements that contain currently remaining clusters

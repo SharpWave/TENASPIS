@@ -41,10 +41,14 @@ for i = 1:length(DistanceThresholdList)
     Cchanged = 1;
     oldNumCT = NumCT; % Update number
     while Cchanged == 1
-        disp(['Merging neurons, iteration #',num2str(NumIterations+1),' distance ',num2str(DistanceThresholdList(i))])
+        disp(['Merging neurons, iteration #',num2str(NumIterations+1),...
+            ' distance ',num2str(DistanceThresholdList(i))])
         
         % Iteratively merge spatially distant clusters together
-        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,BigPixelAvg,CircMask);
+        [Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,...
+            BigPixelAvg] = AttemptTransientMerges(DistanceThresholdList(i),...
+            Trans2ROI,PixelIdxList,Xcent,Ycent,FrameList,ObjList,PixelAvg,...
+            BigPixelAvg,CircMask);
         NumIterations = NumIterations+1; % Update number of iterations
         NumClu(NumIterations) = length(unique(Trans2ROI)); % Update number of clusters
         DistUsed(NumIterations) = DistanceThresholdList(i); % Updated distance threshold used
