@@ -30,8 +30,17 @@ function [frames] = LoadFrames(file,framenums)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%% Get parameters
-[Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
+
+%% Get parameters & find filetype
+try
+    [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
+catch
+    disp('Initializing movie - might take a bit longer')
+    Set_T_Params(file)
+    [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
+end
+[~,~,ext] = fileparts(file); % Get filetype
+filetype = ext(2:end);
 
 %% find sets of consecutive frames in framenums and grab their indices
 fmap = zeros(1,max(framenums));
@@ -49,9 +58,27 @@ curr = 1;
 
 frames = zeros(Xdim,Ydim,length(framenums),'single');
 
-for i = 1:size(fep,1)
-    frames(:,:,curr:(curr+loadchunks(i,2)-1)) = h5read(file,'/Object',[1 1 loadchunks(i,1) 1],[Xdim Ydim loadchunks(i,2) 1]);
-    curr = curr+loadchunks(i,2);
+switch filetype
+    case 'h5'
+        for i = 1:size(fep,1)
+            frames(:,:,curr:(curr+loadchunks(i,2)-1)) = ...
+                h5read(file,'/Object',[1 1 loadchunks(i,1) 1],...
+                [Xdim Ydim loadchunks(i,2) 1]);
+            curr = curr+loadchunks(i,2);
+        end
+    case {'tiff','tif'}
+        if isempty(tstack)
+            tstack = TIFFStack(file);
+        end
+        for i = 1:size(fep,1)
+            frames(:,:,curr:(curr+loadchunks(i,2)-1)) = ...
+                tstack(:,:,loadchunks(i,1):(sum(loadchunks(i,:))-1));
+            curr = curr+loadchunks(i,2);
+        end
+        
+    otherwise
+        error('files must be in either h5 or tiff format')
+        
 end
 
 end
