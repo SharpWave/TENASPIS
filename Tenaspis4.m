@@ -71,13 +71,19 @@ function Tenaspis4(md,varargin)
 %% Make filtered movies. 
     if preprocess
         disp('BPDFF.h5 and/or LPDFF.h5 not detected. Making movies...'); 
-        cd(fullfile(md.Location,'MotCorrMovie-Objects'));
-        h5Movie = fullfile(pwd,ls('*.h5'));
+        try % try to load an h5 first
+            cd(fullfile(md.Location,'MotCorrMovie-Objects'));
+            h5Movie = fullfile(pwd,ls('*.h5'));
+            
+            cd(md.Location);
+            Set_T_Params(h5Movie);
+            MakeFilteredMovies(h5Movie,'d1',d1);
+        catch % if not, load a tiff
+            cd(md.Location)
+            tiffMovie = fullfile(pwd,ls('*.tiff'));
+        end
         
-        cd(md.Location);
-        Set_T_Params(h5Movie);
         
-        MakeFilteredMovies(h5Movie,'d1',d1);        
     else
         disp('Appropriate movies detected. Proceeding...');
     end
