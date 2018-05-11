@@ -32,13 +32,14 @@ function [frames] = LoadFrames(file,framenums)
 %
 
 %% Get parameters & find filetype
-try
-    [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
-catch
-    disp('Initializing movie - might take a bit longer')
-    Set_T_Params(file)
-    [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
-end
+% try
+%     Set_T_Params(file)
+%     [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
+% catch
+
+% Set_T_Params(file)
+[Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
+% end
 [~,~,ext] = fileparts(file); % Get filetype
 filetype = ext(2:end);
 

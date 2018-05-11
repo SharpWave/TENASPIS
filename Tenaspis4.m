@@ -81,6 +81,7 @@ function Tenaspis4(md,varargin)
         catch % if not, load a tiff
             cd(md.Location)
             tiffMovie = fullfile(pwd,ls('*.tiff'));
+            MakeFilteredMovies(tiffMovie,'d1',d1);
         end
         
         
