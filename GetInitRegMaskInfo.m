@@ -133,6 +133,16 @@ AI(i).animal = 'G50_AK';
 AI(i).init_date = '03_13_2017';
 AI(i).init_sess = 2; 
 
+i = i+1;
+AI(i).animal = 'Marble3';
+AI(i).init_date = '02_05_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble7';
+AI(i).init_date = '03_19_2018';
+AI(i).init_sess = 1; 
+
 % For each animal you have, add onto the structure array: 
 % i = i+1;
 % AI(i).animal = _ANIMAL NAME HERE_
