@@ -34,8 +34,8 @@ function [frames] = LoadFrames(file,framenums)
 %% Get parameters & find filetype
 try
     [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
-catch
-    
+
+catch % Set T_PARAMS if not already done
     Set_T_Params(file)
     [Xdim,Ydim,~,tstack] = Get_T_Params('Xdim','Ydim','NumFrames','tstack');
 end
