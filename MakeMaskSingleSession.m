@@ -45,14 +45,13 @@ figure;
 ToContinue = 'n';
 disp('draw a circle around the area with good cells');
 while ~(strcmp(ToContinue,'y'))
-    [neuronmask, xi, yi] = roipoly(imadjust(newmax));
-    figure;imagesc_gray(imadjust(newmax));
+    [neuronmask, xi, yi] = roipoly(imadjust(mat2gray(newmax)));
+    figure;imagesc_gray(imadjust(mat2gray(newmax)));
     hold on
     plot(xi, yi,'r')
     
     ToContinue = input('OK with the mask you just drew? [y/n] --->','s');
 end
-
 %% Save.
 save singlesessionmask.mat neuronmask;
 

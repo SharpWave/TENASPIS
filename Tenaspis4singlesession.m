@@ -20,7 +20,7 @@ if make_movies
 end
 
 if make_mask
-    MakeMaskSingleSession(moviefile);
+    MakeMaskSingleSession('BPDFF.h5');
 end
 
 % set global parameter variable
