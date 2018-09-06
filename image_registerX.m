@@ -23,7 +23,7 @@ function [RegistrationInfoX, unique_filename] = image_registerX(animal_name, ...
 %
 % Image Registration Function - THIS FUNCTION ONLY REGISTERS ONE IMAGE TO ANOTHER
 % AND DOES NOT DEAL WITH ANY INDIVIDUAL CELLS.
-% this fuction allows you to register a given
+% this function allows you to register a given
 % recording session (the registered session) to a previous sesison ( the
 % base session) to track neuronal activity from session to session.  It
 % also outputs a combined set of ROIs so that you can register a given
@@ -66,7 +66,10 @@ function [RegistrationInfoX, unique_filename] = image_registerX(animal_name, ...
 
 %% MAGIC VARIABLES
 configname = 'multimodal'; % For images taken with similar contrasts, e.g. from the same device, same gain, etc.
-regtype = 'rigid'; % rigid = Translation, Rotation % Similarity = Translation, Rotation, Scale
+
+% Moved to parameter below...
+% regtype = 'rigid'; 
+% rigid = Translation, Rotation % Similarity = Translation, Rotation, Scale
 
 % Adjust registration algorithm values:
 % MONOMODAL
@@ -101,6 +104,9 @@ p.addParameter('use_neuron_masks', false, @(a) islogical(a) || (isnumeric(a) ...
 p.addParameter('name_append', '', @(a) isempty(a) || ischar(a));
 p.addParameter('suppress_output', false, @(a) islogical(a) || (isnumeric(a) ...
     && a == 0 || a == 1));
+p.addParameter('regtype','rigid',@ischar); 
+% rigid = Translation, Rotation % similarity = Translation, Rotation, Scale
+p.KeepUnmatched = true;
 p.parse(animal_name, base_date, base_session, reg_date, reg_session,...
     varargin{:});
 
@@ -108,6 +114,7 @@ manual_reg_enable = p.Results.manual_reg_enable;
 use_neuron_masks = p.Results.use_neuron_masks;
 name_append = p.Results.name_append;
 suppress_output = p.Results.suppress_output;
+regtype = p.Results.regtype;
 
 %% Step 1: Select images to compare and import the images
 
