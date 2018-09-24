@@ -1,5 +1,5 @@
 function MakeFilteredMovies(MotCorrh5,varargin)
-% MakeFilteredMovies(varargin)
+% MakeFilteredMovies(path, ...)
 %
 % Tenaspis: Technique for Extracting Neuronal Activity from Single Photon Image Sequences
 % Copyright 2015 by David Sullivan and Nathaniel Kinsky
@@ -27,7 +27,7 @@ function MakeFilteredMovies(MotCorrh5,varargin)
 %       'path' whose VALUE can be a string, the path containing the session
 %       usually in the form X:\Animal\Date\Session. Default=runs uigetfile.
 %
-%       'd1' whose VALUE can be a logical, whether or not you want to also
+%       'd1' (optional) whose VALUE can be a logical, whether or not you want to also
 %       make a first derivative movie from the 3-pixel smoothed movie.
 %       Default=false.
 %

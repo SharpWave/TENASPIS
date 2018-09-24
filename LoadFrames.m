@@ -11,6 +11,11 @@ function [frames] = LoadFrames(file,framenums)
 % OUTPUTS:
 %   frames: an array of the frames you loaded
 %
+% IMPORTANT NOTE: In order for this function to work with TIFF files you
+% will need to install the TIFFStack package located at: 
+% 
+%   https://github.com/DylanMuir/TIFFStack
+%
 %%
 % Copyright 2015 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
