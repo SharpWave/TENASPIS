@@ -47,20 +47,20 @@ T_PARAMS.SampleRate = 10; % Sample rate of the movie to be processed.
 
 %% MakeFilteredMovies
 T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass disk-kernel filtering. EDIT:SPACE
-T_PARAMS.LowPassRadius = 1; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
+T_PARAMS.LowPassRadius = 2; % Smoothing radius for low pass disk-kernel filtering. EDIT:SPACE
 
 %% ExtractBlobs / SegmentFrame params
-T_PARAMS.threshold = 0.01; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
+T_PARAMS.threshold = 0.02; % Pixel intensity baseline threshold for detecting blobs. Lower means more blobs but more noise and longer runs
 
 T_PARAMS.threshsteps = 50; % number of threshold increments to try in order to find criterion region within non-criterion blob and check for multiple peaks in criterion blobs
                            % higher values mean slightly bigger ROIs at the cost of multiplying run time - edit this with care.
                       
-T_PARAMS.MaxBlobRadius = 12; % Maximum radius for a circular shaped blob to be included. 
+T_PARAMS.MaxBlobRadius = 7.5; % Maximum radius for a circular shaped blob to be included. 
                              % trade off between not including multiple neurons and missing pixels that reliably
                              % participate and can be used to differentiate ROIs in subsequent steps
                              % EDIT:SPACE
                              
-T_PARAMS.MinBlobRadius = 4; % Minimum radius for circular shaped blob to be included. 
+T_PARAMS.MinBlobRadius = 3; % Minimum radius for circular shaped blob to be included. 
                             % Increasing this eliminates noise at the cost
                             % of losing low-intensity blobs. EDIT:SPACE
 
@@ -123,7 +123,7 @@ T_PARAMS.MinPSALen = ceil(4/(20/T_PARAMS.SampleRate));     % minimum duration of
 T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap (% of area of smallest ROI) between ROIs for a merge 
 
-T_PARAMS.MaxGapFillLen = ceil(4/(20/T_PARAMS.SampleRate)); % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
+T_PARAMS.MaxGapFillLen = ceil(8/(20/T_PARAMS.SampleRate)); % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
                             % smooths the skippyness in some borderline
                             % cases. % EDIT:TIME 
                             

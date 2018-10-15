@@ -38,7 +38,11 @@ for i = 1:NumNeurons
       ObjNum = ObjList{i}(j);
       
       temp = zeros(Xdim,Ydim);
+      try
       temp(BlobPixelIdxList{FrameNum}{ObjNum}) = temp(BlobPixelIdxList{FrameNum}{ObjNum}) + 1;
+      catch
+          keyboard;
+      end
       PlotRegionOutline(temp);hold on;
     end
     title(['final area = ',int2str(length(PixelIdxList{i}))]);

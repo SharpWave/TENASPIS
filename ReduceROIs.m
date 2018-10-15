@@ -3,11 +3,11 @@ close all;
 
 load MovieDims.mat;
 load ('TraceA.mat','GoodPeakAvg','GoodPeaks','LPtrace','PixelIdxList');
-load('PlaceMaps2.mat','y','FToffset');
-y = [ones(1,FToffset-2)*min(y),y];
+%load('PlaceMaps2.mat','y','FToffset');
+%y = [ones(1,FToffset-2)*min(y),y];
 
 global T_MOVIE;
-ToPlot = 0;
+ToPlot = 1;
 NumNeurons = length(PixelIdxList);
 
 GoodROI = zeros(1,NumNeurons);
@@ -26,7 +26,7 @@ PixelIdxList = PixelIdxList(GoodROIidx);
 LPtrace = LPtrace(GoodROIidx,:);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-MaxErrorList = [10,10,10,15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,45,45,45,50,50,50];
+MaxErrorList = [10,10,10,15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40];
 for q = 1:length(MaxErrorList)
     maxerror = MaxErrorList(q)
     % Calculate which pixels overlap
@@ -87,7 +87,7 @@ for q = 1:length(MaxErrorList)
             [maxjx,maxjy] = ind2sub([Xdim,Ydim],maxj);
             mergedist = ((maxix-maxjx)^2+(maxiy-maxjy)^2)^0.5;
             
-            if mergedist >= 10
+            if mergedist >= 7.5
                 continue
             end
             [~,m1] = imgradient(GoodPeakAvg{Neighbors(j)});
@@ -141,7 +141,7 @@ for q = 1:length(MaxErrorList)
             Food = DestinationClu(Food);
         end
         
-        if(false)
+        if(maxerror >= 20)
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');
@@ -171,8 +171,9 @@ for q = 1:length(MaxErrorList)
             
             a4 = subplot(4,2,5:6);plot(LPtrace(Food,:));axis tight;hold on;plot(GoodPeaks{Food},LPtrace(Food,GoodPeaks{Food}),'ro');hold off;
             
-            a5 = subplot(4,2,7:8);plot(y);axis tight;hold on;plot(GoodPeaks{Eater},y(GoodPeaks{Eater}),'ro','MarkerSize',12,'MarkerFaceColor','r');plot(GoodPeaks{Food},y(GoodPeaks{Food}),'go','MarkerFaceColor','g');hold off;
-            linkaxes([a3 a4 a5],'x');
+            %a5 = subplot(4,2,7:8);plot(y);axis tight;hold on;plot(GoodPeaks{Eater},y(GoodPeaks{Eater}),'ro','MarkerSize',12,'MarkerFaceColor','r');plot(GoodPeaks{Food},y(GoodPeaks{Food}),'go','MarkerFaceColor','g');hold off;
+            %linkaxes([a3 a4 a5],'x');
+            linkaxes([a3 a4 ],'x');
             pause;
         end
         DestinationClu(Food) = Eater;

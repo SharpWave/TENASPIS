@@ -1,6 +1,5 @@
 function [] = BrowseReducedROIs(i)
-%UNTITLED8 Summary of this function goes here
-%   Detailed explanation goes here
+% doesn't work 10/11/2018
 
 close all;
 load Reduced.mat;
@@ -15,6 +14,8 @@ Overlaps = CalcOverlaps(PixelIdxList);
 figure(1);
 set(gcf,'Position',[2 348 1911 648]);
 subplot(2,3,4:6);
+keyboard;
+
 plot(LPtrace{i});axis tight;hold on;
 plot(GoodPeaks{i},LPtrace{i}(GoodPeaks{i}),'ro','MarkerSize',6,'MarkerFaceColor','r');
 [~,b] = findpeaks(LPtrace{i},'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
