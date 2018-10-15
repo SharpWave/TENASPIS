@@ -14,10 +14,7 @@ MinBlobArea = ceil((MinBlobRadius^2)*pi);
 PeakWinLen = 6;
 
 global T_MOVIE;
-if(isempty(T_MOVIE))
-    disp('load the movie');
-    return;
-end
+assert(~isempty(T_MOVIE), 'load the movie');
 
 ToPlot = false;
 p = ProgressBar(NumROIs);
