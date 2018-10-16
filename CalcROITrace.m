@@ -12,7 +12,10 @@ temptrace = zeros(NumPixels,length(Frames),'single');
 for j = 1:NumPixels
     temptrace(j,:) = T_MOVIE(xidx(j),yidx(j),Frames);
 end
-trace = mean(temptrace);
-
+if(NumPixels > 1)
+    trace = mean(temptrace);
+else
+    trace = temptrace;
+end
 end
 

@@ -13,14 +13,7 @@ for i = 1:225
     t1 = FrameList{i}(1);
     t2 = FrameList{i}(end);
     c1 = squeeze(T_MOVIE(Ycent(i),Xcent(i),t1:t2));
-    
-    for j = 1:length(CircMask{i});
-        [Xj Yj] = ind2sub([Xdim Ydim],CircMask{i}(j));
-        % i,j,
-        ROIcorr{i}(j) = corr(c1,squeeze(T_MOVIE(Xj,Yj,t1:t2)));
-        
-    end
-    
+    ROIcorr{i} = TraceCorrelationMap(PixelIdxList{i},CircMask{i},t1:t2);   
 end
 
 
