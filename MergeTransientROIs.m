@@ -52,7 +52,7 @@ for j = 1:length(MinCorr)
 end
 
 %% Unpack the variables calculated above
-disp('Final ROI refinement');
+disp('Final ROI refinement and trace calculation');
 ROIidx = unique(Trans2ROI); % Get unique clusters and mappings between clusters and neurons
 NumROIs = length(ROIidx); % Final number of neurons
 blankframe = zeros(Xdim,Ydim,'single');
@@ -75,10 +75,8 @@ for i = 1:NumROIs
     
     IsTransientPeak(i,tempFrameList{i}) = true;
     %GoodPeakAvg{i} = mean(T_MOVIE(:,:,tempFrameList{i}),3);
-    
-    [xidx,yidx] = ind2sub([Xdim Ydim],tempPixelIdxList{i});
-    temptrace = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);    
-    temptrace = squeeze(mean(temptrace));
+    temptrace = CalcROITrace(tempPixelIdxList{i},1:NumFrames);    
+
     LPtrace(i,:) = convtrim(temptrace,convwin);
     
     PeakEpoch = NP_FindSupraThresholdEpochs(IsTransientPeak(i,:),eps);

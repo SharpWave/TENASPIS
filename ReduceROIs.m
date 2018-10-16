@@ -26,7 +26,7 @@ PixelIdxList = PixelIdxList(GoodROIidx);
 LPtrace = LPtrace(GoodROIidx,:);
 figure(1);set(gcf,'Position',[1 1 1920 700]);
 
-MaxErrorList = [10,10,10,15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40];
+MaxErrorList = [10,10,10,15,15,15,20,20,20,25,25,25,30,30,30,35,35,35,40,40,40,45,45,45];
 for q = 1:length(MaxErrorList)
     maxerror = MaxErrorList(q)
     % Calculate which pixels overlap
@@ -141,7 +141,7 @@ for q = 1:length(MaxErrorList)
             Food = DestinationClu(Food);
         end
         
-        if(maxerror >= 20)
+        if(maxerror >= 40) %
             temp = zeros(Xdim,Ydim);
             temp(PixelIdxList{Eater}) = 1;
             rp = regionprops(temp,'Centroid');
@@ -237,9 +237,7 @@ clear LPtrace;
 LPtrace = zeros(length(PixelIdxList),NumFrames,'single');
 
 for i = 1:length(PixelIdxList)
-    [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
-    temptrace = mean(T_MOVIE(xidx,yidx,1:NumFrames),1);
-    temptrace = squeeze(mean(temptrace));
+    temptrace = CalcROITrace(PixelIdxList{i},1:NumFrames);
     LPtrace(i,:) = convtrim(temptrace,ones(2,1)/2)';
 end
 

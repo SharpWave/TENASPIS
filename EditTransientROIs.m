@@ -53,9 +53,7 @@ for i = 1:NumROIs
     olda = a-MinWin+1;
     
     % create trace
-    [xidx,yidx] = ind2sub([Xdim Ydim],PixelIdxList{i});
-    LPtrace = mean(T_MOVIE(xidx,yidx,tidx),1);
-    LPtrace = squeeze(mean(LPtrace));
+    LPtrace = CalcROITrace(PixelIdxList{i},tidx);
     LPtrace = convtrim(LPtrace,ones(2,1)/2);
     
     % find peaks
