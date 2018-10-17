@@ -36,7 +36,7 @@ p = ProgressBar(NumFrames); % Initialize progress bar
 
 %%  parallel for loop optional
 % if you have a boatload of RAM you can work from the global LoadMovie 
-parfor i = 1:NumFrames
+for i = 1:1000%NumFrames
     Set_T_Params;
     frame = LoadFrames('BPDFF.h5',i);
     [BlobPixelIdxList{i},BlobWeightedCentroids{i},BlobMinorAxisLength{i}] = SegmentFrame(frame,PrepMask);

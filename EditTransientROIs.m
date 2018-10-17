@@ -140,7 +140,7 @@ Trans2ROI = 1:length(Xcent);
 
 disp('Computing pixel overlaps');
 
-Overlaps = CalcOverlaps(PixelIdxList);
+%Overlaps = CalcOverlaps(PixelIdxList);
 
 disp('saving data');
 save UngarbagedROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelAvg PixelIdxList BigPixelAvg CircMask Overlaps;
