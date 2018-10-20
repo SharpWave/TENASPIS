@@ -15,11 +15,12 @@ CorrIsolation = zeros(1,NumROIs);
 
 for i = 1:NumROIs
     % plot the corrmap into a 2-d array and threshold
+    ROIcorrR{i} = ROIcorrR{i}.*(ROIcorrP{i} < 0.01);
     corrblobframe = blankframe;
     corrblobframe(CircMask{i}) = (ROIcorrR{i} > threshold);
 
     % find the blob containing the centroid
-    rp = regionprops(corrblobframe,'PixelIdxList');
+    rp = regionprops(bwconncomp(corrblobframe,4),'PixelIdxList');
     FoundIt = 0;
     for j = 1:length(rp)
       LIA = ismember(PixelIdxList{i},rp(j).PixelIdxList);
@@ -35,7 +36,7 @@ for i = 1:NumROIs
     else
         CorrBlobIdx{i} = rp(FoundIt).PixelIdxList;
         OutsidePixels = setdiff(CircMask{i},CorrBlobIdx{i});
-        corrblobframe(CircMask{i}) = ROIcorrR{i}.*(ROIcorrR{i} > 0);
+        corrblobframe(CircMask{i}) = ROIcorrR{i}.*ROIcorrR{i};
         OutsideValues = corrblobframe(OutsidePixels);
         CorrIsolation(i) = 1-mean(OutsideValues);
     end     
