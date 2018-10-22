@@ -50,6 +50,10 @@ for i = 1:length(threshlist)
             ROIsToTry = ROIsToTry(ROIsToTry > CurrROI);
             MatchFound = 0;
             
+            RTTOverlaps = Overlaps(CurrROI,ROIsToTry);
+            [~,idx] = sort(RTTOverlaps,'descend');
+            ROIsToTry = ROIsToTry(idx);
+            
             for n = 1:length(ROIsToTry)
                 TargetROI = ROIsToTry(n);
                 TargetCent = sub2ind([Xdim Ydim],Ycent(TargetROI),Xcent(TargetROI));
@@ -57,35 +61,21 @@ for i = 1:length(threshlist)
                 % if target's ROI fits in Curr's corrblob, or if Curr's
                 % ROI fits in target's corrblob, it's a match
                 Dist = sqrt((Xcent(CurrROI)-Xcent(TargetROI)).^2+(Ycent(CurrROI)-Ycent(TargetROI)).^2);
-                if (Dist >= 10)
-                    continue;
-                end
-                
-                if (~ismember(CurrCent,PixelIdxList{TargetROI}))
-                    continue;
-                end
-                
-                if (~ismember(TargetCent,PixelIdxList{CurrROI}))
-                    continue;
-                end
                 
                 
-                if(length(intersect(PixelIdxList{TargetROI},CorrBlobIdx{CurrROI})) == length(PixelIdxList{TargetROI}))
-                    MatchFound = 1;
-                    break;
+                if ((Dist < 10) && ismember(CurrCent,PixelIdxList{TargetROI}) ...
+                        && ismember(TargetCent,PixelIdxList{CurrROI}) ...
+                        && ((length(intersect(PixelIdxList{TargetROI},CorrBlobIdx{CurrROI})) == length(PixelIdxList{TargetROI})) ...
+                        && (length(intersect(PixelIdxList{CurrROI},CorrBlobIdx{TargetROI})) == length(PixelIdxList{CurrROI}))))
+                        MatchFound = 1;
                 end
+
                 
-                if(length(intersect(PixelIdxList{CurrROI},CorrBlobIdx{TargetROI})) == length(PixelIdxList{CurrROI}))
-                    MatchFound = 1;
-                    break;
-                end
-            end
-            
-            if (~MatchFound & threshold < 0.6)
-                if(true)
+                if (sum(~WasDeleted) < 1500) %& threshold < 0.8
+              
                     % plot shit for the current ROI
                     figure(1);
-                    subplot(2,3,1);hold on; % ROI i brightness
+                    subplot(2,2,1);hold on; % ROI i brightness
                     a = zeros(Xdim,Ydim);
                     a(CircMask{CurrROI}) = BigPixelAvg{CurrROI};
                     imagesc(a);
@@ -95,39 +85,47 @@ for i = 1:length(threshlist)
                     PlotRegionOutline(CorrBlobIdx{CurrROI},[0.75 0 0]);
                     PlotRegionOutline(PixelIdxList{TargetROI},[0 0 1]);
                     PlotRegionOutline(CorrBlobIdx{TargetROI},[0 0 .75]);hold off;
+                    title(['Match found: ',int2str(MatchFound)]);
                     
-                    subplot(2,3,4);hold on;
+                    subplot(2,2,3);hold on;
                     a(CircMask{CurrROI}) = ROIcorrR{CurrROI};
-                    imagesc(a);
+                    imagesc(a.^2);
                     axis([Xcent(CurrROI)-25 Xcent(CurrROI)+25 Ycent(CurrROI)-25 Ycent(CurrROI)+25]);
-                    caxis([-1 1]);colorbar;
+                    caxis([0 1]);colorbar;
                     PlotRegionOutline(PixelIdxList{CurrROI},[1 0 0]);
                     PlotRegionOutline(CorrBlobIdx{CurrROI},[0.75 0 0]);
                     PlotRegionOutline(PixelIdxList{TargetROI},[0 0 1]);
                     PlotRegionOutline(CorrBlobIdx{TargetROI},[0 0 .75]);hold off;
                     
-                    subplot(2,3,2);hold on; % ROI i brightness
+                    subplot(2,2,2);hold on; % ROI i brightness
                     a = zeros(Xdim,Ydim);
                     a(CircMask{TargetROI}) = BigPixelAvg{TargetROI};
                     imagesc(a);
-                    axis([Xcent(TargetROI)-25 Xcent(TargetROI)+25 Ycent(TargetROI)-25 Ycent(TargetROI)+25]);
+                    axis([Xcent(CurrROI)-25 Xcent(CurrROI)+25 Ycent(CurrROI)-25 Ycent(CurrROI)+25]);
                     caxis([0 max(PixelAvg{TargetROI})]);colorbar;
                     PlotRegionOutline(PixelIdxList{CurrROI},[1 0 0]);
                     PlotRegionOutline(CorrBlobIdx{CurrROI},[0.75 0 0]);
                     PlotRegionOutline(PixelIdxList{TargetROI},[0 0 1]);
                     PlotRegionOutline(CorrBlobIdx{TargetROI},[0 0 .75]);hold off;
                     
-                    subplot(2,3,5);hold on;
+                    subplot(2,2,4);hold on;
                     a(CircMask{TargetROI}) = ROIcorrR{TargetROI};
-                    imagesc(a);
-                    axis([Xcent(TargetROI)-25 Xcent(TargetROI)+25 Ycent(TargetROI)-25 Ycent(TargetROI)+25]);
-                    caxis([-1 1]);colorbar;
+                    imagesc(a.^2);
+                    axis([Xcent(CurrROI)-25 Xcent(CurrROI)+25 Ycent(CurrROI)-25 Ycent(CurrROI)+25]);
+                    caxis([0 1]);colorbar;
                     PlotRegionOutline(PixelIdxList{CurrROI},[1 0 0]);
                     PlotRegionOutline(CorrBlobIdx{CurrROI},[0.75 0 0]);
                     PlotRegionOutline(PixelIdxList{TargetROI},[0 0 1]);
                     PlotRegionOutline(CorrBlobIdx{TargetROI},[0 0 .75]);hold off;
+                    pause;
                 end
+                if (MatchFound)
+                    break;
+                end
+            
             end
+            
+
             
             if (MatchFound)
                 PairsToMerge = [PairsToMerge;[CurrROI TargetROI]];
