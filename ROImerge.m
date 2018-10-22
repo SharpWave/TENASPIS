@@ -71,7 +71,7 @@ for i = 1:length(threshlist)
                 end
 
                 
-                if (sum(~WasDeleted) < 1500) %& threshold < 0.8
+                if (sum(~WasDeleted) < 2500) %& threshold < 0.8
               
                     % plot shit for the current ROI
                     figure(1);
