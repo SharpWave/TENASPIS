@@ -68,12 +68,19 @@ BandPassName = fullfile(path,'BandPass.h5');    % High pass filtered movie
 % create output files
 h5create(BandPassName,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
     [Xdim Ydim 1 1],'Datatype','single');
-h5create(LowPassName,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
-    [Xdim Ydim 1 1],'Datatype','single');
+
+FWinSize = 51;
+
+HighPassPixels = 10;
+LowPassPixels = 1;
+
 
 % create Spatial filters.
-HighPassFilter = fspecial('disk',HighPassRadius);
-LowPassFilter = fspecial('disk',LowPassRadius);
+Hd = ones(FWinSize);
+[f1,f2] = freqspace(FWinSize,'meshgrid');
+r = sqrt(f1.^2+f2.^2);
+Hd((r<LowPassPixels/(FWinSize-1))|(r>HighPassPixels/(FWinSize-1))) = 0;
+h = fsamp2(Hd);
 
 %% Writing.
 disp('Filtering Movies')
@@ -85,18 +92,9 @@ for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     FrameChunk = LoadFrames(MotCorrh5,FrameList);
     
-    %HPChunk = imfilter(FrameChunk,HighPassFilter,'replicate');
-    %LPChunk = imfilter(FrameChunk,LowPassFilter,'replicate');
-    
-    HPChunk = imgaussfilt(FrameChunk,HighPassRadius);
-    LPChunk = imgaussfilt(FrameChunk,LowPassRadius);
+    BPChunk = imfilter(FrameChunk,h,'symmetric');
 
-    if d1
-        h5write(LowPassName,'/Object',LPChunk,[1 1 ChunkStarts(i) 1],...          %Write Lowpass
-            [Xdim Ydim length(FrameList) 1]);
-    end
-
-    h5write(BandPassName,'/Object',LPChunk./HPChunk,[1 1 ChunkStarts(i) 1],... %Write LP divide.
+    h5write(BandPassName,'/Object',BPChunk,[1 1 ChunkStarts(i) 1],... 
         [Xdim Ydim length(FrameList) 1]);
     p.progress;
     
@@ -111,6 +109,6 @@ Make_DFF(BandPassName,BPDFF);
 % Make_DFF(LowPassName,LPDFF);
 
 %% Delete temporary files
-delete(BandPassName);
+%delete(BandPassName);
 
 end

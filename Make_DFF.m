@@ -32,6 +32,22 @@ NumChunks = length(ChunkStarts);
 %% create output file ('ChunkSize' here not related to FrameChunkSize)
 h5create(outfile,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',[Xdim Ydim 1 1],'Datatype','single');
 
+
+display('determining minimum movie value in order to make movie non-negative');
+p = ProgressBar(NumChunks);
+
+absmin = inf;
+for i = 1:NumChunks
+    FrameList = ChunkStarts(i):ChunkEnds(i);
+    FrameChunk = LoadFrames(moviefile,FrameList);
+    FrameChunk(isnan(FrameChunk)) = 0;
+    currmin = min(min(min(FrameChunk)));
+    if (currmin < absmin)
+        absmin = currmin;
+    end
+    p.progress;
+end
+
 %% Get the average frame of the movie
 display('determining average frame');
 avgframe = zeros(Xdim,Ydim); % Initialize variable
@@ -40,7 +56,7 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = LoadFrames(moviefile,FrameList);
+    FrameChunk = LoadFrames(moviefile,FrameList)-absmin;
     FrameChunk(isnan(FrameChunk)) = 0;
     avgframe = avgframe+sum(FrameChunk,3);
     p.progress;
@@ -55,7 +71,7 @@ p = ProgressBar(NumChunks);
 
 for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
-    FrameChunk = single(LoadFrames(moviefile,FrameList));
+    FrameChunk = single(LoadFrames(moviefile,FrameList))-absmin;
     FrameChunk(isnan(FrameChunk)) = 0;
     NewChunk = (FrameChunk-avgframe)./avgframe;
     h5write(outfile,'/Object',NewChunk,[1 1 ChunkStarts(i) 1],[Xdim Ydim length(FrameList) 1]);
