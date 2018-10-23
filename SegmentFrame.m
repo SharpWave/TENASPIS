@@ -4,7 +4,7 @@ function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentF
 [Xdim,Ydim,threshold,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
     Get_T_Params('Xdim','Ydim','threshold','MaxBlobRadius','MinBlobRadius','MaxAxisRatio','MinSolidity');
 
-threshinc = 0.001; % amount to increase the threshold by
+
 NormMaxThresh = 0.95; % maximum threshold to try (fraction of max intensity)
 ToPlot = false; % whether to plot the results (also need to disable the parfor in ExtractBlobs
 
@@ -25,7 +25,8 @@ badpix = find(PrepMask == 0); % Locations of pixels that are outside the mask an
 blankframe = zeros(Xdim,Ydim,'single'); % use this
 
 maxframe = max(frame(PrepMask));
-threshlist = threshold:threshinc:maxframe*NormMaxThresh;
+threshinc = 0.02;
+threshlist = prctile(frame(:),95:threshinc:100);
 
 CurrGoodBlob = 0;
 BlobPixelIdxList = [];
@@ -33,6 +34,8 @@ BlobWeightedCentroids = [];
 BlobMinorAxisLength = [];
 BlobAxisRatio = [];
 BlobSolidity = [];
+
+
 
 for i = 1:length(threshlist)
     threshframe = frame > threshlist(i);
@@ -77,6 +80,7 @@ for i = 1:length(threshlist)
         
         if(AlreadyFound && ~BetterThanBefore)
             % not better so keep the blob at the old threshold
+
             continue;
         end
         

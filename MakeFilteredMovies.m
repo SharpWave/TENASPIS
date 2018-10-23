@@ -72,7 +72,7 @@ h5create(BandPassName,'/Object',[Xdim Ydim NumFrames 1],'ChunkSize',...
 FWinSize = 51;
 
 HighPassPixels = 10;
-LowPassPixels = 1;
+LowPassPixels = 1.5;
 
 
 % create Spatial filters.
