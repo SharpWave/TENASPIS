@@ -9,14 +9,16 @@ global T_MOVIE;
 NumROIs = length(PixelAvg);
 convwin = ones(1,2)/2;
 
+display('making correlations between ROI traces and pixels in their neighborhood');
+p = ProgressBar(NumROIs);
 for i = 1:NumROIs
     t1 = FrameList{i}(1);
     t2 = FrameList{i}(end);
     c1 = squeeze(T_MOVIE(Ycent(i),Xcent(i),t1:t2));
     [ROIcorrR{i} ROIcorrP{i}]= TraceCorrelationMap(PixelIdxList{i},CircMask{i},t1:t2);
-    i/NumROIs,
+    p.progress;
 end
-
+p.stop;
 
 % for i = 1:NumROIs
 %     corrmap = zeros(Xdim,Ydim);

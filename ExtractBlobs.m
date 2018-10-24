@@ -32,19 +32,19 @@ end
 p = ProgressBar(NumFrames); % Initialize progress bar
 
 %% Distribute chunked outputs to cell arrays
-[BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = deal(cell(1,NumFrames));
+[BlobPixelIdxList,BlobWeightedCentroids] = deal(cell(1,NumFrames));
 
 %%  parallel for loop optional
 % if you have a boatload of RAM you can work from the global LoadMovie 
 parfor i = 1:NumFrames
     Set_T_Params;
     frame = LoadFrames('BPDFF.h5',i);
-    [BlobPixelIdxList{i},BlobWeightedCentroids{i},BlobMinorAxisLength{i}] = SegmentFrame(frame,PrepMask);
+    [BlobPixelIdxList{i},BlobWeightedCentroids{i}] = SegmentFrame(frame,PrepMask);
     p.progress;
 end
 p.stop; % Shut-down progress bar
 %% outputs get saved to disk
 disp('saving Blobs to disk');
-save Blobs.mat BlobPixelIdxList BlobWeightedCentroids BlobMinorAxisLength;
+save Blobs.mat BlobPixelIdxList BlobWeightedCentroids;
 
 end

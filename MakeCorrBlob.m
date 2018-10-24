@@ -30,8 +30,10 @@ function [CorrBlobIdx,CorrIsolation] = MakeCorrBlob(PixelIdxList,CircMask,ROIcor
     end
     
     if (FoundIt == 0)
-        display('Dave the correlation blob thingy fucks up');
-        keyboard;
+        CorrBlobIdx = [];
+        CorrIsolation = 0;
+        display('Bad ROI correlation');
+        
     else
         CorrBlobIdx = rp(FoundIt).PixelIdxList;
         OutsidePixels = setdiff(CircMask,CorrBlobIdx);

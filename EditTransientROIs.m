@@ -17,6 +17,9 @@ global T_MOVIE;
 assert(~isempty(T_MOVIE), 'load the movie');
 
 ToPlot = false;
+verbose = false;
+
+
 p = ProgressBar(NumROIs);
 
 TraceWinSec = 600;
@@ -58,10 +61,18 @@ for i = 1:NumROIs
     
     % find peaks
     [~,b] = findpeaks(LPtrace,'MinPeakDistance',10,'MinPeakProminence',0.005,'MinPeakHeight',0.005);
+    if(ToPlot)
+        figure(2);
+        plot(LPtrace);hold on;
+        plot(b,LPtrace(b),'o');axis tight;hold off;pause;
+    end
     
     if(isempty(b))
         % if there were actually any peaks, they were really weak and this
         % transient was mis-detected
+        if (verbose)
+            display('no peaks detected');
+        end
         continue;
     end
     FoundOne = false;
@@ -83,7 +94,13 @@ for i = 1:NumROIs
         templist = single(find(InROI));
         
         if((max(PixFreq(:)) < 1) || (length(templist) < MinBlobArea))
-            %disp('re-calculating the ROI caused this one to be discarded');
+            if (verbose)
+                disp('re-calculating the ROI caused this one to be discarded');
+            end
+            continue;
+        end
+        
+        if(max(mv(templist)) <= 0)
             continue;
         end
         
@@ -109,6 +126,9 @@ for i = 1:NumROIs
             
             subplot(1,6,6);
             imagesc(mv);axis image;hold on;
+            if (max(temp_PixelAvg{NumTransients}) < 0)
+                keyboard;
+            end
             caxis([0 max(temp_PixelAvg{NumTransients})]);
             axis([temp_Xcent(NumTransients)-20 temp_Xcent(NumTransients)+20 temp_Ycent(NumTransients)-20 temp_Ycent(NumTransients)+20]);
             PlotRegionOutline(temp_PixelIdxList{NumTransients},'r');
@@ -118,7 +138,9 @@ for i = 1:NumROIs
     end
     p.progress;
     if(~FoundOne)
-        %disp('junked a weak ROI');
+        if(verbose)
+            disp('junked a weak ROI');
+        end
     end
 end
 p.stop;

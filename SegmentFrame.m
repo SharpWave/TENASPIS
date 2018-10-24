@@ -1,4 +1,4 @@
-function [BlobPixelIdxList,BlobWeightedCentroids,BlobMinorAxisLength] = SegmentFrame(frame,PrepMask)
+function [BlobPixelIdxList,BlobWeightedCentroids] = SegmentFrame(frame,PrepMask)
 
 
 [Xdim,Ydim,threshold,MaxBlobRadius,MinBlobRadius,MaxAxisRatio,MinSolidity] = ...
@@ -24,9 +24,22 @@ MinBlobArea = ceil((MinBlobRadius^2)*pi);
 badpix = find(PrepMask == 0); % Locations of pixels that are outside the mask and should be excluded
 blankframe = zeros(Xdim,Ydim,'single'); % use this
 
-maxframe = max(frame(PrepMask));
-threshinc = 0.02;
-threshlist = prctile(frame(:),95:threshinc:100);
+
+MinThresh = 0.07;
+SortFrame = sort(frame(frame >0));
+NumPosPix = length(SortFrame);
+MinIdx = findclosest(MinThresh,SortFrame);
+PixelsLeft = NumPosPix-MinIdx;
+CurrThr = 1;
+threshlist(1) = MinThresh;
+threshdecay = 0.98;
+
+while (PixelsLeft > MaxBlobArea)
+    CurrThr = CurrThr + 1;
+    PixelsLeft = round(PixelsLeft*threshdecay);
+    threshidx = NumPosPix-PixelsLeft;
+    threshlist(CurrThr) = SortFrame(threshidx);
+end
 
 CurrGoodBlob = 0;
 BlobPixelIdxList = [];
@@ -36,12 +49,17 @@ BlobAxisRatio = [];
 BlobSolidity = [];
 
 
-
+PixelsToZero = [];
 for i = 1:length(threshlist)
+    
     threshframe = frame > threshlist(i);
+    threshframe(PixelsToZero) = 0;
     threshframe = bwareaopen(threshframe,MinBlobArea,4); % remove blobs smaller than minpixels
     
-    rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','MinorAxisLength','PixelIdxList','Centroid'); % get the properties of the blobs
+    rp = regionprops(bwconncomp(threshframe,4),'Area','Solidity','MajorAxisLength','PixelIdxList','Centroid'); % get the properties of the blobs
+    if(isempty(rp))
+        continue;
+    end
     WasImproved = zeros(1,length(BlobPixelIdxList));
     OldNumBlobs = length(BlobPixelIdxList);
     
@@ -56,7 +74,7 @@ for i = 1:length(threshlist)
             continue;
         end        
         
-        AxisRatio = rp(j).MajorAxisLength/rp(j).MinorAxisLength;
+        %AxisRatio = rp(j).MajorAxisLength/rp(j).MinorAxisLength;
         
         % ok so it looks good but do we already have it? Check all of the
         % old blobs for matches
@@ -65,10 +83,10 @@ for i = 1:length(threshlist)
         CentroidIdx = sub2ind([Xdim Ydim],ceil(rp(j).Centroid(2)),ceil(rp(j).Centroid(1)));        
         
         for k = 1:OldNumBlobs
-            if(ismember(CentroidIdx,BlobPixelIdxList{k}))
+           if(ismember(CentroidIdx,BlobPixelIdxList{k}))
                 AlreadyFound = true;
                 
-                BetterThanBefore = ((rp(j).Solidity > BlobSolidity(k)) && (AxisRatio < BlobAxisRatio(k)));
+                BetterThanBefore = rp(j).Solidity > BlobSolidity(k);% && (rp(j).MajorAxisLength < BlobAxisRatio(k)));
                 if(BetterThanBefore && CriteriaOK)
                     % this guarantees that the matching blob gets deleted
                     WasImproved(k) = 1;
@@ -80,7 +98,8 @@ for i = 1:length(threshlist)
         
         if(AlreadyFound && ~BetterThanBefore)
             % not better so keep the blob at the old threshold
-
+            % add blob to zero list
+            PixelsToZero = [PixelsToZero;BlobPixelIdxList{k}];
             continue;
         end
         
@@ -88,8 +107,8 @@ for i = 1:length(threshlist)
         CurrGoodBlob = CurrGoodBlob + 1;
         BlobPixelIdxList{CurrGoodBlob} = rp(j).PixelIdxList;
         BlobWeightedCentroids{CurrGoodBlob} = single(rp(j).Centroid);
-        BlobMinorAxisLength(CurrGoodBlob) = single(rp(j).MinorAxisLength);
-        BlobAxisRatio(CurrGoodBlob) = AxisRatio;
+        %BlobMinorAxisLength(CurrGoodBlob) = single(rp(j).MinorAxisLength);
+        BlobAxisRatio(CurrGoodBlob) = rp(j).MajorAxisLength;
         BlobSolidity(CurrGoodBlob) = single(rp(j).Solidity);
     end
     
@@ -108,7 +127,7 @@ for i = 1:length(threshlist)
     NotDead = find(NotDead);
     BlobPixelIdxList = BlobPixelIdxList(NotDead);
     BlobWeightedCentroids = BlobWeightedCentroids(NotDead);
-    BlobMinorAxisLength = BlobMinorAxisLength(NotDead);
+    %BlobMinorAxisLength = BlobMinorAxisLength(NotDead);
     BlobAxisRatio = BlobAxisRatio(NotDead);
     BlobSolidity = BlobSolidity(NotDead);
     CurrGoodBlob = length(BlobPixelIdxList);    
@@ -122,7 +141,7 @@ for i = 1:CurrGoodBlob
 end
 BlobPixelIdxList = BlobPixelIdxList(find(GoodBlob));
 BlobWeightedCentroids = BlobWeightedCentroids(find(GoodBlob));
-BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
+%BlobMinorAxisLength = BlobMinorAxisLength(find(GoodBlob));
 
 %parameter debugging
 

@@ -28,11 +28,11 @@ disp('Processing blobs into calcium transient ROIs: first step is to link blobs 
 
 % max number of samples to interpolate places where a transient skips frames
 
-GapFillLen = 2;
+GapFillLen = 1;
 
 % Load Blob pixel lists and centroids
 disp('Loading blobs');
-load('Blobs.mat','BlobPixelIdxList','BlobWeightedCentroids','BlobMinorAxisLength');
+load('Blobs.mat','BlobPixelIdxList','BlobWeightedCentroids');
 
 %% set up some variables
 TransientIdx = cell(1,NumFrames);
@@ -100,7 +100,6 @@ for i = 2+GapFillLen:NumFrames
                 NumBlobs(k) = NumBlobs(k)+1;
                 BlobPixelIdxList{k}{NumBlobs(k)} = BlobPixelIdxList{i}{j};
                 BlobWeightedCentroids{k}{NumBlobs(k)} = BlobWeightedCentroids{i}{j};
-                BlobMinorAxisLength{k}(NumBlobs(k)) = BlobMinorAxisLength{i}(j);
                 TransientIdx{k}(NumBlobs(k)) = PrevIdx;
                 FrameList{PrevIdx} = [FrameList{PrevIdx},single(k)];
                 ObjList{PrevIdx} = [ObjList{PrevIdx},single(NumBlobs(k))];
@@ -125,5 +124,5 @@ p.stop;
 %% save outputs
 disp('saving blob link information');
 
-save BlobLinks.mat TransientIdx FrameList ObjList BlobPixelIdxList BlobWeightedCentroids BlobMinorAxisLength;
+save BlobLinks.mat TransientIdx FrameList ObjList BlobPixelIdxList BlobWeightedCentroids;
 

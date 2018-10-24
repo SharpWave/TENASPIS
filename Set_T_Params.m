@@ -80,15 +80,17 @@ T_PARAMS.BlobLinkThresholdCoeff = 1; % multiplier for the blob minor axis length
 T_PARAMS.MaxCentroidTravelDistance = 4; % maximum net distance that the centroid of a transient can travel. 
                                         % Eliminates spurious blobs from overlapping transients.
                                         % EDIT:SPACE
-                                        
-T_PARAMS.MinNumFrames = ceil(12/(20/T_PARAMS.SampleRate)); % minimum number of frames for transient to be included. default: 600ms
+
+MinTransientDurationSec = 0.5; % minimum consecutive frames for a blob to be considered a transient                                       
+T_PARAMS.MinNumFrames = ceil(T_PARAMS.SampleRate*MinTransientDurationSec); % minimum number of frames for transient to be included. 
 
 %% MakeTransientROIs params
 T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
 % Setting to 1 means the pixels in the smallest blob in the transient (often right before fadeout) will be chosen. 
 % Setting to 0 means the maximum blob extent will be used. 
 
-T_PARAMS.PeakWinLength = ceil(12/(20/T_PARAMS.SampleRate));
+PeakWinSec = 0.2;
+T_PARAMS.PeakWinLength =ceil(T_PARAMS.SampleRate*PeakWinSec);
 
 
 %% MergeTransientROIs paramsload
