@@ -1,4 +1,4 @@
-function[PixelIdxList,PixelAvg] = RecalcROI_Corr(ROIpix,CircMask,BigPixelAvg);
+function[PixelIdxList] = RecalcROI_Corr(ROIpix,CircMask,BigPixelAvg);
 
 % New version, works from pre-calculated averaged frame in BigPixelAvg,
 %  which is centered on the midpoint of the ROIs to be merged
@@ -16,7 +16,7 @@ midpt = ceil(length(CircMask)/2);
 temp = blankframe;
 temp(CircMask) = BigPixelAvg;
 NewPixelIdxList = [];
-BestSolid = 0;
+
 CurrPixelIdxList = [];
 maxthresh = max(BigPixelAvg);
 
@@ -24,37 +24,43 @@ threshlist = sort(BigPixelAvg(BigPixelAvg > 0));
 currthresh = length(threshlist);
 highthresh = length(threshlist);
 lowthresh = 1;
-bestthresh = 0;
+
+BestPixelIdxList = [];
+BestSolid = 0;
+BestAxis = inf;
 
 % start threshold in middle
 % if no blobs, threshold too high
 % if blobs but too big, threshold too low
 NumIterations = 0;
 
+[~,CentroidIdx] = max(temp(ROIpix));
+CentroidPixel = ROIpix(CentroidIdx);
+
 while(~foundit)
     if (highthresh - lowthresh <= 1)
-        keyboard;
+        break;
     end
     NumIterations = NumIterations + 1;
     thresh = threshlist(currthresh);
     TooHigh = false;
     TooLow = false;
     ROIidx = 0;
-    CurrOverlap = 0;
+   
     
     % segment the average
-    rp = regionprops(bwareaopen(temp > thresh,MinBlobArea,4),'PixelIdxList','Area','Solidity','MajorAxisLength','MinorAxisLength');
+    rp = regionprops(bwareaopen(temp > thresh,MinBlobArea,4),'PixelIdxList','Area','Solidity','MajorAxisLength');
     
     if(length(rp) == 0)
         % no ROIs found
         TooHigh = true;
-    else        
+    else
         % find which segment is our ROI
         for j = 1:length(rp)
-            ROIintersect = length(intersect(ROIpix,rp(j).PixelIdxList));
-            if ((ROIintersect > 0) && (ROIintersect > CurrOverlap))
+            %ROIintersect = length(intersect(ROIpix,rp(j).PixelIdxList));
+            if (ismember(CentroidPixel,rp(j).PixelIdxList))
                 ROIidx = j;
-                CurrOverlap = ROIintersect;
+                break;
             end
         end
     end
@@ -63,15 +69,13 @@ while(~foundit)
         % found a blob but not our guy
         TooHigh = true;
     else
+        TooLow = true;
         % found our blob, let's check it out
-        if (rp(ROIidx).Area > MaxBlobArea)
-            TooLow = true;
-        else
-            % Blob area criteria good
-            if(rp(ROIidx).Solidity < 0.9)
-                TooLow = true;
-            else
-                foundit = true;
+        if (rp(ROIidx).Area < MaxBlobArea) && (rp(ROIidx).Solidity > 0.95)
+            if ((rp(ROIidx).MajorAxisLength < BestAxis) && (rp(ROIidx).Solidity > BestSolid))
+                BestPixelIdxList = rp(j).PixelIdxList;
+                BestAxis = rp(ROIidx).MajorAxisLength;
+                BestSolid = rp(ROIidx).Solidity;
             end
         end
     end
@@ -85,10 +89,14 @@ while(~foundit)
         highthresh = currthresh;
         currthresh = ceil((currthresh+lowthresh)/2);
     end
-
+    
 end
 
-PixelIdxList = rp(ROIidx).PixelIdxList;
-PixelAvg = temp(PixelIdxList);
-% NumIterations,
+PixelIdxList = BestPixelIdxList;
+
+if (isempty (PixelIdxList))
+    display('uh oh couldnt make a new ROI so keeping the old one');
+    PixelIdxList = ROIpix;
+end
+
 

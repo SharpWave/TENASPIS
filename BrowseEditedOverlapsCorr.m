@@ -1,8 +1,7 @@
 function [] = BrowseEditedOverlapsCorr()
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-load UngarbagedROIs.mat;
-load ROIcorr.mat;
+load ROImerge.mat;
 
 NumROIs = length(CircMask);
 figure(1);
@@ -10,7 +9,7 @@ CorrThresh = sqrt(0.75);
 
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');
 
-for i = 41:NumROIs
+for i = 1:NumROIs
     OverlapList = find(Overlaps(i,:));
     
     
@@ -19,7 +18,7 @@ for i = 41:NumROIs
     a(CircMask{i}) = BigPixelAvg{i};
     imagesc(a);
     axis([Xcent(i)-25 Xcent(i)+25 Ycent(i)-25 Ycent(i)+25]);
-    caxis([0 max(PixelAvg{i})]);colorbar;
+    %caxis([0 max(PixelAvg{i})]);colorbar;
     PlotRegionOutline(PixelIdxList{i},'g');hold off;
     
     subplot(2,3,2);hold on;
@@ -43,7 +42,7 @@ for i = 41:NumROIs
         a(CircMask{t}) = BigPixelAvg{t};
         imagesc(a);
         axis([Xcent(i)-25 Xcent(i)+25 Ycent(i)-25 Ycent(i)+25]);
-        caxis([0 max(PixelAvg{t})]);colorbar;
+        %caxis([0 max(PixelAvg{t})]);colorbar;
         PlotRegionOutline(PixelIdxList{i},'g');
         PlotRegionOutline(PixelIdxList{t},'r');hold off;
         
