@@ -1,76 +1,83 @@
 function [] = MakeTransientROIs()
-%UNTITLED3 Summary of this function goes here
-%   Detailed explanation goes here
-disp('Calculating ROIs for linked blobs (putative transients)');
 
-%% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','MinBlobRadius');
+% The idea is that calcium transient segmentation is less noisy during the
+% rise than during the fall - we're gonna chop the portion of the
+% transients with the fall so that the ROIs are cleaner
 
-DebugPlot = 0;
-SummaryPlot = 1;
-
-MinBlobArea = ceil((MinBlobRadius^2)*pi);
+[Xdim,Ydim,MinNumFrames,SampleRate] = Get_T_Params('Xdim','Ydim','MinNumFrames','SampleRate');
+MinPixelFrequency = 0.2;
 
 %% load data
-disp('loading data');
-load('VettedTransients.mat','FrameList','ObjList');
-load('BlobLinks.mat','BlobPixelIdxList');
+disp('Loading blob and link data');
+load('BlobLinks.mat');
 
-%% setup some variables
+global T_MOVIE;
+
 NumTransients = length(FrameList);
-[PixelIdxList,CircMask] = deal(cell(1,NumTransients));
-TranBool = false(1,NumTransients);
-[Xcent,Ycent] = deal(zeros(1,NumTransients,'single'));
-
-%% get pixel participation average and determine ROI
-disp('determining calcium transient ROIs');
+GoodTransient = true(length(FrameList),1);
 
 for i = 1:NumTransients
-    PixFreq = CalcPixFreq(FrameList{i},ObjList{i},BlobPixelIdxList);
-    if(DebugPlot)
-        figure(1);
-        imagesc(PixFreq);colorbar;caxis([0 1]);axis image;        
-        pause;
-    end
-    InROI = PixFreq >= MinPixelPresence;
-    PixelIdxList{i} = single(find(InROI));
-    props = regionprops(InROI,'Centroid');
-    if((isempty(props)) || (max(PixFreq(:)) < 1) || (length(PixelIdxList{i}) < MinBlobArea))
+    if ((length(FrameList{i}) <= 5) )
+        GoodTransient(i) = false;
         continue;
     end
-    BinCent = props.Centroid;
-    Ycent(i) = BinCent(1);
-    Xcent(i) = BinCent(2);
-    CircMask{i} = MakeCircMask(Xdim,Ydim,ROICircleWindowRadius,BinCent(1),BinCent(2));
-    TranBool(i) = true;
-    
-end
-
-GoodTr = find(TranBool);
-disp(['kept ',int2str(length(GoodTr)),' out of ',int2str(length(PixelIdxList)),' after eliminating transients without a minimum of ',int2str(MinBlobArea),' pixels present on at least 50% of frames']);
-
-PixelIdxList = PixelIdxList(GoodTr);
-CircMask = CircMask(GoodTr);
-Xcent = Xcent(GoodTr);
-Ycent = Ycent(GoodTr);
-FrameList = FrameList(GoodTr);
-ObjList = ObjList(GoodTr);
-NumTransients = length(PixelIdxList);
-
-Trans2ROI = single(1:NumTransients);
-
-%% save outputs
-disp('saving data');
-save TransientROIs.mat Trans2ROI Xcent Ycent FrameList ObjList PixelIdxList CircMask;
-
-if(SummaryPlot)
-    figure;
-    for i = 1:NumTransients
-        PlotRegionOutline(PixelIdxList{i});hold on;
+    BlobUnion = [];
+    for j = 1:length(FrameList{i})
+        Blob = BlobPixelIdxList{FrameList{i}(j)}{ObjList{i}(j)};
+        BlobUnion = [BlobUnion;Blob];
     end
-    axis image;
+    
+    Cent1 = BlobWeightedCentroids{FrameList{i}(1)}{ObjList{i}(1)};
+    
+    % make a trace for this thing
+    TempTrace = CalcROITrace(BlobUnion,FrameList{i});
+    
+    % First sample of trace is detection level
+    % anything less than detection level gets tossed
+    % Remaining rising samples are ok
+    % falling samples greater than half the peak height are ok
+    
+    DetectionLevel = TempTrace(1);
+    GoodFrame = true(length(TempTrace),1);
+    GoodFrame(TempTrace < DetectionLevel) = false;
+    Slopes = [0,diff(TempTrace)];
+    HalfPeak = max(TempTrace)/2;
+    GoodFrame((Slopes < 0) & (TempTrace < HalfPeak)) = false;
+    
+    GreenFrames = find(GoodFrame == true);
+    
+    % check for minimum # of frames again
+    if (length(GreenFrames) <= 5)
+        GoodTransient(i) = false;
+        continue;
+    end
+    
+    % check travel distance
+    LastGreen = GreenFrames(end);
+    Cent2 = BlobWeightedCentroids{FrameList{i}(LastGreen)}{ObjList{i}(LastGreen)};
+    TravelDist = sqrt((Cent1(1)-Cent2(1)).^2+(Cent1(2)-Cent2(2)).^2);
+    if (TravelDist > 6)
+        GoodTransient(i) = false;
+        continue;
+    end
+
+    AllGreenPixels = [];
+    for j = 1:length(GreenFrames)
+        TI(i).Blob{j} = BlobPixelIdxList{FrameList{i}(GreenFrames(j))}{ObjList{i}(GreenFrames(j))};
+        AllGreenPixels = [AllGreenPixels;TI(i).Blob{j}];       
+    end
+    
+    [GreenBlob,~,ic] = unique(AllGreenPixels);
+    Green_freq = accumarray(ic,1)/length(GreenFrames);
+    idx = find(Green_freq >= MinPixelFrequency);
+    
+    % save the info
+    TI(i).ROIidx = GreenBlob(idx);
+    TI(i).FrameList = GreenFrames;
 end
+TI = TI(GoodTransient);
+save TI.mat TI;
+    
 
 end
-
 

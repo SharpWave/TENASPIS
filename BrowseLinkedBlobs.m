@@ -20,13 +20,19 @@ for i = 1:NumTransients
     end
     
     AllPixels = [];
+    BlobDist = zeros(length(FrameList{i}),1);
+    
     for j = 1:length(FrameList{i})
-        Blob = BlobPixelIdxList{FrameList{i}(j)}{ObjList{i}(j)};
-        
+        Blob = BlobPixelIdxList{FrameList{i}(j)}{ObjList{i}(j)};        
         AllPixels = [AllPixels;Blob];
+        if (j >= 2)
+            CurrCent =  BlobWeightedCentroids{FrameList{i}(j)}{ObjList{i}(j)};
+            PrevCent =  BlobWeightedCentroids{FrameList{i}(j-1)}{ObjList{i}(j-1)};
+            BlobDist(j) = sqrt((CurrCent(1)-PrevCent(1)).^2+(CurrCent(2)-PrevCent(2)).^2);
+        end
     end
     
-    Cent = BlobWeightedCentroids{FrameList{i}(1)}{ObjList{i}(1)};
+    Cent1 = BlobWeightedCentroids{FrameList{i}(1)}{ObjList{i}(1)};
     
     [BlobUnion,ia,ic ] = unique(AllPixels);
     BlobUnion_freq = accumarray(ic,1)/length(FrameList{i});
@@ -56,19 +62,30 @@ for i = 1:NumTransients
     end
     RedFrames = find(GoodFrame == false);
     
+    LastGreen = GreenFrames(end);
+    Cent2 = BlobWeightedCentroids{FrameList{i}(LastGreen)}{ObjList{i}(LastGreen)};
+    TravelDist = sqrt((Cent1(1)-Cent2(1)).^2+(Cent1(2)-Cent2(2)).^2);
+    
+    if (TravelDist < 5.5)
+        continue;
+    end
+    
     
     figure(1);
-    subplot(2,4,[1 5]);
+    subplot(2,4,1);
     plot(FrameList{i},TempTrace,'-b');hold on;
     plot(FrameList{i}(GreenFrames),TempTrace(GreenFrames),'og');hold on;
-    plot(FrameList{i}(RedFrames),TempTrace(RedFrames),'or');hold off;
+    plot(FrameList{i}(RedFrames),TempTrace(RedFrames),'or');hold off;axis tight;
+    
+    subplot(2,4,5);
+    plot(FrameList{i},BlobDist);axis tight;
     
     
     AllMeanFrames = mean(T_MOVIE(:,:,FrameList{i}),3);
     subplot(2,4,2);
     imagesc(AllMeanFrames);axis image;hold on;
     
-    axis([Cent(1)-25 Cent(1)+25 Cent(2)-25 Cent(2)+25]);
+    axis([Cent1(1)-25 Cent1(1)+25 Cent1(2)-25 Cent1(2)+25]);
     MaxC = max(max(AllMeanFrames(BlobUnion)),eps);
     caxis([0 MaxC]);
     title('All')
@@ -89,7 +106,7 @@ for i = 1:NumTransients
     [GreenBlob,~,ic] = unique(AllGreenPixels);
     Green_freq = accumarray(ic,1)/length(GreenFrames);
     
-    axis([Cent(1)-25 Cent(1)+25 Cent(2)-25 Cent(2)+25]);
+    axis([Cent1(1)-25 Cent1(1)+25 Cent1(2)-25 Cent1(2)+25]);
 
     title('Good');hold off;
     
@@ -108,7 +125,7 @@ for i = 1:NumTransients
     [RedBlob,~,ic] = unique(AllRedPixels);
     Red_freq = accumarray(ic,1)/length(RedFrames);
     
-    axis([Cent(1)-25 Cent(1)+25 Cent(2)-25 Cent(2)+25]);
+    axis([Cent1(1)-25 Cent1(1)+25 Cent1(2)-25 Cent1(2)+25]);
 
     title('Bad');hold off;
     
@@ -122,18 +139,19 @@ for i = 1:NumTransients
     
     subplot(2,4,6);
     imagesc(AllMeanFrames);axis image;hold on;
-    axis([Cent(1)-25 Cent(1)+25 Cent(2)-25 Cent(2)+25]);
+    axis([Cent1(1)-25 Cent1(1)+25 Cent1(2)-25 Cent1(2)+25]);
     MaxC = max(max(AllMeanFrames(BlobUnion)),eps);
     caxis([0 MaxC]);
     for j = 1:length(MinFreq)
         idx = find(BlobUnion_freq >= MinFreq(j));
         PlotRegionOutline(BlobUnion(idx),clist{j});
     end
+    title(num2str(TravelDist));
     hold off;
     
     subplot(2,4,7);
     imagesc(AllGreenFrames);axis image;hold on;
-    axis([Cent(1)-25 Cent(1)+25 Cent(2)-25 Cent(2)+25]);
+    axis([Cent1(1)-25 Cent1(1)+25 Cent1(2)-25 Cent1(2)+25]);
      MaxC = max(max(AllGreenFrames(BlobUnion)),eps);
     caxis([0 MaxC]);
     for j = 1:length(MinFreq)
@@ -144,7 +162,7 @@ for i = 1:NumTransients
     
     subplot(2,4,8);
     imagesc(AllRedFrames);axis image;hold on;
-    axis([Cent(1)-25 Cent(1)+25 Cent(2)-25 Cent(2)+25]);
+    axis([Cent1(1)-25 Cent1(1)+25 Cent1(2)-25 Cent1(2)+25]);
      MaxC = max(max(AllRedFrames(BlobUnion)),eps);
     caxis([0 MaxC]);
     for j = 1:length(MinFreq)

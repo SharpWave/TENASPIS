@@ -1,7 +1,7 @@
 function [] = NewStep()
 % Will replace everything between MakeTransientROIs and ROImerge
 
-load TransientROIs.mat;
+load TI.mat;
 global T_MOVIE;
 
 [Xdim,Ydim,NumFrames] = Get_T_Params('Xdim','Ydim','NumFrames');

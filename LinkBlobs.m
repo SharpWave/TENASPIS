@@ -78,7 +78,9 @@ for i = 2+GapFillLen:NumFrames
                 PrevCent = BlobWeightedCentroids{CurrSamp}{k};
                 PrevIdxList = BlobPixelIdxList{CurrSamp}{k};
                 
-                if (ismember(CurrCentIdx,PrevIdxList))
+                CentDist = sqrt((PrevCent(1)-CurrCent(1)).^2+(PrevCent(2)-CurrCent(2)).^2);
+                
+                if (CentDist < 1.2)%(ismember(CurrCentIdx,PrevIdxList))
                     FoundMatch = k;
                     MatchSamp = CurrSamp;
                     break;
