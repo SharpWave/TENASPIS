@@ -9,7 +9,8 @@ disp('Rejecting transients based on duration criteria');
 disp('Loading blob and link data');
 load('BlobLinks.mat','FrameList','ObjList');
 
-MinFrame = 60*SampleRate;
+MinFrameSec = 3;
+MinFrame = MinFrameSec*SampleRate;
 
 %% setup vars
 NumTransients = length(FrameList);

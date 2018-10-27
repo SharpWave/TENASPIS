@@ -28,7 +28,7 @@ disp('Processing blobs into calcium transient ROIs: first step is to link blobs 
 
 % max number of samples to interpolate places where a transient skips frames
 
-GapFillLen = 1;
+GapFillLen = 0;
 
 % Load Blob pixel lists and centroids
 disp('Loading blobs');
