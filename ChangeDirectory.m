@@ -1,5 +1,7 @@
-function [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
-% [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,change_dir_flag)
+function [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,...
+    change_dir_flag, mdfilename)
+% [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,...
+%   change_dir_flag, mdfilename)
 %
 % Changes to the appropriate working directory for the mouse in question,
 % and/or outputs that directory in dirstr.
@@ -17,6 +19,9 @@ function [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,change_
 %       will change to the working directory. If change_dir_flag is set to
 %       0, dirstr will still be output but you will remain in the original
 %       directory.
+%
+%       mdfilename:default = MasterDirectory.mat. Can use to run multiple
+%       databases...
 %
 %   OUTPUT
 %       dirstr: String, directory corresponding to inputs.

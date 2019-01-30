@@ -50,15 +50,17 @@ function Tenaspis4(md,varargin)
     
     p = inputParser;
     p.addRequired('md',@(x) isstruct(x));
+    p.addOptional('sample_rate', 20, @(x) x > 0);   %Default sample rate = 20Hz
     p.addParameter('preprocess',...
         ~exist(fullfile(pwd,'BPDFF.h5'),'file'));
     p.addParameter('d1',false);                     %Make first derivative movie. 
     p.addParameter('manualmask',false);             %Draw mask manually.
     p.addParameter('masterdirectory',...    
-        'C:/MasterData',@(x) ischar(x));            %Master directory.               
+        'C:/MasterData',@(x) ischar(x));            %Master directory.
     p.parse(md,varargin{:});           
     
     %Compile.
+    sample_rate = p.Results.sample_rate;
     preprocess = p.Results.preprocess; 
     d1 = p.Results.d1; 
     manualmask = p.Results.manualmask; 
@@ -76,12 +78,12 @@ function Tenaspis4(md,varargin)
             h5Movie = fullfile(pwd,ls('*.h5'));
             
             cd(md.Location);
-            Set_T_Params(h5Movie);
-            MakeFilteredMovies(h5Movie,'d1',d1);
+            Set_T_Params(h5Movie, sample_rate);
+            MakeFilteredMovies(h5Movie, 'd1', d1, 'sample_rate', sample_rate);
         catch % if not, load a tiff
             cd(md.Location)
             tiffMovie = fullfile(pwd,ls('*.tiff'));
-            MakeFilteredMovies(tiffMovie,'d1',d1);
+            MakeFilteredMovies(tiffMovie,'d1',d1, 'sample_rate', sample_rate);
         end
         
         
@@ -93,7 +95,7 @@ function Tenaspis4(md,varargin)
     if d1       
         disp('Making D1Movie.h5');     
         %Temporal smooth. 
-        TempSmoothMovie('LowPass.h5','SMovie.h5',20); 
+        TempSmoothMovie('LowPass.h5','SMovie.h5', sample_rate); 
         
         %First derivative movie. 
         multiplier_use = DFDT_Movie('SMovie.h5','D1Movie.h5');
@@ -135,7 +137,7 @@ function Tenaspis4(md,varargin)
     load(fullfile(pwd,'mask_reg.mat')); 
 
     %Set new parameters based on BPDFF movie. 
-    Set_T_Params('BPDFF.h5');
+    Set_T_Params('BPDFF.h5', sample_rate);
 
     %Get blobs. 
     disp('Extracting blobs...');

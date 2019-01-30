@@ -41,8 +41,8 @@ end
 p = ProgressBar(NumChunks); % Initialize progress bar
 
 parfor i = 1:NumChunks
-%     Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
-    Set_Custom_T_Params('BPDFF.h5', param_file_use);
+    Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+%     Set_Custom_T_Params('BPDFF.h5', param_file_use);
     FrameList = ChunkStarts(i):ChunkEnds(i);
        
     BlobChunk(i) = SegmentFrameChunk(FrameList,PrepMask);

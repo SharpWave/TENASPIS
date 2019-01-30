@@ -27,7 +27,9 @@ function MakeFilteredMovies(MotCorrh5,varargin)
 %       'path' whose VALUE can be a string, the path containing the session
 %       usually in the form X:\Animal\Date\Session. Default=runs uigetfile.
 %
-%       'd1' (optional) whose VALUE can be a logical, whether or not you want to also
+%       'sample_rate': (optional parameter-value pair). Default = 20Hz
+%
+%       'd1' (optional parameter-value pair) whose VALUE can be a logical, whether or not you want to also
 %       make a first derivative movie from the 3-pixel smoothed movie.
 %       Default=false.
 %
@@ -39,8 +41,18 @@ function MakeFilteredMovies(MotCorrh5,varargin)
 %
 %   LPDFF.h5: DF/F of the 3-pixel smoothed movie.
 
+%% Parse inputs.
+p = inputParser;
+p.addRequired('MotCorrh5', @(a) exist(a,'file'));
+p.addParameter('sample_rate', 20, @(a) a > 0);
+p.addParameter('d1',false,@(x) islogical(x));
+p.parse(varargin{:});
+
+d1 = p.Results.d1;
+sample_rate = p.Results.sample_rate;
+
 %% Get Parameters and setup frame chunking
-Set_T_Params(MotCorrh5)
+Set_T_Params(MotCorrh5, sample_rate)
 [Xdim,Ydim,NumFrames,FrameChunkSize,HighPassRadius,LowPassRadius] = ...
     Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','HighPassRadius',...
     'LowPassRadius');
@@ -49,14 +61,6 @@ ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
 ChunkEnds(length(ChunkStarts)) = NumFrames;
 NumChunks = length(ChunkStarts);
-
-%% Parse inputs.
-p = inputParser;
-p.addParameter('d1',false,@(x) islogical(x));
-p.parse(varargin{:});
-
-d1 = p.Results.d1;
-
 %% more simple way to do this
 path = pwd;
 
