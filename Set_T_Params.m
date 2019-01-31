@@ -1,5 +1,5 @@
-function Set_T_Params(moviefile)
-% function Set_T_Params(moviefile)
+function Set_T_Params(moviefile, sample_rate)
+% function Set_T_Params(moviefile, sample_rate)
 %
 % Sets Tenaspis parameters.  Must be called at beginning of run.
 %
@@ -23,18 +23,23 @@ function Set_T_Params(moviefile)
 %     along with Tenaspis.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Set sample rate to 20Hz by default unless specified in 2nd argin
+if nargin < 2
+    sample_rate = 20;
+end
+
 clearvars -global T_PARAMS;
 global T_PARAMS;
 
 % NK bugfix hack
 try
-    [~,~,ext] = fileparts(moviefile); % Get filetype
+    [path,~,ext] = fileparts(moviefile); % Get filetype
     filetype = ext(2:end);
 catch
     ext = 'h5';
 end
 %% The dimensions of the movie - load from .mat file if possible, to save time when this function is called by parfor workers
-if (~exist('MovieDims.mat','file'))
+if (~exist(fullfile(path,'MovieDims.mat'),'file'))
     disp('Initializing movie - might take a bit longer')
     switch filetype
         case 'h5'
@@ -53,12 +58,12 @@ if (~exist('MovieDims.mat','file'))
         otherwise
            error('file must be either h5 or tiff format') 
     end
-    save MovieDims.mat Xdim Ydim NumFrames tstack
+    save (fullfile(path,'MovieDims.mat'), 'Xdim', 'Ydim', 'NumFrames', 'tstack')
 else
     try
-        load('MovieDims.mat','Xdim','Ydim','NumFrames','tstack');
+        load(fullfile(path,'MovieDims.mat'),'Xdim','Ydim','NumFrames','tstack');
     catch
-        load('MovieDims.mat','Xdim','Ydim','NumFrames');
+        load(fullfile(path,'MovieDims.mat'),'Xdim','Ydim','NumFrames');
     end
     T_PARAMS.Xdim = Xdim;
     T_PARAMS.Ydim = Ydim;
@@ -75,7 +80,7 @@ T_PARAMS.FrameChunkSize = 1250; % Number of frames to load at once for various f
 T_PARAMS.ROICircleWindowRadius = 35; % If this is too small the program crashes; higher values use more RAM and increase run time. Default is overkill
 
 %% General parameters used by multiple scripts
-T_PARAMS.SampleRate = 20; % Sample rate of the movie to be processed.  
+T_PARAMS.SampleRate = sample_rate; % Sample rate of the movie to be processed.  
 
 %% MakeFilteredMovies
 T_PARAMS.HighPassRadius = 20; % Smoothing radius for high pass disk-kernel filtering. EDIT:SPACE
@@ -112,7 +117,7 @@ T_PARAMS.MaxCentroidTravelDistance = 2; % maximum net distance that the centroid
                                         % Eliminates spurious blobs from overlapping transients.
                                         % EDIT:SPACE
                                         
-T_PARAMS.MinNumFrames = 4; % minimum number of frames for transient to be included. EDIT:TIME
+T_PARAMS.MinNumFrames = ceil(4/(20/T_PARAMS.SampleRate)); % minimum number of frames for transient to be included. EDIT:TIME
 
 %% MakeTransientROIs params
 T_PARAMS.MinPixelPresence = 0.5; %0.6321; % minimum fraction of frames in the transient for a pixel to be counted as part of an ROI. 
@@ -130,7 +135,7 @@ T_PARAMS.MinTransientMergeCorrR = 0.2;       % minimum correlation r value for a
 T_PARAMS.ROIBoundaryCoeff = 0.5;             % ROI boundaries are determined by setting a threshold at some fraction of the peak mean intensity
                                              % lower values mean bigger ROIs
                                              
-T_PARAMS.SmoothSize = 5;                     % length of window for temporal smoothing of traces.  EDIT:SPACE
+T_PARAMS.SmoothSize = ceil(5/(20/T_PARAMS.SampleRate)); % length of window for temporal smoothing of traces.  EDIT:SPACE
 T_PARAMS.MinNumTransients = 1;               % ROIs with fewer transients than this are cut after segmentation. recommend setting to 1, meaning no cut
 
 %% DetectTracePSA
@@ -145,14 +150,14 @@ T_PARAMS.SlopeThresh = 0.5; % minimum slope (z-score) for a new PSA epoch (i.e.,
                             % starting early enough.  Use a higher value if
                             % 
 
-T_PARAMS.MinPSALen = 4;     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
+T_PARAMS.MinPSALen = ceil(4/(20/T_PARAMS.SampleRate));     % minimum duration of PSA epochs, enforced right after detection. Helps to eliminate noise; 250ms is awfully short for a spiking epoch
                             % EDIT:TIME
                             
 %% MergeSuspiciousNeighors
 T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap (% of area of smallest ROI) between ROIs for a merge 
 
-T_PARAMS.MaxGapFillLen = 4; % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
+T_PARAMS.MaxGapFillLen = ceil(4/(20/T_PARAMS.SampleRate)); % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
                             % smooths the skippyness in some borderline
                             % cases. % EDIT:TIME 
                             
