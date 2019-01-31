@@ -111,5 +111,6 @@ Make_DFF(BandPassName,BPDFF);
 
 %% Delete temporary files
 delete(BandPassName);
+delete(LowPassName);
 
 end

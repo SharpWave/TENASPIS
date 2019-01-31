@@ -3,13 +3,16 @@ function Tenaspis4(md,varargin)
 % IMPORTANT NOTE: To automate Tenaspis you MUST do three things:
 %   1) Add the session(s) in question to your mouse directory (e.g.
 %   MakeMouseSessionList),
+%
 %   2) Designate an initial session you wish to use as a reference for all
-%   subsequent sessions.
+%   subsequent sessions, and put the initial session info for this into 
+%   GetInitRegMaskInfo.
+%
 %   3) Run Tenaspis4 with the 'manualmask' flag set to true for the initial
 %   session you designated in step 2.  You will be prompted early on to draw
 %   a mask around all the good cells (i.e. excluding any dead space and/or
 %   artifacts). You can then run all subsequent sessions without drawing a
-%   mask, e.g. Tenaspis4(md)
+%   mask, e.g. Tenaspis4(md), 
 %
 %   INPUTS
 %       md: session entry.
@@ -81,12 +84,13 @@ function Tenaspis4(md,varargin)
         catch % if not, load a tiff
             cd(md.Location)
             tiffMovie = fullfile(pwd,ls('*.tiff'));
+            Set_T_Params(tiffMovie);
             MakeFilteredMovies(tiffMovie,'d1',d1);
         end
         
-        
     else
         disp('Appropriate movies detected. Proceeding...');
+        Set_T_Params(fullfile(md.Location, 'BPDFF.h5'))
     end
     
     %Make first derivative movie if specified.
