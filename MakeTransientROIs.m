@@ -7,7 +7,9 @@ end
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold','MinBlobRadius');
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold,MinBlobRadius] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius',...
+    'threshold','MinBlobRadius');
 
 threshold = threshold * 2;
 

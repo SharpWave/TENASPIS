@@ -135,6 +135,8 @@ function Tenaspis4(md,varargin)
     %Image registration. 
     mask_multi_image_reg(InitMaskPath,initDate,initSession,md);
     
+    hdebug = figure; hdebug = gca;
+    
 %% Extract blobs.
     %Load the mask.
     cd(md.Location); 
@@ -142,18 +144,25 @@ function Tenaspis4(md,varargin)
 
     %Set new parameters based on BPDFF movie. 
     Set_T_Params('BPDFF.h5', sample_rate);
-
+    
     %Get blobs. 
     disp('Extracting blobs...');
-    ExtractBlobs(mask_reg);  
+    text(hdebug, 0.1, 0.9, ['SR before ExtractBlobs = ' num2str(Get_T_Params('SampleRate'))])
+    ExtractBlobs(mask_reg, sample_rate);  
+    text(hdebug, 0.1, 0.8, ['SR after ExtractBlobs = ' num2str(Get_T_Params('SampleRate'))])
     
 %% Connect blobs into transients
     LinkBlobs();
+    text(hdebug, 0.1, 0.7, ['SR after LinkBlobs = ' num2str(Get_T_Params('SampleRate'))])
     RejectBadTransients();
+    text(hdebug, 0.1, 0.6, ['SR after RejectBadTransients = ' num2str(Get_T_Params('SampleRate'))])
     MakeTransientROIs();
+    text(hdebug, 0.1, 0.5, ['SR after MakeTransientROIs = ' num2str(Get_T_Params('SampleRate'))])
 
 %% Group together individual transients under individual neurons and save data
     MergeTransientROIs;
+    text(hdebug, 0.1, 0.4, ['SR after MergeTransientROIs = ' num2str(Get_T_Params('SampleRate'))])
     InterpretTraces();
+    text(hdebug, 0.1, 0.3, ['SR after InterpretTraces = ' num2str(Get_T_Params('SampleRate'))])
     
 end
