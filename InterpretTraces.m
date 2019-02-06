@@ -406,7 +406,7 @@ NeuronROIidx = NeuronROIidx(ActOK);
 
 PSAbool = PSAbool(ActOK,:);
 disp('averaging ROIs over the movie');
-NeuronAvg = PixelSetMovieAvg(PSAbool,NeuronPixelIdxList,param_file_use);
+NeuronAvg = PixelSetMovieAvg(PSAbool,NeuronPixelIdxList);
 
 NumNeurons = sum(ActOK);
 

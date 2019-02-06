@@ -148,7 +148,7 @@ function Tenaspis4(md,varargin)
     %Get blobs. 
     disp('Extracting blobs...');
     text(hdebug, 0.1, 0.9, ['SR before ExtractBlobs = ' num2str(Get_T_Params('SampleRate'))])
-    ExtractBlobs(mask_reg, sample_rate);  
+    ExtractBlobs();  
     text(hdebug, 0.1, 0.8, ['SR after ExtractBlobs = ' num2str(Get_T_Params('SampleRate'))])
     
 %% Connect blobs into transients
