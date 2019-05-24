@@ -150,7 +150,7 @@ T_PARAMS.MinPSALen = 2;     % minimum duration of PSA epochs, enforced right aft
 T_PARAMS.MinBinSimRank = 0.94; % minimum rank normalized Binary Similarity between two ROI actvity vectors for a merge (similarity must be this percentile of non-adjacent similarities)
 T_PARAMS.ROIoverlapthresh = 0.5; % minimum normalized overlap (% of area of smallest ROI) between ROIs for a merge 
 
-T_PARAMS.MaxGapFillLen = 4; % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
+T_PARAMS.MaxGapFillLen = 3; % After detecting rising slopes, if the gaps between PSA epochs are this # of samples or smaller, fill them in.
                             % smooths the skippyness in some borderline
                             % cases. % EDIT:TIME 
                             

@@ -143,6 +143,71 @@ AI(i).animal = 'Marble7';
 AI(i).init_date = '03_19_2018';
 AI(i).init_sess = 1; 
 
+i = i+1;
+AI(i).animal = 'Marble6';
+AI(i).init_date = '04_17_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble11';
+AI(i).init_date = '05_28_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble12';
+AI(i).init_date = '05_13_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble17';
+AI(i).init_date = '09_17_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble14';
+AI(i).init_date = '08_14_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble19';
+AI(i).init_date = '09_24_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble20';
+AI(i).init_date = '10_09_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble18';
+AI(i).init_date = '09_17_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble24';
+AI(i).init_date = '11_26_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble25';
+AI(i).init_date = '12_03_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'G_D_6';
+AI(i).init_date = '01_14_2019';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble_26';
+AI(i).init_date = '12_03_2018';
+AI(i).init_sess = 1; 
+
+i = i+1;
+AI(i).animal = 'Marble_29';
+AI(i).init_date = '01_14_2019';
+AI(i).init_sess = 1; 
+
 % For each animal you have, add onto the structure array: 
 % i = i+1;
 % AI(i).animal = _ANIMAL NAME HERE_

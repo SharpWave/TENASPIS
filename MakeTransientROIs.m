@@ -1,13 +1,16 @@
-function [] = MakeTransientROIs(param_file_use)
+function [] = MakeTransientROIs()
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
-if nargin < 1
-    param_file_use = '';
-end
+% if nargin < 1
+%     param_file_use = '';
+% end
 disp('Calculating ROIs for linked blobs (putative transients)');
 
 %% Get parameters
-[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold,MinBlobRadius] = Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius','threshold','MinBlobRadius');
+[Xdim,Ydim,NumFrames,MinPixelPresence,ROICircleWindowRadius,threshold,...
+    MinBlobRadius, SampleRate] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','MinPixelPresence','ROICircleWindowRadius',...
+    'threshold','MinBlobRadius', 'SampleRate');
 
 threshold = threshold * 2;
 
@@ -44,7 +47,7 @@ end
 
 %% go through the movie and get the average pixel values
 disp('averaging preliminary ROIs over the movie');
-[BigPixelAvg] = PixelSetMovieAvg(TranBool,CircMask,param_file_use);
+[BigPixelAvg] = PixelSetMovieAvg(TranBool,CircMask);
 
 %% Refine the ROIs
 GoodROI = false(1,NumTransients);

@@ -3,13 +3,16 @@ function Tenaspis4(md,varargin)
 % IMPORTANT NOTE: To automate Tenaspis you MUST do three things:
 %   1) Add the session(s) in question to your mouse directory (e.g.
 %   MakeMouseSessionList),
+%
 %   2) Designate an initial session you wish to use as a reference for all
-%   subsequent sessions.
+%   subsequent sessions, and put the initial session info for this into 
+%   GetInitRegMaskInfo.
+%
 %   3) Run Tenaspis4 with the 'manualmask' flag set to true for the initial
 %   session you designated in step 2.  You will be prompted early on to draw
 %   a mask around all the good cells (i.e. excluding any dead space and/or
 %   artifacts). You can then run all subsequent sessions without drawing a
-%   mask, e.g. Tenaspis4(md)
+%   mask, e.g. Tenaspis4(md), 
 %
 %   INPUTS
 %       md: session entry.
@@ -83,12 +86,13 @@ function Tenaspis4(md,varargin)
         catch % if not, load a tiff
             cd(md.Location)
             tiffMovie = fullfile(pwd,ls('*.tiff'));
+            Set_T_Params(tiffMovie, sample_rate);
             MakeFilteredMovies(tiffMovie,'d1',d1, 'sample_rate', sample_rate);
         end
         
-        
     else
         disp('Appropriate movies detected. Proceeding...');
+        Set_T_Params(fullfile(md.Location, 'BPDFF.h5'))
     end
     
     %Make first derivative movie if specified.
@@ -131,6 +135,8 @@ function Tenaspis4(md,varargin)
     %Image registration. 
     mask_multi_image_reg(InitMaskPath,initDate,initSession,md);
     
+    hdebug = figure; hdebug = gca;
+    
 %% Extract blobs.
     %Load the mask.
     cd(md.Location); 
@@ -138,18 +144,25 @@ function Tenaspis4(md,varargin)
 
     %Set new parameters based on BPDFF movie. 
     Set_T_Params('BPDFF.h5', sample_rate);
-
+    
     %Get blobs. 
     disp('Extracting blobs...');
-    ExtractBlobs(mask_reg);  
+    text(hdebug, 0.1, 0.9, ['SR before ExtractBlobs = ' num2str(Get_T_Params('SampleRate'))])
+    ExtractBlobs();  
+    text(hdebug, 0.1, 0.8, ['SR after ExtractBlobs = ' num2str(Get_T_Params('SampleRate'))])
     
 %% Connect blobs into transients
     LinkBlobs();
+    text(hdebug, 0.1, 0.7, ['SR after LinkBlobs = ' num2str(Get_T_Params('SampleRate'))])
     RejectBadTransients();
+    text(hdebug, 0.1, 0.6, ['SR after RejectBadTransients = ' num2str(Get_T_Params('SampleRate'))])
     MakeTransientROIs();
+    text(hdebug, 0.1, 0.5, ['SR after MakeTransientROIs = ' num2str(Get_T_Params('SampleRate'))])
 
 %% Group together individual transients under individual neurons and save data
     MergeTransientROIs;
+    text(hdebug, 0.1, 0.4, ['SR after MergeTransientROIs = ' num2str(Get_T_Params('SampleRate'))])
     InterpretTraces();
+    text(hdebug, 0.1, 0.3, ['SR after InterpretTraces = ' num2str(Get_T_Params('SampleRate'))])
     
 end

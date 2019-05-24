@@ -57,7 +57,6 @@ end
 tempFrame = blankframe;
 tempFrame(CircMask{EaterClu}) = BigPixelAvg{EaterClu};
 
-
 tempthresh = threshold;
 
 okmerge = false;

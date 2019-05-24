@@ -46,7 +46,7 @@ p = inputParser;
 p.addRequired('MotCorrh5', @(a) exist(a,'file'));
 p.addParameter('sample_rate', 20, @(a) a > 0);
 p.addParameter('d1',false,@(x) islogical(x));
-p.parse(varargin{:});
+p.parse(MotCorrh5, varargin{:});
 
 d1 = p.Results.d1;
 sample_rate = p.Results.sample_rate;
@@ -115,5 +115,6 @@ Make_DFF(BandPassName,BPDFF);
 
 %% Delete temporary files
 delete(BandPassName);
+delete(LowPassName);
 
 end

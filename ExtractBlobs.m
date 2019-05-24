@@ -1,4 +1,4 @@
-function ExtractBlobs(PrepMask, param_file_use)
+function ExtractBlobs(PrepMask)
 % ExtractBlobs(file, param_file_use)
 % Copyright 2016 by David Sullivan, Nathaniel Kinsky, and William Mau
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,13 +19,15 @@ function ExtractBlobs(PrepMask, param_file_use)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 
-if nargin < 2
-    param_file_use = ''; % Use Set_T_Params as a default.
-end
+% Old way of customizing Set_T_Params file - keeping for legacy purposes!
+% if nargin < 2
+%     param_file_use = ''; % Use Set_T_Params as a default.
+% end
 disp('Extracting Blobs from movie');
 
 %% Get parameters and set up Chunking variables
-[Xdim,Ydim,NumFrames,FrameChunkSize] = Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize');
+[Xdim,Ydim,NumFrames,FrameChunkSize,SampleRate] = ...
+    Get_T_Params('Xdim','Ydim','NumFrames','FrameChunkSize','SampleRate');
 
 ChunkStarts = 1:FrameChunkSize:NumFrames;
 ChunkEnds = FrameChunkSize:FrameChunkSize:NumFrames;
@@ -41,7 +43,7 @@ end
 p = ProgressBar(NumChunks); % Initialize progress bar
 
 parfor i = 1:NumChunks
-    Set_T_Params; % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
+    Set_T_Params('BPDFF.h5', SampleRate); % needed because SegFrame is called in a parfor and matlab doesn't distribute global variables to workers
 %     Set_Custom_T_Params('BPDFF.h5', param_file_use);
     FrameList = ChunkStarts(i):ChunkEnds(i);
        
