@@ -1,5 +1,5 @@
 function [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,...
-    change_dir_flag, mdfilename)
+    change_dir_flag, ~)
 % [dirstr, MD_out] = ChangeDirectory(animal_id,sess_date,sess_num,...
 %   change_dir_flag, mdfilename)
 %
