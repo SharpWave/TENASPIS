@@ -104,7 +104,6 @@ end
 
 OKcount = nTrans >= MinNumTransients;
 NumNeurons = sum(OKcount);
-
 NeuronPixelIdxList = NeuronPixelIdxList(OKcount);
 NeuronImage = NeuronImage(OKcount);
 NeuronAvg = NeuronAvg(OKcount);
@@ -118,6 +117,6 @@ NeuronTraces = MakeTracesAndCorrs(NeuronPixelIdxList,NeuronAvg);
 
 disp('saving outputs');
 save SegmentationROIs.mat NeuronPixelIdxList NeuronImage NeuronAvg NeuronFrameList ...
-    NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI
+    NeuronObjList NeuronROIidx NumNeurons NeuronActivity NeuronTraces nTrans Trans2ROI -v7.3
     
 end

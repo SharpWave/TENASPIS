@@ -24,7 +24,7 @@ NumChunks = length(ChunkStarts);
 
 %% process the chunks in parallel
 p = ProgressBar(NumChunks);
-parfor i = 1:NumChunks
+for i = 1:NumChunks
     FrameList = ChunkStarts(i):ChunkEnds(i);
     TraceChunk{i} = MakeTraceChunk(FrameList,PixelIdxList,PixelAvg);
     p.progress;

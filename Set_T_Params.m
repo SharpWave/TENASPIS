@@ -25,7 +25,7 @@ function Set_T_Params(moviefile, sample_rate)
 
 % Set sample rate to 20Hz by default unless specified in 2nd argin
 if nargin < 2
-    sample_rate = 20;
+    sample_rate = 10;
 end
 
 clearvars -global T_PARAMS;

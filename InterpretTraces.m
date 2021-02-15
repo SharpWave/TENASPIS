@@ -113,7 +113,7 @@ for i = 1:NumNeurons
     CorrThresh = min(CorrSig(GoodCS));
     
     % find epochs above the correlation threshold
-    CorrEpochs = NP_FindSupraThresholdEpochs(CorrSig,CorrThresh);
+    CorrEpochs = NP_FindSupraThresholdEpochs(CorrSig,CorrThresh,0);
     
     % identify good correlation epochs that are also above the amplitude
     % threshold for at least 1 frame
@@ -127,7 +127,7 @@ for i = 1:NumNeurons
     end
     
     % identify small gaps that we can fill in
-    ZeroEpochs = NP_FindSupraThresholdEpochs(~GoodTrBool,eps);
+    ZeroEpochs = NP_FindSupraThresholdEpochs(~GoodTrBool,eps,0);
     EpLen = ZeroEpochs(:,2)-ZeroEpochs(:,1)+1;
     GoodFill = EpLen <= MaxGapFillLen;
     ZeroEpochs = ZeroEpochs(GoodFill,:);
@@ -277,8 +277,8 @@ for i = 1:NumNeurons
         end
         
         % determine who has more transients (counting ones added in clustering)
-        Temp1 = NP_FindSupraThresholdEpochs(PSAbool(idx1,:),eps);
-        Temp2 = NP_FindSupraThresholdEpochs(PSAbool(idx2,:),eps);
+        Temp1 = NP_FindSupraThresholdEpochs(PSAbool(idx1,:),eps,0);
+        Temp2 = NP_FindSupraThresholdEpochs(PSAbool(idx2,:),eps,0);
         if (size(Temp1,1) > size(Temp2,1))
             target = idx1;
             ball = idx2;
@@ -299,7 +299,7 @@ disp([int2str(NumMerges),' ROIs eliminated via merging']);
 %% B3: fill gaps again
 
 for i = 1:NumNeurons
-    ZeroEpochs = NP_FindSupraThresholdEpochs(~PSAbool(i,:),eps);
+    ZeroEpochs = NP_FindSupraThresholdEpochs(~PSAbool(i,:),eps,0);
     EpLen = ZeroEpochs(:,2)-ZeroEpochs(:,1)+1;
     GoodFill = EpLen <= MaxGapFillLen;
     ZeroEpochs = ZeroEpochs(GoodFill,:);
@@ -315,7 +315,7 @@ NumActs = zeros(1,NumNeurons);
 AllPSALen = [];
 actlist = cell(1,NumNeurons);
 for i = 1:NumNeurons
-    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps,0);
     if (~isempty(actlist{i}))
         
         PSALen = (actlist{i}(:,2)-actlist{i}(:,1))+1;
@@ -326,7 +326,7 @@ for i = 1:NumNeurons
             end
         end
     end
-    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps);
+    actlist{i} = NP_FindSupraThresholdEpochs(PSAbool(i,:),eps,0);
     NumActs(i) = size(actlist{i},1);
 end
 
@@ -400,6 +400,7 @@ ActOK = NumActs >= MinNumPSAepochs;
 NeuronActivity = NeuronActivity(ActOK);
 NeuronPixelIdxList = NeuronPixelIdxList(ActOK);
 NeuronFrameList = NeuronFrameList(ActOK);
+
 NeuronImage = NeuronImage(ActOK);
 NeuronObjList = NeuronObjList(ActOK);
 NeuronROIidx = NeuronROIidx(ActOK);
